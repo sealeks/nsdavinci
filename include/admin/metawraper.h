@@ -85,102 +85,125 @@ namespace dvnci {
         // Base class
 
         class basemetawraper : public abstractwraper {
+
         public:
 
-            basemetawraper(lcltype loc = NS_CODPAGE_UTF8) : abstractwraper(loc) {};
+            basemetawraper(lcltype loc = NS_CODPAGE_UTF8) : abstractwraper(loc) {
+            };
             virtual void commit(indx id);
 
             virtual lcltype local() const {
-                return NS_CODPAGE_UTF8;}
+                return NS_CODPAGE_UTF8;
+            }
         protected:
             nodetype basetypeitem;
-            virtual void setValue(propidtype type_, indx id, std::string attribname_, std::string val, std::string def_tp = "1", int min_ = -2000000, int max = 2000000 );
-            virtual std::string value(propidtype type_, indx id, std::string attribname_,  std::string def_tp = "0");} ;
+            virtual void setValue(propidtype type_, indx id, std::string attribname_, std::string val, std::string def_tp = "1", int min_ = -2000000, int max = 2000000);
+            virtual std::string value(propidtype type_, indx id, std::string attribname_, std::string def_tp = "0");
+        };
 
 
         // обработчик <ReportArr>
 
         class reparrrwraper : public basemetawraper {
+
         public:
             reparrrwraper(lcltype loc = NS_CODPAGE_UTF8);
             virtual void setProperty(indx id, propidtype prop, std::string val);
             virtual std::string getProperty(indx id, propidtype prop);
         protected:
             reporttypetagpropertyeditor reptypePred;
-            virtual  void addproprtyeditors_internal(abstractpropertymanager* mangr);} ;
+            virtual void addproprtyeditors_internal(abstractpropertymanager* mangr);
+        };
 
         // обработчик <ReportHeader>
 
         class repheaderwraper : public basemetawraper {
+
         public:
             repheaderwraper(lcltype loc = NS_CODPAGE_UTF8);
             virtual void setProperty(indx id, propidtype prop, std::string val);
-            virtual std::string getProperty(indx id, propidtype prop);} ;
+            virtual std::string getProperty(indx id, propidtype prop);
+        };
 
         // обработчик <unit>
 
         class unitwraper : public basemetawraper {
+
         public:
             unitwraper(lcltype loc = NS_CODPAGE_UTF8);
             virtual void setProperty(indx id, propidtype prop, std::string val);
             virtual std::string getProperty(indx id, propidtype prop);
         protected:
             reportstatistictagpropertyeditor repstatPred;
-            virtual  void addproprtyeditors_internal(abstractpropertymanager* mangr);} ;
+            virtual void addproprtyeditors_internal(abstractpropertymanager* mangr);
+        };
 
         // обработчик <TrendArr>
 
         class trendarrwraper : public basemetawraper {
+
         public:
             trendarrwraper(lcltype loc = NS_CODPAGE_UTF8);
             virtual void setProperty(indx id, propidtype prop, std::string val);
-            virtual std::string getProperty(indx id, propidtype prop);} ;
+            virtual std::string getProperty(indx id, propidtype prop);
+        };
 
         // обработчик <TrendHeader>
 
         class trendheaderwraper : public basemetawraper {
+
         public:
             trendheaderwraper(lcltype loc = NS_CODPAGE_UTF8);
             virtual void setProperty(indx id, propidtype prop, std::string val);
-            virtual std::string getProperty(indx id, propidtype prop);} ;
+            virtual std::string getProperty(indx id, propidtype prop);
+        };
 
         // обработчик <trend>
 
         class trendwraper : public basemetawraper {
+
         public:
             trendwraper(lcltype loc = NS_CODPAGE_UTF8);
             virtual void setProperty(indx id, propidtype prop, std::string val);
             virtual std::string getProperty(indx id, propidtype prop);
         protected:
-            virtual  void addproprtyeditors_internal(abstractpropertymanager* mangr);} ;
+            virtual void addproprtyeditors_internal(abstractpropertymanager* mangr);
+        };
 
         // обработчик <MessageArr>
 
         class messagearrwraper : public basemetawraper {
+
         public:
             messagearrwraper(lcltype loc = NS_CODPAGE_UTF8);
             virtual void setProperty(indx id, propidtype prop, std::string val);
-            virtual std::string getProperty(indx id, propidtype prop);} ;
+            virtual std::string getProperty(indx id, propidtype prop);
+        };
 
         // обработчик <MessageHeader>
 
         class messageheaderwraper : public basemetawraper {
+
         public:
             messageheaderwraper(lcltype loc = NS_CODPAGE_UTF8);
             virtual void setProperty(indx id, propidtype prop, std::string val);
-            virtual std::string getProperty(indx id, propidtype prop);} ;
+            virtual std::string getProperty(indx id, propidtype prop);
+        };
 
         // обработчик <message>
 
         class messagewraper : public basemetawraper {
+
         public:
             messagewraper(lcltype loc = NS_CODPAGE_UTF8);
             virtual void setProperty(indx id, propidtype prop, std::string val);
-            virtual std::string getProperty(indx id, propidtype prop);} ;
+            virtual std::string getProperty(indx id, propidtype prop);
+        };
 
         // обработчик <meta>
 
         class metawraper : public basemetawraper {
+
         public:
             metawraper(lcltype loc = NS_CODPAGE_UTF8);
             virtual void setProperty(indx id, propidtype prop, std::string val);
@@ -189,8 +212,10 @@ namespace dvnci {
             dbproviderpropertyeditor dbprovPred;
         protected:
             reportstatistictagpropertyeditor repstatPred;
-            virtual  void addproprtyeditors_internal(abstractpropertymanager* mangr);} ;
-}}
+            virtual void addproprtyeditors_internal(abstractpropertymanager* mangr);
+        };
+    }
+}
 
 #endif	/* _ITEMwraper_H */
 

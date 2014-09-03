@@ -14,28 +14,34 @@ namespace dvnci {
         using namespace std;
 
         size_t remoteregistryintf::load() {
-            return rintf.regs_net_req(vect, version_);}
+            return rintf.regs_net_req(vect, version_);
+        }
 
         size_t remoteclientsintf::load() {
-            return rintf.clients_net_req(vect, version_);}
+            return rintf.clients_net_req(vect, version_);
+        }
 
-        size_t remotealarmsintf::load(const std::string& grp , const std::string& agrp ) {
-            return rintf.alarms_net_req(vect, version_, grp, agrp);}
+        size_t remotealarmsintf::load(const std::string& grp, const std::string& agrp) {
+            return rintf.alarms_net_req(vect, version_, grp, agrp);
+        }
 
         size_t remotecommandintf::load(const std::string& grp) {
-            return rintf.commands_net_req(vect, version_, grp);}
+            return rintf.commands_net_req(vect, version_, grp);
+        }
 
-        size_t remotejournalintf::load(const std::string& agroup ) {
+        size_t remotejournalintf::load(const std::string& agroup) {
             vect_journal_data vect;
-            rintf.journal_net_req(vect,  guid_, cursor_, count_);
+            rintf.journal_net_req(vect, guid_, cursor_, count_);
             filldata(vect);
-            return count_;}
+            return count_;
+        }
 
         size_t remotedebugintf::load(debuglvtype lev) {
             vect_debug_data vect;
-            rintf.debug_net_req(vect,  guid_, cursor_, count_);
+            rintf.debug_net_req(vect, guid_, cursor_, count_);
             filldata(vect);
-            return count_;}
+            return count_;
+        }
 
         remotemetaintf::remotemetaintf(entitytype_metamaps_maps* maps_) : metaintf() {
             maps = maps_;
@@ -52,10 +58,11 @@ namespace dvnci {
             maps->insert(nodetype_metamap_pair(NT_MF_MESSARR, indx_metaitem_map()));
             maps->insert(nodetype_metamap_pair(NT_MF_UNIT, indx_metaitem_map()));
             maps->insert(nodetype_metamap_pair(NT_MF_TREND, indx_metaitem_map()));
-            maps->insert(nodetype_metamap_pair(NT_MF_MESSAGE, indx_metaitem_map()));};
+            maps->insert(nodetype_metamap_pair(NT_MF_MESSAGE, indx_metaitem_map()));
+        };
 
-        remoteadminintf::remoteadminintf(std::string hst, std::string port_, unsigned int timout) : adminintf(),  client_io( new dvnci::rpc::rpcioclient()) {
-            host_= hst;
+        remoteadminintf::remoteadminintf(std::string hst, std::string port_, unsigned int timout) : adminintf(), client_io(new dvnci::rpc::rpcioclient()) {
+            host_ = hst;
             port = port_;
             timeout = in_bounded<unsigned int>(100, 600000, timout);
             tag_ = tagintf_ptr(new remotetagintf(&tags_map));
@@ -70,182 +77,249 @@ namespace dvnci {
             journal_ = journalintf_ptr(new remotejournalintf(*this));
             alarms_ = alarmsintf_ptr(new remotealarmsintf(*this));
             clients_ = clientsintf_ptr(new remoteclientsintf(*this));
-            serviceintf_ = serviceintf_ptr(new remoteserviceintf(&services_map));}
+            serviceintf_ = serviceintf_ptr(new remoteserviceintf(&services_map));
+        }
 
         ns_error remoteadminintf::entities_internal_signature(nodetype ittp, indx_set& idset, iteminfo_map& mappack,
-                const std::string&  strcriteria) {
+                const std::string& strcriteria) {
 
             mappack.clear();
             switch (ittp) {
                 case NT_ROOT_SERVERS_AVAIL_R:
-                case NT_ROOT_SERVERS_AVAIL:{
-                    return NS_ERROR_SUCCESS;}
+                case NT_ROOT_SERVERS_AVAIL:
+                {
+                    return NS_ERROR_SUCCESS;
+                }
 
-                case NT_TAG:{
+                case NT_TAG:
+                {
                     tags(mappack, idset);
-                    return NS_ERROR_SUCCESS;}
+                    return NS_ERROR_SUCCESS;
+                }
 
-                case NT_ATAG:{
+                case NT_ATAG:
+                {
                     tags(mappack, idset);
-                    return NS_ERROR_SUCCESS;}
+                    return NS_ERROR_SUCCESS;
+                }
 
-                case NT_GROUP:{
+                case NT_GROUP:
+                {
                     groups(mappack, idset);
-                    return NS_ERROR_SUCCESS;}
+                    return NS_ERROR_SUCCESS;
+                }
 
-                case NT_AGROUP:{
+                case NT_AGROUP:
+                {
                     agroups(mappack, idset);
-                    return NS_ERROR_SUCCESS;}
+                    return NS_ERROR_SUCCESS;
+                }
 
-                case NT_USER:{
+                case NT_USER:
+                {
                     users(mappack, idset);
-                    return NS_ERROR_SUCCESS;}
+                    return NS_ERROR_SUCCESS;
+                }
 
-                default:{
+                default:
+                {
                     if (nodetp_is_meta(ittp)) {
-                        metas(ittp, mappack, idset  );
-                        return NS_ERROR_SUCCESS;}}}
-            return NS_ERROR_SUCCESS;}
+                        metas(ittp, mappack, idset);
+                        return NS_ERROR_SUCCESS;
+                    }
+                }
+            }
+            return NS_ERROR_SUCCESS;
+        }
 
-        bool remoteadminintf::tags(iteminfo_map& mappack, indx_set& idset, std::string  strcriteria ) {
+        bool remoteadminintf::tags(iteminfo_map& mappack, indx_set& idset, std::string strcriteria) {
             mappack.clear();
             for (indx_set::iterator it = idset.begin(); it != idset.end(); ++it) {
-                mappack.insert(iteminfo_pair(*it, name_with_type(tag(*it).name(), NT_TAG,  tag(*it).type(), group(tag(*it).group()).appid())));}
-            return true;}
+                mappack.insert(iteminfo_pair(*it, name_with_type(tag(*it).name(), NT_TAG, tag(*it).type(), group(tag(*it).group()).appid())));
+            }
+            return true;
+        }
 
-        bool remoteadminintf::groups(iteminfo_map& mappack, indx_set& idset, std::string  strcriteria ) {
+        bool remoteadminintf::groups(iteminfo_map& mappack, indx_set& idset, std::string strcriteria) {
             mappack.clear();
             for (indx_set::iterator it = idset.begin(); it != idset.end(); ++it) {
-                mappack.insert(iteminfo_pair(*it, name_with_type(group(*it).name(), NT_GROUP,  static_cast<appidtype> (group(*it).appid()))));}
-            return true;}
+                mappack.insert(iteminfo_pair(*it, name_with_type(group(*it).name(), NT_GROUP, static_cast<appidtype> (group(*it).appid()))));
+            }
+            return true;
+        }
 
-        bool remoteadminintf::agroups(iteminfo_map& mappack, indx_set& idset, std::string  strcriteria) {
+        bool remoteadminintf::agroups(iteminfo_map& mappack, indx_set& idset, std::string strcriteria) {
             mappack.clear();
             for (indx_set::iterator it = idset.begin(); it != idset.end(); ++it) {
-                mappack.insert(iteminfo_pair(*it, name_with_type(agroup(*it).name(), NT_AGROUP)));}
-            return true;}
+                mappack.insert(iteminfo_pair(*it, name_with_type(agroup(*it).name(), NT_AGROUP)));
+            }
+            return true;
+        }
 
-        bool remoteadminintf::users(iteminfo_map& mappack, indx_set& idset, std::string  strcriteria ) {
+        bool remoteadminintf::users(iteminfo_map& mappack, indx_set& idset, std::string strcriteria) {
             mappack.clear();
             for (indx_set::iterator it = idset.begin(); it != idset.end(); ++it) {
-                mappack.insert(iteminfo_pair(*it, name_with_type(user(*it).name(), NT_USER)));}
-            return true;}
+                mappack.insert(iteminfo_pair(*it, name_with_type(user(*it).name(), NT_USER)));
+            }
+            return true;
+        }
 
-        bool remoteadminintf::metas(nodetype ittp, iteminfo_map& mappack, indx_set& idset, std::string  strcriteria) {
+        bool remoteadminintf::metas(nodetype ittp, iteminfo_map& mappack, indx_set& idset, std::string strcriteria) {
             mappack.clear();
-            std::string  nm_attr = dvnci::meta::nameAttribute(ittp);
+            std::string nm_attr = dvnci::meta::nameAttribute(ittp);
             if (nm_attr == "") return true;
             for (indx_set::iterator it = idset.begin(); it != idset.end(); ++it) {
-                mappack.insert(iteminfo_pair(*it, name_with_type(meta(ittp, *it).property(nm_attr), ittp)));}
-            return true;}
+                mappack.insert(iteminfo_pair(*it, name_with_type(meta(ittp, *it).property(nm_attr), ittp)));
+            }
+            return true;
+        }
 
-        ns_error remoteadminintf::load_entities(nodetype ittp,  indx_set& idset) {
+        ns_error remoteadminintf::load_entities(nodetype ittp, indx_set& idset) {
             THD_EXCLUSIVE_LOCK(mutex);
             clearerrors();
             switch (ittp) {
-                case NT_TAG:               return readtags(idset);
-                case NT_ATAG:              return readtags(idset);
-                case NT_GROUP:             return readgroups(idset);
-                case NT_AGROUP:            return readagroups(idset);
-                case NT_USER:              return readusers(idset);
-                case NT_ACCESSRULE:        return readaccessrules(idset);
-                case NT_SERVICE:           return readservices(idset);
+                case NT_TAG: return readtags(idset);
+                case NT_ATAG: return readtags(idset);
+                case NT_GROUP: return readgroups(idset);
+                case NT_AGROUP: return readagroups(idset);
+                case NT_USER: return readusers(idset);
+                case NT_ACCESSRULE: return readaccessrules(idset);
+                case NT_SERVICE: return readservices(idset);
                 case NT_ROOT_SERVERS_AVAIL_R:
-                case NT_ROOT_SERVERS_AVAIL:  return readconfig(idset);
-                default: if (nodetp_is_meta(ittp)) return readmetas(ittp, idset);}
-            return NS_ERROR_SUCCESS;}
+                case NT_ROOT_SERVERS_AVAIL: return readconfig(idset);
+                default: if (nodetp_is_meta(ittp)) return readmetas(ittp, idset);
+            }
+            return NS_ERROR_SUCCESS;
+        }
 
-        ns_error remoteadminintf::merge_entities(nodetype ittp,  indx_set& idset, iteminfo_map& mappack) {{
+        ns_error remoteadminintf::merge_entities(nodetype ittp, indx_set& idset, iteminfo_map& mappack) {
+            {
                 THD_EXCLUSIVE_LOCK(mutex);
                 clearerrors();
                 switch (ittp) {
-                    case NT_TAG:{
+                    case NT_TAG:
+                    {
                         sendtags(idset);
-                        break;}
-                    case NT_ATAG:{
+                        break;
+                    }
+                    case NT_ATAG:
+                    {
                         sendtags(idset);
-                        break;}
-                    case NT_GROUP:{
+                        break;
+                    }
+                    case NT_GROUP:
+                    {
                         sendgroups(idset);
-                        break;}
-                    case NT_AGROUP:{
+                        break;
+                    }
+                    case NT_AGROUP:
+                    {
                         sendagroups(idset);
-                        break;}
-                    case NT_USER:{
+                        break;
+                    }
+                    case NT_USER:
+                    {
                         sendusers(idset);
-                        break;}
-                    case NT_ACCESSRULE:{
+                        break;
+                    }
+                    case NT_ACCESSRULE:
+                    {
                         sendaccessrules(idset);
-                        break;}
-                    case NT_SERVICE:{
+                        break;
+                    }
+                    case NT_SERVICE:
+                    {
                         sendservices(idset);
-                        break;}
-                    case NT_ROOT_SERVERS_AVAIL:{
+                        break;
+                    }
+                    case NT_ROOT_SERVERS_AVAIL:
+                    {
                         sendconfig(idset);
-                        break;}
-                    default: if (nodetp_is_meta(ittp)) sendmetas(ittp, idset);}
-                entities_internal_signature(ittp, idset, mappack);}
+                        break;
+                    }
+                    default: if (nodetp_is_meta(ittp)) sendmetas(ittp, idset);
+                }
+                entities_internal_signature(ittp, idset, mappack);
+            }
             adminintf::merge_entities(ittp, idset, mappack);
-            return NS_ERROR_SUCCESS;}
+            return NS_ERROR_SUCCESS;
+        }
 
         ns_error remoteadminintf::change_parent_entities(nodetype ittp, indx_set& idset, indx parentid) {
             THD_EXCLUSIVE_LOCK(mutex);
             clearerrors();
-            try{
-            switch (ittp) {
-                case NT_TAG:{
-                    changeparenttag(idset, parentid);
-                    break;}
+            try {
+                switch (ittp) {
+                    case NT_TAG:
+                    {
+                        changeparenttag(idset, parentid);
+                        break;
+                    }
 
-                case NT_ATAG:{
-                    changeparentatag(idset, parentid);
-                    break;}
+                    case NT_ATAG:
+                    {
+                        changeparentatag(idset, parentid);
+                        break;
+                    }
 
-                default: return NS_ERROR_SUCCESS;}
-            iteminfo_map tmpmap_;
+                    default: return NS_ERROR_SUCCESS;
+                }
+                iteminfo_map tmpmap_;
 
-            merge_entities(ittp, idset, tmpmap_);}
-            catch (dvncierror& err_) {
-                  adderror(err_);}
+                merge_entities(ittp, idset, tmpmap_);
+            }            catch (dvncierror& err_) {
+                adderror(err_);
+            }
 
-            return NS_ERROR_SUCCESS;}
+            return NS_ERROR_SUCCESS;
+        }
 
-        bool remoteadminintf::changeparenttag( indx_set& idset, indx parentid) {
+        bool remoteadminintf::changeparenttag(indx_set& idset, indx parentid) {
 
             for (indx_set::iterator it = idset.begin(); it != idset.end(); ++it) {
-                tag(*it).group(parentid);}
-            return true;}
+                tag(*it).group(parentid);
+            }
+            return true;
+        }
 
-        bool remoteadminintf::changeparentatag( indx_set& idset, indx parentid) {
+        bool remoteadminintf::changeparentatag(indx_set& idset, indx parentid) {
 
             for (indx_set::iterator it = idset.begin(); it != idset.end(); ++it) {
-                tag(*it).agroup(parentid);}
-            return true;}
+                tag(*it).agroup(parentid);
+            }
+            return true;
+        }
 
-        std::string  remoteadminintf::conf_property(const confproptype&  name) const {
+        std::string remoteadminintf::conf_property(const confproptype& name) const {
             confinfo_map::const_iterator it = config_map.find(name);
-            return (it != config_map.end()) ? config_.str_data[it->second] : "";}
+            return (it != config_map.end()) ? config_.str_data[it->second] : "";
+        }
 
-        int remoteadminintf::conf_numproperty(const confproptype&  name) {
+        int remoteadminintf::conf_numproperty(const confproptype& name) {
             confinfo_map::iterator it = config_map.find(name);
             std::string tmp = (it != config_map.end()) ? config_.str_data[it->second] : "";
             int reslt = 0;
             if (tmp == "") return 0;
             if (str_to(tmp, reslt)) return reslt;
-            return 0;}
+            return 0;
+        }
 
-        void remoteadminintf::conf_property(const confproptype&  name, const std::string&  val) {
+        void remoteadminintf::conf_property(const confproptype& name, const std::string& val) {
             confinfo_map::iterator it = config_map.find(name);
             if (it != config_map.end()) {
                 config_.str_data[it->second] = val;
-                config_.changeset |= (0x1LL << it->second);}}
+                config_.changeset |= (0x1LL << it->second);
+            }
+        }
 
-        void remoteadminintf::conf_property(const confproptype&  name, int val) {
+        void remoteadminintf::conf_property(const confproptype& name, int val) {
             confinfo_map::iterator it = config_map.find(name);
             if (it != config_map.end()) {
                 std::string tmp = "";
                 config_.str_data[it->second] = to_str(val);
-                config_.changeset |= (0x1LL << it->second);}}
+                config_.changeset |= (0x1LL << it->second);
+            }
+        }
 
         bool remoteadminintf::operation_setvalue(indx id, const std::string& val, vlvtype valid) {
             req_adminoperation execute_op;
@@ -254,7 +328,8 @@ namespace dvnci {
             execute_op.strpar1 = val;
             execute_op.numpar3 = valid;
             executeoperation(execute_op);
-            return true;}
+            return true;
+        }
 
         bool remoteadminintf::operation_setvalid(indx id, vlvtype valid) {
             req_adminoperation execute_op;
@@ -262,68 +337,77 @@ namespace dvnci {
             execute_op.numpar2 = id;
             execute_op.numpar3 = valid;
             executeoperation(execute_op);
-            return true;}
+            return true;
+        }
 
         bool remoteadminintf::operation_setallvalid(vlvtype valid) {
             req_adminoperation execute_op;
             execute_op.numpar1 = OPERATION_SETALL_VALID;
             execute_op.numpar2 = valid;
             executeoperation(execute_op);
-            return true;}
+            return true;
+        }
 
         bool remoteadminintf::operation_setcounter(indx id, bool inc) {
             req_adminoperation execute_op;
             execute_op.numpar1 = inc ? OPERATION_INCCOUNT : OPERATION_DECCOUNT;
             execute_op.numpar2 = id;
             executeoperation(execute_op);
-            return true;}
+            return true;
+        }
 
         bool remoteadminintf::operation_setallcounter(bool inc) {
             req_adminoperation execute_op;
             execute_op.numpar1 = inc ? OPERATION_INCCOUNTALL : OPERATION_DECCOUNTALL;
             executeoperation(execute_op);
-            return true;}
+            return true;
+        }
 
         bool remoteadminintf::operation_kvit() {
             req_adminoperation execute_op;
             execute_op.numpar1 = OPERATION_ACTION_KVIT;
             executeoperation(execute_op);
-            return true;}
+            return true;
+        }
 
         bool remoteadminintf::operation_kvitgroup(indx id) {
             req_adminoperation execute_op;
             execute_op.numpar1 = OPERATION_KVIT_GROUP;
             execute_op.numpar2 = id;
             executeoperation(execute_op);
-            return true;}
+            return true;
+        }
 
         bool remoteadminintf::operation_kvitagroup(indx id) {
             req_adminoperation execute_op;
             execute_op.numpar1 = OPERATION_KVIT_AGROUP;
             execute_op.numpar2 = id;
             executeoperation(execute_op);
-            return true;}
+            return true;
+        }
 
         bool remoteadminintf::operation_startservice(appidtype val) {
             req_adminoperation execute_op;
             execute_op.numpar1 = SERVICE_OPEATION_START;
             execute_op.numpar2 = val;
             executeoperation(execute_op);
-            return true;}
+            return true;
+        }
 
         bool remoteadminintf::operation_stopservice(appidtype val) {
             req_adminoperation execute_op;
             execute_op.numpar1 = SERVICE_OPEATION_STOP;
             execute_op.numpar2 = val;
             executeoperation(execute_op);
-            return true;}
+            return true;
+        }
 
         bool remoteadminintf::connect_(std::string user, std::string password) {
 
             try {
                 client_io->connect(host_, port, timeout);
-                _state = (client_io->state() == client_io->connected ) ?
-                        adminintf::connected :  adminintf::disconnected;
+                _state = (client_io->state() == client_io->connected) ?
+                        adminintf::connected : adminintf::disconnected;
                 if (client_io->state() == client_io->connected) {
                     ns_error tmperror = operation_autorizate(user, password);
                     if (tmperror != NS_ERROR_SUCCESS) {
@@ -331,37 +415,46 @@ namespace dvnci {
                         _state = adminintf::disconnected;
                         if (tmperror == ERROR_AUTORIZATION_FAIL) throw dvncierror(ERROR_AUTORIZATION_FAIL);
                         dvncierror tmperr(tmperror);
-                        adderror(tmperr);}}
-                else {
+                        adderror(tmperr);
+                    }
+                } else {
                     dvncierror tmperr(ERROR_BASENOTFOUND);
-                    adderror(tmperr);}}
-            catch (dvncierror& err_) {
+                    adderror(tmperr);
+                }
+            }            catch (dvncierror& err_) {
                 if ((err_.code() == ERROR_FAILNET_CONNECTED) || (err_.code() == ERROR_NONET_CONNECTED) || (err_.code() == ERROR_AUTORIZATION_FAIL)) {
                     releaseconnection();
-                    throw err_;}
-                adderror(err_);}
-            catch (...) {
-                _state = (client_io->state() == client_io->connected ) ?
-                        adminintf::connected :  adminintf::disconnected;
+                    throw err_;
+                }
+                adderror(err_);
+            }            catch (...) {
+                _state = (client_io->state() == client_io->connected) ?
+                        adminintf::connected : adminintf::disconnected;
                 if (client_io->state() == client_io->connected) {
                     dvncierror tmperr(ERROR_BASENOTFOUND);
-                    adderror(tmperr);}}
+                    adderror(tmperr);
+                }
+            }
 
-            return (_state == adminintf::connected);}
+            return (_state == adminintf::connected);
+        }
 
         bool remoteadminintf::disconnect_() {
             try {
                 client_io->disconnect();
-                _state = (client_io->state() == client_io->connected ) ?
-                        adminintf::connected :  adminintf::disconnected;}
-            catch (...) {
-                _state = (client_io->state() == client_io->connected ) ?
-                        adminintf::connected :  adminintf::disconnected;}
+                _state = (client_io->state() == client_io->connected) ?
+                        adminintf::connected : adminintf::disconnected;
+            }            catch (...) {
+                _state = (client_io->state() == client_io->connected) ?
+                        adminintf::connected : adminintf::disconnected;
+            }
 
-            return (_state == adminintf::disconnected);}
+            return (_state == adminintf::disconnected);
+        }
 
-        ns_error remoteadminintf::select_entities(nodetype parenttp,  iteminfo_map& mappack, indx parentid,
-                const std::string& strcriteria , bool clearer) {{
+        ns_error remoteadminintf::select_entities(nodetype parenttp, iteminfo_map& mappack, indx parentid,
+                const std::string& strcriteria, bool clearer) {
+            {
 
                 THD_EXCLUSIVE_LOCK(mutex);
                 if (clearer) clearerrors();
@@ -376,15 +469,18 @@ namespace dvnci {
                     tmpreq.strcriteria = strcriteria;
 
                     if (querytmpl<req_entitysigs, resp_entitysigs, RPC_OPERATION_REQ_ENTITYSIGS, RPC_OPERATION_RESP_ENTITYSIGS > (tmpreq, tpmresp)) {
-                        mappack << tpmresp;}}
+                        mappack << tpmresp;
+                    }
+                } catch (dvncierror& err) {
+                    parseerror(err);
+                }                catch (...) {
+                    parseundeferror();
+                }
+            }
 
-                catch (dvncierror& err) {
-                    parseerror(err);}
-                catch (...) {
-                    parseundeferror();}}
-
-            adminintf::select_entities(parenttp,  mappack, parentid, strcriteria);
-            return NS_ERROR_SUCCESS;}
+            adminintf::select_entities(parenttp, mappack, parentid, strcriteria);
+            return NS_ERROR_SUCCESS;
+        }
 
         ns_error remoteadminintf::readtags(indx_set& idset) {
 
@@ -395,14 +491,16 @@ namespace dvnci {
                 tmpreq << idset;
 
                 if (querytmpl<req_tags, resp_tags, RPC_OPERATION_REQ_TAGS, RPC_OPERATION_RESP_TAGS > (tmpreq, tpmresp)) {
-                    tags_map << tpmresp;}}
+                    tags_map << tpmresp;
+                }
+            } catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
-
-            return NS_ERROR_SUCCESS;}
+            return NS_ERROR_SUCCESS;
+        }
 
         ns_error remoteadminintf::sendtags(indx_set& idset) {
 
@@ -413,18 +511,21 @@ namespace dvnci {
                 assign_tag_data(idset, tmpreq.tags);
 
                 for (vect_tag_data::iterator it = tmpreq.tags.begin(); it != tmpreq.tags.end(); ++it) {
-                    it->changeset = ((remotetagintf&) (tag(static_cast<indx> (it->key)))).gets_()->changeset;}
+                    it->changeset = ((remotetagintf&) (tag(static_cast<indx> (it->key)))).gets_()->changeset;
+                }
 
                 if (querytmpl<req_sendtags, resp_sendtags, RPC_OPERATION_REQ_SENDTAGS, RPC_OPERATION_RESP_SENDTAGS > (tmpreq, tpmresp)) {
                     tags_map << tpmresp;
-                    set_vect_error_entity(tpmresp.error);}}
+                    set_vect_error_entity(tpmresp.error);
+                }
+            } catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
-
-            return NS_ERROR_SUCCESS;}
+            return NS_ERROR_SUCCESS;
+        }
 
         ns_error remoteadminintf::readgroups(indx_set& idset) {
 
@@ -435,14 +536,16 @@ namespace dvnci {
                 tmpreq << idset;
 
                 if (querytmpl<req_groups, resp_groups, RPC_OPERATION_REQ_GROUPS, RPC_OPERATION_RESP_GROUPS > (tmpreq, tpmresp)) {
-                    groups_map << tpmresp;}}
+                    groups_map << tpmresp;
+                }
+            } catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
-
-            return NS_ERROR_SUCCESS;}
+            return NS_ERROR_SUCCESS;
+        }
 
         ns_error remoteadminintf::sendgroups(indx_set& idset) {
             try {
@@ -453,18 +556,21 @@ namespace dvnci {
                 assign_group_data(idset, tmpreq.groups);
 
                 for (vect_group_data::iterator it = tmpreq.groups.begin(); it != tmpreq.groups.end(); ++it) {
-                    it->changeset = ((remotegroupintf&) (group(static_cast<indx> (it->key)))).gets_()->changeset;}
+                    it->changeset = ((remotegroupintf&) (group(static_cast<indx> (it->key)))).gets_()->changeset;
+                }
 
                 if (querytmpl<req_sendgroups, resp_sendgroups, RPC_OPERATION_REQ_SENDGROUPS, RPC_OPERATION_RESP_SENDGROUPS > (tmpreq, tpmresp)) {
                     groups_map << tpmresp;
-                    set_vect_error_entity(tpmresp.error);}}
+                    set_vect_error_entity(tpmresp.error);
+                }
+            } catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
-
-            return NS_ERROR_SUCCESS;}
+            return NS_ERROR_SUCCESS;
+        }
 
         ns_error remoteadminintf::readagroups(indx_set& idset) {
 
@@ -475,14 +581,16 @@ namespace dvnci {
                 tmpreq << idset;
 
                 if (querytmpl<req_agroups, resp_agroups, RPC_OPERATION_REQ_AGROUPS, RPC_OPERATION_RESP_AGROUPS > (tmpreq, tpmresp)) {
-                    agroups_map << tpmresp;}}
+                    agroups_map << tpmresp;
+                }
+            } catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
-
-            return NS_ERROR_SUCCESS;}
+            return NS_ERROR_SUCCESS;
+        }
 
         ns_error remoteadminintf::sendagroups(indx_set& idset) {
             try {
@@ -493,18 +601,21 @@ namespace dvnci {
                 assign_agroup_data(idset, tmpreq.agroups);
 
                 for (vect_agroup_data::iterator it = tmpreq.agroups.begin(); it != tmpreq.agroups.end(); ++it) {
-                    it->changeset = ((remoteagroupintf&) (agroup(static_cast<indx> (it->key)))).gets_()->changeset;}
+                    it->changeset = ((remoteagroupintf&) (agroup(static_cast<indx> (it->key)))).gets_()->changeset;
+                }
 
                 if (querytmpl<req_sendagroups, resp_sendagroups, RPC_OPERATION_REQ_SENDAGROUPS, RPC_OPERATION_RESP_SENDAGROUPS > (tmpreq, tpmresp)) {
                     agroups_map << tpmresp;
-                    set_vect_error_entity(tpmresp.error);}}
+                    set_vect_error_entity(tpmresp.error);
+                }
+            } catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
-
-            return NS_ERROR_SUCCESS;}
+            return NS_ERROR_SUCCESS;
+        }
 
         ns_error remoteadminintf::readusers(indx_set& idset) {
 
@@ -515,17 +626,18 @@ namespace dvnci {
                 tmpreq << idset;
 
                 if (querytmpl<req_users, resp_users, RPC_OPERATION_REQ_USERS, RPC_OPERATION_RESP_USERS > (tmpreq, tpmresp)) {
-                    users_map << tpmresp;}}
+                    users_map << tpmresp;
+                }
+            } catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
+            return NS_ERROR_SUCCESS;
+        }
 
-            return NS_ERROR_SUCCESS;}
-
-
-        ns_error  remoteadminintf::sendusers(indx_set& idset) {
+        ns_error remoteadminintf::sendusers(indx_set& idset) {
             try {
                 req_sendusers tmpreq;
                 resp_sendusers tpmresp;
@@ -534,18 +646,21 @@ namespace dvnci {
                 assign_user_data(idset, tmpreq.users);
 
                 for (vect_user_data::iterator it = tmpreq.users.begin(); it != tmpreq.users.end(); ++it) {
-                    it->changeset = ((remoteuserintf&) (user(static_cast<indx> (it->key)))).gets_()->changeset;}
+                    it->changeset = ((remoteuserintf&) (user(static_cast<indx> (it->key)))).gets_()->changeset;
+                }
 
                 if (querytmpl<req_sendusers, resp_sendusers, RPC_OPERATION_REQ_SENDUSERS, RPC_OPERATION_RESP_SENDUSERS > (tmpreq, tpmresp)) {
                     users_map << tpmresp;
-                    set_vect_error_entity(tpmresp.error);}}
+                    set_vect_error_entity(tpmresp.error);
+                }
+            } catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
+            return NS_ERROR_SUCCESS;
+        }
 
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
-            return NS_ERROR_SUCCESS;}
-     
         ns_error remoteadminintf::readaccessrules(indx_set& idset) {
 
             try {
@@ -555,17 +670,18 @@ namespace dvnci {
                 tmpreq << idset;
 
                 if (querytmpl<req_accessrules, resp_accessrules, RPC_OPERATION_REQ_ACCESSRULES, RPC_OPERATION_RESP_ACCESSRULES > (tmpreq, tpmresp)) {
-                    accessrules_map << tpmresp;}}
+                    accessrules_map << tpmresp;
+                }
+            } catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
+            return NS_ERROR_SUCCESS;
+        }
 
-            return NS_ERROR_SUCCESS;}
-
-
-           ns_error  remoteadminintf::sendaccessrules(indx_set& idset) {
+        ns_error remoteadminintf::sendaccessrules(indx_set& idset) {
             try {
                 req_sendaccessrules tmpreq;
                 resp_sendaccessrules tpmresp;
@@ -574,19 +690,20 @@ namespace dvnci {
                 assign_accessrule_data(idset, tmpreq.accessrules);
 
                 for (vect_accessrule_data::iterator it = tmpreq.accessrules.begin(); it != tmpreq.accessrules.end(); ++it) {
-                    it->changeset = ((remoteaccessruleintf&) (accessrule(static_cast<indx> (it->key)))).gets_()->changeset;}
+                    it->changeset = ((remoteaccessruleintf&) (accessrule(static_cast<indx> (it->key)))).gets_()->changeset;
+                }
 
                 if (querytmpl<req_sendaccessrules, resp_sendaccessrules, RPC_OPERATION_REQ_SENDACCESSRULES, RPC_OPERATION_RESP_SENDACCESSRULES > (tmpreq, tpmresp)) {
                     accessrules_map << tpmresp;
-                    set_vect_error_entity(tpmresp.error);}}
-
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
-            return NS_ERROR_SUCCESS;}
-
-
+                    set_vect_error_entity(tpmresp.error);
+                }
+            } catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
+            return NS_ERROR_SUCCESS;
+        }
 
         ns_error remoteadminintf::readservices(indx_set& idset) {
             try {
@@ -596,14 +713,16 @@ namespace dvnci {
                 tmpreq << idset;
 
                 if (querytmpl<req_services, resp_services, RPC_OPERATION_REQ_SERVICES, RPC_OPERATION_RESP_SERVICES > (tmpreq, tpmresp)) {
-                    services_map << tpmresp;}}
+                    services_map << tpmresp;
+                }
+            } catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
-
-            return NS_ERROR_SUCCESS;}
+            return NS_ERROR_SUCCESS;
+        }
 
         ns_error remoteadminintf::sendservices(indx_set& idset) {
             try {
@@ -614,18 +733,21 @@ namespace dvnci {
                 assign_service_data(idset, tmpreq.services);
 
                 for (vect_service_data::iterator it = tmpreq.services.begin(); it != tmpreq.services.end(); ++it) {
-                    it->changeset = ((remoteserviceintf&) (service(static_cast<indx> (it->key)))).gets_()->changeset;}
+                    it->changeset = ((remoteserviceintf&) (service(static_cast<indx> (it->key)))).gets_()->changeset;
+                }
 
                 if (querytmpl<req_sendservices, resp_sendservices, RPC_OPERATION_REQ_SENDSERVICES, RPC_OPERATION_RESP_SENDSERVICES > (tmpreq, tpmresp)) {
                     services_map << tpmresp;
-                    set_vect_error_entity(tpmresp.error);}}
+                    set_vect_error_entity(tpmresp.error);
+                }
+            } catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
-
-            return NS_ERROR_SUCCESS;}
+            return NS_ERROR_SUCCESS;
+        }
 
         ns_error remoteadminintf::readconfig(indx_set& idset) {
             try {
@@ -638,15 +760,19 @@ namespace dvnci {
                 if (querytmpl<req_config, resp_config, RPC_OPERATION_REQ_CONFIG, RPC_OPERATION_RESP_CONFIG > (tmpreq, tpmresp)) {
                     for (confinfo_map::iterator it = config_map.begin(); it != config_map.end(); ++it) {
                         if (it->second < 20) {
-                            config_.str_data[it->second] = tpmresp.config.str_data[it->second];};}
-                    config_.changeset = 0;}}
+                            config_.str_data[it->second] = tpmresp.config.str_data[it->second];
+                        };
+                    }
+                    config_.changeset = 0;
+                }
+            } catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
-
-            return NS_ERROR_SUCCESS;}
+            return NS_ERROR_SUCCESS;
+        }
 
         ns_error remoteadminintf::sendconfig(indx_set& idset) {
             try {
@@ -661,15 +787,19 @@ namespace dvnci {
                 if (querytmpl<req_sendconfig, resp_sendconfig, RPC_OPERATION_REQ_SENDCONFIG, RPC_OPERATION_RESP_SENDCONFIG > (tmpreq, tpmresp)) {
                     for (confinfo_map::iterator it = config_map.begin(); it != config_map.end(); ++it) {
                         if (it->second < 20) {
-                            config_.str_data[it->second] = tpmresp.config.str_data[it->second];};}
-                    config_.changeset = 0;}}
+                            config_.str_data[it->second] = tpmresp.config.str_data[it->second];
+                        };
+                    }
+                    config_.changeset = 0;
+                }
+            } catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
-
-            return NS_ERROR_SUCCESS;}
+            return NS_ERROR_SUCCESS;
+        }
 
         ns_error remoteadminintf::readmetas(nodetype ittp, indx_set& idset) {
             try {
@@ -681,14 +811,17 @@ namespace dvnci {
 
                 if (querytmpl<req_metas, resp_metas, RPC_OPERATION_REQ_METAS, RPC_OPERATION_RESP_METAS > (tmpreq, tpmresp)) {
                     for (vect_meta_data::iterator it = tpmresp.metas.begin(); it != tpmresp.metas.end(); ++it) {
-                        ((remotemetaintf&) meta()).set(static_cast<nodetype> (it->meta_type), static_cast<indx> (it->key), *it);}}}
+                        ((remotemetaintf&) meta()).set(static_cast<nodetype> (it->meta_type), static_cast<indx> (it->key), *it);
+                    }
+                }
+            } catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
-
-            return NS_ERROR_SUCCESS;}
+            return NS_ERROR_SUCCESS;
+        }
 
         ns_error remoteadminintf::sendmetas(nodetype ittp, indx_set& idset) {
             try {
@@ -700,22 +833,27 @@ namespace dvnci {
 
                 for (vect_meta_data::iterator it = tmpreq.metas.begin(); it != tmpreq.metas.end(); ++it) {
                     if (((remotemetaintf&) (meta())).get(ittp, static_cast<indx> (it->key)))
-                        it->changeset = ((remotemetaintf&) (meta())).get(ittp, static_cast<indx> (it->key))->changeset;}
+                        it->changeset = ((remotemetaintf&) (meta())).get(ittp, static_cast<indx> (it->key))->changeset;
+                }
 
                 if (querytmpl<req_sendmetas, resp_sendmetas, RPC_OPERATION_REQ_SENDMETAS, RPC_OPERATION_RESP_SENDMETAS > (tmpreq, tpmresp)) {
                     for (vect_meta_data::iterator it = tpmresp.metas.begin(); it != tpmresp.metas.end(); ++it) {
-                        ((remotemetaintf&) meta()).set(static_cast<nodetype> (it->meta_type), static_cast<indx> (it->key), *it);}
-                    set_vect_error_entity(tpmresp.error);}}
+                        ((remotemetaintf&) meta()).set(static_cast<nodetype> (it->meta_type), static_cast<indx> (it->key), *it);
+                    }
+                    set_vect_error_entity(tpmresp.error);
+                }
+            } catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
-
-            return NS_ERROR_SUCCESS;}
+            return NS_ERROR_SUCCESS;
+        }
 
         ns_error remoteadminintf::insert_entity(nodetype ittp, indx parentid, iteminfo_pair& pairpack,
-                string newname_) {{
+                string newname_) {
+            {
                 THD_EXCLUSIVE_LOCK(mutex);
                 clearerrors();
                 try {
@@ -732,172 +870,203 @@ namespace dvnci {
 
                         pairpack.first = static_cast<indx> (tpmresp.sig.key);
                         pairpack.second = name_with_type(tpmresp.sig.name, nodeinfotype(tpmresp.sig.tpitem));
-                        set_vect_error_entity(tpmresp.error);}}
-
-                catch (dvncierror& err) {
-                    parseerror(err);}
-                catch (...) {
-                    parseundeferror();}}
+                        set_vect_error_entity(tpmresp.error);
+                    }
+                } catch (dvncierror& err) {
+                    parseerror(err);
+                }                catch (...) {
+                    parseundeferror();
+                }
+            }
 
             adminintf::insert_entity(ittp, parentid, pairpack);
 
-            return NS_ERROR_SUCCESS;}
+            return NS_ERROR_SUCCESS;
+        }
 
         ns_error remoteadminintf::delete_entities(nodetype ittp, const indx_set& idset) {
-                THD_EXCLUSIVE_LOCK(mutex);
-                clearerrors();
-                try {
-                    req_removeentity tmpreq;
-                    resp_removeentity tpmresp;
+            THD_EXCLUSIVE_LOCK(mutex);
+            clearerrors();
+            try {
+                req_removeentity tmpreq;
+                resp_removeentity tpmresp;
 
 
-                    tmpreq.tpitem = ittp;
-                    idset >> tmpreq.keys;
+                tmpreq.tpitem = ittp;
+                idset >> tmpreq.keys;
 
-                    if (querytmpl<req_removeentity, resp_removeentity, RPC_OPERATION_REQ_REMOVEENTITY, RPC_OPERATION_RESP_REMOVEENTITY > (tmpreq, tpmresp)) {
-                        set_vect_error_entity(tpmresp.error);}}
-
-                catch (dvncierror& err) {
-                    parseerror(err);}
-                catch (...) {
-                    parseundeferror();}
+                if (querytmpl<req_removeentity, resp_removeentity, RPC_OPERATION_REQ_REMOVEENTITY, RPC_OPERATION_RESP_REMOVEENTITY > (tmpreq, tpmresp)) {
+                    set_vect_error_entity(tpmresp.error);
+                }
+            } catch (dvncierror& err) {
+                parseerror(err);
+            } catch (...) {
+                parseundeferror();
+            }
 
             adminintf::delete_entities(ittp, idset);
 
-            return NS_ERROR_SUCCESS;};
+            return NS_ERROR_SUCCESS;
+        };
 
-       ns_error remoteadminintf::duplicate_entity(nodetype ittp,  indx id,  const std::string& newname, iteminfo_pair& pairpack){
-                THD_EXCLUSIVE_LOCK(mutex);
-                clearerrors();
-                try {
-                    req_dupentity tmpreq;
-                    resp_dupentity tpmresp;
+        ns_error remoteadminintf::duplicate_entity(nodetype ittp, indx id, const std::string& newname, iteminfo_pair& pairpack) {
+            THD_EXCLUSIVE_LOCK(mutex);
+            clearerrors();
+            try {
+                req_dupentity tmpreq;
+                resp_dupentity tpmresp;
 
 
-                    tmpreq.tpitem = ittp;
-                    tmpreq.soursekey = id;
-                    tmpreq.newname = newname;
+                tmpreq.tpitem = ittp;
+                tmpreq.soursekey = id;
+                tmpreq.newname = newname;
 
-                    if (querytmpl<req_dupentity, resp_dupentity, RPC_OPERATION_REQ_DUPENTITY, RPC_OPERATION_RESP_DUPENTITY > (tmpreq, tpmresp)) {
+                if (querytmpl<req_dupentity, resp_dupentity, RPC_OPERATION_REQ_DUPENTITY, RPC_OPERATION_RESP_DUPENTITY > (tmpreq, tpmresp)) {
 
-                        pairpack.first = static_cast<indx> (tpmresp.sig.key);
-                        pairpack.second = name_with_type(tpmresp.sig.name, nodeinfotype(tpmresp.sig.tpitem));
-                        set_vect_error_entity(tpmresp.error);}}
-
-                catch (dvncierror& err) {
-                    parseerror(err);}
-                catch (...) {
-                    parseundeferror();}
+                    pairpack.first = static_cast<indx> (tpmresp.sig.key);
+                    pairpack.second = name_with_type(tpmresp.sig.name, nodeinfotype(tpmresp.sig.tpitem));
+                    set_vect_error_entity(tpmresp.error);
+                }
+            } catch (dvncierror& err) {
+                parseerror(err);
+            } catch (...) {
+                parseundeferror();
+            }
 
             //adminintf::insert_entity(ittp, parentid, pairpack);
 
-            return NS_ERROR_SUCCESS;}
+            return NS_ERROR_SUCCESS;
+        }
 
-        size_t remoteadminintf::alarms_net_req(vect_alarms_data& vect, guidtype& vers,  const std::string& agrp, const std::string& grp  ) {
+        size_t remoteadminintf::alarms_net_req(vect_alarms_data& vect, guidtype& vers, const std::string& agrp, const std::string& grp) {
             try {
 
-                req_alarms  tmpreq = {vers, agrp, grp};
+                req_alarms tmpreq = {vers, agrp, grp};
                 resp_alarms tpmresp;
                 if (querytmpl<req_alarms, resp_alarms, RPC_OPERATION_REQ_ALARMS, RPC_OPERATION_RESP_ALARMS > (tmpreq, tpmresp)) {
-                    if (vers !=  tpmresp.vers) {
+                    if (vers != tpmresp.vers) {
                         vers = tpmresp.vers;
-                        vect.swap(tpmresp.lines);}}
-                return vect.size();}
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
+                        vect.swap(tpmresp.lines);
+                    }
+                }
+                return vect.size();
+            }            catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            return 0;}
+            return 0;
+        }
 
         size_t remoteadminintf::commands_net_req(vect_commands_data& vect, guidtype& vers, const std::string& grp) {
             try {
 
-                req_commands  tmpreq = {vers, grp};
+                req_commands tmpreq = {vers, grp};
                 resp_commands tpmresp;
                 if (querytmpl<req_commands, resp_commands, RPC_OPERATION_REQ_COMMANDS, RPC_OPERATION_RESP_COMMANDS > (tmpreq, tpmresp)) {
-                    if (vers !=  tpmresp.vers) {
+                    if (vers != tpmresp.vers) {
                         vers = tpmresp.vers;
-                        vect.swap(tpmresp.lines);}}
-                return vect.size();}
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
+                        vect.swap(tpmresp.lines);
+                    }
+                }
+                return vect.size();
+            }            catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            return 0;}
+            return 0;
+        }
 
         size_t remoteadminintf::regs_net_req(vect_registry_data& vect, guidtype& vers) {
             try {
 
-                req_registry  tmpreq = {vers};
+                req_registry tmpreq = {vers};
                 resp_registry tpmresp;
                 if (querytmpl<req_registry, resp_registry, RPC_OPERATION_REQ_REGISTRY, RPC_OPERATION_RESP_REGISTRY > (tmpreq, tpmresp)) {
-                    if (vers !=  tpmresp.vers) {
+                    if (vers != tpmresp.vers) {
                         vers = tpmresp.vers;
-                        vect.swap(tpmresp.lines);}}
-                return vect.size();}
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
+                        vect.swap(tpmresp.lines);
+                    }
+                }
+                return vect.size();
+            }            catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            return 0;}
+            return 0;
+        }
 
         size_t remoteadminintf::clients_net_req(vect_clients_data& vect, guidtype& vers) {
             try {
 
-                req_clients  tmpreq = {vers};
+                req_clients tmpreq = {vers};
                 resp_clients tpmresp;
                 if (querytmpl<req_clients, resp_clients, RPC_OPERATION_REQ_CLIENTS, RPC_OPERATION_RESP_CLIENTS > (tmpreq, tpmresp)) {
-                    if (vers !=  tpmresp.vers) {
+                    if (vers != tpmresp.vers) {
                         vers = tpmresp.vers;
-                        vect.swap(tpmresp.lines);}}
-                return vect.size();}
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
+                        vect.swap(tpmresp.lines);
+                    }
+                }
+                return vect.size();
+            }            catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            return 0;}
+            return 0;
+        }
 
         size_t remoteadminintf::debug_net_req(vect_debug_data& vect, guidtype& guid, size_t& curs, size_t& cnt) {
             try {
 
-                req_debug  tmpreq = {guid, curs, cnt};
+                req_debug tmpreq = {guid, curs, cnt};
                 resp_debug tpmresp;
                 if (querytmpl<req_debug, resp_debug, RPC_OPERATION_REQ_DEBUG, RPC_OPERATION_RESP_DEBUG > (tmpreq, tpmresp)) {
-                    if (guid !=  tpmresp.guid) {
+                    if (guid != tpmresp.guid) {
                         guid = tpmresp.guid;
-                        vect.swap(tpmresp.lines);}
+                        vect.swap(tpmresp.lines);
+                    }
                     curs = static_cast<size_t> (tpmresp.cursor);
-                    cnt = static_cast<size_t> (tpmresp.cnt);}
-                return vect.size();}
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
+                    cnt = static_cast<size_t> (tpmresp.cnt);
+                }
+                return vect.size();
+            }            catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            return 0;}
+            return 0;
+        }
 
         size_t remoteadminintf::journal_net_req(vect_journal_data& vect, guidtype& guid, size_t& curs, size_t& cnt) {
             try {
 
-                req_journal  tmpreq = {guid, curs, cnt};
+                req_journal tmpreq = {guid, curs, cnt};
                 resp_journal tpmresp;
                 if (querytmpl<req_journal, resp_journal, RPC_OPERATION_REQ_JOURNAL, RPC_OPERATION_RESP_JOURNAL > (tmpreq, tpmresp)) {
-                    if (guid !=  tpmresp.guid) {
+                    if (guid != tpmresp.guid) {
                         guid = tpmresp.guid;
-                        vect.swap(tpmresp.lines);}
+                        vect.swap(tpmresp.lines);
+                    }
                     curs = static_cast<size_t> (tpmresp.cursor);
-                    cnt = static_cast<size_t> (tpmresp.cnt);}
-                return vect.size();}
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
+                    cnt = static_cast<size_t> (tpmresp.cnt);
+                }
+                return vect.size();
+            }            catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            return 0;}
+            return 0;
+        }
 
         ns_error remoteadminintf::executeoperation(req_adminoperation& operat) {
             THD_EXCLUSIVE_LOCK(mutex);
@@ -906,14 +1075,16 @@ namespace dvnci {
                 tmpreq.ver = intrf_ver;
                 resp_adminoperation tpmresp;
                 if (querytmpl<req_adminoperation, resp_adminoperation, RPC_OPERATION_REQ_ADMINOPERATION, RPC_OPERATION_RESP_ADMINOPERATION > (tmpreq, tpmresp)) {
-                    set_vect_error_entity(tpmresp.error);}}
+                    set_vect_error_entity(tpmresp.error);
+                }
+            } catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
-
-            return NS_ERROR_SUCCESS;}
+            return NS_ERROR_SUCCESS;
+        }
 
         ns_error remoteadminintf::operation_autorizate(const std::string& user, const std::string& password) {
             THD_EXCLUSIVE_LOCK(mutex);
@@ -923,16 +1094,18 @@ namespace dvnci {
                 tmpreq.name = user;
                 tmpreq.password = password;
                 tmpreq.ver = intrf_ver;
-                if (querytmpl<req_autorization, resp_autorization, RPC_OPERATION_REQ_AUTORIZATION, RPC_OPERATION_RESP_AUTORIZATION > (tmpreq, tpmresp)) {}}
-
-            catch (dvncierror& err) {
-                parseerror(err);}
-            catch (...) {
-                parseundeferror();}
+                if (querytmpl<req_autorization, resp_autorization, RPC_OPERATION_REQ_AUTORIZATION, RPC_OPERATION_RESP_AUTORIZATION > (tmpreq, tpmresp)) {
+                }
+            } catch (dvncierror& err) {
+                parseerror(err);
+            }            catch (...) {
+                parseundeferror();
+            }
 
             isautorizated_ = (tpmresp.err == NS_ERROR_SUCCESS);
 
-            return static_cast<ns_error> (tpmresp.err);}
+            return static_cast<ns_error> (tpmresp.err);
+        }
 
         void remoteadminintf::releaseconnection() {
             groups_map.clear();
@@ -951,16 +1124,22 @@ namespace dvnci {
             count_logmap_ = 0;
             count_commandmap_ = 0;
             disconnect_();
-            _state =  adminintf::disconnected;
-            DEBUG_STR_DVNCI(RELEASCONNECTION)}
+            _state = adminintf::disconnected;
+            DEBUG_STR_DVNCI(RELEASCONNECTION)
+        }
 
         void remoteadminintf::parseerror(dvncierror& err) {
             if ((err.code() == ERROR_FAILNET_CONNECTED) ||
                     (err.code() == ERROR_NONET_CONNECTED)) {
                 releaseconnection();
-                throw err;}
-            adderror(err);}
+                throw err;
+            }
+            adderror(err);
+        }
 
         void remoteadminintf::parseundeferror() {
             dvncierror tmperr(NS_ERROR_ERRRESP);
-            adderror(tmperr);}}}
+            adderror(tmperr);
+        }
+    }
+}
