@@ -19,14 +19,17 @@
 namespace dvnci {
 
     class reporttype_executor : public system_tag {
+
     public:
 
-        reporttype_executor(executor* exectr, tagsbase_ptr inf , indx id) :
+        reporttype_executor(executor* exectr, tagsbase_ptr inf, indx id) :
         system_tag(exectr, inf, id), type(0) {
-            if (intf) expressionstr(intf->name(id));};
+            if (intf) expressionstr(intf->name(id));
+        };
 
         static void setdbdriver(dvnci::database::dbdriver_ptr val) {
-            dbdriver = val;}
+            dbdriver = val;
+        }
 
     protected:
 
@@ -35,8 +38,10 @@ namespace dvnci {
 
     private:
 
-        tagtype                              type;
-        static dvnci::database::dbdriver_ptr dbdriver;} ;}
+        tagtype type;
+        static dvnci::database::dbdriver_ptr dbdriver;
+    };
+}
 
 
 
