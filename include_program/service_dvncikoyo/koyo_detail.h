@@ -85,6 +85,7 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         struct koyo_req_parcel : public basis_req_parcel {
+
         public:
 
             koyo_req_parcel(std::string vl, tagtype tgtp, const metalink & mlnk);
@@ -94,17 +95,20 @@ namespace dvnci {
             bool parse(std::string vl) {
                 if (parse_impl(vl)) {
                     if (protocol() != NT_KOYO_MODBUS) return true;
-                    if (modbus_transform()) return true;}
+                    if (modbus_transform()) return true;
+                }
                 error(ERROR_BINDING);
-                return false;}
+                return false;
+            }
 
             bool parse_impl(std::string vl);
-            
-         protected:     
+
+        protected:
 
             bool conform_bit_koyo_addr(const std::string& vl, num32 startaddr, num32 maxcnt, std::string rgxstr, num32& addr, size_t & bitnum);
             bool conform_v_koyo_addr(const std::string& vl, num32 startaddr, num32 maxcnt, std::string rgxstr, num32& addr, size_t & bitnum);
-            bool modbus_transform();};
+            bool modbus_transform();
+        };
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -112,23 +116,35 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         class koyo_block_model : public flatmemory_block_model<koyo_req_parcel> {
+
         public:
 
             koyo_block_model(executor* exectr, tagsbase_ptr inf, const metalink& mlnk) :
             flatmemory_block_model<koyo_req_parcel>(exectr, inf, mlnk) {
                 switch (def_koyo_protocol(mlnk)) {
-                    case NT_KOYO_DIRECTNET_ECOM:{
+                    case NT_KOYO_DIRECTNET_ECOM:
+                    {
                         blocksize = in_bounded<size_t > (8, MAX_ECOM_BLOCK_SIZE, static_cast<size_t> (mlnk.blocksize()));
-                        break;}
-                    case NT_KOYO_MODBUS:{
+                        break;
+                    }
+                    case NT_KOYO_MODBUS:
+                    {
                         blocksize = in_bounded<size_t > (8, MAX_MODBUS_BLOCK_SIZE, static_cast<size_t> (mlnk.blocksize()));
-                        break;}
-                    case NT_KOYO_DIRECTNET_ASCII:{
+                        break;
+                    }
+                    case NT_KOYO_DIRECTNET_ASCII:
+                    {
                         blocksize = in_bounded<size_t > (8, MAX_KOYO_BLOCK_SIZE / 2, static_cast<size_t> (mlnk.blocksize()));
-                        break;}
-                    default:{
+                        break;
+                    }
+                    default:
+                    {
                         blocksize = in_bounded<size_t > (8, MAX_KOYO_BLOCK_SIZE, static_cast<size_t> (mlnk.blocksize()));
-                        return;}}};};
+                        return;
+                    }
+                }
+            };
+        };
 
 
 
@@ -138,12 +154,15 @@ namespace dvnci {
 
         struct koyo_com_option_setter : public com_option_setter {
 
-            koyo_com_option_setter(const metalink & lnk) : com_option_setter(lnk) {};
+            koyo_com_option_setter(const metalink & lnk) : com_option_setter(lnk) {
+            };
 
             virtual boost::system::error_code store(com_port_option& opt, boost::system::error_code & ec) const;
 
             virtual boost::system::error_code load(com_port_option& opt, boost::system::error_code & ec) {
-                return boost::system::error_code();}};
+                return boost::system::error_code();
+            }
+        };
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -153,7 +172,9 @@ namespace dvnci {
         struct koyo_metalink_checker : public metalink_checker {
 
             virtual ns_error compare(const metalink& rs, const metalink & ls) {
-                return ((ls.inf().cominf.boundrate != rs.inf().cominf.boundrate)) ? ERROR_IO_NOSYNC_LINK : 0;}};
+                return ((ls.inf().cominf.boundrate != rs.inf().cominf.boundrate)) ? ERROR_IO_NOSYNC_LINK : 0;
+            }
+        };
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /*koyo_device_service*/
@@ -161,21 +182,26 @@ namespace dvnci {
 
         struct koyo_protocol_factory : public protocol_factory {
 
-            virtual ioprotocol_ptr build(const metalink& lnk, ns_error & err);};
+            virtual ioprotocol_ptr build(const metalink& lnk, ns_error & err);
+        };
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /*koyo_device_service*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         class koyo_device_service : public templ_device_service<koyo_protocol_factory> {
+
         public:
 
             koyo_device_service(const metalink& lnk) : templ_device_service<koyo_protocol_factory>(lnk) {
-              util_interval(((lnk.protocol()==NT_KOYO_DIRECTNET_HEX) || ((lnk.protocol()==NT_KOYO_DIRECTNET_ASCII)) ||
-                              (lnk.chanaltype()==NT_CHTP_UDP_IP)) ? 
-                                  UTIL_INTERVAL_DAY : UTIL_INTERVAL_NONE);};};
+                util_interval(((lnk.protocol() == NT_KOYO_DIRECTNET_HEX) || ((lnk.protocol() == NT_KOYO_DIRECTNET_ASCII)) ||
+                        (lnk.chanaltype() == NT_CHTP_UDP_IP)) ?
+                        UTIL_INTERVAL_DAY : UTIL_INTERVAL_NONE);
+            };
+        };
 
-}}
+    }
+}
 
 
 

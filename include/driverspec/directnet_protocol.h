@@ -31,8 +31,8 @@ namespace dvnci {
         bool check_ascii_koyo_lrc(std::string& src);
 
         bool calculate_koyo_lrc(const std::string& src, num8& lrc, std::string::size_type strt);
-        
-        
+
+
 
         const std::string DIRECTNET_NREQ = "N";
 
@@ -91,27 +91,33 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         class directnet_value_manager : public flatmemory_value_manager {
+
         public:
 
-            directnet_value_manager() : flatmemory_value_manager() {}
+            directnet_value_manager() : flatmemory_value_manager() {
+            }
 
         protected:
 
             virtual size_t getbitnum(parcel_const_iterator strt, parcel_const_iterator stp) {
                 if (stp->first->indx() >= 0) {
-                    return static_cast<size_t> (stp->first->indx());};
-                return NULL_BIT_NUM;}
+                    return static_cast<size_t> (stp->first->indx());
+                };
+                return NULL_BIT_NUM;
+            }
 
 
             virtual ns_error parse_response_impl(std::string& val, parcel_ptr prcl, size_t bitn = NULL_BIT_NUM);
 
-            virtual ns_error preapare_cmd_request_impl(std::string& val, parcel_ptr cmd, size_t bitn = NULL_BIT_NUM);};
+            virtual ns_error preapare_cmd_request_impl(std::string& val, parcel_ptr cmd, size_t bitn = NULL_BIT_NUM);
+        };
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /*basis_koyo_protocol*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         class basis_koyo_protocol : public templ_protocol<directnet_value_manager> {
+
         public:
 
             typedef unum8 koyodevn;
@@ -119,18 +125,20 @@ namespace dvnci {
             static const koyodevn MAX_KOYO_DEV_NUM = 90;
             static const koyodevn NO_KOYO_DEV_NUM = 0xFF;
 
-            basis_koyo_protocol(basis_iostream_ptr io) : templ_protocol<directnet_value_manager>(io) {}
+            basis_koyo_protocol(basis_iostream_ptr io) : templ_protocol<directnet_value_manager>(io) {
+            }
 
 
         protected:
-            
-            
+
+
             virtual ns_error readblock(block& blk);
 
             virtual ns_error writecmd(const std::string& vl, parcel_ptr cmd);
 
             virtual size_t ex_koef() {
-                return 1;}
+                return 1;
+            }
 
             unum8 byte_from_str(const std::string& vl, std::string::size_type n);
 
@@ -152,16 +160,19 @@ namespace dvnci {
 
             virtual ns_error kseq_write_request(koyodevn dvnum, num32 startaddr, bool on) = 0;
 
-            virtual ns_error check_envelope(std::string& resp, size_t cnt);};
+            virtual ns_error check_envelope(std::string& resp, size_t cnt);
+        };
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /*hex_direcnet_protocol*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         class hex_direcnet_protocol : public basis_koyo_protocol {
+
         public:
 
-            hex_direcnet_protocol(basis_iostream_ptr io) : basis_koyo_protocol(io) {}
+            hex_direcnet_protocol(basis_iostream_ptr io) : basis_koyo_protocol(io) {
+            }
 
         protected:
 
@@ -171,7 +182,8 @@ namespace dvnci {
 
             ns_error eot_impl() {
                 error(ios->write(EOT));
-                return error();}
+                return error();
+            }
 
             virtual ns_error read_request(koyodevn dvnum, num32 startaddr, size_t cnt, std::string& resp);
 
@@ -186,7 +198,8 @@ namespace dvnci {
 
             ns_error directnet_generate_body_read(std::string& vl, koyodevn dvnum, num32 startaddr, size_t cnt);
 
-            ns_error directnet_generate_body_write(std::string& vl, koyodevn dvnum, num32 startaddr, size_t cnt);};
+            ns_error directnet_generate_body_write(std::string& vl, koyodevn dvnum, num32 startaddr, size_t cnt);
+        };
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -194,14 +207,17 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         class ascii_direcnet_protocol : public hex_direcnet_protocol {
+
         public:
 
-            ascii_direcnet_protocol(basis_iostream_ptr io) : hex_direcnet_protocol(io) {}
+            ascii_direcnet_protocol(basis_iostream_ptr io) : hex_direcnet_protocol(io) {
+            }
 
         protected:
 
             virtual size_t ex_koef() {
-                return 2;}
+                return 2;
+            }
 
             virtual ns_error enq_impl(koyodevn dvnum, const std::string protstrt = DIRECTNET_NREQ);
 
@@ -216,7 +232,8 @@ namespace dvnci {
                     return error(ERROR_IO_NO_GENERATE_REQ);
                 if (!insert_ascii_koyo_lrc(vl))
                     return error(ERROR_IO_NO_GENERATE_REQ);
-                return error(0);}
+                return error(0);
+            }
 
             virtual ns_error check_envelope(std::string& resp, size_t cnt) {
                 std::string tmp = "";
@@ -225,7 +242,9 @@ namespace dvnci {
                 if (cnt != tmp.size())
                     return error(ERROR_IO_PARSERESP);
                 resp = tmp;
-                return error(0);}};
+                return error(0);
+            }
+        };
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -233,14 +252,16 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         class ecom_protocol : public basis_koyo_protocol {
+
         public:
 
-            ecom_protocol(basis_iostream_ptr io) : basis_koyo_protocol(io), trasactcnt(0) {}
+            ecom_protocol(basis_iostream_ptr io) : basis_koyo_protocol(io), trasactcnt(0) {
+            }
 
 
         protected:
-            
-            
+
+
             virtual ns_error readblock(block& blk);
 
             virtual ns_error writecmd(const std::string& vl, parcel_ptr cmd);
@@ -259,8 +280,10 @@ namespace dvnci {
 
             virtual ns_error check_envelope(std::string& resp, size_t cnt);
 
-            unum16 trasactcnt;};
-}}
+            unum16 trasactcnt;
+        };
+    }
+}
 
 
 
