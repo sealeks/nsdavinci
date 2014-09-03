@@ -14,7 +14,7 @@ namespace dvnci {
 
         using dvnci::prot80670::dataobject;
         using dvnci::prot80670::dataobject_ptr;
-        using dvnci::prot80670::dataobject_set;
+        using dvnci::prot80670::dataobject_set;       
         using dvnci::prot80670::indx_dataobject_pair;
         using dvnci::prot80670::indx_dataobject_vct;
         
@@ -26,7 +26,7 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////
 
         extiec60870intf::extiec60870intf(tagsbase_ptr intf_, executor* exctr, indx grp) :
-        extintf_wraper<dvnci::prot80670::dataobject_ptr>(intf_, exctr, grp, TYPE_SIMPLE_REQ, CONTYPE_SYNC), iec60870_data_listener() {
+        extintf_wraper<dvnci::prot80670::dataobject_ptr>(intf_, exctr, grp, TYPE_SIMPLE_REQ, CONTYPE_SYNC), iec60870_data_listener(), fatal_() {
         }
 
         extiec60870intf::~extiec60870intf() {
@@ -35,20 +35,39 @@ namespace dvnci {
 
         void extiec60870intf::execute60870(dataobject_ptr vl) {
             write_val_sid(vl, dvnci::prot80670::to_short_value(vl));
-            dataobject_ptr vlf = vl;
         };
 
-        void extiec60870intf::execute60870(const boost::system::error_code& error) {
+        void extiec60870intf::execute60870(const dataobject_vct& vl) {
+            for (dataobject_vct::const_iterator it = vl.begin(); it != vl.end(); ++it)
+                execute60870(*it);
+        }        
 
+        void extiec60870intf::execute60870(const boost::system::error_code& err) {          
+            error(ERROR_NONET_CONNECTED);
         };
+        
+
+        void extiec60870intf::terminate60870() {
+            fatal_=dvnci::dvncierror(ERROR_NONET_CONNECTED);  
+        }
 
         ns_error extiec60870intf::checkserverstatus() {
-            /* if ((!iec60870intf->isconnected()))
-                   throw dvncierror(ERROR_FAILNET_CONNECTED);*/
+            /*if (fatal_) {
+                kill_pm();
+                dvnci::dvncierror tmp = fatal_;
+                fatal_ = dvnci::dvncierror();
+                throw dvnci::dvncierror(ERROR_NONET_CONNECTED);
+            }*/
             return error(0);
         }
 
         ns_error extiec60870intf::connect_impl() {
+            /*if (fatal_) {
+                kill_pm();
+                dvnci::dvncierror tmp = fatal_;
+                fatal_ = dvnci::dvncierror();
+                throw dvnci::dvncierror(ERROR_NONET_CONNECTED);
+            }*/            
             try {
                 std::string port = "2404"; //intf->groups()->port(group());
                 if (port.empty())
@@ -84,6 +103,7 @@ namespace dvnci {
                     }*/
                 }
             } catch (...) {
+                if (thread_io)
                 thread_io.reset();
                 state_ = disconnected;
             }
@@ -110,18 +130,17 @@ namespace dvnci {
                     }
                 }
                 if (cids.empty()) return error(0);
+                
+                indx_dataobject_vct rslt;
+                thread_io->pm()->add_items(cids, rslt);
 
-                /*dataobject_set errors;
 
-                if (!error(remintf->add_items(cids, errors))) {*/
-
-                    for (indx_dataobject_vct::const_iterator it = cids.begin(); it != cids.end(); ++it) {
-                        //if (errors.find(*it) == errors.end()) {
-                            add_simple(it->first, it->second);
-                        //} else {}
-                            //req_error(it->first, ERROR_BINDING);
-                    }
-               /* }*/
+                for (indx_dataobject_vct::const_iterator it = cids.begin(); it != cids.end(); ++it) {
+                    add_simple(it->first, it->second);
+                }
+                for (indx_dataobject_vct::const_iterator it = rslt.begin(); it != rslt.end(); ++it) {
+                    write_val_id(it->first, dvnci::prot80670::to_short_value(it->second));
+                }                
             }
             return error();
         }
@@ -209,7 +228,10 @@ namespace dvnci {
         }
 
         void extiec60870intf::kill_pm() {
-
+            disconnect_util();
+            if (thread_io)
+                thread_io.reset();
+            state_ = disconnected;
         }
 
     }

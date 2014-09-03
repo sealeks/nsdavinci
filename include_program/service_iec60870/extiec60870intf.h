@@ -25,6 +25,7 @@ namespace dvnci {
 
         using dvnci::prot80670::iec60870_data_listener;
         using dvnci::prot80670::dataobject_ptr;
+        using dvnci::prot80670::dataobject_vct;
         using dvnci::prot80670::iec60870_thread;
         using dvnci::prot80670::iec60870_thread_ptr;
 
@@ -39,7 +40,11 @@ namespace dvnci {
 
             virtual void execute60870(dataobject_ptr vl);
 
+            virtual void execute60870(const dataobject_vct& vl);
+
             virtual void execute60870(const boost::system::error_code& error);
+
+            virtual void terminate60870();
 
 
         protected:
@@ -71,6 +76,7 @@ namespace dvnci {
             void kill_pm();
 
             iec60870_thread_ptr thread_io;
+            dvnci::dvncierror fatal_;
 
         };
     }
