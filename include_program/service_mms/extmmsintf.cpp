@@ -95,10 +95,14 @@ namespace dvnci {
             if (need_add().empty())
                 return error();
             bindobject_map cids;
-            for (indx_set::const_iterator it = need_add().begin(); it != need_add().end(); ++it) {
+            indx_set tmpadd = need_add();
+            for (indx_set::const_iterator it = tmpadd.begin(); it != tmpadd.end(); ++it) {
                 if (intf->exists(*it)) {
                     objectname_ptr tmp = objectname::create_from_bind(intf->binding(*it), intf->groups()->topic(group()));
-                    cids.insert(bindobject_pair(*it, tmp));
+                    if (tmp)
+                        cids.insert(bindobject_pair(*it, tmp));
+                    else
+                        req_error(*it, ERROR_BINDING);
                 } else {
                     req_error(*it, ERROR_ENTNOEXIST);
                 }

@@ -45,7 +45,7 @@ namespace dvnci {
             virtual ns_error event_request_impl();
 
         private:
-
+            
             mmsintf_ptr remintf;
 
         };
