@@ -12,10 +12,12 @@
                    kind="IMPORTANT_FILES_FOLDER">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
-    <itemPath>../../include_program/service_iec60870/iec60870_detail.cpp</itemPath>
-    <itemPath>../../include_program/service_iec60870/iec60870_detail.h</itemPath>
+    <itemPath>../../include_program/service_iec60870/extiec60870intf.cpp</itemPath>
+    <itemPath>../../include_program/service_iec60870/extiec60870intf.h</itemPath>
     <itemPath>../../include_program/service_iec60870/iec60870_protocol.cpp</itemPath>
     <itemPath>../../include_program/service_iec60870/iec60870_protocol.h</itemPath>
+    <itemPath>../../include_program/service_iec60870/iec60870ioclient.cpp</itemPath>
+    <itemPath>../../include_program/service_iec60870/iec60870ioclient.h</itemPath>
     <itemPath>../../include_program/service_iec60870/main.cpp</itemPath>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
@@ -70,12 +72,12 @@
           <commandLine>-mthreads</commandLine>
         </linkerTool>
       </compileType>
-      <item path="../../include_program/service_iec60870/iec60870_detail.cpp"
+      <item path="../../include_program/service_iec60870/extiec60870intf.cpp"
             ex="false"
             tool="1"
             flavor2="0">
       </item>
-      <item path="../../include_program/service_iec60870/iec60870_detail.h"
+      <item path="../../include_program/service_iec60870/extiec60870intf.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -86,6 +88,16 @@
             flavor2="0">
       </item>
       <item path="../../include_program/service_iec60870/iec60870_protocol.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_iec60870/iec60870ioclient.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_iec60870/iec60870ioclient.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -152,12 +164,12 @@
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
         </linkerTool>
       </compileType>
-      <item path="../../include_program/service_iec60870/iec60870_detail.cpp"
+      <item path="../../include_program/service_iec60870/extiec60870intf.cpp"
             ex="false"
             tool="1"
             flavor2="0">
       </item>
-      <item path="../../include_program/service_iec60870/iec60870_detail.h"
+      <item path="../../include_program/service_iec60870/extiec60870intf.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -168,6 +180,16 @@
             flavor2="0">
       </item>
       <item path="../../include_program/service_iec60870/iec60870_protocol.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_iec60870/iec60870ioclient.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_iec60870/iec60870ioclient.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -222,12 +244,12 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
-      <item path="../../include_program/service_iec60870/iec60870_detail.cpp"
+      <item path="../../include_program/service_iec60870/extiec60870intf.cpp"
             ex="false"
             tool="1"
             flavor2="0">
       </item>
-      <item path="../../include_program/service_iec60870/iec60870_detail.h"
+      <item path="../../include_program/service_iec60870/extiec60870intf.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -238,6 +260,16 @@
             flavor2="0">
       </item>
       <item path="../../include_program/service_iec60870/iec60870_protocol.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_iec60870/iec60870ioclient.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_iec60870/iec60870ioclient.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -291,12 +323,12 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
-      <item path="../../include_program/service_iec60870/iec60870_detail.cpp"
+      <item path="../../include_program/service_iec60870/extiec60870intf.cpp"
             ex="false"
             tool="1"
             flavor2="0">
       </item>
-      <item path="../../include_program/service_iec60870/iec60870_detail.h"
+      <item path="../../include_program/service_iec60870/extiec60870intf.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -307,6 +339,16 @@
             flavor2="0">
       </item>
       <item path="../../include_program/service_iec60870/iec60870_protocol.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_iec60870/iec60870ioclient.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include_program/service_iec60870/iec60870ioclient.h"
             ex="false"
             tool="3"
             flavor2="0">
