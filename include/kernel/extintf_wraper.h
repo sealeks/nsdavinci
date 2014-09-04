@@ -44,6 +44,10 @@ namespace dvnci {
             typedef std::map<serverkey_type, short_value,
             std::less<serverkey_type>, std::allocator<sidcmd_pair > > sidcmd_map;
 
+            typedef std::pair<indx, short_value > cidcmd_pair;
+            typedef std::map<indx, short_value,
+            std::less<indx>, std::allocator<cidcmd_pair > > cidcmd_map;
+
             extintf_wraper(tagsbase_ptr inf, executor* exctr, indx grp, tagtype provide_man, subcripttype subsrcr = CONTYPE_SYNC) :
             externalintf(inf, exctr, grp, provide_man, subsrcr) {
                 next_simple_iterator = simple_req_map.left.end();
@@ -214,6 +218,10 @@ namespace dvnci {
             //send   command value      
 
             virtual ns_error command_request_impl(const sidcmd_map& cmd) = 0;
+
+            virtual ns_error cl_command_request_impl(const cidcmd_map& cmd) {
+                return 0;
+            };
 
             const serverkeys_tags_map& simple_req() {
                 return simple_req_map;
@@ -417,6 +425,7 @@ namespace dvnci {
                 intf->select_commands(cmds, exectr->groupset());
                 if (!cmds.empty()) {
                     sidcmd_map sidcmds;
+                    cidcmd_map cidcmds;
                     THD_COND_EXCLUSIVE_LOCK(needsync(), *mtx);
                     for (command_vector::const_iterator it = cmds.begin(); it != cmds.end(); ++it) {
                         tag_const_iterator itsid = simple_req_map.right.find(it->tagid());
@@ -425,9 +434,16 @@ namespace dvnci {
                                 sidcmds.insert(std::make_pair(itsid->second, short_value(it->value_set<num64 > (), it->type())));
                             else
                                 sidcmds.insert(std::make_pair(itsid->second, short_value(it->strvalue())));
+                        } else {
+                            if (it->type() != TYPE_TEXT)
+                                cidcmds.insert(std::make_pair(it->tagid(), short_value(it->value_set<num64 > (), it->type())));
+                            else
+                                cidcmds.insert(std::make_pair(it->tagid(), short_value(it->strvalue())));
                         }
                     }
-                    return (sidcmds.empty()) ? 0 : command_request_impl(sidcmds);
+                    ns_error rslt = (sidcmds.empty()) ? 0 : command_request_impl(sidcmds);
+                    ns_error crslt = (cidcmds.empty()) ? 0 : cl_command_request_impl(cidcmds);
+                    return (!rslt && !crslt) ? 0 : (rslt ? rslt : crslt);
                 }
                 return 0;
             }
