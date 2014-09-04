@@ -212,6 +212,10 @@ namespace dvnci {
             bool valid() const {
                 return type_;
             }
+            
+            bool readable() const;
+            
+            bool command() const;           
 
             friend bool operator==(const dataobject& ls, const dataobject& rs);
             friend bool operator<(const dataobject& ls, const dataobject& rs);
