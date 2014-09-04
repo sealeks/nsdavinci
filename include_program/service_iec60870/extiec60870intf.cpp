@@ -106,12 +106,17 @@ namespace dvnci {
                 if (need_add().empty())
                     return error();
                 indx_dataobject_vct cids;
+                indx_dataobject_vct command_cids;
                 indx_set tmpadd = need_add();
                 for (indx_set::const_iterator it = tmpadd.begin(); it != tmpadd.end(); ++it) {
                     if (intf->exists(*it)) {
                         dataobject_ptr tmp = dataobject::build_from_bind(intf->groups()->devnum(group()), intf->binding(*it));
-                        if (tmp)
-                            cids.push_back(indx_dataobject_pair(*it,tmp));
+                        if (tmp) {
+                            if (tmp->readable())
+                                cids.push_back(indx_dataobject_pair(*it, tmp));
+                            else
+                                command_cids.push_back(indx_dataobject_pair(*it, tmp));
+                        }
                         else
                             req_error(*it, ERROR_BINDING);
                     } else {
@@ -123,13 +128,12 @@ namespace dvnci {
                 indx_dataobject_vct rslt;
                 thread_io->pm()->add_items(cids, rslt);
 
-
-                for (indx_dataobject_vct::const_iterator it = cids.begin(); it != cids.end(); ++it) {
+                for (indx_dataobject_vct::const_iterator it = cids.begin(); it != cids.end(); ++it) 
                     add_simple(it->first, it->second);
-                }
-                for (indx_dataobject_vct::const_iterator it = rslt.begin(); it != rslt.end(); ++it) {
+                for (indx_dataobject_vct::const_iterator it = command_cids.begin(); it != command_cids.end(); ++it) 
+                    add_simple(it->first, it->second);       
+                for (indx_dataobject_vct::const_iterator it = rslt.begin(); it != rslt.end(); ++it)
                     write_val_id(it->first, dvnci::prot80670::to_short_value(it->second));
-                }                
             }
             return error();
         }
