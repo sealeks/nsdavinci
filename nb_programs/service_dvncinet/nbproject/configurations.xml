@@ -63,7 +63,6 @@
             <linkerLibLibItem>uuid</linkerLibLibItem>
             <linkerLibLibItem>wsock32</linkerLibLibItem>
             <linkerLibLibItem>ws2_32</linkerLibLibItem>
-            <linkerLibLibItem>custom</linkerLibLibItem>
             <linkerLibLibItem>stdc++</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
