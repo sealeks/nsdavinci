@@ -186,6 +186,14 @@ namespace dvnci {
 
         }
 
+        bool dataobject::readable() const {
+            return (type_ && ((type_ <= M_EP_TF_1) || ((type_ >= P_ME_NA_1) || (type_ <= P_AC_NA_1))));
+        }
+
+        bool dataobject::command() const {
+            return ((type_ >= C_SC_NA_1) || (type_ <= C_BO_TA_1));
+        }          
+
         bool operator==(const dataobject& ls, const dataobject& rs) {
             return ((ls.devnum_ == rs.devnum_) && (ls.address_ == rs.address_) && (ls.type_ == rs.type_));
         }

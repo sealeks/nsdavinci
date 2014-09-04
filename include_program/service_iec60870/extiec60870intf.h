@@ -72,6 +72,8 @@ namespace dvnci {
 
             iec60870_thread_ptr create_pm(std::string host, std::string port, timeouttype tmo,
                     dvnci::prot80670::iec60870_data_listener_ptr listr);
+            
+            bool pm_connected() const;
 
             void kill_pm();
 

@@ -26,7 +26,7 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////
 
         extiec60870intf::extiec60870intf(tagsbase_ptr intf_, executor* exctr, indx grp) :
-        extintf_wraper<dvnci::prot80670::dataobject_ptr>(intf_, exctr, grp, TYPE_SIMPLE_REQ, CONTYPE_SYNC), iec60870_data_listener(), fatal_() {
+        extintf_wraper<dvnci::prot80670::dataobject_ptr>(intf_, exctr, grp, TYPE_SIMPLE_REQ, CONTYPE_ASYNC), iec60870_data_listener(), fatal_() {
         }
 
         extiec60870intf::~extiec60870intf() {
@@ -58,8 +58,7 @@ namespace dvnci {
                 fatal_ = dvnci::dvncierror();
                 throw dvnci::dvncierror(ERROR_NONET_CONNECTED);
             }
-           return error(((thread_io) && (thread_io->pm()->state() == dvnci::prot80670::iec60870pm::connected)) ?
-               0 :  ERROR_IO_LINK_NOT_CONNECTION);
+           return error(pm_connected() ? 0 :  ERROR_IO_LINK_NOT_CONNECTION);
         }
 
         ns_error extiec60870intf::connect_impl() {           
@@ -73,8 +72,7 @@ namespace dvnci {
                             iec60870_data_listener::shared_from_this());
                 }
                 state_ = connected;
-                return error(((thread_io) && (thread_io->pm()->state() == dvnci::prot80670::iec60870pm::connected)) ?
-                        0 : ERROR_IO_LINK_NOT_CONNECTION);
+                return error(pm_connected() ? 0 : ERROR_IO_LINK_NOT_CONNECTION);
             } catch (...) {
             }
             state_ = disconnected;
@@ -104,7 +102,7 @@ namespace dvnci {
 
         ns_error extiec60870intf::add_request_impl() {
             error(0);
-            if (state_ == connected) {
+            if (/*state_ == connected*/pm_connected()) {
                 if (need_add().empty())
                     return error();
                 indx_dataobject_vct cids;
@@ -216,6 +214,10 @@ namespace dvnci {
 
         iec60870_thread_ptr extiec60870intf::create_pm(std::string host, std::string port, timeouttype tmo, dvnci::prot80670::iec60870_data_listener_ptr listr) {
             return iec60870_thread::create(host, port, tmo, listr);
+        }
+
+        bool extiec60870intf::pm_connected() const {
+            return ((thread_io) && (thread_io->pm()->state() == dvnci::prot80670::iec60870pm::connected));
         }
 
         void extiec60870intf::kill_pm() {
