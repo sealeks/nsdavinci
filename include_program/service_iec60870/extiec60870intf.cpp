@@ -52,24 +52,19 @@ namespace dvnci {
         }
 
         ns_error extiec60870intf::checkserverstatus() {
-            /*if (fatal_) {
+            if (fatal_) {
                 kill_pm();
                 dvnci::dvncierror tmp = fatal_;
                 fatal_ = dvnci::dvncierror();
                 throw dvnci::dvncierror(ERROR_NONET_CONNECTED);
-            }*/
-            return error(0);
+            }
+           return error(((thread_io) && (thread_io->pm()->state() == dvnci::prot80670::iec60870pm::connected)) ?
+               0 :  ERROR_IO_LINK_NOT_CONNECTION);
         }
 
-        ns_error extiec60870intf::connect_impl() {
-            /*if (fatal_) {
-                kill_pm();
-                dvnci::dvncierror tmp = fatal_;
-                fatal_ = dvnci::dvncierror();
-                throw dvnci::dvncierror(ERROR_NONET_CONNECTED);
-            }*/            
+        ns_error extiec60870intf::connect_impl() {           
             try {
-                std::string port = "2404"; //intf->groups()->port(group());
+                std::string port = "2404"; 
                 if (port.empty())
                     port = "2404";
                 if (!thread_io) {
@@ -77,13 +72,9 @@ namespace dvnci {
                             fulltrim_copy(port), intf->groups()->timeout(group()),
                             iec60870_data_listener::shared_from_this());
                 }
-                state_ = (thread_io->pm()->state() == dvnci::prot80670::iec60870pm::connected) ? connected : disconnected;
-                if (state_ == connected) {
-                    return error(0);
-                } else {
-                    state_ = disconnected;
-                    return error(ERROR_IO_LINK_NOT_CONNECTION);
-                }
+                state_ = connected;
+                return error(((thread_io) && (thread_io->pm()->state() == dvnci::prot80670::iec60870pm::connected)) ?
+                        0 : ERROR_IO_LINK_NOT_CONNECTION);
             } catch (...) {
             }
             state_ = disconnected;

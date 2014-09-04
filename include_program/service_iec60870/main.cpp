@@ -52,7 +52,7 @@ private:
 int main(int argc, char* argv[]) {
     std::string quit_in;
     basepath = dvnci::getlocalbasepath();
-    dvnci::mainserv = executable_ptr(new net_service());
+    dvnci::mainserv = executable_ptr(new net_service());    
 #ifndef DVNCI_DEDUG
     if (serviceargumentparser(argc, argv) == SERVICE_OPEATION_APP) {
 #endif
