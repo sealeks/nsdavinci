@@ -320,7 +320,7 @@
           </incDir>
           <commandLine>-mthreads</commandLine>
           <preprocessorList>
-            <Elem>_WIN32_WINNT=0x0501</Elem>
+            <Elem>_WIN32_WINNT=0x0601</Elem>
           </preprocessorList>
           <warningLevel>2</warningLevel>
         </ccTool>
