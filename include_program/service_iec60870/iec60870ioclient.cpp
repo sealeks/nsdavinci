@@ -511,7 +511,7 @@ namespace dvnci {
                     state_ = connected;
                     pmstate(activated);
                     send(asdu_body::create_activation());
-                    return false;;
+                    return true;
                 }
                 case message_104::STOPDTact:
                 {
