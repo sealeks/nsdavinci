@@ -234,6 +234,7 @@ namespace dvnci {
 
         typedef std::set<dataobject_ptr> dataobject_set;
         typedef std::vector<dataobject_ptr> dataobject_vct;   
+        typedef std::deque<dataobject_ptr> dataobject_deq;
         
          typedef std::pair<dvnci::indx, dataobject_ptr> indx_dataobject_pair;
          typedef std::vector<indx_dataobject_pair> indx_dataobject_vct;        
@@ -262,6 +263,7 @@ namespace dvnci {
             ~asdu_body(){}
             
             static asdu_body create_activation(interrogation_type tp=INTERROG_GLOBAL, cause_type cs = CS_ACT);
+            static asdu_body create_polling(dataobject_ptr vl, cause_type cs = CS_POLL);           
             
             octet_sequence& body() {
                 return *body_;

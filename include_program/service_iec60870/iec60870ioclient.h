@@ -164,7 +164,7 @@ namespace dvnci {
 
 
 
-
+        const std::size_t  PM_SHORT_TIMER= 10;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -226,7 +226,7 @@ namespace dvnci {
 
             void handle_timout_expire(const boost::system::error_code& err);            
             
-            
+            void handle_short_timout_expire(const boost::system::error_code& err);             
             
             
             
@@ -238,14 +238,26 @@ namespace dvnci {
             void send(message_104::apcitypeU u);
 
             void send(tcpcounter_type cnt);
+            
+            void receive();        
+            
+            void short_wait();   
+                     
+            void check_work_available();             
+                                       
 
+            
             void ack_tx(tcpcounter_type vl);
 
             void set_rx(tcpcounter_type vl);
+            
+            bool parse_response(message_104_ptr resp);
 
-            void parse_data(message_104_ptr resp);
+            bool parse_data(message_104_ptr resp);
 
             bool parse_U(message_104_ptr resp);
+            
+            
 
             iec60870_data_listener_ptr listener() {
                 return !listener_._empty() ? listener_.lock() : iec60870_data_listener_ptr();
@@ -387,7 +399,8 @@ namespace dvnci {
 
             boost::asio::io_service io_service_;
             boost::asio::ip::tcp::socket socket_;
-            boost::asio::deadline_timer tmout_timer;       
+            boost::asio::deadline_timer tmout_timer;      
+            boost::asio::deadline_timer short_timer;             
             std::string host;
             std::string port;
             timeouttype timout;
@@ -395,7 +408,11 @@ namespace dvnci {
             volatile PMState pmstate_;
             tcpcounter_type tx_;
             tcpcounter_type rx_;
+            
             dataobject_set data_;
+            dataobject_deq waitrequestdata_;  
+            dataobject_deq waitcommanddata_; 
+            
             message_104_deq sended_;
             boost::mutex mtx;
             iec60870_data_listener_wptr listener_;

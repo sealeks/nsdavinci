@@ -80,7 +80,7 @@ namespace dvnci {
             octet_sequence::value_type mk = header()[2];
             if (!(header()[2]&1))
                 return I_type;
-            else if (header()[2]&3)
+            else if ((header()[2]&3)==3)
                 return U_type;
             return S_type;
         }
@@ -230,7 +230,7 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////           
 
         iec60870pm::iec60870pm(std::string hst, std::string prt, timeouttype tmo, iec60870_data_listener_ptr listr) :
-        io_service_(), socket_(io_service_), tmout_timer(io_service_),
+        io_service_(), socket_(io_service_), tmout_timer(io_service_), short_timer(io_service_),
         host(hst), port(prt), timout(tmo), state_(disconnected), pmstate_(noconnected),
          tx_(0), rx_(0), listener_(listr) {
         }
@@ -263,13 +263,15 @@ namespace dvnci {
         
         bool iec60870pm::add_items(const indx_dataobject_vct& cids, indx_dataobject_vct& rslt){
             THD_EXCLUSIVE_LOCK(mtx)
-            for (indx_dataobject_vct::const_iterator it=cids.begin();it!=cids.begin();++it){
+            for (indx_dataobject_vct::const_iterator it=cids.begin();it!=cids.end();++it){
                 dataobject_set::const_iterator fnd=data_.find(it->second);
                 if (fnd!=data_.end()){
                     rslt.push_back(indx_dataobject_pair(it->first,*fnd));
                 }
                 else{
-                    // add in request
+                    if (it->second->readable()){
+                        waitrequestdata_.push_back(it->second);
+                    }
                 }
             }
             return !rslt.empty();
@@ -331,7 +333,7 @@ namespace dvnci {
                         boost::bind(&iec60870pm::handle_connect, this,
                         boost::asio::placeholders::error, ++endpoint_iterator));
             } else {
-                //terminate();
+                terminate();
             }
         }
 
@@ -340,7 +342,7 @@ namespace dvnci {
 
             if (!err) {
                 tmout_timer.cancel();
-                pmstate(activated);
+                pmstate(noaciveted);
                 send(message_104::STARTDTact);
             } else
                 if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator()) {
@@ -350,51 +352,20 @@ namespace dvnci {
                         boost::bind(&iec60870pm::handle_connect, this,
                         boost::asio::placeholders::error, ++endpoint_iterator));
             } else {
-                 //terminate();               
+                 terminate();               
             }
         }
 
         void iec60870pm::handle_request(const boost::system::error_code& error, message_104_ptr req) {
             if (!error)
-                async_response(
-                    boost::bind(&iec60870pm::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+                check_work_available();
             else
                 terminate();
         }
 
         void iec60870pm::handle_response(const boost::system::error_code& error, message_104_ptr resp) {
             if (!error) {
-                if (resp) {
-                    switch (resp->type()) {
-                        case message_104::S_type:
-                        {
-                            ack_tx(resp->rx());
-                            break;
-                        }
-                        case message_104::U_type:
-                        {
-                            if (parse_U(resp))
-                                return;
-                            break;
-                        }
-                        case message_104::I_type:
-                        {
-                            parse_data(resp);
-                            if (socket_.available()) {
-                                break;
-                            } else {
-                                send((rx_ + 1) % 32767);
-                                return;
-                            }
-                            break;
-                        }
-                        default:
-                        {
-                        }
-                    }
-                }
-                async_response(
-                        boost::bind(&iec60870pm::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+                parse_response(resp);
             } else
                 terminate();
         }
@@ -402,17 +373,18 @@ namespace dvnci {
         void iec60870pm::handle_timout_expire(const boost::system::error_code& err) {
 
             if (!err) {
-                /*error(err);
-                connect();*/
                 terminate();
             } else {
-                //terminate();
+               //std::cout << " expire timer error" << std::endl;
             }
+        }
+        
+        void iec60870pm::handle_short_timout_expire(const boost::system::error_code& err){
+            check_work_available();   
         }
 
 
         
-
         void iec60870pm::send(const asdu_body& asdu) {
             send(message_104::create(tx_++, rx_, asdu));
         }
@@ -435,9 +407,39 @@ namespace dvnci {
             async_request(
                     boost::bind(&iec60870pm::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), message_104::create(cnt));
         }
+        
+        void iec60870pm::receive() {
+            async_response(
+                    boost::bind(&iec60870pm::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));            
+        }    
+        
+        void iec60870pm::short_wait() {
+            short_timer.expires_from_now(boost::posix_time::milliseconds(PM_SHORT_TIMER));
+            short_timer.async_wait(boost::bind(
+                    &iec60870pm::handle_short_timout_expire, this,
+                    boost::asio::placeholders::error));
+        }               
+
+        void iec60870pm::check_work_available() {
+            if (socket_.available()){
+                receive();
+                return;
+            }            
+            {
+                THD_EXCLUSIVE_LOCK(mtx)
+                if (!waitrequestdata_.empty()) {
+                    send(asdu_body::create_polling(waitrequestdata_.back()));
+                    waitrequestdata_.pop_back();
+                    return;
+                }
+            }
+            short_wait();
+        }
+
+ 
 
         void iec60870pm::set_rx(tcpcounter_type vl) {
-            std::cout << " set Rx = " << vl << std::endl;
+            //std::cout << " set Rx = " << vl << std::endl;
             rx_ = vl;
         }
 
@@ -448,7 +450,44 @@ namespace dvnci {
                     sended_.pop_front();
                 }
             }
+            std::cout << " sended size = " << sended_.size()  << std::endl;
         }
+
+        bool iec60870pm::parse_response(message_104_ptr resp) {
+            if (resp) {
+                switch (resp->type()) {
+                    case message_104::S_type:
+                    {
+                        ack_tx(resp->rx());
+                        break;
+                    }
+                    case message_104::U_type:
+                    {
+                        if (parse_U(resp))
+                            return true;
+                        break;
+                    }
+                    case message_104::I_type:
+                    {
+                        parse_data(resp);
+                        if (socket_.available()) {
+                            break;
+                        } else {
+                            send(rx_ + 1);
+                            return true;
+                        }
+                        break;
+                    }
+                    default:
+                    {
+                    }
+                }
+                check_work_available();
+                return true;
+            }
+            return false;
+        }        
+        
 
         bool iec60870pm::parse_U(message_104_ptr resp) {
             switch (resp->typeU()) {
@@ -464,7 +503,7 @@ namespace dvnci {
                 case message_104::STARTDTact:
                 {
                     send(message_104::STARTDTcon);
-                    pmstate(activated);
+                    pmstate(noaciveted);
                     return true;
                 }
                 case message_104::STARTDTcon:
@@ -472,7 +511,7 @@ namespace dvnci {
                     state_ = connected;
                     pmstate(activated);
                     send(asdu_body::create_activation());
-                    return true;
+                    return false;;
                 }
                 case message_104::STOPDTact:
                 {
@@ -489,7 +528,7 @@ namespace dvnci {
             return false;
         }
 
-        void iec60870pm::parse_data(message_104_ptr resp) {
+        bool iec60870pm::parse_data(message_104_ptr resp) {
             set_rx(resp->tx());
             ack_tx(resp->rx());
             dataobject_vct rslt;
@@ -502,6 +541,7 @@ namespace dvnci {
                 if (lstnr)
                     lstnr->execute60870(rslt);
             }
+            return true;
         }
 
 

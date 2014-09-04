@@ -323,6 +323,11 @@ namespace dvnci {
             dataobject_ptr vl( new dataobject(0, C_IC_NA_1, 1, octet_sequence(1, tp)));
             return asdu_body(vl, cs, false, false, false);          
         }
+        
+        asdu_body asdu_body::create_polling(dataobject_ptr ob, cause_type cs){
+            dataobject_ptr vl( new dataobject(ob->devnum(), C_RD_NA_1, ob->address()));     
+            return asdu_body(vl, cs, false, false, false);               
+        }       
 
         bool asdu_body::get(dataobject_vct& rslt) {
             rslt.clear();
