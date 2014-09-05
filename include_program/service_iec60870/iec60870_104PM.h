@@ -5,8 +5,8 @@
  * Created on 17 ???? 2010 ?., 0:05
  */
 
-#ifndef _DVNCI_KRNL_NS_IEC60850CLIENT_H
-#define	_DVNCI_KRNL_NS_IEC60850CLIENT_H
+#ifndef _DVNCI_KRNL_NS_IEC60850_104PM_H
+#define	_DVNCI_KRNL_NS_IEC60850_104PM_H
 
 #include "iec60870_protocol.h"
 
@@ -349,38 +349,7 @@ namespace dvnci {
         
         
         
-        /////////////////////////////////////////////////////////////////////////////////////////////////
-        //////// iec60870_thread
-        /////////////////////////////////////////////////////////////////////////////////////////////////        
-
-        class iec60870_thread;
-
-        typedef boost::weak_ptr< iec60870_thread> iec60870_thread_wptr;
-        typedef boost::shared_ptr< iec60870_thread> iec60870_thread_ptr;
-
-        class iec60870_thread : public boost::enable_shared_from_this<iec60870_thread> {
-
-        public:
-
-            iec60870_thread(std::string host, std::string port, timeouttype tmo,
-                    iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
-
-            ~iec60870_thread();
-
-            static iec60870_thread_ptr create(std::string host, std::string port, timeouttype tmo,
-                    iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
-
-            callable_shared_ptr<iec60870_PM> pm() const;
-
-            callable_shared_ptr<iec60870_PM> pm();
-
-        private:
-
-            callable_shared_ptr<iec60870_PM> pm_;
-            boost::shared_ptr<boost::thread> ioth;
-        };
-
-
+       
 
     }
 }
