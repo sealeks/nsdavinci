@@ -87,14 +87,6 @@ namespace dvnci {
                 return *body_;
             }
 
-            void inprogress(bool vl) {
-                inprogress_ = vl;
-            }
-
-            bool inprogress() const {
-                return inprogress_;
-            }
-
             void body(const boost::asio::streambuf& vl);
 
             size_t body_length() const;
@@ -138,7 +130,6 @@ namespace dvnci {
             /*bool decode_header();*/
 
 
-            bool inprogress_;
             octet_sequence_ptr header_;
             octet_sequence_ptr body_;
 
