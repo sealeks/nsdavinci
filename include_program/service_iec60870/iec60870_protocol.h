@@ -28,7 +28,6 @@ namespace dvnci {
         typedef boost::uint32_t data_address;
         typedef boost::uint16_t device_address;
         typedef boost::uint8_t bit_number;
-        typedef boost::uint16_t tcpcounter_type;
         const bit_number NULL_BITNUMBER = '\xFF';
 
 
