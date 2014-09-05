@@ -401,8 +401,65 @@ namespace dvnci {
             }
         }   
         
+        
+        
          
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //////// iec60870_PM
+        /////////////////////////////////////////////////////////////////////////////////////////////////         
+        
+        iec60870_PM::iec60870_PM(timeouttype tmo, iec60870_data_listener_ptr listr) :
+        io_service_(), tmout_timer(io_service_), short_timer(io_service_),
+        state_(disconnected), pmstate_(noconnected), timout(tmo), listener_(listr) {
+        }      
+        
+        iec60870_PM::~iec60870_PM() {
+            //if (state_ == connected) disconnect();
+        }        
+        
+            
+        void iec60870_PM::pmstate(iec60870_PM::PMState vl) {
+            pmstate_ = vl;
+        }        
+        
+        bool iec60870_PM::initialize() {
+            return true;
+        }
 
+        bool iec60870_PM::uninitialize() {
+            return true;
+        }    
+        
+        bool iec60870_PM::operator()() {
+            connect();
+            iec60870_data_listener_ptr lstnr = listener();
+            if (lstnr)
+                lstnr->terminate60870();            
+            return true;
+        }        
+        
+        bool iec60870_PM::add_items(const indx_dataobject_vct& cids, indx_dataobject_vct& rslt){
+            THD_EXCLUSIVE_LOCK(mtx)
+            for (indx_dataobject_vct::const_iterator it=cids.begin();it!=cids.end();++it){
+                dataobject_set::const_iterator fnd=data_.find(it->second);
+                if (fnd!=data_.end()){
+                    rslt.push_back(indx_dataobject_pair(it->first,*fnd));
+                }
+                else{
+                    if (it->second->readable()){
+                        waitrequestdata_.push_back(it->second);
+                    }
+                }
+            }
+            return !rslt.empty();
+        }     
+        
+        
+        void iec60870_PM::error(boost::system::error_code& err) {
+                iec60870_data_listener_ptr lstnr = listener();
+                if (lstnr)
+                    lstnr->execute60870(err);
+        }  
 
     }
 }

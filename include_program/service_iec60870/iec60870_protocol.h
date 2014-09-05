@@ -8,6 +8,8 @@
 #ifndef IEC60870_PROTOCOL_H
 #define	 IEC60870_PROTOCOL_H
 
+#include <boost/asio/read_at.hpp>
+
 #include <kernel/utils.h>
 #include <kernel/systemutil.h>
 #include <kernel/error.h>
@@ -18,10 +20,10 @@ namespace dvnci {
     namespace prot80670 {
 
         typedef std::vector<boost::uint8_t> octet_sequence;
-        typedef boost::shared_ptr<octet_sequence> octet_sequence_ptr;         
-        
+        typedef boost::shared_ptr<octet_sequence> octet_sequence_ptr;
+
         typedef boost::uint8_t type_id;
-        typedef boost::uint8_t cause_type;    
+        typedef boost::uint8_t cause_type;
         typedef boost::uint8_t interrogation_type;
         typedef boost::uint32_t data_address;
         typedef boost::uint16_t device_address;
@@ -140,22 +142,22 @@ namespace dvnci {
         const type_id F_SG_NA_1 = 125; // Segment
         const type_id F_DR_TA_1 = 126; // Directory {blank or X, only available in monitor (standard) direction}
         const type_id F_SC_NB_1 = 127; // Query log ? Request archive file
-        
+
         const interrogation_type INTERROG_GLOBAL = 20; // station interrogation (global)
 
         typedef std::pair<std::string, type_id> string_type_id_pair;
         typedef std::map<std::string, type_id> string_type_id_map;
         typedef std::pair<type_id, std::size_t> type_id_size_pair;
-        typedef std::map<type_id, std::size_t> type_id_size_map;        
+        typedef std::map<type_id, std::size_t> type_id_size_map;
 
         type_id find_type_id(const std::string& val);
-        std::size_t find_type_size(type_id val);        
-        
-        
-        
+        std::size_t find_type_size(type_id val);
 
-      
-        
+
+
+
+
+
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -212,10 +214,10 @@ namespace dvnci {
             bool valid() const {
                 return type_;
             }
-            
+
             bool readable() const;
-            
-            bool command() const;           
+
+            bool command() const;
 
             friend bool operator==(const dataobject& ls, const dataobject& rs);
             friend bool operator<(const dataobject& ls, const dataobject& rs);
@@ -233,112 +235,113 @@ namespace dvnci {
 
 
         typedef std::set<dataobject_ptr> dataobject_set;
-        typedef std::vector<dataobject_ptr> dataobject_vct;   
+        typedef std::vector<dataobject_ptr> dataobject_vct;
         typedef std::deque<dataobject_ptr> dataobject_deq;
-        
-         typedef std::pair<dvnci::indx, dataobject_ptr> indx_dataobject_pair;
-         typedef std::vector<indx_dataobject_pair> indx_dataobject_vct;        
-        
-        datetime to_datetime_7(const octet_sequence& v);     
+
+        typedef std::pair<dvnci::indx, dataobject_ptr> indx_dataobject_pair;
+        typedef std::vector<indx_dataobject_pair> indx_dataobject_vct;
+
+        datetime to_datetime_7(const octet_sequence& v);
         datetime to_datetime_3(const octet_sequence& vl);
         float to_float_4(const octet_sequence& vl);
-        
+
         dvnci::short_value to_short_value(dataobject_ptr v);
-        
-        
-        
-         /////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// asdu_body
         /////////////////////////////////////////////////////////////////////////////////////////////////
-        
-        const std::size_t MAX_ASDU_SIZE = 249;        
-        
-        class asdu_body{
+
+        const std::size_t MAX_ASDU_SIZE = 249;
+
+        class asdu_body {
+
         public:
-            
-            asdu_body(dataobject_ptr vl, cause_type cs, bool sq=false, bool ngt=false, bool tst=false);
-            asdu_body(const dataobject_vct& vl, cause_type cs, std::size_t cnt, bool sq=false, bool ngt=false, bool tst=false); // sq = 1 only the first information object has an information object address, all other information objects have the addresses +1, +2, ...
-            asdu_body(const dataobject_vct& vl, cause_type cs, bool sq=false, bool ngt=false, bool tst=false); // sq = 0  each information object has its own information object address in the message         
+
+            asdu_body(dataobject_ptr vl, cause_type cs, bool sq = false, bool ngt = false, bool tst = false);
+            asdu_body(const dataobject_vct& vl, cause_type cs, std::size_t cnt, bool sq = false, bool ngt = false, bool tst = false); // sq = 1 only the first information object has an information object address, all other information objects have the addresses +1, +2, ...
+            asdu_body(const dataobject_vct& vl, cause_type cs, bool sq = false, bool ngt = false, bool tst = false); // sq = 0  each information object has its own information object address in the message         
             asdu_body(octet_sequence_ptr dt);
-            ~asdu_body(){}
-            
-            static asdu_body create_activation(interrogation_type tp=INTERROG_GLOBAL, cause_type cs = CS_ACT);
-            static asdu_body create_polling(dataobject_ptr vl, cause_type cs = CS_POLL);           
-            
+
+            ~asdu_body() {
+            }
+
+            static asdu_body create_activation(interrogation_type tp = INTERROG_GLOBAL, cause_type cs = CS_ACT);
+            static asdu_body create_polling(dataobject_ptr vl, cause_type cs = CS_POLL);
+
             octet_sequence& body() {
                 return *body_;
-            }   
-            
+            }
+
             const octet_sequence& body() const {
                 return *body_;
-            }  
- 
+            }
+
             octet_sequence_ptr body_ptr() const {
                 return body_;
-            }        
-            
-            
+            }
+
             type_id type() const {
                 if (!body().empty())
                     return body()[0];
                 return 0;
             }
-            
+
             bool sq() const {
-                if (body().size()>1)
+                if (body().size() > 1)
                     return body()[1] & '\x80';
                 return false;
-            }          
-            
+            }
+
             std::size_t count() const {
-                if (body().size()>1)
-                    return static_cast<std::size_t>(body()[1] & '\x7F');
+                if (body().size() > 1)
+                    return static_cast<std::size_t> (body()[1] & '\x7F');
                 return 0;
-            }       
-            
+            }
+
             bool test() const {
-                if (body().size()>2)
+                if (body().size() > 2)
                     return body()[2] & '\x80';
                 return false;
-            }             
-            
+            }
+
             bool negative() const {
-                if (body().size()>2)
+                if (body().size() > 2)
                     return body()[2] & '\x40';
                 return false;
-            }               
-            
+            }
+
             cause_type cause() const {
-                if (body().size()>2)
-                    return static_cast<cause_type>(body()[2] & '\x3F');
+                if (body().size() > 2)
+                    return static_cast<cause_type> (body()[2] & '\x3F');
                 return 0;
-            }         
-            
+            }
+
             boost::uint8_t oa() const {
-                if (body().size()>3)
-                    return static_cast<boost::uint8_t>(body()[3]);
+                if (body().size() > 3)
+                    return static_cast<boost::uint8_t> (body()[3]);
                 return 0;
-            }     
-            
-            
+            }
+
             device_address address() const {
-                if (body().size()>5)
-                    return *reinterpret_cast<const device_address*>(&(body()[4]));
+                if (body().size() > 5)
+                    return *reinterpret_cast<const device_address*> (&(body()[4]));
                 return 0;
-            } 
-            
+            }
+
             bool get(dataobject_vct& rslt);
-            
+
         private:
-            
+
             void encode(const dataobject_vct& vl, cause_type cs, bool sq, bool ngt, bool tst);
-            
-            
+
+
             octet_sequence_ptr body_;
         };
-        
-     
-         /////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// iec60870_data_listener
         /////////////////////////////////////////////////////////////////////////////////////////////////       
 
@@ -347,17 +350,94 @@ namespace dvnci {
         public:
 
             virtual void execute60870(dataobject_ptr vl) = 0;
-            virtual void execute60870(const dataobject_vct& vl) = 0;            
+            virtual void execute60870(const dataobject_vct& vl) = 0;
             virtual void execute60870(const boost::system::error_code& error) = 0;
             virtual void terminate60870() = 0;
 
         };
 
         typedef boost::shared_ptr<iec60870_data_listener> iec60870_data_listener_ptr;
-        typedef boost::weak_ptr<iec60870_data_listener> iec60870_data_listener_wptr;        
-        
+        typedef boost::weak_ptr<iec60870_data_listener> iec60870_data_listener_wptr;
 
-       
+
+
+
+
+        const std::size_t PM_SHORT_TIMER = 10;
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //////// iec60870_PM
+        /////////////////////////////////////////////////////////////////////////////////////////////////        
+
+        class iec60870_PM : public executable {
+
+        public:
+
+            enum State {
+                
+                connected, disconnected
+            };
+
+            enum PMState {
+
+                noconnected, noaciveted, activated
+            };
+
+            iec60870_PM(timeouttype tmo, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
+
+            virtual ~iec60870_PM();
+
+            State state() const {
+                return state_;
+            }
+
+            PMState pmstate() const {
+                return pmstate_;
+            }
+
+            void pmstate(PMState vl);
+
+            virtual bool operator()();
+
+            virtual bool add_items(const indx_dataobject_vct& cids, indx_dataobject_vct& rslt);
+
+            virtual void disconnect() = 0;
+
+
+        protected:
+
+            virtual void connect() = 0;
+
+            virtual void terminate() = 0;
+
+            virtual bool initialize();
+
+            virtual bool uninitialize();
+
+            virtual void error(boost::system::error_code& err);
+
+            iec60870_data_listener_ptr listener() {
+                return !listener_._empty() ? listener_.lock() : iec60870_data_listener_ptr();
+            }
+
+
+            boost::asio::io_service io_service_;
+            boost::asio::deadline_timer tmout_timer;
+            boost::asio::deadline_timer short_timer;
+            volatile State state_;
+            volatile PMState pmstate_;
+            timeouttype timout;
+
+            iec60870_data_listener_wptr listener_;
+            boost::mutex mtx;
+            dataobject_set data_;
+            dataobject_deq waitrequestdata_;
+            dataobject_deq waitcommanddata_;
+
+        };
+
+        typedef boost::shared_ptr<iec60870_PM> iec60870_PM_ptr;
+
     }
 }
 

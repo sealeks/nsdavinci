@@ -82,7 +82,7 @@ namespace dvnci {
         ns_error extiec60870intf::disconnect_impl() {
             try {
                 disconnect_util();
-                if ((thread_io) && (thread_io->pm()->state() == dvnci::prot80670::iec60870pm::connected)) {
+                if ((thread_io) && (thread_io->pm()->state() == dvnci::prot80670::iec60870_104PM::connected)) {
                     //thread_io->disconnect();                
                     state_ = disconnected;
                     /*if (remintf->isconnected()) {
@@ -221,7 +221,7 @@ namespace dvnci {
         }
 
         bool extiec60870intf::pm_connected() const {
-            return ((thread_io) && (thread_io->pm()->state() == dvnci::prot80670::iec60870pm::connected));
+            return ((thread_io) && (thread_io->pm()->state() == dvnci::prot80670::iec60870_104PM::connected));
         }
 
         void extiec60870intf::kill_pm() {
