@@ -251,7 +251,7 @@ namespace dvnci {
                     boost::asio::placeholders::iterator));
 
             set_t0();
-            
+
             io_service_.run();
 
         }
@@ -313,7 +313,6 @@ namespace dvnci {
                 terminate();
         }
 
-
         void iec60870_104PM::handle_short_timout_expire(const boost::system::error_code& err) {
             check_work_available();
         }
@@ -356,8 +355,8 @@ namespace dvnci {
         }
 
         void iec60870_104PM::check_work_available() {
-            if (w_expire()) {
-                w_ = 0;
+            if (k_expire()) {
+                k_ = 0;
                 send(rx_ + 1);
                 return;
             }
@@ -376,7 +375,7 @@ namespace dvnci {
                 return;
             }
             {
-                if (!k_expire()) {
+                if (!w_expire()) {
                     THD_EXCLUSIVE_LOCK(mtx)
                     if (!waitrequestdata_.empty()) {
                         send(asdu_body::create_polling(waitrequestdata_.back()));
@@ -399,11 +398,11 @@ namespace dvnci {
                 }
             }
             if (sended_.empty())
-                cancel_t1();               
+                cancel_t1();
         }
 
         bool iec60870_104PM::parse_response(apdu_104_ptr resp) {
-            if (resp) {              
+            if (resp) {
                 set_t3();
                 switch (resp->type()) {
                     case apdu_104::S_type:
@@ -413,16 +412,16 @@ namespace dvnci {
                     }
                     case apdu_104::U_type:
                     {
-                        cancel_t1(); 
+                        cancel_t1();
                         if (parse_U(resp))
                             return true;
                         break;
                     }
                     case apdu_104::I_type:
-                    {                        
+                    {
                         set_t2();
                         parse_data(resp);
-                        w_++;
+                        k_++;
                         break;
                     }
                     default:
@@ -480,21 +479,19 @@ namespace dvnci {
             ack_tx(resp->rx());
             dataobject_vct rslt;
             if (resp->get(rslt)) {
+                to_listener(rslt);
                 {
                     THD_EXCLUSIVE_LOCK(mtx)
                     data_.insert(rslt.begin(), rslt.end());
                 }
-                iec60870_data_listener_ptr lstnr = listener();
-                if (lstnr)
-                    lstnr->execute60870(rslt);
             }
             return true;
         }
 
-        tcpcounter_type iec60870_104PM::k() const {
-            return sended_.size();
-        }
-        
+        bool iec60870_104PM::w_expire() const {
+            return sended_.size() >= w_fct;
+        }     
+
         void iec60870_104PM::set_t0() {
             tmout_timer.cancel();
             t0_state = false;
@@ -514,7 +511,7 @@ namespace dvnci {
             } else {
                 t0_state = false;
             }
-        }        
+        }
 
         void iec60870_104PM::set_t1() {
             t1_timer.cancel();
@@ -545,11 +542,10 @@ namespace dvnci {
                     &iec60870_104PM::handle_t2_expire, this,
                     boost::asio::placeholders::error));
         }
-        
-        
+
         void iec60870_104PM::cancel_t2() {
             t2_timer.cancel();
-        }                
+        }
 
         void iec60870_104PM::handle_t2_expire(const boost::system::error_code& err) {
             if (!err) {
@@ -567,11 +563,10 @@ namespace dvnci {
                     &iec60870_104PM::handle_t3_expire, this,
                     boost::asio::placeholders::error));
         }
-        
-        
+
         void iec60870_104PM::cancel_t3() {
             t3_timer.cancel();
-        }                
+        }
 
         void iec60870_104PM::handle_t3_expire(const boost::system::error_code& err) {
             if (!err) {

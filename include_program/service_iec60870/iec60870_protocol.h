@@ -399,6 +399,10 @@ namespace dvnci {
             virtual bool operator()();
 
             virtual bool add_items(const indx_dataobject_vct& cids, indx_dataobject_vct& rslt);
+            
+            virtual bool read_items(const dataobject_set& cids);            
+            
+            virtual bool remove_items(const dataobject_set& cids);            
 
             virtual void disconnect() = 0;
 
@@ -412,6 +416,8 @@ namespace dvnci {
             virtual bool initialize();
 
             virtual bool uninitialize();
+            
+            void to_listener(const dataobject_vct& dt);
 
             virtual void error(boost::system::error_code& err);
 
@@ -430,6 +436,7 @@ namespace dvnci {
             iec60870_data_listener_wptr listener_;
             boost::mutex mtx;
             dataobject_set data_;
+            dataobject_set inrequestdata_;
             dataobject_deq waitrequestdata_;
             dataobject_deq waitcommanddata_;
 

@@ -102,7 +102,7 @@ namespace dvnci {
 
         ns_error extiec60870intf::add_request_impl() {
             error(0);
-            if (/*state_ == connected*/pm_connected()) {
+            if (pm_connected()) {
                 if (need_add().empty())
                     return error();
                 indx_dataobject_vct cids;
@@ -140,40 +140,29 @@ namespace dvnci {
 
         ns_error extiec60870intf::remove_request_impl() {
 
-            /* error(0);
-             if (need_remove().empty())
-                 return error();
+            error(0);
+            if (need_remove().empty())
+                return error();
 
-             const objectname_set& sids = need_remove();
-             accesserror_map errors;
+            const dataobject_set& sids = need_remove();
 
-             if (!error(remintf->remove_items(sids, errors))) {
-                 remove_clear();
-             }*/
+            thread_io->pm()->remove_items(sids);
+            remove_clear();
 
             return error();
         }
 
         ns_error extiec60870intf::value_request_impl() {
-
-            /* error(0);
+            
+            error(0);
 
              const serverkeys_tags_map& simpreq = simple_req();
-             accessresult_map sids;
+             dataobject_set sids;
 
-             for (serverkey_const_iterator it = simpreq.left.begin(); it != simpreq.left.end(); ++it) {
-                 sids.insert(accessresult_pair(it->first, mmsresult_ptr()));
-             }
-
-             error(remintf->read_values(sids));
-             //this->
-
-             for (accessresult_map::const_iterator it = sids.begin(); it != sids.end(); ++it) {
-                 if (it->second)
-                     write_val_sid(it->first, from_mms_result(it->second));
-                 else
-                     write_val_sid(it->first, short_value());
-             }*/
+             for (serverkey_const_iterator it = simpreq.left.begin(); it != simpreq.left.end(); ++it) 
+                 sids.insert(it->first);
+             
+             thread_io->pm()->read_items(sids);
 
             return error();
         }
