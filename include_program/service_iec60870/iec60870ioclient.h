@@ -14,7 +14,7 @@ namespace dvnci {
     namespace prot80670 {
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
-        //////// class message_104
+        //////// class apdu_104
         /////////////////////////////////////////////////////////////////////////////////////////////////           
 
         const octet_sequence::value_type FC_START104 = '\x68';
@@ -26,10 +26,10 @@ namespace dvnci {
         const unum32 HD104_TESTFRcon = 0x0003 | 0x0080;
         const unum16 HD104_U_IND = 0x01;
 
-        class message_104;
-        typedef boost::shared_ptr<message_104> message_104_ptr;
+        class apdu_104;
+        typedef boost::shared_ptr<apdu_104> apdu_104_ptr;
 
-        class message_104 {
+        class apdu_104 {
 
         public:
 
@@ -49,27 +49,27 @@ namespace dvnci {
             };
 
             //
-            message_104();
+            apdu_104();
 
-            message_104(apcitypeU u);
+            apdu_104(apcitypeU u);
 
-            message_104(tcpcounter_type rx);
+            apdu_104(tcpcounter_type rx);
 
-            message_104(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs);
+            apdu_104(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs);
 
-            message_104(tcpcounter_type tx, tcpcounter_type rx, const asdu_body& vl);
+            apdu_104(tcpcounter_type tx, tcpcounter_type rx, const asdu_body& vl);
 
-            ~message_104();
+            ~apdu_104();
 
-            static message_104_ptr create();
+            static apdu_104_ptr create();
 
-            static message_104_ptr create(apcitypeU u);
+            static apdu_104_ptr create(apcitypeU u);
 
-            static message_104_ptr create(tcpcounter_type rx);
+            static apdu_104_ptr create(tcpcounter_type rx);
 
-            static message_104_ptr create(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs);
+            static apdu_104_ptr create(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs);
 
-            static message_104_ptr create(tcpcounter_type tx, tcpcounter_type rx, const asdu_body& vl);
+            static apdu_104_ptr create(tcpcounter_type tx, tcpcounter_type rx, const asdu_body& vl);
 
             octet_sequence& header() {
                 return *header_;
@@ -145,8 +145,8 @@ namespace dvnci {
         };
 
 
-        typedef std::deque<message_104_ptr> message_104_deq;
-        typedef std::set<message_104_ptr> message_104_set;
+        typedef std::deque<apdu_104_ptr> apdu_104_deq;
+        typedef std::set<apdu_104_ptr> apdu_104_set;
 
 
        
@@ -178,9 +178,9 @@ namespace dvnci {
             void handle_connect(const boost::system::error_code& err,
                     boost::asio::ip::tcp::resolver::iterator endpoint_iterator);
 
-            void handle_request(const boost::system::error_code& error, message_104_ptr req);
+            void handle_request(const boost::system::error_code& error, apdu_104_ptr req);
 
-            void handle_response(const boost::system::error_code& error, message_104_ptr resp);
+            void handle_response(const boost::system::error_code& error, apdu_104_ptr resp);
 
             void handle_timout_expire(const boost::system::error_code& err);            
             
@@ -191,9 +191,9 @@ namespace dvnci {
 
             void send(const asdu_body& asdu);
 
-            void send(message_104_ptr msg);
+            void send(apdu_104_ptr msg);
 
-            void send(message_104::apcitypeU u);
+            void send(apdu_104::apcitypeU u);
 
             void send(tcpcounter_type cnt);
             
@@ -209,11 +209,11 @@ namespace dvnci {
 
             void set_rx(tcpcounter_type vl);
             
-            bool parse_response(message_104_ptr resp);
+            bool parse_response(apdu_104_ptr resp);
 
-            bool parse_data(message_104_ptr resp);
+            bool parse_data(apdu_104_ptr resp);
 
-            bool parse_U(message_104_ptr resp);
+            bool parse_U(apdu_104_ptr resp);
             
 
 
@@ -222,7 +222,7 @@ namespace dvnci {
             template< typename handler>
             struct req_operation {
 
-                req_operation(handler hnd, boost::asio::ip::tcp::socket& sock, message_104_ptr rq) : hndl(hnd), socket_(sock), req_(rq), headersz_(0), bodysz_(0) {
+                req_operation(handler hnd, boost::asio::ip::tcp::socket& sock, apdu_104_ptr rq) : hndl(hnd), socket_(sock), req_(rq), headersz_(0), bodysz_(0) {
                 }
 
                 void header(const boost::system::error_code& error, std::size_t bytes_transferred) {
@@ -262,13 +262,13 @@ namespace dvnci {
 
                 handler hndl;
                 boost::asio::ip::tcp::socket& socket_;
-                message_104_ptr req_;
+                apdu_104_ptr req_;
                 std::size_t headersz_;
                 std::size_t bodysz_;
             };
 
             template< typename handler>
-            void async_request(handler hnd, message_104_ptr req) {
+            void async_request(handler hnd, apdu_104_ptr req) {
 
                 typedef req_operation< handler> req_operation_type;
 
@@ -286,13 +286,13 @@ namespace dvnci {
             template< typename handler>
             struct resp_operation {
 
-                resp_operation(handler hnd, boost::asio::ip::tcp::socket& sock, message_104_ptr rsp) : hndl(hnd), socket_(sock), resp_(rsp), headersz_(0), bodysz_(0) {
+                resp_operation(handler hnd, boost::asio::ip::tcp::socket& sock, apdu_104_ptr rsp) : hndl(hnd), socket_(sock), resp_(rsp), headersz_(0), bodysz_(0) {
                 }
 
                 void header(const boost::system::error_code& error, std::size_t bytes_transferred) {
                     if (!error) {
                         headersz_ += bytes_transferred;
-                        if (headersz_ < message_104::apci_length)
+                        if (headersz_ < apdu_104::apci_length)
                             socket_.async_receive(boost::asio::buffer(&(resp_->header()[0]) + headersz_, resp_->header().size() - headersz_),
                                 boost::bind(&resp_operation::header, *this,
                                 boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
@@ -326,7 +326,7 @@ namespace dvnci {
 
                 handler hndl;
                 boost::asio::ip::tcp::socket& socket_;
-                message_104_ptr resp_;
+                apdu_104_ptr resp_;
                 std::size_t headersz_;
                 std::size_t bodysz_;
             };
@@ -336,7 +336,7 @@ namespace dvnci {
 
                 typedef resp_operation< handler> resp_operation_type;
 
-                message_104_ptr resp = message_104::create();
+                apdu_104_ptr resp = apdu_104::create();
 
                 socket_.async_receive(boost::asio::buffer(resp->header().data(), resp->header().size()),
                         boost::bind(&resp_operation_type::header, resp_operation_type(hnd, socket_, resp),
@@ -350,7 +350,7 @@ namespace dvnci {
             std::string port;
             tcpcounter_type tx_;
             tcpcounter_type rx_;
-            message_104_deq sended_;
+            apdu_104_deq sended_;
 
         };
 
