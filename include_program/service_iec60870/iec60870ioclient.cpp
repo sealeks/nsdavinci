@@ -11,28 +11,28 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////              
 
         apdu_104::apdu_104() :
-        inprogress_(false), header_(new octet_sequence()), body_(new octet_sequence()) {
+         header_(new octet_sequence()), body_(new octet_sequence()) {
             header_prepare();
         }
 
         apdu_104::apdu_104(apcitypeU u) :
-        inprogress_(false), header_(new octet_sequence()), body_(new octet_sequence()) {
+         header_(new octet_sequence()), body_(new octet_sequence()) {
             encode_header(U_type, u);
         }
 
         apdu_104::apdu_104(tcpcounter_type rx) :
-        inprogress_(false), header_(new octet_sequence()), body_(new octet_sequence()) {
+         header_(new octet_sequence()), body_(new octet_sequence()) {
             encode_header(S_type, NULLu, 0, rx);
         }
 
         apdu_104::apdu_104(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs) :
-        inprogress_(false), header_(new octet_sequence()), body_(new octet_sequence()) {
+         header_(new octet_sequence()), body_(new octet_sequence()) {
             encode_body(vl, cs);
             encode_header(I_type, NULLu, tx, rx);
         }
 
         apdu_104::apdu_104(tcpcounter_type tx, tcpcounter_type rx, const asdu_body& vl) :
-        inprogress_(false), header_(new octet_sequence()), body_(new octet_sequence()) {
+         header_(new octet_sequence()), body_(new octet_sequence()) {
             encode_body(vl);
             encode_header(I_type, NULLu, tx, rx);
         }
