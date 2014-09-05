@@ -36,8 +36,9 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/1923264132/extiec60870intf.o \
+	${OBJECTDIR}/_ext/1923264132/iec60870_104PM.o \
+	${OBJECTDIR}/_ext/1923264132/iec60870_PM.o \
 	${OBJECTDIR}/_ext/1923264132/iec60870_protocol.o \
-	${OBJECTDIR}/_ext/1923264132/iec60870ioclient.o \
 	${OBJECTDIR}/_ext/1923264132/main.o
 
 
@@ -70,15 +71,20 @@ ${OBJECTDIR}/_ext/1923264132/extiec60870intf.o: ../../include_program/service_ie
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DBOOST_ASIO_ENABLE_CANCELIO -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1923264132/extiec60870intf.o ../../include_program/service_iec60870/extiec60870intf.cpp
 
+${OBJECTDIR}/_ext/1923264132/iec60870_104PM.o: ../../include_program/service_iec60870/iec60870_104PM.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1923264132
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DBOOST_ASIO_ENABLE_CANCELIO -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1923264132/iec60870_104PM.o ../../include_program/service_iec60870/iec60870_104PM.cpp
+
+${OBJECTDIR}/_ext/1923264132/iec60870_PM.o: ../../include_program/service_iec60870/iec60870_PM.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1923264132
+	${RM} $@.d
+	$(COMPILE.cc) -O2 -DBOOST_ASIO_ENABLE_CANCELIO -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1923264132/iec60870_PM.o ../../include_program/service_iec60870/iec60870_PM.cpp
+
 ${OBJECTDIR}/_ext/1923264132/iec60870_protocol.o: ../../include_program/service_iec60870/iec60870_protocol.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1923264132
 	${RM} $@.d
 	$(COMPILE.cc) -O2 -DBOOST_ASIO_ENABLE_CANCELIO -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1923264132/iec60870_protocol.o ../../include_program/service_iec60870/iec60870_protocol.cpp
-
-${OBJECTDIR}/_ext/1923264132/iec60870ioclient.o: ../../include_program/service_iec60870/iec60870ioclient.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1923264132
-	${RM} $@.d
-	$(COMPILE.cc) -O2 -DBOOST_ASIO_ENABLE_CANCELIO -D_WIN32_WINNT=0x0501 -I../../include -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1923264132/iec60870ioclient.o ../../include_program/service_iec60870/iec60870ioclient.cpp
 
 ${OBJECTDIR}/_ext/1923264132/main.o: ../../include_program/service_iec60870/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1923264132
