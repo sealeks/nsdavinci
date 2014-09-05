@@ -7,60 +7,60 @@ namespace dvnci {
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
-        //////// class message_104
+        //////// class apdu_104
         /////////////////////////////////////////////////////////////////////////////////////////////////              
 
-        message_104::message_104() :
+        apdu_104::apdu_104() :
         inprogress_(false), header_(new octet_sequence()), body_(new octet_sequence()) {
             header_prepare();
         }
 
-        message_104::message_104(apcitypeU u) :
+        apdu_104::apdu_104(apcitypeU u) :
         inprogress_(false), header_(new octet_sequence()), body_(new octet_sequence()) {
             encode_header(U_type, u);
         }
 
-        message_104::message_104(tcpcounter_type rx) :
+        apdu_104::apdu_104(tcpcounter_type rx) :
         inprogress_(false), header_(new octet_sequence()), body_(new octet_sequence()) {
             encode_header(S_type, NULLu, 0, rx);
         }
 
-        message_104::message_104(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs) :
+        apdu_104::apdu_104(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs) :
         inprogress_(false), header_(new octet_sequence()), body_(new octet_sequence()) {
             encode_body(vl, cs);
             encode_header(I_type, NULLu, tx, rx);
         }
 
-        message_104::message_104(tcpcounter_type tx, tcpcounter_type rx, const asdu_body& vl) :
+        apdu_104::apdu_104(tcpcounter_type tx, tcpcounter_type rx, const asdu_body& vl) :
         inprogress_(false), header_(new octet_sequence()), body_(new octet_sequence()) {
             encode_body(vl);
             encode_header(I_type, NULLu, tx, rx);
         }
 
-        message_104::~message_104() {
+        apdu_104::~apdu_104() {
         }
 
-        message_104_ptr message_104::create() {
-            return message_104_ptr(new message_104());
+        apdu_104_ptr apdu_104::create() {
+            return apdu_104_ptr(new apdu_104());
         }
 
-        message_104_ptr message_104::create(apcitypeU u) {
-            return message_104_ptr(new message_104(u));
+        apdu_104_ptr apdu_104::create(apcitypeU u) {
+            return apdu_104_ptr(new apdu_104(u));
         }
 
-        message_104_ptr message_104::create(tcpcounter_type rx) {
-            return message_104_ptr(new message_104(rx));
+        apdu_104_ptr apdu_104::create(tcpcounter_type rx) {
+            return apdu_104_ptr(new apdu_104(rx));
         }
 
-        message_104_ptr message_104::create(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs) {
-            return message_104_ptr(new message_104(tx, rx, vl, cs));
+        apdu_104_ptr apdu_104::create(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs) {
+            return apdu_104_ptr(new apdu_104(tx, rx, vl, cs));
         }
 
-        message_104_ptr message_104::create(tcpcounter_type tx, tcpcounter_type rx, const asdu_body& vl) {
-            return message_104_ptr(new message_104(tx, rx, vl));
+        apdu_104_ptr apdu_104::create(tcpcounter_type tx, tcpcounter_type rx, const asdu_body& vl) {
+            return apdu_104_ptr(new apdu_104(tx, rx, vl));
         }
 
-        size_t message_104::body_length() const {
+        size_t apdu_104::body_length() const {
             size_t bl = 0;
             if (header().size() == apci_length) {
                 if (header()[0] == FC_START104) {
@@ -74,7 +74,7 @@ namespace dvnci {
             return 0;
         }
 
-        message_104::apcitype message_104::type() const {
+        apdu_104::apcitype apdu_104::type() const {
             if (header().size() < apci_length)
                 return Null_type;
             octet_sequence::value_type mk = header()[2];
@@ -85,7 +85,7 @@ namespace dvnci {
             return S_type;
         }
 
-        message_104::apcitypeU message_104::typeU() const {
+        apdu_104::apcitypeU apdu_104::typeU() const {
             if (header().size() < apci_length)
                 return NULLu;
             octet_sequence::value_type mk = header()[2];
@@ -105,32 +105,32 @@ namespace dvnci {
             return NULLu;
         }
 
-        tcpcounter_type message_104::tx() const {
+        tcpcounter_type apdu_104::tx() const {
             if (header().size() < apci_length)
                 return 0;
             return (((* reinterpret_cast<const tcpcounter_type*> (&header()[2])) >> 1) & 0x7FFF);
         }
 
-        tcpcounter_type message_104::rx() const {
+        tcpcounter_type apdu_104::rx() const {
             if (header().size() < apci_length)
                 return 0;
             return (((* reinterpret_cast<const tcpcounter_type*> (&header()[4])) >> 1) & 0x7FFF);
         }
 
-        octet_sequence& message_104::header_prepare() {
+        octet_sequence& apdu_104::header_prepare() {
             header().clear();
             header().assign(apci_length, 0);
             return header();
         }
 
-        octet_sequence& message_104::body_prepare() {
+        octet_sequence& apdu_104::body_prepare() {
             body().clear();
             if (body_length())
                 body().assign(body_length(), 0);
             return body();
         }
 
-        bool message_104::get(dataobject_vct& rslt) {
+        bool apdu_104::get(dataobject_vct& rslt) {
             if (body_) {
                 asdu_body asdu(body_);
                 return asdu.get(rslt);
@@ -138,7 +138,7 @@ namespace dvnci {
             return false;
         }
 
-        void message_104::encode_header(apcitype tp, apcitypeU tpu, tcpcounter_type tx, tcpcounter_type rx) {
+        void apdu_104::encode_header(apcitype tp, apcitypeU tpu, tcpcounter_type tx, tcpcounter_type rx) {
             header().clear();
             unum8 tmp_length = body().size() + 4;
             header().push_back(FC_START104);
@@ -206,7 +206,7 @@ namespace dvnci {
             }
         }
 
-        void message_104::encode_body(const dataobject& vl, cause_type cs) {
+        void apdu_104::encode_body(const dataobject& vl, cause_type cs) {
             body().clear();
             type_id tmptype = vl.type();
             body().push_back(tmptype);
@@ -220,7 +220,7 @@ namespace dvnci {
             body().insert(body().end(), vl.data().begin(), vl.data().end());
         }
 
-        void message_104::encode_body(const asdu_body& vl) {
+        void apdu_104::encode_body(const asdu_body& vl) {
             body_ = vl.body_ptr();
         }
         
@@ -292,7 +292,7 @@ namespace dvnci {
             if (!err) {
                 tmout_timer.cancel();
                 pmstate(noaciveted);
-                send(message_104::STARTDTact);
+                send(apdu_104::STARTDTact);
             } else
                 if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator()) {
                 socket_.close();
@@ -305,14 +305,14 @@ namespace dvnci {
             }
         }
 
-        void iec60870_104PM::handle_request(const boost::system::error_code& error, message_104_ptr req) {
+        void iec60870_104PM::handle_request(const boost::system::error_code& error, apdu_104_ptr req) {
             if (!error)
                 check_work_available();
             else
                 terminate();
         }
 
-        void iec60870_104PM::handle_response(const boost::system::error_code& error, message_104_ptr resp) {
+        void iec60870_104PM::handle_response(const boost::system::error_code& error, apdu_104_ptr resp) {
             if (!error) {
                 parse_response(resp);
             } else
@@ -333,26 +333,26 @@ namespace dvnci {
 
         
         void iec60870_104PM::send(const asdu_body& asdu) {
-            send(message_104::create(tx_++, rx_, asdu));
+            send(apdu_104::create(tx_++, rx_, asdu));
         }
 
-        void iec60870_104PM::send(message_104_ptr msg) {
-            if (msg->type() == message_104::I_type)
+        void iec60870_104PM::send(apdu_104_ptr msg) {
+            if (msg->type() == apdu_104::I_type)
                 sended_.push_back(msg);
             async_request(
                     boost::bind(&iec60870_104PM::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred),
                     msg);
         }
 
-        void iec60870_104PM::send(message_104::apcitypeU u) {
+        void iec60870_104PM::send(apdu_104::apcitypeU u) {
             async_request(
                     boost::bind(&iec60870_104PM::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred),
-                    message_104::create(u));
+                    apdu_104::create(u));
         }
 
         void iec60870_104PM::send(tcpcounter_type cnt) {
             async_request(
-                    boost::bind(&iec60870_104PM::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), message_104::create(cnt));
+                    boost::bind(&iec60870_104PM::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), apdu_104::create(cnt));
         }
         
         void iec60870_104PM::receive() {
@@ -400,21 +400,21 @@ namespace dvnci {
             std::cout << " sended size = " << sended_.size()  << std::endl;
         }
 
-        bool iec60870_104PM::parse_response(message_104_ptr resp) {
+        bool iec60870_104PM::parse_response(apdu_104_ptr resp) {
             if (resp) {
                 switch (resp->type()) {
-                    case message_104::S_type:
+                    case apdu_104::S_type:
                     {
                         ack_tx(resp->rx());
                         break;
                     }
-                    case message_104::U_type:
+                    case apdu_104::U_type:
                     {
                         if (parse_U(resp))
                             return true;
                         break;
                     }
-                    case message_104::I_type:
+                    case apdu_104::I_type:
                     {
                         parse_data(resp);
                         if (socket_.available()) {
@@ -436,35 +436,35 @@ namespace dvnci {
         }        
         
 
-        bool iec60870_104PM::parse_U(message_104_ptr resp) {
+        bool iec60870_104PM::parse_U(apdu_104_ptr resp) {
             switch (resp->typeU()) {
-                case message_104::TESTFRact:
+                case apdu_104::TESTFRact:
                 {
-                    send(message_104::TESTFRcon);
+                    send(apdu_104::TESTFRcon);
                     return true;
                 }
-                case message_104::TESTFRcon:
+                case apdu_104::TESTFRcon:
                 {
                     return false;
                 }
-                case message_104::STARTDTact:
+                case apdu_104::STARTDTact:
                 {
-                    send(message_104::STARTDTcon);
+                    send(apdu_104::STARTDTcon);
                     pmstate(noaciveted);
                     return true;
                 }
-                case message_104::STARTDTcon:
+                case apdu_104::STARTDTcon:
                 {
                     state_ = connected;
                     pmstate(activated);
                     send(asdu_body::create_activation());
                     return true;
                 }
-                case message_104::STOPDTact:
+                case apdu_104::STOPDTact:
                 {
                     break;
                 }
-                case message_104::STOPDTcon:
+                case apdu_104::STOPDTcon:
                 {
                     
                     break;
@@ -476,7 +476,7 @@ namespace dvnci {
             return false;
         }
 
-        bool iec60870_104PM::parse_data(message_104_ptr resp) {
+        bool iec60870_104PM::parse_data(apdu_104_ptr resp) {
             set_rx(resp->tx());
             ack_tx(resp->rx());
             dataobject_vct rslt;
