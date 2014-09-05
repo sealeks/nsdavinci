@@ -12,6 +12,8 @@
 
 namespace dvnci {
     namespace prot80670 {
+        
+        typedef boost::uint16_t tcpcounter_type;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// class apdu_104
@@ -145,7 +147,16 @@ namespace dvnci {
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// iec60870_104PM
-        /////////////////////////////////////////////////////////////////////////////////////////////////        
+        /////////////////////////////////////////////////////////////////////////////////////////////////  
+        
+        const std::size_t PM_104_T0= 30;
+        const std::size_t PM_104_T1= 15; 
+        const std::size_t PM_104_T2= 10;
+        const std::size_t PM_104_T3= 20-2;
+        
+        const tcpcounter_type PM_104_K=12;
+        const tcpcounter_type PM_104_W=8;        
+        
 
         class iec60870_104PM : public iec60870_PM {
 
@@ -171,9 +182,7 @@ namespace dvnci {
 
             void handle_request(const boost::system::error_code& error, apdu_104_ptr req);
 
-            void handle_response(const boost::system::error_code& error, apdu_104_ptr resp);
-
-            void handle_timout_expire(const boost::system::error_code& err);            
+            void handle_response(const boost::system::error_code& error, apdu_104_ptr resp);          
             
             void handle_short_timout_expire(const boost::system::error_code& err);             
             
@@ -335,12 +344,51 @@ namespace dvnci {
             }
       
         private:
+            
+            tcpcounter_type w() const {
+                return w_;
+            }
+            
+            bool  w_expire() const {
+                return w_>=w_fct;
+            }            
+            
+            
+            tcpcounter_type k() const;
+            
+            bool  k_expire() const {
+                return k()>=k_fct;
+            }               
+            
+            void set_t0();
+            void cancel_t0();            
+            void handle_t0_expire(const boost::system::error_code& err);            
+            void set_t1();
+            void cancel_t1();            
+            void handle_t1_expire(const boost::system::error_code& err);   
+            void set_t2();
+            void cancel_t2();            
+            void handle_t2_expire(const boost::system::error_code& err);       
+            void set_t3();
+            void cancel_t3();             
+            void handle_t3_expire(const boost::system::error_code& err);   
+           
 
-            boost::asio::ip::tcp::socket socket_;
+            boost::asio::ip::tcp::socket socket_;           
+            boost::asio::deadline_timer t1_timer;
+            boost::asio::deadline_timer t2_timer;
+            boost::asio::deadline_timer t3_timer;   
+            bool t0_state;            
+            bool t1_state;
+            bool t2_state;
+            bool t3_state;        
             std::string host;
             std::string port;
             tcpcounter_type tx_;
             tcpcounter_type rx_;
+            tcpcounter_type w_;            
+            tcpcounter_type k_fct;
+            tcpcounter_type w_fct;            
             apdu_104_deq sended_;
 
         };

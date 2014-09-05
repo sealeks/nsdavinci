@@ -11,28 +11,28 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////              
 
         apdu_104::apdu_104() :
-         header_(new octet_sequence()), body_(new octet_sequence()) {
+        header_(new octet_sequence()), body_(new octet_sequence()) {
             header_prepare();
         }
 
         apdu_104::apdu_104(apcitypeU u) :
-         header_(new octet_sequence()), body_(new octet_sequence()) {
+        header_(new octet_sequence()), body_(new octet_sequence()) {
             encode_header(U_type, u);
         }
 
         apdu_104::apdu_104(tcpcounter_type rx) :
-         header_(new octet_sequence()), body_(new octet_sequence()) {
+        header_(new octet_sequence()), body_(new octet_sequence()) {
             encode_header(S_type, NULLu, 0, rx);
         }
 
         apdu_104::apdu_104(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs) :
-         header_(new octet_sequence()), body_(new octet_sequence()) {
+        header_(new octet_sequence()), body_(new octet_sequence()) {
             encode_body(vl, cs);
             encode_header(I_type, NULLu, tx, rx);
         }
 
         apdu_104::apdu_104(tcpcounter_type tx, tcpcounter_type rx, const asdu_body& vl) :
-         header_(new octet_sequence()), body_(new octet_sequence()) {
+        header_(new octet_sequence()), body_(new octet_sequence()) {
             encode_body(vl);
             encode_header(I_type, NULLu, tx, rx);
         }
@@ -80,7 +80,7 @@ namespace dvnci {
             octet_sequence::value_type mk = header()[2];
             if (!(header()[2]&1))
                 return I_type;
-            else if ((header()[2]&3)==3)
+            else if ((header()[2]&3) == 3)
                 return U_type;
             return S_type;
         }
@@ -223,14 +223,16 @@ namespace dvnci {
         void apdu_104::encode_body(const asdu_body& vl) {
             body_ = vl.body_ptr();
         }
-        
+
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// iec60870_104PM
         /////////////////////////////////////////////////////////////////////////////////////////////////           
 
-        iec60870_104PM::iec60870_104PM(std::string hst, std::string prt, timeouttype tmo, iec60870_data_listener_ptr listr) : 
-                    iec60870_PM(tmo, listr),socket_(io_service_), host(hst), port(prt), tx_(0), rx_(0) {
+        iec60870_104PM::iec60870_104PM(std::string hst, std::string prt, timeouttype tmo, iec60870_data_listener_ptr listr) :
+        iec60870_PM(tmo, listr), socket_(io_service_),
+        t1_timer(io_service_), t2_timer(io_service_), t3_timer(io_service_),
+        t0_state(false), t1_state(false), t2_state(false), t3_state(false), host(hst), port(prt), tx_(0), rx_(0), k_fct(PM_104_K), w_fct(PM_104_W) {
         }
 
         void iec60870_104PM::connect() {
@@ -242,21 +244,14 @@ namespace dvnci {
             boost::asio::ip::tcp::resolver resolver(io_service_);
             boost::asio::ip::tcp::resolver::query query(host.c_str(), port.c_str());
 
-            DEBUG_STR_DVNCI(START ASYNC RESOLVER)
 
             resolver.async_resolve(query,
                     boost::bind(&iec60870_104PM::handle_resolve, this,
                     boost::asio::placeholders::error,
                     boost::asio::placeholders::iterator));
 
-            DEBUG_STR_DVNCI(START ASYNC CONNECTTIMER)
-
-            tmout_timer.expires_from_now(boost::posix_time::milliseconds(timout));
-            tmout_timer.async_wait(boost::bind(
-                    &iec60870_104PM::handle_timout_expire, this,
-                    boost::asio::placeholders::error));
-
-            DEBUG_STR_DVNCI(START WAIT)
+            set_t0();
+            
             io_service_.run();
 
         }
@@ -271,9 +266,8 @@ namespace dvnci {
             state_ = disconnected;
             socket_.close();
             io_service_.stop();
-        }             
-        
-        
+        }
+
         void iec60870_104PM::handle_resolve(const boost::system::error_code& err,
                 boost::asio::ip::tcp::resolver::iterator endpoint_iterator) {
             if (!err) {
@@ -301,7 +295,7 @@ namespace dvnci {
                         boost::bind(&iec60870_104PM::handle_connect, this,
                         boost::asio::placeholders::error, ++endpoint_iterator));
             } else {
-                 terminate();               
+                terminate();
             }
         }
 
@@ -319,19 +313,11 @@ namespace dvnci {
                 terminate();
         }
 
-        void iec60870_104PM::handle_timout_expire(const boost::system::error_code& err) {
-            if (!err) {
-                terminate();
-            } else {
-               //std::cout << " expire timer error" << std::endl;
-            }
-        }
-        
-        void iec60870_104PM::handle_short_timout_expire(const boost::system::error_code& err){
-            check_work_available();   
+
+        void iec60870_104PM::handle_short_timout_expire(const boost::system::error_code& err) {
+            check_work_available();
         }
 
-        
         void iec60870_104PM::send(const asdu_body& asdu) {
             send(apdu_104::create(tx_++, rx_, asdu));
         }
@@ -339,12 +325,14 @@ namespace dvnci {
         void iec60870_104PM::send(apdu_104_ptr msg) {
             if (msg->type() == apdu_104::I_type)
                 sended_.push_back(msg);
+            set_t1();
             async_request(
                     boost::bind(&iec60870_104PM::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred),
                     msg);
         }
 
         void iec60870_104PM::send(apdu_104::apcitypeU u) {
+            set_t1();
             async_request(
                     boost::bind(&iec60870_104PM::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred),
                     apdu_104::create(u));
@@ -354,54 +342,69 @@ namespace dvnci {
             async_request(
                     boost::bind(&iec60870_104PM::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), apdu_104::create(cnt));
         }
-        
+
         void iec60870_104PM::receive() {
             async_response(
-                    boost::bind(&iec60870_104PM::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));            
-        }    
-        
+                    boost::bind(&iec60870_104PM::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+        }
+
         void iec60870_104PM::short_wait() {
             short_timer.expires_from_now(boost::posix_time::milliseconds(PM_SHORT_TIMER));
             short_timer.async_wait(boost::bind(
                     &iec60870_104PM::handle_short_timout_expire, this,
                     boost::asio::placeholders::error));
-        }               
+        }
 
         void iec60870_104PM::check_work_available() {
-            if (socket_.available()){
+            if (w_expire()) {
+                w_ = 0;
+                send(rx_ + 1);
+                return;
+            }
+            if (t2_state) {
+                t2_state = false;
+                send(rx_ + 1);
+                return;
+            }
+            if (socket_.available()) {
                 receive();
                 return;
-            }            
+            }
+            if (t3_state) {
+                t3_state = false;
+                send(apdu_104::TESTFRact);
+                return;
+            }
             {
-                THD_EXCLUSIVE_LOCK(mtx)
-                if (!waitrequestdata_.empty()) {
-                    send(asdu_body::create_polling(waitrequestdata_.back()));
-                    waitrequestdata_.pop_back();
-                    return;
+                if (!k_expire()) {
+                    THD_EXCLUSIVE_LOCK(mtx)
+                    if (!waitrequestdata_.empty()) {
+                        send(asdu_body::create_polling(waitrequestdata_.back()));
+                        waitrequestdata_.pop_back();
+                        return;
+                    }
                 }
             }
             short_wait();
         }
 
- 
-
         void iec60870_104PM::set_rx(tcpcounter_type vl) {
-            //std::cout << " set Rx = " << vl << std::endl;
             rx_ = vl;
         }
 
         void iec60870_104PM::ack_tx(tcpcounter_type vl) {
-            std::cout << " ack Tx = " << vl << std::endl;
             if (!sended_.empty()) {
                 while ((!sended_.empty()) && (sended_.front()->tx() < vl)) {
                     sended_.pop_front();
                 }
             }
-            std::cout << " sended size = " << sended_.size()  << std::endl;
+            if (sended_.empty())
+                cancel_t1();               
         }
 
         bool iec60870_104PM::parse_response(apdu_104_ptr resp) {
-            if (resp) {
+            if (resp) {              
+                set_t3();
                 switch (resp->type()) {
                     case apdu_104::S_type:
                     {
@@ -410,19 +413,16 @@ namespace dvnci {
                     }
                     case apdu_104::U_type:
                     {
+                        cancel_t1(); 
                         if (parse_U(resp))
                             return true;
                         break;
                     }
                     case apdu_104::I_type:
-                    {
+                    {                        
+                        set_t2();
                         parse_data(resp);
-                        if (socket_.available()) {
-                            break;
-                        } else {
-                            send(rx_ + 1);
-                            return true;
-                        }
+                        w_++;
                         break;
                     }
                     default:
@@ -433,8 +433,7 @@ namespace dvnci {
                 return true;
             }
             return false;
-        }        
-        
+        }
 
         bool iec60870_104PM::parse_U(apdu_104_ptr resp) {
             switch (resp->typeU()) {
@@ -466,7 +465,7 @@ namespace dvnci {
                 }
                 case apdu_104::STOPDTcon:
                 {
-                    
+
                     break;
                 }
                 default:
@@ -490,6 +489,96 @@ namespace dvnci {
                     lstnr->execute60870(rslt);
             }
             return true;
+        }
+
+        tcpcounter_type iec60870_104PM::k() const {
+            return sended_.size();
+        }
+        
+        void iec60870_104PM::set_t0() {
+            tmout_timer.cancel();
+            t0_state = false;
+            tmout_timer.expires_from_now(boost::posix_time::milliseconds(timout));
+            tmout_timer.async_wait(boost::bind(
+                    &iec60870_104PM::handle_t0_expire, this,
+                    boost::asio::placeholders::error));
+        }
+
+        void iec60870_104PM::cancel_t0() {
+            tmout_timer.cancel();
+        }
+
+        void iec60870_104PM::handle_t0_expire(const boost::system::error_code& err) {
+            if (!err) {
+                terminate();
+            } else {
+                t0_state = false;
+            }
+        }        
+
+        void iec60870_104PM::set_t1() {
+            t1_timer.cancel();
+            t1_state = false;
+            t1_timer.expires_from_now(boost::posix_time::seconds(PM_104_T1));
+            t1_timer.async_wait(boost::bind(
+                    &iec60870_104PM::handle_t1_expire, this,
+                    boost::asio::placeholders::error));
+        }
+
+        void iec60870_104PM::cancel_t1() {
+            t1_timer.cancel();
+        }
+
+        void iec60870_104PM::handle_t1_expire(const boost::system::error_code& err) {
+            if (!err) {
+                terminate();
+            } else {
+                t1_state = false;
+            }
+        }
+
+        void iec60870_104PM::set_t2() {
+            t2_timer.cancel();
+            t2_state = false;
+            t2_timer.expires_from_now(boost::posix_time::seconds(PM_104_T2));
+            t2_timer.async_wait(boost::bind(
+                    &iec60870_104PM::handle_t2_expire, this,
+                    boost::asio::placeholders::error));
+        }
+        
+        
+        void iec60870_104PM::cancel_t2() {
+            t2_timer.cancel();
+        }                
+
+        void iec60870_104PM::handle_t2_expire(const boost::system::error_code& err) {
+            if (!err) {
+                t2_state = true;
+            } else {
+                t2_state = false;
+            }
+        }
+
+        void iec60870_104PM::set_t3() {
+            t3_timer.cancel();
+            t3_state = false;
+            t3_timer.expires_from_now(boost::posix_time::seconds(PM_104_T3));
+            t3_timer.async_wait(boost::bind(
+                    &iec60870_104PM::handle_t3_expire, this,
+                    boost::asio::placeholders::error));
+        }
+        
+        
+        void iec60870_104PM::cancel_t3() {
+            t3_timer.cancel();
+        }                
+
+        void iec60870_104PM::handle_t3_expire(const boost::system::error_code& err) {
+            if (!err) {
+                t3_state = true;
+            } else {
+                t3_state = false;
+            }
         }
 
 
