@@ -17,7 +17,7 @@
 #include <kernel/interface_proccesstmpl.h>
 #include <kernel/extintf_wraper.h>
 
-#include "iec60870ioclient.h"
+#include "iec60870_PM.h"
 
 namespace dvnci {
 
