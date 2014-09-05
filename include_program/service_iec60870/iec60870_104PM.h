@@ -345,20 +345,16 @@ namespace dvnci {
       
         private:
             
-            tcpcounter_type w() const {
-                return w_;
+            tcpcounter_type k() const {
+                return k_;
             }
             
-            bool  w_expire() const {
-                return w_>=w_fct;
+            bool  k_expire() const {
+                return k_>=k_fct;
             }            
             
-            
-            tcpcounter_type k() const;
-            
-            bool  k_expire() const {
-                return k()>=k_fct;
-            }               
+          
+            bool  w_expire() const;    
             
             void set_t0();
             void cancel_t0();            
@@ -386,7 +382,7 @@ namespace dvnci {
             std::string port;
             tcpcounter_type tx_;
             tcpcounter_type rx_;
-            tcpcounter_type w_;            
+            tcpcounter_type k_;            
             tcpcounter_type k_fct;
             tcpcounter_type w_fct;            
             apdu_104_deq sended_;
