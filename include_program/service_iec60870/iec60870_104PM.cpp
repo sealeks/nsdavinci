@@ -233,7 +233,7 @@ namespace dvnci {
         iec60870_PM(tmo, listr), socket_(io_service_),
         t1_timer(io_service_), t2_timer(io_service_), t3_timer(io_service_),
         t0_state(false), t1_state(false), t2_state(false), t3_state(false), 
-                host(hst), port(prt), tx_(0), rx_(0), k_(0), k_fct(PM_104_K), w_fct(PM_104_W) {
+                host(hst), port(prt), tx_(0), rx_(0), w_(0), k_fct(PM_104_K), w_fct(PM_104_W) {
         }
 
         void iec60870_104PM::connect() {
@@ -355,8 +355,8 @@ namespace dvnci {
         }
 
         void iec60870_104PM::check_work_available() {
-            if (k_expire()) {
-                k_ = 0;
+            if (w_expire()) {
+                w_ = 0;
                 send(rx_ + 1);
                 return;
             }
@@ -375,7 +375,7 @@ namespace dvnci {
                 return;
             }
             {
-                if (!w_expire()) {
+                if (!k_expire()) {
                     THD_EXCLUSIVE_LOCK(mtx)
                     if (!waitrequestdata_.empty()) {
                         send(asdu_body::create_polling(waitrequestdata_.back()));
@@ -393,9 +393,18 @@ namespace dvnci {
 
         void iec60870_104PM::ack_tx(tcpcounter_type vl) {
             if (!sended_.empty()) {
+                /*std::size_t tstsz=sended_.size();
+                if ((!sended_.empty()) && (in_rx_range(sended_.front()->tx(), vl)))
+                    std::cout << "tx=" << sended_.front()->tx() << " vl=" << vl << std::endl;*/
                 while ((!sended_.empty()) && (in_rx_range(sended_.front()->tx(), vl))) {
                     sended_.pop_front();
                 }
+                /*if (!sended_.empty()){
+                    std::cout << "sended not empty aftre clear: " <<  " clear cnt: "  << (tstsz-sended_.size()) << " : ";
+                    for (apdu_104_deq::iterator it=sended_.begin(); it!=sended_.end();++it)
+                       std::cout << "  " <<  (*it)->tx();
+                   std::cout << std::endl;                   
+                }*/
             }
             if (sended_.empty())
                 cancel_t1();
@@ -421,7 +430,7 @@ namespace dvnci {
                     {
                         set_t2();
                         parse_data(resp);
-                        k_++;
+                        w_++;
                         break;
                     }
                     default:
@@ -489,18 +498,18 @@ namespace dvnci {
         }
 
         tcpcounter_type iec60870_104PM::inc_tx() {
-            return (tx_ <= PM_104_MODULO) ? (tx_++) : (tx_ = 0);
+            return (tx_ < PM_104_MODULO) ? (tx_++) : (tx_ = 0);
         }
 
-        bool iec60870_104PM::in_rx_range(tcpcounter_type vl, tcpcounter_type rx) {
-            if((rx>k_fct) || (vl<rx))
-                return vl<rx;
+        bool iec60870_104PM::in_rx_range(tcpcounter_type inlist_vl, tcpcounter_type confirmed_rx) {
+            if ((confirmed_rx>k_fct) || (inlist_vl<confirmed_rx))
+                return  inlist_vl<confirmed_rx;
             else
-                return vl>(PM_104_MODULO-(k_fct-rx));
+                return inlist_vl>=(PM_104_MODULO-(k_fct-confirmed_rx));
         }
 
-        bool iec60870_104PM::w_expire() const {
-            return sended_.size() >= w_fct;
+        bool iec60870_104PM::k_expire() const {
+            return sended_.size() >= k_fct;
         }
 
         void iec60870_104PM::set_t0() {
