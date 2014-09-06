@@ -155,7 +155,8 @@ namespace dvnci {
         const std::size_t PM_104_T3= 20-2;
         
         const tcpcounter_type PM_104_K=12;
-        const tcpcounter_type PM_104_W=8;        
+        const tcpcounter_type PM_104_W=8;    
+        const tcpcounter_type PM_104_MODULO=0x7FFF;         
         
 
         class iec60870_104PM : public iec60870_PM {
@@ -352,8 +353,9 @@ namespace dvnci {
             bool  k_expire() const {
                 return k_>=k_fct;
             }            
-            
-          
+
+            tcpcounter_type inc_tx();
+            bool in_rx_range(tcpcounter_type vl, tcpcounter_type rx);            
             bool  w_expire() const;    
             
             void set_t0();
