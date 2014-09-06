@@ -15,6 +15,8 @@ namespace dvnci {
         
         typedef boost::uint16_t tcpcounter_type;
 
+
+
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// class apdu_104
         /////////////////////////////////////////////////////////////////////////////////////////////////           
@@ -156,7 +158,10 @@ namespace dvnci {
         
         const tcpcounter_type PM_104_K=12;
         const tcpcounter_type PM_104_W=8;    
-        const tcpcounter_type PM_104_MODULO=0x7FFF;         
+        const tcpcounter_type PM_104_MODULO=0x8000;         
+
+        BOOST_STATIC_ASSERT(sizeof (tcpcounter_type) == 2);
+        BOOST_STATIC_ASSERT(!std::numeric_limits<tcpcounter_type>::is_signed);        
         
 
         class iec60870_104PM : public iec60870_PM {
@@ -346,17 +351,17 @@ namespace dvnci {
       
         private:
             
-            tcpcounter_type k() const {
-                return k_;
+            tcpcounter_type w() const {
+                return w_;
             }
             
-            bool  k_expire() const {
-                return k_>=k_fct;
+            bool  w_expire() const {
+                return w_>=w_fct;
             }            
 
             tcpcounter_type inc_tx();
-            bool in_rx_range(tcpcounter_type vl, tcpcounter_type rx);            
-            bool  w_expire() const;    
+            bool in_rx_range(tcpcounter_type inlist_vl, tcpcounter_type confirmed_rx);            
+            bool  k_expire() const;    
             
             void set_t0();
             void cancel_t0();            
@@ -384,7 +389,7 @@ namespace dvnci {
             std::string port;
             tcpcounter_type tx_;
             tcpcounter_type rx_;
-            tcpcounter_type k_;            
+            tcpcounter_type w_;            
             tcpcounter_type k_fct;
             tcpcounter_type w_fct;            
             apdu_104_deq sended_;
