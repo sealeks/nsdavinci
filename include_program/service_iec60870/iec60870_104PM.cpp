@@ -232,8 +232,8 @@ namespace dvnci {
         iec60870_104PM::iec60870_104PM(std::string hst, std::string prt, timeouttype tmo, iec60870_data_listener_ptr listr) :
         iec60870_PM(tmo, listr), socket_(io_service_),
         t1_timer(io_service_), t2_timer(io_service_), t3_timer(io_service_),
-        t0_state(false), t1_state(false), t2_state(false), t3_state(false), 
-                host(hst), port(prt), tx_(0), rx_(0), w_(0), k_fct(PM_104_K), w_fct(PM_104_W) {
+        t0_state(false), t1_state(false), t1_progress(false), t2_state(false), t2_progress(false), t3_state(false),
+        host(hst), port(prt), tx_(0), rx_(0), w_(0), k_fct(PM_104_K), w_fct(PM_104_W) {
         }
 
         void iec60870_104PM::connect() {
@@ -325,19 +325,27 @@ namespace dvnci {
         void iec60870_104PM::send(apdu_104_ptr msg) {
             if (msg->type() == apdu_104::I_type)
                 sended_.push_back(msg);
-            set_t1();
+            reset_t1();
+            reset_t3();
+            cancel_t2();
             async_request(
                     boost::bind(&iec60870_104PM::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred),
                     msg);
         }
 
         void iec60870_104PM::send(apdu_104::apcitypeU u) {
+            if ((u == apdu_104::STARTDTact) || (u == apdu_104::STOPDTact) || (apdu_104::TESTFRact))
+                reset_t1();
+            reset_t3();
+            cancel_t2();
             async_request(
                     boost::bind(&iec60870_104PM::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred),
                     apdu_104::create(u));
         }
 
         void iec60870_104PM::send(tcpcounter_type cnt) {
+            cancel_t2();
+            reset_t3();
             async_request(
                     boost::bind(&iec60870_104PM::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred), apdu_104::create(cnt));
         }
@@ -362,6 +370,7 @@ namespace dvnci {
             }
             if (t2_state) {
                 t2_state = false;
+                w_ = 0;
                 send(rx_ + 1);
                 return;
             }
@@ -384,35 +393,28 @@ namespace dvnci {
                     }
                 }
             }
+            set_t3();
             short_wait();
         }
 
         void iec60870_104PM::set_rx(tcpcounter_type vl) {
-            rx_ = vl;
+            if (((rx_ + 1) % PM_104_MODULO) != vl) {
+                set_t1();
+            } else
+                rx_ = vl;
         }
 
         void iec60870_104PM::ack_tx(tcpcounter_type vl) {
             if (!sended_.empty()) {
-                /*std::size_t tstsz=sended_.size();
-                if ((!sended_.empty()) && (in_rx_range(sended_.front()->tx(), vl)))
-                    std::cout << "tx=" << sended_.front()->tx() << " vl=" << vl << std::endl;*/
-                while ((!sended_.empty()) && (in_rx_range(sended_.front()->tx(), vl))) {
+                while ((!sended_.empty()) && (in_rx_range(sended_.front()->tx(), vl)))
                     sended_.pop_front();
-                }
-                /*if (!sended_.empty()){
-                    std::cout << "sended not empty aftre clear: " <<  " clear cnt: "  << (tstsz-sended_.size()) << " : ";
-                    for (apdu_104_deq::iterator it=sended_.begin(); it!=sended_.end();++it)
-                       std::cout << "  " <<  (*it)->tx();
-                   std::cout << std::endl;                   
-                }*/
             }
-            if (sended_.empty())
-                cancel_t1();
         }
 
         bool iec60870_104PM::parse_response(apdu_104_ptr resp) {
             if (resp) {
-                set_t3();
+                cancel_t1();
+                reset_t3();
                 switch (resp->type()) {
                     case apdu_104::S_type:
                     {
@@ -421,14 +423,13 @@ namespace dvnci {
                     }
                     case apdu_104::U_type:
                     {
-                        cancel_t1();
                         if (parse_U(resp))
                             return true;
                         break;
                     }
                     case apdu_104::I_type:
                     {
-                        set_t2();
+                        reset_t2();
                         parse_data(resp);
                         w_++;
                         break;
@@ -502,10 +503,10 @@ namespace dvnci {
         }
 
         bool iec60870_104PM::in_rx_range(tcpcounter_type inlist_vl, tcpcounter_type confirmed_rx) {
-            if ((confirmed_rx>k_fct) || (inlist_vl<confirmed_rx))
-                return  inlist_vl<confirmed_rx;
+            if ((confirmed_rx > k_fct) || (inlist_vl < confirmed_rx))
+                return inlist_vl < confirmed_rx;
             else
-                return inlist_vl>=(PM_104_MODULO-(k_fct-confirmed_rx));
+                return inlist_vl >= (PM_104_MODULO - (k_fct - confirmed_rx));
         }
 
         bool iec60870_104PM::k_expire() const {
@@ -513,6 +514,7 @@ namespace dvnci {
         }
 
         void iec60870_104PM::set_t0() {
+            std::cout << "set t0 " << std::endl;
             tmout_timer.cancel();
             t0_state = false;
             tmout_timer.expires_from_now(boost::posix_time::milliseconds(timout));
@@ -522,79 +524,108 @@ namespace dvnci {
         }
 
         void iec60870_104PM::cancel_t0() {
+            std::cout << "cancel t0" << std::endl;
             tmout_timer.cancel();
         }
 
         void iec60870_104PM::handle_t0_expire(const boost::system::error_code& err) {
             if (!err) {
+                std::cout << "exp t0 = terminate " << std::endl;
                 terminate();
             } else {
                 t0_state = false;
             }
         }
 
-        void iec60870_104PM::set_t1() {
+        void iec60870_104PM::reset_t1() {
             t1_timer.cancel();
             t1_state = false;
+            t1_progress = true;
             t1_timer.expires_from_now(boost::posix_time::seconds(PM_104_T1));
             t1_timer.async_wait(boost::bind(
                     &iec60870_104PM::handle_t1_expire, this,
                     boost::asio::placeholders::error));
         }
 
+        void iec60870_104PM::set_t1() {
+            if (!t1_progress)
+                reset_t1();
+        }
+
         void iec60870_104PM::cancel_t1() {
             t1_timer.cancel();
+            t1_progress = false;
         }
 
         void iec60870_104PM::handle_t1_expire(const boost::system::error_code& err) {
             if (!err) {
+                std::cout << "exp t1  = terminate" << std::endl;
                 terminate();
             } else {
                 t1_state = false;
             }
         }
 
-        void iec60870_104PM::set_t2() {
+        void iec60870_104PM::reset_t2() {
             t2_timer.cancel();
             t2_state = false;
+            t2_progress = true;
             t2_timer.expires_from_now(boost::posix_time::seconds(PM_104_T2));
             t2_timer.async_wait(boost::bind(
                     &iec60870_104PM::handle_t2_expire, this,
                     boost::asio::placeholders::error));
         }
 
+        void iec60870_104PM::set_t2() {
+            if (!t2_progress)
+                reset_t2();
+        }
+
         void iec60870_104PM::cancel_t2() {
             t2_timer.cancel();
+            t2_progress = false;
         }
 
         void iec60870_104PM::handle_t2_expire(const boost::system::error_code& err) {
             if (!err) {
+                std::cout << "exp t2 " << std::endl;
                 t2_state = true;
+                t2_progress = false;
             } else {
                 t2_state = false;
             }
         }
 
-        void iec60870_104PM::set_t3() {
+        void iec60870_104PM::reset_t3() {
             t3_timer.cancel();
             t3_state = false;
+            t3_progress = true;
             t3_timer.expires_from_now(boost::posix_time::seconds(PM_104_T3));
             t3_timer.async_wait(boost::bind(
                     &iec60870_104PM::handle_t3_expire, this,
                     boost::asio::placeholders::error));
         }
 
+        void iec60870_104PM::set_t3() {
+            if (!t3_progress)
+                reset_t3();
+        }
+
         void iec60870_104PM::cancel_t3() {
             t3_timer.cancel();
+            t3_progress = false;
         }
 
         void iec60870_104PM::handle_t3_expire(const boost::system::error_code& err) {
             if (!err) {
+                std::cout << "exp t3 " << std::endl;
                 t3_state = true;
+                t3_progress = false;
             } else {
                 t3_state = false;
             }
         }
+
 
 
 
