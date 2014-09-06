@@ -232,7 +232,8 @@ namespace dvnci {
         iec60870_104PM::iec60870_104PM(std::string hst, std::string prt, timeouttype tmo, iec60870_data_listener_ptr listr) :
         iec60870_PM(tmo, listr), socket_(io_service_),
         t1_timer(io_service_), t2_timer(io_service_), t3_timer(io_service_),
-        t0_state(false), t1_state(false), t2_state(false), t3_state(false), host(hst), port(prt), tx_(0), rx_(0), k_fct(PM_104_K), w_fct(PM_104_W) {
+        t0_state(false), t1_state(false), t2_state(false), t3_state(false), 
+                host(hst), port(prt), tx_(0), rx_(0), k_(0), k_fct(PM_104_K), w_fct(PM_104_W) {
         }
 
         void iec60870_104PM::connect() {
@@ -318,7 +319,7 @@ namespace dvnci {
         }
 
         void iec60870_104PM::send(const asdu_body& asdu) {
-            send(apdu_104::create(tx_++, rx_, asdu));
+            send(apdu_104::create(inc_tx(), rx_, asdu));
         }
 
         void iec60870_104PM::send(apdu_104_ptr msg) {
@@ -331,7 +332,6 @@ namespace dvnci {
         }
 
         void iec60870_104PM::send(apdu_104::apcitypeU u) {
-            set_t1();
             async_request(
                     boost::bind(&iec60870_104PM::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred),
                     apdu_104::create(u));
@@ -393,7 +393,7 @@ namespace dvnci {
 
         void iec60870_104PM::ack_tx(tcpcounter_type vl) {
             if (!sended_.empty()) {
-                while ((!sended_.empty()) && (sended_.front()->tx() < vl)) {
+                while ((!sended_.empty()) && (in_rx_range(sended_.front()->tx(), vl))) {
                     sended_.pop_front();
                 }
             }
@@ -488,9 +488,20 @@ namespace dvnci {
             return true;
         }
 
+        tcpcounter_type iec60870_104PM::inc_tx() {
+            return (tx_ <= PM_104_MODULO) ? (tx_++) : (tx_ = 0);
+        }
+
+        bool iec60870_104PM::in_rx_range(tcpcounter_type vl, tcpcounter_type rx) {
+            if((rx>k_fct) || (vl<rx))
+                return vl<rx;
+            else
+                return vl>(PM_104_MODULO-(k_fct-rx));
+        }
+
         bool iec60870_104PM::w_expire() const {
             return sended_.size() >= w_fct;
-        }     
+        }
 
         void iec60870_104PM::set_t0() {
             tmout_timer.cancel();
