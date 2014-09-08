@@ -81,22 +81,13 @@ namespace dvnci {
 
         ns_error extiec60870intf::disconnect_impl() {
             try {
-                disconnect_util();
-                if ((thread_io) && (thread_io->pm()->state() == dvnci::prot80670::iec60870_104PM::connected)) {
-                    //thread_io->disconnect();                
-                    state_ = disconnected;
-                    /*if (remintf->isconnected()) {
-                        remintf->disconnect();
-                        remintf.reset();
-                        return error(0);
-                    }*/
+                if (thread_io) {
+                    thread_io->pm()->disconnect();
+                    thread_io->join();
                 }
             } catch (...) {
-                if (thread_io)
-                thread_io.reset();
-                state_ = disconnected;
             }
-            state_ = disconnected;
+            kill_pm();
             return error(0);
         }
 

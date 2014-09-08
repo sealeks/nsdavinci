@@ -379,7 +379,7 @@ namespace dvnci {
 
             enum PMState {
 
-                noconnected, noaciveted, activated
+                noconnected, noaciveted, activated, todisconnect
             };
 
             iec60870_PM(timeouttype tmo, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
@@ -432,6 +432,7 @@ namespace dvnci {
             volatile State state_;
             volatile PMState pmstate_;
             timeouttype timout;
+            bool need_disconnect_;            
 
             iec60870_data_listener_wptr listener_;
             boost::mutex mtx;
