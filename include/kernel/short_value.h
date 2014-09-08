@@ -106,6 +106,14 @@ namespace dvnci {
             tmp.error(err);
             return tmp;
         }
+        
+        template<typename T>
+                static short_value create_timed(T val, vlvtype vld = FULL_VALID, ns_error err=0) {
+            short_value tmp(val);
+            tmp.valid(vld);
+            tmp.error(err);
+            return tmp;
+        }        
 
         template <typename T >
                 T value() const {
