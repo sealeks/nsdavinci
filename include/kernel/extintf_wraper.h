@@ -345,7 +345,7 @@ namespace dvnci {
             void disconnect_util() {
                 {
                     THD_COND_EXCLUSIVE_LOCK(needsync(), *mtx);
-                    need_add_set.clear();
+                    //need_add_set.clear();
                     for (tag_const_iterator it = simple_req_map.right.begin(); it != simple_req_map.right.end(); ++it) {
                         need_remove_set.insert(it->second);
                         need_add_set.insert(it->first);

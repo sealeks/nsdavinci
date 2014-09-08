@@ -20,7 +20,7 @@ namespace dvnci {
 
         typedef boost::shared_ptr<std::string> string_ptr;
 
-        short_value() : value_(num64_cast<double > (NULL_DOUBLE)), valid_(0), time_(castnum64_from_datetime(nill_time)), type_(0), error_(ERROR_TAGNOEXIST) {
+        short_value() : value_(num64_cast<double > (NULL_DOUBLE)), valid_(0), time_(castnum64_from_datetime(nill_time)), type_(0), error_(ERROR_NODATA) {
         }
 
         short_value(num64 val, tagtype tp, vlvtype vld = FULL_VALID, ns_error err = 0, const datetime& tm = nill_time) :
@@ -31,47 +31,47 @@ namespace dvnci {
         value_(static_cast<num64> (val)), valid_(FULL_VALID), time_(0), type_(TYPE_DISCRET), error_(0) {
         };
 
-        short_value(num64 val) :
+        short_value(const num64& val) :
         value_(num64_cast<num64 > (val)), valid_(FULL_VALID), time_(0), type_(TYPE_NUM64), error_(0) {
         };
 
-        short_value(unum64 val) :
+        short_value(const unum64& val) :
         value_(num64_cast<unum64 > (val)), valid_(FULL_VALID), time_(0), type_(TYPE_UNUM64), error_(0) {
         };
 
-        short_value(num32 val) :
+        short_value(const num32& val) :
         value_(num64_cast<num32 > (val)), valid_(FULL_VALID), time_(0), type_(TYPE_NUM32), error_(0) {
         };
 
-        short_value(unum32 val) :
+        short_value(const unum32& val) :
         value_(num64_cast<unum32 > (val)), valid_(FULL_VALID), time_(0), type_(TYPE_UNUM32), error_(0) {
         };
 
-        short_value(num16 val) :
+        short_value(const num16& val) :
         value_(num64_cast<num16 > (val)), valid_(FULL_VALID), time_(0), type_(TYPE_NUM16), error_(0) {
         };
 
-        short_value(unum16 val) :
+        short_value(const unum16& val) :
         value_(num64_cast<unum16 > (val)), valid_(FULL_VALID), time_(0), type_(TYPE_UNUM16), error_(0) {
         };
 
-        short_value(num8 val) :
+        short_value(const num8& val) :
         value_(num64_cast<num8 > (val)), valid_(FULL_VALID), time_(0), type_(TYPE_NUM8), error_(0) {
         };
 
-        short_value(unum8 val) :
+        short_value(const unum8& val) :
         value_(num64_cast<unum8 > (val)), valid_(FULL_VALID), time_(0), type_(TYPE_UNUM8), error_(0) {
         };
 
-        short_value(float val) :
+        short_value(const float& val) :
         value_(num64_cast<float> (val)), valid_(FULL_VALID), time_(0), type_(TYPE_FLOAT), error_(0) {
         };
 
-        short_value(double val) :
+        short_value(const double& val) :
         value_(num64_cast<double> (val)), valid_(FULL_VALID), time_(0), type_(TYPE_DOUBLE), error_(0) {
         };
 
-        short_value(double val, datetime dtm) :
+        short_value(const double& val, const datetime& dtm) :
         value_(num64_cast<double> (val)), valid_(FULL_VALID), time_(0), type_(TYPE_DOUBLE), error_(0) {
             time(dtm);
         };
@@ -99,10 +99,11 @@ namespace dvnci {
         }
 
         template<typename T>
-                static short_value create_timed(T val, const datetime & tm, vlvtype vld = FULL_VALID) {
+                static short_value create_timed(T val, const datetime & tm, vlvtype vld = FULL_VALID, ns_error err=0) {
             short_value tmp(val);
             tmp.valid(vld);
             tmp.time(tm);
+            tmp.error(err);
             return tmp;
         }
 
