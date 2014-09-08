@@ -142,6 +142,8 @@ namespace dvnci {
     const ns_error ERROR_PROTOCOL_SEQ = 0x442;
     // ошибка при выполнении запроса с базой данных
     const ns_error ERROR_PROTOCOL_ERROR = 0x443;
+    
+    const ns_error ERROR_DATA_OUT_OF_RANGE = 0x450;    
 
     // DATABASE error
 
