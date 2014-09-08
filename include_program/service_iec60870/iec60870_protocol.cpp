@@ -411,7 +411,7 @@ namespace dvnci {
 
         iec60870_PM::iec60870_PM(timeouttype tmo, iec60870_data_listener_ptr listr) :
         io_service_(), tmout_timer(io_service_), short_timer(io_service_),
-        state_(disconnected), pmstate_(noconnected), timout(tmo), listener_(listr) {
+        state_(disconnected), pmstate_(noconnected), timout(tmo), need_disconnect_(false), listener_(listr) {
         }
 
         iec60870_PM::~iec60870_PM() {
@@ -431,7 +431,12 @@ namespace dvnci {
         }
 
         bool iec60870_PM::operator()() {
+            try{
             connect();
+            }
+            catch(...){
+                
+            }
             iec60870_data_listener_ptr lstnr = listener();
             if (lstnr)
                 lstnr->terminate60870();

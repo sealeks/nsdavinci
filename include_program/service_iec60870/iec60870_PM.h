@@ -31,6 +31,8 @@ namespace dvnci {
                     iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
 
             ~iec60870_thread();
+            
+            void join();            
 
             static iec60870_thread_ptr create(std::string host, std::string port, timeouttype tmo,
                     iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());

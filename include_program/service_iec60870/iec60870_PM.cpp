@@ -25,6 +25,11 @@ namespace dvnci {
             return iec60870_thread_ptr(new iec60870_thread(host, port, tmo, listr));
         }
 
+        void iec60870_thread::join() {
+            if (ioth)
+                ioth->join();
+        }       
+
         callable_shared_ptr<iec60870_PM>iec60870_thread::pm() const {
             return pm_;
         }

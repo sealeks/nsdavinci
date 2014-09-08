@@ -258,9 +258,7 @@ namespace dvnci {
         }
 
         void iec60870_104PM::disconnect() {
-            state_ = disconnected;
-            socket_.close();
-            io_service_.stop();
+            need_disconnect_ = true;
         }
 
         void iec60870_104PM::terminate() {
@@ -363,6 +361,13 @@ namespace dvnci {
         }
 
         void iec60870_104PM::check_work_available() {
+            if (need_disconnect_) {
+                if (pmstate() != todisconnect) {
+                    pmstate(todisconnect);
+                    send(apdu_104::STOPDTact);
+                    receive();
+                }
+                return;}
             if (w_expire()) {
                 w_ = 0;
                 send(rx_ + 1);
@@ -474,8 +479,8 @@ namespace dvnci {
                 }
                 case apdu_104::STOPDTcon:
                 {
-
-                    break;
+                    io_service_.stop();
+                    return true;
                 }
                 default:
                 {
