@@ -92,7 +92,7 @@ namespace dvnci {
             mp.insert(type_id_size_pair(8, 8)); //Bitstring of 32 bits with time-tag  4 + 1(q) + 3(ta)
             mp.insert(type_id_size_pair(9, 3)); //Measured value, normalized value 2 + 1(q)
             mp.insert(type_id_size_pair(10, 6)); //Measured value, normalized value with time-tag 2 + 1(q) + 3(ta)
-            mp.insert(type_id_size_pair(11, 3)); //Measured value, scaled value 2 + 1(q)
+            mp.insert(type_id_size_pair(M_ME_NB_1, 3)); //Measured value, scaled value 2 + 1(q)
             mp.insert(type_id_size_pair(12, 6)); //Measured value, scaled value with time-tag 2 + 1(q) + 3(ta)
             mp.insert(type_id_size_pair(13, 5)); //Measured value, short floating point value 4 + 1(q)
             mp.insert(type_id_size_pair(14, 8)); //Measured value, short floating point value with time-tag 4 + 1(q) + 3(ta)
@@ -158,11 +158,20 @@ namespace dvnci {
 
         dataobject_ptr dataobject::build_from_bind(device_address dev, std::string bind) {
             /* Name data type without _1 example M_SP_NA_1 => M_SP_NA == X_XX_XX
-                         X_XX_XXNNNNN[.B]                
+                         SSS:X_XX_XXNNNNN[.B]   
+                         SSS - ASDU Address    ex           bind 1:M_SP_NA2         
                          main templ = [CMP]_[ABSDEIMPRS][CEPTOS]_[TN][ABCDEF][0-9]{1,6}.{0,1}[0-9]{0,2}   
              */
+            upper_and_trim(bind);
+            selector_address slct=0;
+            std::string::size_type selit = bind.find(':', 0);
+            if ((selit != std::string::npos) && (selit != (bind.size() - 1))) {
+                 std::string selrdata = bind.substr(0, selit);
+                 bind=bind.substr(selit + 1);
+                 if (!dvnci::str_to(selrdata, slct))
+                     return dataobject_ptr();
+            }
             if (bind.size() > 7) {
-                upper_and_trim(bind);
                 std::string typedata = bind.substr(0, 7);
                 std::string addrdata = bind.substr(7);
                 type_id tp = find_type_id(typedata);
@@ -179,7 +188,7 @@ namespace dvnci {
                     }
                     if (!dvnci::str_to(addrdata, addr))
                         return dataobject_ptr();
-                    return dataobject_ptr(new dataobject(dev, tp, addr, bt));
+                    return dataobject_ptr(new dataobject(dev,  tp, slct, addr, bt));
                 }
             }
             return dataobject_ptr();
@@ -195,14 +204,20 @@ namespace dvnci {
         }
 
         bool operator==(const dataobject& ls, const dataobject& rs) {
-            return ((ls.devnum_ == rs.devnum_) && (ls.address_ == rs.address_) && (ls.type_ == rs.type_));
+            return ((ls.devnum_ == rs.devnum_) && (ls.selector_ == rs.selector_) &&  (ls.ioa_ == rs.ioa_) && (ls.type_ == rs.type_));
         }
 
         bool operator<(const dataobject& ls, const dataobject& rs) {
             if (ls.devnum_ == rs.devnum_) {
-                if (ls.type_ == rs.type_)
-                    return ls.address_ < rs.address_;
-                return ls.type_ < rs.type_;
+                if (ls.type_ == rs.type_) {
+                    if (ls.selector_ == rs.selector_) {
+                        return ls.ioa_ < rs.ioa_;
+                    } else {
+                        return ls.selector_ < rs.selector_;
+                    }
+                } else {
+                    return ls.type_ < rs.type_;
+                }
             }
             return ls.devnum_ < rs.devnum_;
         }
@@ -238,6 +253,10 @@ namespace dvnci {
             }
             return datetime();
         }
+
+        boost::int16_t to_int16_t(const octet_sequence& vl) {
+            return (vl.size() == 2) ? (*reinterpret_cast<const boost::int16_t *> (&vl[0])) : 0;
+        }        
 
         datetime to_datetime_3(const octet_sequence& vl) {
             try {
@@ -276,6 +295,10 @@ namespace dvnci {
                         {
                             return dvnci::short_value::create_timed<boost::uint8_t>(dt[0], to_datetime_3(octet_sequence(dt.begin() + 1, dt.end())));
                         }
+                        case M_ME_NB_1: /*11*/ //= 2 + 1(q)
+                        {
+                            return dvnci::short_value(to_int16_t(octet_sequence(dt.begin(), dt.begin()+2)));
+                        }                        
                         case M_SP_TB_1: /*30*/
                         {
                             return dvnci::short_value::create_timed<boost::uint8_t>(dt[0], to_datetime_7(octet_sequence(dt.begin() + 1, dt.end())));
@@ -300,7 +323,7 @@ namespace dvnci {
         //////// asdu_body
         /////////////////////////////////////////////////////////////////////////////////////////////////
 
-        asdu_body::asdu_body(dataobject_ptr vl, cause_type cs, bool sq, bool ngt, bool tst) : body_(new octet_sequence()) {
+       /*asdu_body::asdu_body(dataobject_ptr vl, cause_type cs, bool sq, bool ngt, bool tst) : body_(new octet_sequence()) {
             body_->reserve(MAX_ASDU_SIZE);
             dataobject_vct tmp;
             tmp.push_back(vl);
@@ -326,7 +349,7 @@ namespace dvnci {
         }
 
         asdu_body asdu_body::create_polling(dataobject_ptr ob, cause_type cs) {
-            dataobject_ptr vl(new dataobject(ob->devnum(), C_RD_NA_1, ob->address()));
+            dataobject_ptr vl(new dataobject(ob->devnum(), C_RD_NA_1, ob->ioa()));
             return asdu_body(vl, cs, false, false, false);
         }
 
@@ -388,19 +411,19 @@ namespace dvnci {
                 body().insert(body().end(), (const char*) &tmpdev, (const char*) &tmpdev + 2);
                 if (sq) {
                     for (dataobject_vct::const_iterator it = vl.begin(); it != vl.end(); ++it) {
-                        data_address tmpaddr = (*it)->address();
+                        data_address tmpaddr = (*it)->ioa();
                         body().insert(body().end(), (const char*) &tmpaddr, (const char*) &tmpaddr + 3);
                         body().insert(body().end(), (*it)->data().begin(), (*it)->data().end());
                     }
                 } else {
-                    data_address tmpaddr = hdrelm->address();
+                    data_address tmpaddr = hdrelm->ioa();
                     body().insert(body().end(), (const char*) &tmpaddr, (const char*) &tmpaddr + 3);
                     for (dataobject_vct::const_iterator it = vl.begin(); it != vl.end(); ++it) {
                         body().insert(body().end(), (*it)->data().begin(), (*it)->data().end());
                     }
                 }
             }
-        }
+        }*/
 
 
 
@@ -468,10 +491,10 @@ namespace dvnci {
         }
 
         bool iec60870_PM::read_items(const dataobject_set& cids) {
-            THD_EXCLUSIVE_LOCK(mtx)
+            /*THD_EXCLUSIVE_LOCK(mtx)
             for (dataobject_set::const_iterator it = cids.begin(); it != cids.end(); ++it)
                 if (std::find(waitrequestdata_.begin(), waitrequestdata_.end(), *it) == waitrequestdata_.end())
-                    waitrequestdata_.push_back(*it);
+                    waitrequestdata_.push_back(*it);*/
             return true;
         }        
 
@@ -480,7 +503,7 @@ namespace dvnci {
             if (lstnr) {
                 THD_EXCLUSIVE_LOCK(mtx)
                 for (dataobject_vct::const_iterator it = dt.begin(); it != dt.end(); ++it) {
-                    if (inrequestdata_.find(*it) != inrequestdata_.end())
+                    //if (inrequestdata_.find(*it) != inrequestdata_.end())
                         lstnr->execute60870(dt);
                 }
             }

@@ -19,7 +19,9 @@ namespace dvnci {
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// class apdu_104
-        /////////////////////////////////////////////////////////////////////////////////////////////////           
+        /////////////////////////////////////////////////////////////////////////////////////////////////       
+        
+        typedef asdu_body<0, 2, 2, 3> asdu_body104;
 
         const octet_sequence::value_type FC_START104 = '\x68';
         const unum32 HD104_STARTDTact = 0x0003 | 0x0004;
@@ -61,7 +63,7 @@ namespace dvnci {
 
             apdu_104(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs);
 
-            apdu_104(tcpcounter_type tx, tcpcounter_type rx, const asdu_body& vl);
+            apdu_104(tcpcounter_type tx, tcpcounter_type rx, const asdu_body104& vl);
 
             ~apdu_104();
 
@@ -73,7 +75,7 @@ namespace dvnci {
 
             static apdu_104_ptr create(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs);
 
-            static apdu_104_ptr create(tcpcounter_type tx, tcpcounter_type rx, const asdu_body& vl);
+            static apdu_104_ptr create(tcpcounter_type tx, tcpcounter_type rx, const asdu_body104& vl);
 
             octet_sequence& header() {
                 return *header_;
@@ -129,7 +131,7 @@ namespace dvnci {
 
             void encode_body(const dataobject& vl, cause_type cs);
 
-            void encode_body(const asdu_body& vl);
+            void encode_body(const asdu_body104& vl);
 
             /*bool decode_header();*/
 
@@ -194,7 +196,7 @@ namespace dvnci {
 
 
 
-            void send(const asdu_body& asdu);
+            void send(const asdu_body104& asdu);
 
             void send(apdu_104_ptr msg);
 
