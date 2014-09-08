@@ -31,7 +31,7 @@ namespace dvnci {
             encode_header(I_type, NULLu, tx, rx);
         }
 
-        apdu_104::apdu_104(tcpcounter_type tx, tcpcounter_type rx, const asdu_body& vl) :
+        apdu_104::apdu_104(tcpcounter_type tx, tcpcounter_type rx, const asdu_body104& vl) :
         header_(new octet_sequence()), body_(new octet_sequence()) {
             encode_body(vl);
             encode_header(I_type, NULLu, tx, rx);
@@ -56,7 +56,7 @@ namespace dvnci {
             return apdu_104_ptr(new apdu_104(tx, rx, vl, cs));
         }
 
-        apdu_104_ptr apdu_104::create(tcpcounter_type tx, tcpcounter_type rx, const asdu_body& vl) {
+        apdu_104_ptr apdu_104::create(tcpcounter_type tx, tcpcounter_type rx, const asdu_body104& vl) {
             return apdu_104_ptr(new apdu_104(tx, rx, vl));
         }
 
@@ -132,7 +132,7 @@ namespace dvnci {
 
         bool apdu_104::get(dataobject_vct& rslt) {
             if (body_) {
-                asdu_body asdu(body_);
+                asdu_body104 asdu(body_);
                 return asdu.get(rslt);
             }
             return false;
@@ -215,12 +215,12 @@ namespace dvnci {
             body().insert(body().end(), '\x0');
             device_address tmpdev = vl.devnum();
             body().insert(body().end(), (const char*) &tmpdev, (const char*) &tmpdev + 2);
-            data_address tmpaddr = vl.address();
+            data_address tmpaddr = vl.ioa();
             body().insert(body().end(), (const char*) &tmpaddr, (const char*) &tmpaddr + 3);
             body().insert(body().end(), vl.data().begin(), vl.data().end());
         }
 
-        void apdu_104::encode_body(const asdu_body& vl) {
+        void apdu_104::encode_body(const asdu_body104& vl) {
             body_ = vl.body_ptr();
         }
 
@@ -316,7 +316,7 @@ namespace dvnci {
             check_work_available();
         }
 
-        void iec60870_104PM::send(const asdu_body& asdu) {
+        void iec60870_104PM::send(const asdu_body104& asdu) {
             send(apdu_104::create(inc_tx(), rx_, asdu));
         }
 
@@ -392,7 +392,7 @@ namespace dvnci {
                 if (!k_expire()) {
                     THD_EXCLUSIVE_LOCK(mtx)
                     if (!waitrequestdata_.empty()) {
-                        send(asdu_body::create_polling(waitrequestdata_.back()));
+                        send(asdu_body104::create_polling(waitrequestdata_.back()));
                         waitrequestdata_.pop_back();
                         return;
                     }
@@ -470,7 +470,7 @@ namespace dvnci {
                 {
                     state_ = connected;
                     pmstate(activated);
-                    send(asdu_body::create_activation());
+                    send(asdu_body104::create_activation(0, 1));
                     return true;
                 }
                 case apdu_104::STOPDTact:

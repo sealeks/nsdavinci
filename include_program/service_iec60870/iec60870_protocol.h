@@ -24,9 +24,11 @@ namespace dvnci {
 
         typedef boost::uint8_t type_id;
         typedef boost::uint8_t cause_type;
+        typedef boost::uint8_t sourse_type;        
         typedef boost::uint8_t interrogation_type;
-        typedef boost::uint32_t data_address;
-        typedef boost::uint16_t device_address;
+        typedef boost::uint16_t device_address; // 1,2
+        typedef boost::uint16_t selector_address; // 1,2
+        typedef boost::uint32_t data_address; // 1, 2 ,3        
         typedef boost::uint8_t bit_number;
         const bit_number NULL_BITNUMBER = '\xFF';
 
@@ -156,12 +158,45 @@ namespace dvnci {
 
 
 
-
+        template<std::size_t LinkAddress,  std::size_t COT, std::size_t Selector,  std::size_t IOA>
+        struct protocol_traits{
+            static std::size_t link_size(){
+                return  LinkAddress;
+            }
+            static std::size_t selector_size(){
+                return  Selector;
+            } 
+            
+            static std::size_t start_selector(){
+                return  2+COT;
+            } 
+            
+            static std::size_t stop_selector(){
+                return  2+COT+Selector;
+            }             
+            
+            static std::size_t min_size(){
+                return  2+COT+Selector;
+            } 
+            
+            static std::size_t ioa_size(){
+                return  IOA;
+            }
+            static std::size_t cot_size(){
+                return  COT;
+            }    
+            
+            static bool has_OA(){
+                return (COT>1);
+            }
+            
+        };
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// dataobject
         /////////////////////////////////////////////////////////////////////////////////////////////////    
+                
 
         class dataobject;
         typedef boost::shared_ptr<dataobject> dataobject_ptr;
@@ -170,18 +205,18 @@ namespace dvnci {
 
         public:
 
-            dataobject() : devnum_(0), address_(0), type_(0), bit_(NULL_BITNUMBER) {
+            dataobject() : devnum_(0), type_(0), selector_(0), ioa_(0),  bit_(NULL_BITNUMBER) {
             };
 
-            dataobject(device_address dev, type_id tp, data_address addr, const octet_sequence& dt = octet_sequence()) :
-            devnum_(dev), address_(addr), type_(tp), data_(dt), bit_(NULL_BITNUMBER) {
+            dataobject(device_address dev, type_id tp, selector_address sel, data_address addr, const octet_sequence& dt = octet_sequence()) :
+            devnum_(dev), type_(tp),  selector_(sel), ioa_(addr),  data_(dt), bit_(NULL_BITNUMBER) {
             };
 
-            dataobject(device_address dev, type_id tp, data_address addr, bit_number bt, const octet_sequence& dt = octet_sequence()) :
-            devnum_(dev), address_(addr), type_(tp), data_(dt), bit_(bt) {
+            dataobject(device_address dev, type_id tp, selector_address sel, data_address addr, bit_number bt, const octet_sequence& dt = octet_sequence()) :
+            devnum_(dev), type_(tp), selector_(sel),  ioa_(addr), data_(dt), bit_(bt) {
             };
 
-            ~dataobject() {
+            ~ dataobject() {
             };
 
             static dataobject_ptr build_from_bind(device_address dev, std::string bind);
@@ -189,9 +224,13 @@ namespace dvnci {
             device_address devnum() const {
                 return devnum_;
             }
+            
+            selector_address selector() const {
+                return selector_;
+            }            
 
-            data_address address() const {
-                return address_;
+            data_address ioa() const {
+                return ioa_;
             }
 
             type_id type() const {
@@ -223,7 +262,8 @@ namespace dvnci {
         protected:
 
             device_address devnum_;
-            data_address address_;
+            selector_address selector_;
+            data_address ioa_;
             type_id type_;
             bit_number bit_;
             octet_sequence data_;
@@ -242,9 +282,12 @@ namespace dvnci {
 
         datetime to_datetime_7(const octet_sequence& v);
         datetime to_datetime_3(const octet_sequence& vl);
+        boost::int16_t to_int16_t(const octet_sequence& vl);
         float to_float_4(const octet_sequence& vl);
 
         dvnci::short_value to_short_value(dataobject_ptr v);
+
+        
 
 
 
@@ -254,20 +297,48 @@ namespace dvnci {
 
         const std::size_t MAX_ASDU_SIZE = 249;
 
-        class asdu_body {
+        template<std::size_t LinkAddress, std::size_t Selector, std::size_t COT, std::size_t IOA>
+        class asdu_body {           
 
         public:
+            
+            typedef protocol_traits<LinkAddress, Selector, COT, IOA> protocol_traits_type;
 
-            asdu_body(dataobject_ptr vl, cause_type cs, bool sq = false, bool ngt = false, bool tst = false);
-            asdu_body(const dataobject_vct& vl, cause_type cs, std::size_t cnt, bool sq = false, bool ngt = false, bool tst = false); // sq = 1 only the first information object has an information object address, all other information objects have the addresses +1, +2, ...
-            asdu_body(const dataobject_vct& vl, cause_type cs, bool sq = false, bool ngt = false, bool tst = false); // sq = 0  each information object has its own information object address in the message         
-            asdu_body(octet_sequence_ptr dt);
+            asdu_body(dataobject_ptr vl, cause_type cs, bool sq = false, bool ngt = false, bool tst = false)
+            : body_(new octet_sequence()) {
+                body_->reserve(MAX_ASDU_SIZE);
+                dataobject_vct tmp;
+                tmp.push_back(vl);
+                encode(tmp, cs, sq, ngt, tst);
+            };
+
+            asdu_body(const dataobject_vct& vl, cause_type cs, std::size_t cnt, bool sq = false, bool ngt = false, bool tst = false)
+            : body_(new octet_sequence()) { // sq = 1 only the first information object has an information object address, all other information objects have the addresses +1, +2, ...
+                body_->reserve(MAX_ASDU_SIZE);
+                encode(vl, cs, sq, ngt, tst);
+            };
+
+            asdu_body(const dataobject_vct& vl, cause_type cs, bool sq = false, bool ngt = false, bool tst = false)
+            : body_(new octet_sequence()) {// sq = 0  each information object has its own information object address in the message       
+                body_->reserve(MAX_ASDU_SIZE);
+                encode(vl, cs, sq, ngt, tst);
+            };       
+            
+            asdu_body(octet_sequence_ptr dt) : body_(dt) {
+            }
 
             ~asdu_body() {
             }
 
-            static asdu_body create_activation(interrogation_type tp = INTERROG_GLOBAL, cause_type cs = CS_ACT);
-            static asdu_body create_polling(dataobject_ptr vl, cause_type cs = CS_POLL);
+            static asdu_body create_activation(device_address dev , selector_address sel, interrogation_type tp = INTERROG_GLOBAL, cause_type cs = CS_ACT) {
+                dataobject_ptr vl(new dataobject(dev, C_IC_NA_1, sel,  0, octet_sequence(1, tp)));
+                return asdu_body(vl, cs, false, false, false);
+            }
+
+            static asdu_body create_polling(dataobject_ptr ob, cause_type cs = CS_POLL) {
+                dataobject_ptr vl(new dataobject(ob->devnum(), C_RD_NA_1, ob->selector(),  ob->ioa()));
+                return asdu_body(vl, cs, false, false, false);
+            }
 
             octet_sequence& body() {
                 return *body_;
@@ -318,22 +389,95 @@ namespace dvnci {
             }
 
             boost::uint8_t oa() const {
-                if (body().size() > 3)
+                if ((protocol_traits_type::has_OA()) && (body().size() > 3))
                     return static_cast<boost::uint8_t> (body()[3]);
                 return 0;
             }
 
-            device_address address() const {
-                if (body().size() > 5)
-                    return *reinterpret_cast<const device_address*> (&(body()[4]));
+            selector_address selector() const {
+                if (body().size() >= protocol_traits_type::stop_selector())
+                    if (protocol_traits_type::selector_size() == 1)
+                        return *reinterpret_cast<const boost::uint8_t*> (&(body()[protocol_traits_type::start_selector()]));
+                    else
+                        return *reinterpret_cast<const device_address*> (&(body()[protocol_traits_type::start_selector()]));
                 return 0;
             }
 
-            bool get(dataobject_vct& rslt);
+            bool get(dataobject_vct& rslt, device_address devaddr = 0) {
+                rslt.clear();
+                if (body().size() >=protocol_traits_type::min_size()) {
+                    type_id tp = type();
+                    selector_address selctr = selector();
+                    std::size_t szdata = find_type_size(tp);
+                    std::size_t datacnt = count();
+                    std::size_t it = protocol_traits_type::min_size();
+                    std::size_t ioasz =protocol_traits_type::ioa_size();
+                    if (!datacnt)
+                        return true;
+                    if (szdata) {
+                        if (sq()) {
+                            if ((it + ioasz + szdata) <= body().size()) {
+                                data_address addr = *reinterpret_cast<const data_address*> (&(body()[it])) & 0xFFFFFF;
+                                octet_sequence data(&body()[it + ioasz], &body()[it + ioasz] + szdata);
+                                rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, selctr, addr, data)));
+                                it = it + ioasz + szdata;
+                                datacnt--;
+                                while ((datacnt--) && ((it + szdata) <= body().size())) {
+                                    octet_sequence data(&body()[it], &body()[it] + szdata);
+                                    rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, selctr, ++addr, data)));
+                                    it = it + ioasz + szdata;
+                                }
+                                return !(rslt.empty());
+                            }
+                        } else {
+                            while ((datacnt--) && ((it + ioasz + szdata) <= body().size())) {
+                                data_address addr = (*reinterpret_cast<const data_address*> (&(body()[it]))) & 0xFFFFFF;
+                                octet_sequence data(&body()[it + ioasz], &body()[it + ioasz] + szdata);
+                                rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp,selctr, addr, data)));
+                                it = it + ioasz + szdata;
+                            }
+                            return !(rslt.empty());
+                        }
+                    }
+                }
+                return false;
+            }
 
         private:
 
-            void encode(const dataobject_vct& vl, cause_type cs, bool sq, bool ngt, bool tst);
+            void encode(const dataobject_vct& vl, cause_type cs, bool sq, bool ngt, bool tst, sourse_type src=0) {
+                body().clear();
+                if (!vl.empty()) {
+                    dataobject_ptr hdrelm = vl[0];
+                    body().push_back(hdrelm->type());
+                    boost::uint8_t szobj = static_cast<boost::uint8_t> (vl.size());
+                    if (sq)
+                        szobj |= '\x80';
+                    body().push_back(szobj);
+                    if (tst)
+                        cs |= '\x80';
+                    if (ngt)
+                        cs |= '\x40';
+                    body().push_back(cs);
+                    if (protocol_traits_type::has_OA())
+                        body().push_back(src);
+                    selector_address tmpsel = hdrelm->selector();
+                    body().insert(body().end(), (const char*) &tmpsel, (const char*) &tmpsel + protocol_traits_type::selector_size());
+                    if (sq) {
+                        for (dataobject_vct::const_iterator it = vl.begin(); it != vl.end(); ++it) {
+                            data_address tmpioa = (*it)->ioa();
+                            body().insert(body().end(), (const char*) &tmpioa, (const char*) &tmpioa + protocol_traits_type::ioa_size());
+                            body().insert(body().end(), (*it)->data().begin(), (*it)->data().end());
+                        }
+                    } else {
+                        data_address tmpioa = hdrelm->ioa();
+                        body().insert(body().end(), (const char*) &tmpioa, (const char*) &tmpioa + protocol_traits_type::ioa_size());
+                        for (dataobject_vct::const_iterator it = vl.begin(); it != vl.end(); ++it) {
+                            body().insert(body().end(), (*it)->data().begin(), (*it)->data().end());
+                        }
+                    }
+                }
+            }
 
 
             octet_sequence_ptr body_;
