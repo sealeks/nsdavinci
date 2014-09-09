@@ -163,13 +163,13 @@ namespace dvnci {
                          main templ = [CMP]_[ABSDEIMPRS][CEPTOS]_[TN][ABCDEF][0-9]{1,6}.{0,1}[0-9]{0,2}   
              */
             upper_and_trim(bind);
-            selector_address slct=0;
+            selector_address slct = 0;
             std::string::size_type selit = bind.find(':', 0);
             if ((selit != std::string::npos) && (selit != (bind.size() - 1))) {
-                 std::string selrdata = bind.substr(0, selit);
-                 bind=bind.substr(selit + 1);
-                 if (!dvnci::str_to(selrdata, slct))
-                     return dataobject_ptr();
+                std::string selrdata = bind.substr(0, selit);
+                bind = bind.substr(selit + 1);
+                if (!dvnci::str_to(selrdata, slct))
+                    return dataobject_ptr();
             }
             if (bind.size() > 7) {
                 std::string typedata = bind.substr(0, 7);
@@ -188,7 +188,7 @@ namespace dvnci {
                     }
                     if (!dvnci::str_to(addrdata, addr))
                         return dataobject_ptr();
-                    return dataobject_ptr(new dataobject(dev,  tp, slct, addr, bt));
+                    return dataobject_ptr(new dataobject(dev, tp, slct, addr, bt));
                 }
             }
             return dataobject_ptr();
@@ -204,17 +204,17 @@ namespace dvnci {
         }
 
         bool operator==(const dataobject& ls, const dataobject& rs) {
-            return ((ls.devnum_ == rs.devnum_) && (ls.selector_ == rs.selector_) &&  (ls.ioa_ == rs.ioa_) /*&& (ls.type_ == rs.type_)*/);
+            return ((ls.devnum_ == rs.devnum_) && (ls.selector_ == rs.selector_) && (ls.ioa_ == rs.ioa_) /*&& (ls.type_ == rs.type_)*/);
         }
 
         bool operator<(const dataobject& ls, const dataobject& rs) {
             if (ls.devnum_ == rs.devnum_) {
                 /*if (ls.type_ == rs.type_) {*/
-                    if (ls.selector_ == rs.selector_) {
-                        return ls.ioa_ < rs.ioa_;
-                    } else {
-                        return ls.selector_ < rs.selector_;
-                    }
+                if (ls.selector_ == rs.selector_) {
+                    return ls.ioa_ < rs.ioa_;
+                } else {
+                    return ls.selector_ < rs.selector_;
+                }
                 /*} else {
                     return ls.type_ < rs.type_;
                 }*/
@@ -235,13 +235,12 @@ namespace dvnci {
                 return false;
             return !ls;
         }
-        
-        
-        void  error_and_valid_QDS(boost::uint8_t vl, vlvtype& vld, ns_error& err) {
+
+        void error_and_valid_QDS(boost::uint8_t vl, vlvtype& vld, ns_error& err) {
             err = (vl & 1) ? ERROR_DATA_OUT_OF_RANGE : 0;
-            vld =FULL_VALID;
+            vld = FULL_VALID;
         }
-        
+
         datetime to_datetime_7(const octet_sequence& vl) {
             try {
                 if (vl.size() == 7) {
@@ -262,7 +261,7 @@ namespace dvnci {
 
         boost::int16_t to_int16_t(const octet_sequence& vl) {
             return (vl.size() == 2) ? (*reinterpret_cast<const boost::int16_t *> (&vl[0])) : 0;
-        }        
+        }
 
         datetime to_datetime_3(const octet_sequence& vl) {
             try {
@@ -306,8 +305,8 @@ namespace dvnci {
                         case M_ME_NB_1: /*11*/ //= 2 + 1(q)
                         {
                             error_and_valid_QDS(dt[2], valid, error);
-                            return dvnci::short_value::create_timed<boost::int16_t>(to_int16_t(octet_sequence(dt.begin(), dt.begin()+2)), valid, error);
-                        }                        
+                            return dvnci::short_value::create_timed<boost::int16_t>(to_int16_t(octet_sequence(dt.begin(), dt.begin() + 2)), valid, error);
+                        }
                         case M_SP_TB_1: /*30*/ // 1 + 7(tb)
                         {
                             return dvnci::short_value::create_timed<boost::uint8_t>(dt[0], to_datetime_7(octet_sequence(dt.begin() + 1, dt.end())));
@@ -315,8 +314,8 @@ namespace dvnci {
                         case M_ME_TE_1: /*35*/ //2 + 1(q) + 7(tb)
                         {
                             error_and_valid_QDS(dt[2], valid, error);
-                            return dvnci::short_value::create_timed<boost::int16_t>(to_int16_t(octet_sequence(dt.begin(), 
-                                    dt.begin()+2)),to_datetime_7(octet_sequence(dt.begin() + 3, dt.end())), valid, error);
+                            return dvnci::short_value::create_timed<boost::int16_t>(to_int16_t(octet_sequence(dt.begin(),
+                                    dt.begin() + 2)), to_datetime_7(octet_sequence(dt.begin() + 3, dt.end())), valid, error);
                         }
                         case M_ME_TF_1: /*36*/ //4 + 1(q) + 7(tb)
                         {
@@ -339,180 +338,256 @@ namespace dvnci {
         //////// asdu_body
         /////////////////////////////////////////////////////////////////////////////////////////////////
 
-       /*asdu_body::asdu_body(dataobject_ptr vl, cause_type cs, bool sq, bool ngt, bool tst) : body_(new octet_sequence()) {
-            body_->reserve(MAX_ASDU_SIZE);
-            dataobject_vct tmp;
-            tmp.push_back(vl);
-            encode(tmp, cs, sq, ngt, tst);
-        };
+        /*asdu_body::asdu_body(dataobject_ptr vl, cause_type cs, bool sq, bool ngt, bool tst) : body_(new octet_sequence()) {
+             body_->reserve(MAX_ASDU_SIZE);
+             dataobject_vct tmp;
+             tmp.push_back(vl);
+             encode(tmp, cs, sq, ngt, tst);
+         };
 
-        asdu_body::asdu_body(const dataobject_vct& vl, cause_type cs, std::size_t cnt, bool sq, bool ngt, bool tst) : body_(new octet_sequence()) { // sq = 1 only the first information object has an information object address, all other information objects have the addresses +1, +2, ...
-            body_->reserve(MAX_ASDU_SIZE);
-            encode(vl, cs, sq, ngt, tst);
-        }
+         asdu_body::asdu_body(const dataobject_vct& vl, cause_type cs, std::size_t cnt, bool sq, bool ngt, bool tst) : body_(new octet_sequence()) { // sq = 1 only the first information object has an information object address, all other information objects have the addresses +1, +2, ...
+             body_->reserve(MAX_ASDU_SIZE);
+             encode(vl, cs, sq, ngt, tst);
+         }
 
-        asdu_body::asdu_body(const dataobject_vct& vl, cause_type cs, bool sq, bool ngt, bool tst) : body_(new octet_sequence()) {// sq = 0  each information object has its own information object address in the message       
-            body_->reserve(MAX_ASDU_SIZE);
-            encode(vl, cs, sq, ngt, tst);
-        }
+         asdu_body::asdu_body(const dataobject_vct& vl, cause_type cs, bool sq, bool ngt, bool tst) : body_(new octet_sequence()) {// sq = 0  each information object has its own information object address in the message       
+             body_->reserve(MAX_ASDU_SIZE);
+             encode(vl, cs, sq, ngt, tst);
+         }
 
-        asdu_body::asdu_body(octet_sequence_ptr dt) : body_(dt) {
-        }
+         asdu_body::asdu_body(octet_sequence_ptr dt) : body_(dt) {
+         }
 
-        asdu_body asdu_body::create_activation(interrogation_type tp, cause_type cs) {
-            dataobject_ptr vl(new dataobject(0, C_IC_NA_1, 1, octet_sequence(1, tp)));
-            return asdu_body(vl, cs, false, false, false);
-        }
+         asdu_body asdu_body::create_activation(interrogation_type tp, cause_type cs) {
+             dataobject_ptr vl(new dataobject(0, C_IC_NA_1, 1, octet_sequence(1, tp)));
+             return asdu_body(vl, cs, false, false, false);
+         }
 
-        asdu_body asdu_body::create_polling(dataobject_ptr ob, cause_type cs) {
-            dataobject_ptr vl(new dataobject(ob->devnum(), C_RD_NA_1, ob->ioa()));
-            return asdu_body(vl, cs, false, false, false);
-        }
+         asdu_body asdu_body::create_polling(dataobject_ptr ob, cause_type cs) {
+             dataobject_ptr vl(new dataobject(ob->devnum(), C_RD_NA_1, ob->ioa()));
+             return asdu_body(vl, cs, false, false, false);
+         }
 
-        bool asdu_body::get(dataobject_vct& rslt) {
-            rslt.clear();
-            if (body().size() > 6) {
-                type_id tp = type();
-                device_address devaddr = address();
-                std::size_t szdata = find_type_size(tp);
-                std::size_t datacnt = count();
-                std::size_t it = 6;
-                if (!datacnt)
-                    return true;
-                if (szdata) {
-                    if (sq()) {
-                        if ((it + 3 + szdata) <= body().size()) {
-                            data_address addr = *reinterpret_cast<const data_address*> (&(body()[it])) & 0xFFFFFF;
-                            octet_sequence data(&body()[it + 3], &body()[it + 3] + szdata);
-                            rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, addr, data)));
-                            it = it + 3 + szdata;
-                            datacnt--;
-                            while ((datacnt--) && ((it + szdata) <= body().size())) {
-                                octet_sequence data(&body()[it], &body()[it] + szdata);
-                                rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, ++addr, data)));
-                                it = it + 3 + szdata;
-                            }
-                            return !(rslt.empty());
-                        }
-                    } else {
-                        while ((datacnt--) && ((it + 3 + szdata) <= body().size())) {
-                            data_address addr = (*reinterpret_cast<const data_address*> (&(body()[it]))) & 0xFFFFFF;
-                            octet_sequence data(&body()[it + 3], &body()[it + 3] + szdata);
-                            rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, addr, data)));
-                            it = it + 3 + szdata;
-                        }
-                        return !(rslt.empty());
-                    }
-                }
-            }
-            return false;
-        }
+         bool asdu_body::get(dataobject_vct& rslt) {
+             rslt.clear();
+             if (body().size() > 6) {
+                 type_id tp = type();
+                 device_address devaddr = address();
+                 std::size_t szdata = find_type_size(tp);
+                 std::size_t datacnt = count();
+                 std::size_t it = 6;
+                 if (!datacnt)
+                     return true;
+                 if (szdata) {
+                     if (sq()) {
+                         if ((it + 3 + szdata) <= body().size()) {
+                             data_address addr = *reinterpret_cast<const data_address*> (&(body()[it])) & 0xFFFFFF;
+                             octet_sequence data(&body()[it + 3], &body()[it + 3] + szdata);
+                             rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, addr, data)));
+                             it = it + 3 + szdata;
+                             datacnt--;
+                             while ((datacnt--) && ((it + szdata) <= body().size())) {
+                                 octet_sequence data(&body()[it], &body()[it] + szdata);
+                                 rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, ++addr, data)));
+                                 it = it + 3 + szdata;
+                             }
+                             return !(rslt.empty());
+                         }
+                     } else {
+                         while ((datacnt--) && ((it + 3 + szdata) <= body().size())) {
+                             data_address addr = (*reinterpret_cast<const data_address*> (&(body()[it]))) & 0xFFFFFF;
+                             octet_sequence data(&body()[it + 3], &body()[it + 3] + szdata);
+                             rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, addr, data)));
+                             it = it + 3 + szdata;
+                         }
+                         return !(rslt.empty());
+                     }
+                 }
+             }
+             return false;
+         }
 
-        void asdu_body::encode(const dataobject_vct& vl, cause_type cs, bool sq, bool ngt, bool tst) {
-            body().clear();
-            if (!vl.empty()) {
-                dataobject_ptr hdrelm = vl[0];
-                body().push_back(hdrelm->type());
-                boost::uint8_t szobj = static_cast<boost::uint8_t> (vl.size());
-                if (sq)
-                    szobj |= '\x80';
-                body().push_back(szobj);
-                if (tst)
-                    cs |= '\x80';
-                if (ngt)
-                    cs |= '\x40';
-                body().push_back(cs);
-                body().push_back(0);
-                device_address tmpdev = hdrelm->devnum();
-                body().insert(body().end(), (const char*) &tmpdev, (const char*) &tmpdev + 2);
-                if (sq) {
-                    for (dataobject_vct::const_iterator it = vl.begin(); it != vl.end(); ++it) {
-                        data_address tmpaddr = (*it)->ioa();
-                        body().insert(body().end(), (const char*) &tmpaddr, (const char*) &tmpaddr + 3);
-                        body().insert(body().end(), (*it)->data().begin(), (*it)->data().end());
-                    }
-                } else {
-                    data_address tmpaddr = hdrelm->ioa();
-                    body().insert(body().end(), (const char*) &tmpaddr, (const char*) &tmpaddr + 3);
-                    for (dataobject_vct::const_iterator it = vl.begin(); it != vl.end(); ++it) {
-                        body().insert(body().end(), (*it)->data().begin(), (*it)->data().end());
-                    }
-                }
-            }
-        }*/
-        
-        
+         void asdu_body::encode(const dataobject_vct& vl, cause_type cs, bool sq, bool ngt, bool tst) {
+             body().clear();
+             if (!vl.empty()) {
+                 dataobject_ptr hdrelm = vl[0];
+                 body().push_back(hdrelm->type());
+                 boost::uint8_t szobj = static_cast<boost::uint8_t> (vl.size());
+                 if (sq)
+                     szobj |= '\x80';
+                 body().push_back(szobj);
+                 if (tst)
+                     cs |= '\x80';
+                 if (ngt)
+                     cs |= '\x40';
+                 body().push_back(cs);
+                 body().push_back(0);
+                 device_address tmpdev = hdrelm->devnum();
+                 body().insert(body().end(), (const char*) &tmpdev, (const char*) &tmpdev + 2);
+                 if (sq) {
+                     for (dataobject_vct::const_iterator it = vl.begin(); it != vl.end(); ++it) {
+                         data_address tmpaddr = (*it)->ioa();
+                         body().insert(body().end(), (const char*) &tmpaddr, (const char*) &tmpaddr + 3);
+                         body().insert(body().end(), (*it)->data().begin(), (*it)->data().end());
+                     }
+                 } else {
+                     data_address tmpaddr = hdrelm->ioa();
+                     body().insert(body().end(), (const char*) &tmpaddr, (const char*) &tmpaddr + 3);
+                     for (dataobject_vct::const_iterator it = vl.begin(); it != vl.end(); ++it) {
+                         body().insert(body().end(), (*it)->data().begin(), (*it)->data().end());
+                     }
+                 }
+             }
+         }*/
+
+
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// iec60870_datanotificator
         /////////////////////////////////////////////////////////////////////////////////////////////////  
 
+        iec60870_datanotificator::iec60870_datanotificator(iec60870_data_listener_ptr listr) : listener_(listr) {
+        }
 
-            iec60870_datanotificator::iec60870_datanotificator(iec60870_data_listener_ptr listr)  : listener_(listr){           
-            }                       
-           
-            void iec60870_datanotificator::execute60870(dataobject_ptr vl){
+        void iec60870_datanotificator::execute60870(dataobject_ptr vl) {
             iec60870_data_listener_ptr lstnr = listener();
             if (lstnr)
-                lstnr->execute60870(vl);                
-            }           
+                lstnr->execute60870(vl);
+        }
 
-            
-            void iec60870_datanotificator::execute60870(device_address dev,  const boost::system::error_code& error){
+        void iec60870_datanotificator::execute60870(device_address dev, const boost::system::error_code& error) {
             iec60870_data_listener_ptr lstnr = listener();
             if (lstnr)
-                lstnr->execute60870(dev, error);                  
-            }     
-            
-            iec60870_data_listener_ptr iec60870_datanotificator::listener() {
-                return !listener_._empty() ? listener_.lock() : iec60870_data_listener_ptr();
-            }        
-        
-     
-        
+                lstnr->execute60870(dev, error);
+        }
+
+        iec60870_data_listener_ptr iec60870_datanotificator::listener() {
+            return !listener_._empty() ? listener_.lock() : iec60870_data_listener_ptr();
+        }
+
+
+
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// iec60870_sector
         /////////////////////////////////////////////////////////////////////////////////////////////////         
 
-        /*bool operator==(iec60870_sector_ptr ls, iec60870_sector_ptr rs) {
-            if (ls && rs)
-                return (*ls) == (*rs);
-            if (!ls && !rs)
+        dataobject_ptr iec60870_sector::operator()(data_address id) const {
+            ioa_dataobject_map::const_iterator fit = line_.find(id);
+            return fit != line_.end() ? fit->second : dataobject_ptr();
+        }
+
+        bool iec60870_sector::operator()(data_address id, dataobject_ptr vl) {
+            ioa_dataobject_map::iterator fit = line_.find(id);
+            if ((fit != line_.end()) && vl) {
+                fit->second.swap(vl);
                 return true;
+            }
             return false;
         }
 
-        bool operator<(iec60870_sector_ptr ls, iec60870_sector_ptr rs) {
-            if (ls && rs)
-                return (*ls) < (*rs);
-            if (!ls && !rs)
-                return false;
-            return !ls;
-        }*/           
+        bool iec60870_sector::operator()(dataobject_ptr vl) {
+            if (vl && (vl->selector() == selector_)) {
+                ioa_dataobject_map::iterator fit = line_.find(vl->ioa());
+                if ((fit != line_.end())) {
+                    fit->second.swap(vl);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        bool iec60870_sector::insert(dataobject_ptr vl) {
+            if (vl->selector() == selector_) {
+                if (line_.find(vl->ioa()) == line_.end()) {
+                    line_.insert(ioa_dataobject_pair(vl->ioa(), vl));
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        bool iec60870_sector::erase(dataobject_ptr vl) {
+            if (vl->selector() == selector_) {
+                if (line_.find(vl->ioa()) != line_.end()) {
+                    line_.erase(vl->ioa());
+                }
+            }
+            return line_.empty();
+        }
+
+
+
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// iec60870_device
         /////////////////////////////////////////////////////////////////////////////////////////////////    
-        
-        /*bool operator==(iec60870_device_ptr ls, iec60870_device_ptr rs) {
-            if (ls && rs)
-                return (*ls) == (*rs);
-            if (!ls && !rs)
-                return true;
+
+        iec60870_sector_ptr iec60870_device::operator()(selector_address id) const {
+            id_selestor_map::const_iterator fit = sectors_.find(id);
+            return fit != sectors_.end() ? fit->second : iec60870_sector_ptr();
+        }
+
+        dataobject_ptr iec60870_device::operator()(selector_address sl, data_address id) const {
+            id_selestor_map::const_iterator fit = sectors_.find(sl);
+            return ((fit != sectors_.end()) && (fit->second)) ? fit->second->operator ()(id) : dataobject_ptr();
+        }
+
+        bool iec60870_device::operator()(selector_address sl, data_address id, dataobject_ptr vl) {
+            id_selestor_map::iterator fit = sectors_.find(sl);
+            if ((fit != sectors_.end()) && (fit->second))
+                return fit->second->operator ()(id, vl);
             return false;
         }
 
-        bool operator<(iec60870_device_ptr ls, iec60870_device_ptr rs) {
-            if (ls && rs)
-                return (*ls) < (*rs);
-            if (!ls && !rs)
+        // result if new created
+
+        iec60870_sector_ptr iec60870_device::insert(selector_address vl) {
+            id_selestor_map::const_iterator fit = sectors_.find(vl);
+            if (fit == sectors_.end()) {
+                iec60870_sector_ptr newsel = iec60870_sector_ptr(new iec60870_sector(vl));
+                sectors_.insert(id_selestor_pair(vl, newsel));
+                return newsel;
+            }
+            return iec60870_sector_ptr();
+        }
+
+        bool iec60870_device::insert(dataobject_ptr vl) {
+            id_selestor_map::const_iterator fit = sectors_.find(vl->selector());
+            if (fit != sectors_.end()) {
+                fit->second->insert(vl);
                 return false;
-            return !ls;
-        }*/   
+            } else {
+                iec60870_sector_ptr newsel = iec60870_sector_ptr(new iec60870_sector(vl->selector()));
+                newsel->insert(vl);
+                sectors_.insert(id_selestor_pair(vl->selector(), newsel));
+                return true;
+            }
+            return false;
+        }
+
+        // result if realy erased            
+
+        iec60870_sector_ptr iec60870_device::erase(selector_address vl) {
+            id_selestor_map::const_iterator fit = sectors_.find(vl);
+            if (fit != sectors_.end()) {
+                iec60870_sector_ptr rslt = fit->second;
+                sectors_.erase(vl);
+                return rslt;
+            }
+            return iec60870_sector_ptr();
+        }
+
+        bool iec60870_device::erase(dataobject_ptr vl) {
+            id_selestor_map::const_iterator fit = sectors_.find(vl->selector());
+            if (fit != sectors_.end()) {
+                return fit->second->erase(vl);
+            }
+            return false;
+        }
 
 
 
-        
+
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// iec60870_PM
@@ -540,11 +615,10 @@ namespace dvnci {
         }
 
         bool iec60870_PM::operator()() {
-            try{
-            connect();
-            }
-            catch(...){
-                
+            try {
+                connect();
+            } catch (...) {
+
             }
             iec60870_data_listener_ptr lstnr = listener();
             if (lstnr)
@@ -582,7 +656,7 @@ namespace dvnci {
                 if (std::find(waitrequestdata_.begin(), waitrequestdata_.end(), *it) == waitrequestdata_.end())
                     waitrequestdata_.push_back(*it);*/
             return true;
-        }        
+        }
 
         void iec60870_PM::to_listener(const dataobject_vct& dt) {
             iec60870_data_listener_ptr lstnr = listener();
@@ -590,7 +664,7 @@ namespace dvnci {
                 THD_EXCLUSIVE_LOCK(mtx)
                 for (dataobject_vct::const_iterator it = dt.begin(); it != dt.end(); ++it) {
                     //if (inrequestdata_.find(*it) != inrequestdata_.end())
-                        lstnr->execute60870(dt);
+                    lstnr->execute60870(dt);
                 }
             }
         }
@@ -598,8 +672,79 @@ namespace dvnci {
         void iec60870_PM::error(boost::system::error_code& err) {
             iec60870_data_listener_ptr lstnr = listener();
             if (lstnr)
-                lstnr->execute60870(0,err);
+                lstnr->execute60870(0, err);
         }
+
+        iec60870_device_ptr iec60870_PM::device(device_address dev) const {
+            id_device_map::const_iterator fit = devices_.find(dev);
+            return (fit != devices_.end()) ? fit->second : iec60870_device_ptr();
+        }
+
+        iec60870_device_ptr iec60870_PM::device(dataobject_ptr vl) const {
+            return device(vl->devnum());
+        }
+
+        iec60870_device_ptr iec60870_PM::insert_device(device_address dev) {
+            if (!device(dev)) {
+                iec60870_device_ptr newdev = iec60870_device_ptr(new iec60870_device(dev));
+                devices_.insert(id_device_pair(dev, newdev));
+                return newdev;
+            }
+            return iec60870_device_ptr();
+        }
+
+        iec60870_device_ptr iec60870_PM::remove_device(device_address dev) {
+            id_device_map::const_iterator fit = devices_.find(dev);
+            if (fit != devices_.end()) {
+                iec60870_device_ptr rslt = fit->second;
+                devices_.erase(dev);
+                return rslt;
+            }
+        }
+
+        iec60870_sector_ptr iec60870_PM::sector(device_address dev, selector_address slct) const {
+            iec60870_device_ptr fit = device(dev);
+            return (fit) ? fit->operator()(slct) : iec60870_sector_ptr();
+        }
+
+        iec60870_sector_ptr iec60870_PM::sector(dataobject_ptr vl) const {
+            return sector(vl->devnum(), vl->selector());
+        }
+
+        iec60870_sector_ptr iec60870_PM::insert_sector(device_address dev, selector_address slct) {
+            if (!sector(dev, slct)) {
+                if (!device(dev))
+                    insert_device(dev);
+                iec60870_device_ptr devptr = device(dev);
+                return devptr->insert(slct);
+            }
+            return iec60870_sector_ptr();
+        }
+
+        iec60870_sector_ptr iec60870_PM::remove_sector(device_address dev, selector_address slct) {
+            iec60870_device_ptr devfnd = device(dev);
+            if (devfnd) {
+                return devfnd->erase(slct);
+            }
+            return iec60870_sector_ptr();
+        }
+
+        dataobject_ptr iec60870_PM::data(dataobject_ptr vl) const {
+            iec60870_device_ptr devfnd = device(vl->devnum());
+            if (devfnd) {
+                return devfnd->operator ()(vl->selector(), vl->ioa());
+            }
+            return dataobject_ptr();
+        }
+
+        void iec60870_PM::execute_data(dataobject_ptr vl) {
+            iec60870_device_ptr devfnd = device(vl->devnum());
+            if (devfnd) {
+                return devfnd->operator ()(vl->selector(), vl->ioa());
+            }
+            return dataobject_ptr();
+        }        
+
 
     }
 }
