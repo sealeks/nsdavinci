@@ -495,17 +495,260 @@ namespace dvnci {
 
             virtual void execute60870(dataobject_ptr vl) = 0;
             virtual void execute60870(const dataobject_vct& vl) = 0;
-            virtual void execute60870(const boost::system::error_code& error) = 0;
+            virtual void execute60870(device_address dev,  const boost::system::error_code& error) = 0;
             virtual void terminate60870() = 0;
 
         };
+        
 
         typedef boost::shared_ptr<iec60870_data_listener> iec60870_data_listener_ptr;
-        typedef boost::weak_ptr<iec60870_data_listener> iec60870_data_listener_wptr;
+        typedef boost::weak_ptr<iec60870_data_listener> iec60870_data_listener_wptr;        
+        
+        
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //////// iec60870_datanotificator
+        /////////////////////////////////////////////////////////////////////////////////////////////////  
+
+        class iec60870_datanotificator {
+        public:
+            
+            iec60870_datanotificator(iec60870_data_listener_ptr listr);
+            
+            ~iec60870_datanotificator(){};
+            
+            void execute60870(dataobject_ptr vl);
+            void execute60870(device_address dev,  const boost::system::error_code& error);            
+            
+        protected:
+
+            iec60870_data_listener_ptr listener();
+            
+            iec60870_data_listener_wptr listener_;
+        };        
+        
+        
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //////// iec60870_sector
+        /////////////////////////////////////////////////////////////////////////////////////////////////  
+        
+        
+        typedef std::pair<data_address, dataobject_ptr> ioa_dataobject_pair;
+        typedef std::map<data_address, dataobject_ptr> ioa_dataobject_map;        
+        
+        
+        class iec60870_sector;
+        typedef boost::shared_ptr<iec60870_sector> iec60870_sector_ptr;
+        
+        class iec60870_sector {
+            
+        public:            
+            
+            enum SectorState {
+                s_noaciveted, s_activate, s_activated, s_fullactivated, s_deactivate, s_deactivated, s_error
+            };            
+
+            iec60870_sector(selector_address sl) : selector_(sl), state_(s_noaciveted){}
+            ~iec60870_sector(){}
+            
+            selector_address selector() const {
+                return selector_;
+            }               
+            
+            SectorState state() const {
+                return state_;
+            }
+            
+            void state(SectorState vl){
+                state_=vl;
+            }               
+                     
+            
+            const ioa_dataobject_map& line() const {
+                return line_;
+            }
+
+            dataobject_ptr operator()(data_address id) const {
+                ioa_dataobject_map::const_iterator fit=line_.find(id);
+                return fit!=line_.end() ? fit->second : dataobject_ptr();
+            }
+            
+            bool operator()(data_address id, dataobject_ptr vl) {
+                ioa_dataobject_map::iterator fit=line_.find(id);
+                if ((fit!=line_.end()) && vl){
+                    fit->second.swap(vl);
+                    return true;
+                }       
+                return false;
+            }     
+            
+            bool operator()(dataobject_ptr vl) {
+                if ( vl && (vl->selector() == selector_)) {
+                    ioa_dataobject_map::iterator fit = line_.find(vl->ioa());
+                    if ((fit != line_.end())) {
+                        fit->second.swap(vl);
+                        return true;
+                    }
+                }
+                return false;
+            }            
+            
+            bool insert(dataobject_ptr vl){
+                if (vl->selector()==selector_){
+                    if (line_.find(vl->ioa())==line_.end()){
+                        line_.insert(ioa_dataobject_pair(vl->ioa(), vl));
+                        return true;
+                    }
+                }
+                return false;
+            }       
+            
+            bool erase(dataobject_ptr vl){
+                if (vl->selector()==selector_){
+                    if (line_.find(vl->ioa())!=line_.end()){
+                        line_.erase(vl->ioa());
+                    }
+                }
+                return line_.empty();
+            }      
+            
+            std::size_t size() const {
+                return line_.size();
+            }
+            
+            /*friend bool operator==(const iec60870_sector& ls, const iec60870_sector& rs){
+                return ls.selector_== rs.selector_;
+            }
+            
+            friend bool operator<(const iec60870_sector& ls, const iec60870_sector& rs){
+                return ls.selector_< rs.selector_;
+            }*/         
+                        
+     
+        private:
+            
+            selector_address selector_;
+            SectorState state_;
+            ioa_dataobject_map line_;
+            
+        };
+
+        bool operator==(iec60870_sector_ptr ls, iec60870_sector_ptr rs);
+
+        bool operator<(iec60870_sector_ptr ls, iec60870_sector_ptr rs);        
+        
+        
+        typedef std::pair<selector_address, iec60870_sector_ptr> id_selestor_pair;
+        typedef std::map<selector_address, iec60870_sector_ptr> id_selestor_map;
+        
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //////// iec60870_device
+        /////////////////////////////////////////////////////////////////////////////////////////////////        
+        
+        
+        class iec60870_device;
+        typedef boost::shared_ptr<iec60870_device> iec60870_device_ptr;       
+        
+        
+        class iec60870_device {
+            
+            enum DeviceState {
+                d_disconnect, d_connected
+            };               
+
+        public:
+            
+            iec60870_device(device_address adr) : address_(adr), state_(d_disconnect){}
+            ~iec60870_device(){}
+                        
+            device_address address() const {
+                return address_;
+            }               
+            
+            DeviceState state() const {
+                return state_;
+            }
+            
+            void state(DeviceState vl){
+                state_=vl;
+            }   
+            
+            const id_selestor_map& sectors() const {
+                return sectors_;
+            }            
+            
+            iec60870_sector_ptr operator()(selector_address id) const {
+                id_selestor_map::const_iterator fit=sectors_.find(id);
+                return fit!=sectors_.end() ? fit->second : iec60870_sector_ptr();
+            }
+            
+            dataobject_ptr operator()(selector_address sl, data_address id) const {
+                id_selestor_map::const_iterator fit=sectors_.find(sl);
+                return ((fit!=sectors_.end()) && (fit->second)) ? fit->second->operator ()(id) : dataobject_ptr();
+            }            
+            
+            bool operator()(selector_address sl, data_address id, dataobject_ptr vl){
+                id_selestor_map::iterator fit=sectors_.find(sl);
+                if ((fit!=sectors_.end()) && (fit->second))                
+                    return  fit->second->operator ()(id,vl);
+                return false;
+            }
+            
+            bool insert(dataobject_ptr vl){
+                id_selestor_map::const_iterator fit= sectors_.find(vl->selector());
+                if (fit!=sectors_.end()) {
+                        fit->second->insert(vl);
+                        return false;
+                    }
+                else{
+                    iec60870_sector_ptr newsel =iec60870_sector_ptr( new iec60870_sector(vl->selector()));
+                    newsel->insert(vl);
+                    sectors_.insert(id_selestor_pair(vl->selector(), newsel));
+                    return true;
+                }
+                return false;
+            }       
+            
+            
+            bool erase(dataobject_ptr vl) {
+                id_selestor_map::const_iterator fit = sectors_.find(vl->selector());
+                if (fit != sectors_.end()) {
+                    return fit->second->erase(vl);
+            }
+            return false;
+        }             
+            
+            /*friend bool operator==(const iec60870_device& ls, const iec60870_device& rs){
+                return ls.address_== rs.address_;
+            }
+            
+            friend bool operator<(const iec60870_device& ls, const iec60870_device& rs){
+                return ls.address_< rs.address_;
+            }*/              
+            
+            
+        private:
+            
+            device_address address_;
+            DeviceState state_;    
+            id_selestor_map sectors_;
+        };        
+        
+        
+        /*bool operator==(iec60870_device_ptr ls, iec60870_device_ptr rs);
+
+        bool operator<(iec60870_device_ptr ls, iec60870_device_ptr rs);*/
+        
+        typedef std::pair<device_address, iec60870_device_ptr> id_device_pair;
+        typedef std::map<device_address, iec60870_device_ptr> id_device_map;   
+        
+        
+        
+        
+        
+        
 
 
-
-
+        
 
         const std::size_t PM_SHORT_TIMER = 10;
 
@@ -513,7 +756,7 @@ namespace dvnci {
         //////// iec60870_PM
         /////////////////////////////////////////////////////////////////////////////////////////////////        
 
-        class iec60870_PM : public executable {
+        class iec60870_PM : public executable, public iec60870_datanotificator {
 
         public:
 
@@ -565,10 +808,10 @@ namespace dvnci {
             void to_listener(const dataobject_vct& dt);
 
             virtual void error(boost::system::error_code& err);
-
-            iec60870_data_listener_ptr listener() {
-                return !listener_._empty() ? listener_.lock() : iec60870_data_listener_ptr();
-            }
+            
+            const id_device_map& devices() const {
+                return devices_;
+            }            
 
 
             boost::asio::io_service io_service_;
@@ -579,12 +822,13 @@ namespace dvnci {
             timeouttype timout;
             bool need_disconnect_;            
 
-            iec60870_data_listener_wptr listener_;
             boost::mutex mtx;
             dataobject_set data_;
+            id_device_map devices_;
             dataobject_set inrequestdata_;
             dataobject_deq waitrequestdata_;
             dataobject_deq waitcommanddata_;
+            
 
         };
 

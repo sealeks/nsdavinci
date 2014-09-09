@@ -42,7 +42,7 @@ namespace dvnci {
                 execute60870(*it);
         }        
 
-        void extiec60870intf::execute60870(const boost::system::error_code& err) {          
+        void extiec60870intf::execute60870(device_address dev,  const boost::system::error_code& err) {          
             error(ERROR_NONET_CONNECTED);
         };
         
