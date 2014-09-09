@@ -42,7 +42,7 @@ namespace dvnci {
         const cause_type CS_CONF_ACT = 7; //  confirmation of activation
         const cause_type CS_ABORT_ACT = 8; //  aborting of activation
         const cause_type CS_ABORT_ACT_CONF = 9; //  confirmation of aborting of activation
-        const cause_type CS_END_ACT = 10; //  end of activation
+        const cause_type CS_END_ACT = 10; //  end of activation     
         const cause_type SC_STATUS_REMCMD = 11; //  status information, caused by a remote command
         const cause_type SC_STATUS_LOCCMD = 12; //  status information, caused by a local command
         const cause_type SC_INTERROG_GEN = 20; //  interrogated by general interrogation
@@ -221,6 +221,9 @@ namespace dvnci {
 
             ~ dataobject() {
             };
+            
+            static dataobject_ptr create_activation_1(device_address dev, selector_address sel, cause_type cs =CS_ACT , interrogation_type tp =SC_INTERROG_GEN);
+            
 
             static dataobject_ptr build_from_bind(device_address dev, std::string bind);
             
@@ -283,6 +286,8 @@ namespace dvnci {
             bool readable() const;
 
             bool command() const;
+            
+            bool service() const;            
 
             friend bool operator==(const dataobject& ls, const dataobject& rs);
             friend bool operator<(const dataobject& ls, const dataobject& rs);
@@ -336,10 +341,10 @@ namespace dvnci {
             
             typedef protocol_traits<LinkAddress, Selector, COT, IOA> protocol_traits_type;
 
-            asdu_body(dataobject_ptr vl)
+            asdu_body(dataobject_ptr vl, bool sq = false)
             : body_(new octet_sequence()) {
                 body_->reserve(MAX_ASDU_SIZE);
-                encode(vl);
+                encode(vl, sq);
             };                   
 
             asdu_body(const dataobject_vct& vl, cause_type cs, std::size_t cnt, bool sq = false, bool ngt = false, bool tst = false)
@@ -360,15 +365,9 @@ namespace dvnci {
             ~asdu_body() {
             }
 
-            /*static asdu_body create_activation(device_address dev , selector_address sel, interrogation_type tp = INTERROG_GLOBAL, cause_type cs = CS_ACT) {
-                dataobject_ptr vl(new dataobject(dev, C_IC_NA_1, sel,  0, octet_sequence(1, tp)));
-                return asdu_body(vl, cs, false, false, false);
+            static asdu_body create(dataobject_ptr vl, bool sq = false) {
+                return asdu_body(vl);
             }
-
-            static asdu_body create_polling(dataobject_ptr ob, cause_type cs = CS_POLL) {
-                dataobject_ptr vl(new dataobject(ob->devnum(), C_RD_NA_1, ob->selector(),  ob->ioa()));
-                return asdu_body(vl, cs, false, false, false);
-            }*/
 
             octet_sequence& body() {
                 return *body_;
@@ -623,8 +622,6 @@ namespace dvnci {
 
             dataobject_ptr operator()(data_address id) const;
             
-            bool operator()(data_address id, dataobject_ptr vl);
-            
             bool operator()(dataobject_ptr vl);          
             
             bool insert(dataobject_ptr vl);
@@ -634,6 +631,10 @@ namespace dvnci {
             std::size_t size() const {
                 return line_.size();
             }
+            
+            bool empty() const{
+                return line_.empty();
+            }
        
                            
         private:
@@ -642,19 +643,13 @@ namespace dvnci {
             SectorState state_;
             ioa_dataobject_map line_;
             
-        };
-
-        bool operator==(iec60870_sector_ptr ls, iec60870_sector_ptr rs);
-
-        bool operator<(iec60870_sector_ptr ls, iec60870_sector_ptr rs);        
+        };       
         
         
         typedef std::pair<selector_address, iec60870_sector_ptr> id_selestor_pair;
         typedef std::map<selector_address, iec60870_sector_ptr> id_selestor_map;
         
-        
-        
-        
+
         
         
         
@@ -698,7 +693,7 @@ namespace dvnci {
             
             dataobject_ptr operator()(selector_address sl, data_address id) const;       
             
-            bool operator()(selector_address sl, data_address id, dataobject_ptr vl);
+            bool operator()(dataobject_ptr vl);
             
             // result if new created
             iec60870_sector_ptr insert(selector_address vl);
@@ -707,9 +702,15 @@ namespace dvnci {
             
             // result if realy erased            
             iec60870_sector_ptr erase(selector_address vl);   
+                   
+            bool erase(dataobject_ptr vl);     
             
-            
-            bool erase(dataobject_ptr vl);         
+            std::size_t size() const {
+                return sectors_.size();
+            }
+
+            bool empty() const;          
+                        
             
         private:
             
@@ -819,9 +820,12 @@ namespace dvnci {
             
             dataobject_ptr data(dataobject_ptr vl) const;
             
+            
             void execute_data(dataobject_ptr vl);
             
-            void execute_data(const dataobject_vct& vl);     
+            void execute_data(const dataobject_vct& vl); 
+            
+            
             
             virtual void insert_device_sevice(device_address dev){};             
             
