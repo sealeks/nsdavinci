@@ -101,7 +101,7 @@ namespace dvnci {
                 indx_set tmpadd = need_add();
                 for (indx_set::const_iterator it = tmpadd.begin(); it != tmpadd.end(); ++it) {
                     if (intf->exists(*it)) {
-                        dataobject_ptr tmp = dataobject::build_from_bind(intf->groups()->devnum(group()), intf->binding(*it));
+                        dataobject_ptr tmp = dataobject::build_from_bind(0, intf->binding(*it));
                         if (tmp) {
                             if (tmp->readable())
                                 cids.push_back(indx_dataobject_pair(*it, tmp));
