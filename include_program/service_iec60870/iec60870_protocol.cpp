@@ -156,6 +156,33 @@ namespace dvnci {
         //////// dataobject
         /////////////////////////////////////////////////////////////////////////////////////////////////           
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //////// dataobject
+        /////////////////////////////////////////////////////////////////////////////////////////////////    
+
+
+        class dataobject;
+        typedef boost::shared_ptr<dataobject> dataobject_ptr;
+
+        dataobject::dataobject() : devnum_(0), type_(0), selector_(0), ioa_(0), bit_(NULL_BITNUMBER), cause_(CS_POLL), test_(false), negative_(false) {
+        };
+
+        dataobject::dataobject(device_address dev, type_id tp, selector_address sel, data_address addr, const octet_sequence& dt) :
+        devnum_(dev), type_(tp), selector_(sel), ioa_(addr), bit_(NULL_BITNUMBER), cause_(CS_POLL), test_(false), negative_(false), data_(dt) {
+        };
+
+        dataobject::dataobject(device_address dev, type_id tp, selector_address sel, data_address addr, bit_number bt, const octet_sequence& dt) :
+        devnum_(dev), type_(tp), selector_(sel), ioa_(addr), bit_(NULL_BITNUMBER), cause_(CS_POLL), test_(false), negative_(false), data_(dt) {
+        };
+
+        dataobject::dataobject(device_address dev, type_id tp, selector_address sel, data_address addr, cause_type cs, bool tst, bool neg, const octet_sequence& dt) :
+        devnum_(dev), type_(tp), selector_(sel), ioa_(addr), bit_(NULL_BITNUMBER), cause_(cs), test_(tst), negative_(neg), data_(dt) {
+        };
+
+        dataobject::dataobject(device_address dev, type_id tp, selector_address sel, data_address addr, bit_number bt, cause_type cs, bool tst, bool neg, const octet_sequence& dt) :
+        devnum_(dev), type_(tp), selector_(sel), ioa_(addr), bit_(NULL_BITNUMBER), cause_(cs), test_(tst), negative_(neg), data_(dt) {
+        };
+
         dataobject_ptr dataobject::build_from_bind(device_address dev, std::string bind) {
             /* Name data type without _1 example M_SP_NA_1 => M_SP_NA == X_XX_XX
                          SSS:X_XX_XXNNNNN[.B]   
@@ -629,18 +656,23 @@ namespace dvnci {
         bool iec60870_PM::add_items(const indx_dataobject_vct& cids, indx_dataobject_vct& rslt) {
             THD_EXCLUSIVE_LOCK(mtx)
             for (indx_dataobject_vct::const_iterator it = cids.begin(); it != cids.end(); ++it) {
-                dataobject_set::const_iterator fnd = data_.find(it->second);
-                if (fnd != data_.end()) {
-                    rslt.push_back(indx_dataobject_pair(it->first, dataobject_ptr(new dataobject(*(*fnd)))));
-                } else {
-                    if (it->second->readable()) {
-                        waitrequestdata_.push_back(it->second);
+                if (it->second->readable()) {
+                    if (!data(it->second)) {
+                        iec60870_device_ptr dvc = device(it->second->devnum());
+                        if (!dvc) {
+                            dvc = insert_device(it->second->devnum());
+                            insert_device_sevice(it->second->devnum());
+                        }
+                        iec60870_sector_ptr sct = sector(it->second->devnum(), it->second->selector());
+                        if (!sct) {
+                            sct = insert_sector(it->second->devnum(), it->second->selector());
+                            insert_sector_sevice(it->second->devnum(), it->second->selector());
+                        }
+                        sct->insert(it->second);
                     }
                 }
-                if (it->second->readable())
-                    inrequestdata_.insert(it->second);
             }
-            return !rslt.empty();
+            return true;
         }
 
         bool iec60870_PM::remove_items(const dataobject_set& cids) {
@@ -740,10 +772,15 @@ namespace dvnci {
         void iec60870_PM::execute_data(dataobject_ptr vl) {
             iec60870_device_ptr devfnd = device(vl->devnum());
             if (devfnd) {
-                return devfnd->operator ()(vl->selector(), vl->ioa());
+                devfnd->operator ()(vl->selector(), vl->ioa());
             }
-            return dataobject_ptr();
-        }        
+        }
+
+        void iec60870_PM::execute_data(const dataobject_vct& vl) {
+            for (dataobject_vct::const_iterator it = vl.begin(); it != vl.end(); ++it) {
+                execute_data(*it);
+            }
+        }
 
 
     }

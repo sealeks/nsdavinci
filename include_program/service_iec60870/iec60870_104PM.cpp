@@ -497,11 +497,16 @@ namespace dvnci {
                 to_listener(rslt);
                 {
                     THD_EXCLUSIVE_LOCK(mtx)
-                    data_.insert(rslt.begin(), rslt.end());
+                    execute_data(rslt);
                 }
             }
             return true;
         }
+
+        void iec60870_104PM::insert_sector_sevice(device_address dev, selector_address slct) {
+            waitrequestdata_.push_back(dataobject_ptr(new dataobject(dev, C_IC_NA_1, slct, 0)));
+        }        
+        
 
         tcpcounter_type iec60870_104PM::inc_tx() {
             return (tx_ < PM_104_MODULO) ? (tx_++) : (tx_ = 0);

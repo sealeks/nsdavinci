@@ -205,25 +205,52 @@ namespace dvnci {
 
         public:
 
-            dataobject() : devnum_(0), type_(0), selector_(0), ioa_(0),  bit_(NULL_BITNUMBER) {
-            };
+            dataobject();
 
-            dataobject(device_address dev, type_id tp, selector_address sel, data_address addr, const octet_sequence& dt = octet_sequence()) :
-            devnum_(dev), type_(tp),  selector_(sel), ioa_(addr),  data_(dt), bit_(NULL_BITNUMBER) {
-            };
+            dataobject(device_address dev, type_id tp, selector_address sel,
+            data_address addr, const octet_sequence& dt = octet_sequence());
 
-            dataobject(device_address dev, type_id tp, selector_address sel, data_address addr, bit_number bt, const octet_sequence& dt = octet_sequence()) :
-            devnum_(dev), type_(tp), selector_(sel),  ioa_(addr), data_(dt), bit_(bt) {
-            };
+            dataobject(device_address dev, type_id tp, selector_address sel,          
+            data_address addr, bit_number bt, const octet_sequence& dt = octet_sequence());
+            
+            dataobject(device_address dev, type_id tp, selector_address sel, data_address addr,
+            cause_type cs, bool tst,  bool neg, const octet_sequence& dt = octet_sequence());
+
+            dataobject(device_address dev, type_id tp, selector_address sel, data_address addr,
+            bit_number bt, cause_type cs, bool tst,  bool neg, const octet_sequence& dt = octet_sequence());         
 
             ~ dataobject() {
             };
 
             static dataobject_ptr build_from_bind(device_address dev, std::string bind);
-
+            
             device_address devnum() const {
                 return devnum_;
+            }            
+
+            cause_type cause() const {
+                return cause_;
             }
+            
+            void cause(cause_type vl)  {
+                cause_=vl;
+            }       
+            
+            bool test() const {
+                return test_;
+            }
+            
+            void test(bool vl)  {
+                test_=vl;
+            }    
+            
+            bool negative() const {
+                return negative_;
+            }
+            
+            void negative(bool vl)  {
+                negative_=vl;
+            }             
             
             selector_address selector() const {
                 return selector_;
@@ -266,7 +293,11 @@ namespace dvnci {
             data_address ioa_;
             type_id type_;
             bit_number bit_;
+            cause_type cause_;
+            bool test_;            
+            bool negative_;
             octet_sequence data_;
+            
         };
 
         bool operator==(dataobject_ptr ls, dataobject_ptr rs);
@@ -305,13 +336,11 @@ namespace dvnci {
             
             typedef protocol_traits<LinkAddress, Selector, COT, IOA> protocol_traits_type;
 
-            asdu_body(dataobject_ptr vl, cause_type cs, bool sq = false, bool ngt = false, bool tst = false)
+            asdu_body(dataobject_ptr vl)
             : body_(new octet_sequence()) {
                 body_->reserve(MAX_ASDU_SIZE);
-                dataobject_vct tmp;
-                tmp.push_back(vl);
-                encode(tmp, cs, sq, ngt, tst);
-            };
+                encode(vl);
+            };                   
 
             asdu_body(const dataobject_vct& vl, cause_type cs, std::size_t cnt, bool sq = false, bool ngt = false, bool tst = false)
             : body_(new octet_sequence()) { // sq = 1 only the first information object has an information object address, all other information objects have the addresses +1, +2, ...
@@ -331,7 +360,7 @@ namespace dvnci {
             ~asdu_body() {
             }
 
-            static asdu_body create_activation(device_address dev , selector_address sel, interrogation_type tp = INTERROG_GLOBAL, cause_type cs = CS_ACT) {
+            /*static asdu_body create_activation(device_address dev , selector_address sel, interrogation_type tp = INTERROG_GLOBAL, cause_type cs = CS_ACT) {
                 dataobject_ptr vl(new dataobject(dev, C_IC_NA_1, sel,  0, octet_sequence(1, tp)));
                 return asdu_body(vl, cs, false, false, false);
             }
@@ -339,7 +368,7 @@ namespace dvnci {
             static asdu_body create_polling(dataobject_ptr ob, cause_type cs = CS_POLL) {
                 dataobject_ptr vl(new dataobject(ob->devnum(), C_RD_NA_1, ob->selector(),  ob->ioa()));
                 return asdu_body(vl, cs, false, false, false);
-            }
+            }*/
 
             octet_sequence& body() {
                 return *body_;
@@ -413,6 +442,9 @@ namespace dvnci {
                     std::size_t datacnt = count();
                     std::size_t it = protocol_traits_type::min_size();
                     std::size_t ioasz =protocol_traits_type::ioa_size();
+                    cause_type cs = cause();
+                    bool tst = test();
+                    bool neg = negative();
                     if (!datacnt)
                         return true;
                     if (szdata) {
@@ -420,12 +452,12 @@ namespace dvnci {
                             if ((it + ioasz + szdata) <= body().size()) {
                                 data_address addr = *reinterpret_cast<const data_address*> (&(body()[it])) & 0xFFFFFF;
                                 octet_sequence data(&body()[it + ioasz], &body()[it + ioasz] + szdata);
-                                rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, selctr, addr, data)));
+                                rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, selctr, addr, cs, tst, neg, data)));
                                 it = it + ioasz + szdata;
                                 datacnt--;
                                 while ((datacnt--) && ((it + szdata) <= body().size())) {
                                     octet_sequence data(&body()[it], &body()[it] + szdata);
-                                    rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, selctr, ++addr, data)));
+                                    rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, selctr, ++addr,cs, tst, neg, data)));
                                     it = it + ioasz + szdata;
                                 }
                                 return !(rslt.empty());
@@ -434,7 +466,7 @@ namespace dvnci {
                             while ((datacnt--) && ((it + ioasz + szdata) <= body().size())) {
                                 data_address addr = (*reinterpret_cast<const data_address*> (&(body()[it]))) & 0xFFFFFF;
                                 octet_sequence data(&body()[it + ioasz], &body()[it + ioasz] + szdata);
-                                rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp,selctr, addr, data)));
+                                rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp,selctr, addr,cs, tst, neg, data)));
                                 it = it + ioasz + szdata;
                             }
                             return !(rslt.empty());
@@ -445,6 +477,25 @@ namespace dvnci {
             }
 
         private:
+            
+            void encode(dataobject_ptr vl, bool sq, sourse_type src = 0) {
+                dataobject_vct tmp;
+                tmp.push_back(vl);
+                encode(tmp, sq, src);
+            }                
+            
+            void encode(const dataobject_vct& vl, bool sq, sourse_type src=0) { 
+                if (!vl.empty()) {
+                    dataobject_ptr hdrelm = vl[0];
+                    encode(vl, hdrelm->cause(),sq, hdrelm->negative(), hdrelm->test(), src);
+                }
+            }     
+ 
+            void encode(dataobject_ptr vl, cause_type cs, bool sq, bool ngt, bool tst, sourse_type src=0) {
+                dataobject_vct tmp;
+                tmp.push_back(vl);   
+                encode(tmp, cs, sq, ngt, tst, src);
+            }            
 
             void encode(const dataobject_vct& vl, cause_type cs, bool sq, bool ngt, bool tst, sourse_type src=0) {
                 body().clear();
@@ -770,7 +821,19 @@ namespace dvnci {
             
             void execute_data(dataobject_ptr vl);
             
-
+            void execute_data(const dataobject_vct& vl);     
+            
+            virtual void insert_device_sevice(device_address dev){};             
+            
+            virtual void remove_device_sevice(device_address dev){};            
+            
+            virtual void insert_sector_sevice(device_address dev, selector_address slct){};             
+            
+            virtual void remove_sector_sevice(device_address dev, selector_address slct){}; 
+            
+            virtual void insert_data_sevice(dataobject_ptr vl){};             
+            
+            virtual void remove_data_sevice(dataobject_ptr vl){};             
 
             boost::asio::io_service io_service_;
             boost::asio::deadline_timer tmout_timer;
@@ -781,7 +844,6 @@ namespace dvnci {
             bool need_disconnect_;            
 
             boost::mutex mtx;
-            dataobject_set data_;
             id_device_map devices_;
             dataobject_set inrequestdata_;
             dataobject_deq waitrequestdata_;
