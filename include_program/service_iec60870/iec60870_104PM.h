@@ -349,6 +349,19 @@ namespace dvnci {
                         boost::bind(&resp_operation_type::header, resp_operation_type(hnd, socket_, resp),
                         boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
             }
+            
+            
+            //virtual void insert_device_sevice(device_address dev){};             
+            
+            //virtual void remove_device_sevice(device_address dev){};            
+            
+            virtual void insert_sector_sevice(device_address dev, selector_address slct);             
+            
+            //virtual void remove_sector_sevice(device_address dev, selector_address slct){}; 
+            
+            //virtual void insert_data_sevice(dataobject_ptr vl){};             
+            
+            //virtual void remove_data_sevice(dataobject_ptr vl){};             
 
         private:
 
