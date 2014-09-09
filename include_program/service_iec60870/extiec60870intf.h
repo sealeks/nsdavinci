@@ -38,12 +38,14 @@ namespace dvnci {
             extiec60870intf(tagsbase_ptr intf_, executor* exctr, indx grp);
 
             virtual ~extiec60870intf();
+            
+            virtual void execute60870(dataobject_ptr vl,  const ns_error& error = 0);            
 
-            virtual void execute60870(dataobject_ptr vl);
+            virtual void execute60870(const dataobject_vct& vl,  const ns_error& error = 0);
 
-            virtual void execute60870(const dataobject_vct& vl);
-
-            virtual void execute60870(device_address dev,  const boost::system::error_code& error);
+            virtual void execute60870(device_address dev,  const ns_error& error = 0);
+            
+            virtual void execute60870(const boost::system::error_code& err);
 
             virtual void terminate60870();
 
