@@ -108,8 +108,8 @@ namespace dvnci {
             mp.insert(type_id_size_pair(32, 10)); //Step position information with time tag CP56Time2a 2 + 1(q) + 7(tb)
             mp.insert(type_id_size_pair(33, 12)); //Bitstring of 32 bit with time tag CP56Time2a 4 + 1(q) + 7(tb)
             mp.insert(type_id_size_pair(34, 10)); //Measured value, normalized value with time tag CP56Time2a  2 + 1(q) + 7(tb)
-            mp.insert(type_id_size_pair(35, 10)); //Measured value, scaled value with time tag CP56Time2a 2 + 1(q) + 7(tb)
-            mp.insert(type_id_size_pair(36, 12)); //Measured value, short floating point value with time tag CP56Time2a  4 + 1(q) + 7(tb)
+            mp.insert(type_id_size_pair(M_ME_TE_1, 10)); //Measured value, scaled value with time tag CP56Time2a 2 + 1(q) + 7(tb)
+            mp.insert(type_id_size_pair(M_ME_TF_1, 12)); //Measured value, short floating point value with time tag CP56Time2a  4 + 1(q) + 7(tb)
             mp.insert(type_id_size_pair(37, 14)); //Integrated totals with time tag CP56Time2a  4 + 1(q) + 2(tm) + 7(tb)
             mp.insert(type_id_size_pair(38, 10)); //Event of protection equipment with time-tag CP56Time2a 1 + 2(tm) + 7(ta)
             mp.insert(type_id_size_pair(39, 11)); //Packed start events of protection equipment with time-tag CP56Time2a 1 + 1(q) + 2(tm) + 7(tb)
@@ -204,20 +204,20 @@ namespace dvnci {
         }
 
         bool operator==(const dataobject& ls, const dataobject& rs) {
-            return ((ls.devnum_ == rs.devnum_) && (ls.selector_ == rs.selector_) &&  (ls.ioa_ == rs.ioa_) && (ls.type_ == rs.type_));
+            return ((ls.devnum_ == rs.devnum_) && (ls.selector_ == rs.selector_) &&  (ls.ioa_ == rs.ioa_) /*&& (ls.type_ == rs.type_)*/);
         }
 
         bool operator<(const dataobject& ls, const dataobject& rs) {
             if (ls.devnum_ == rs.devnum_) {
-                if (ls.type_ == rs.type_) {
+                /*if (ls.type_ == rs.type_) {*/
                     if (ls.selector_ == rs.selector_) {
                         return ls.ioa_ < rs.ioa_;
                     } else {
                         return ls.selector_ < rs.selector_;
                     }
-                } else {
+                /*} else {
                     return ls.type_ < rs.type_;
-                }
+                }*/
             }
             return ls.devnum_ < rs.devnum_;
         }
@@ -235,7 +235,13 @@ namespace dvnci {
                 return false;
             return !ls;
         }
-
+        
+        
+        void  error_and_valid_QDS(boost::uint8_t vl, vlvtype& vld, ns_error& err) {
+            err = (vl & 1) ? ERROR_DATA_OUT_OF_RANGE : 0;
+            vld =FULL_VALID;
+        }
+        
         datetime to_datetime_7(const octet_sequence& vl) {
             try {
                 if (vl.size() == 7) {
@@ -286,6 +292,8 @@ namespace dvnci {
                 type_id tp = vl->type();
                 if ((tp) && (find_type_size(tp) == vl->data().size())) {
                     const octet_sequence& dt = vl->data();
+                    vlvtype valid = FULL_VALID;
+                    ns_error error = 0;
                     switch (tp) {
                         case M_SP_NA_1: /*1*/ //=1
                         {
@@ -297,16 +305,24 @@ namespace dvnci {
                         }
                         case M_ME_NB_1: /*11*/ //= 2 + 1(q)
                         {
-                            return dvnci::short_value(to_int16_t(octet_sequence(dt.begin(), dt.begin()+2)));
+                            error_and_valid_QDS(dt[2], valid, error);
+                            return dvnci::short_value::create_timed<boost::int16_t>(to_int16_t(octet_sequence(dt.begin(), dt.begin()+2)), valid, error);
                         }                        
-                        case M_SP_TB_1: /*30*/
+                        case M_SP_TB_1: /*30*/ // 1 + 7(tb)
                         {
                             return dvnci::short_value::create_timed<boost::uint8_t>(dt[0], to_datetime_7(octet_sequence(dt.begin() + 1, dt.end())));
                         }
-                        case M_ME_TF_1: /*36*/
+                        case M_ME_TE_1: /*35*/ //2 + 1(q) + 7(tb)
                         {
+                            error_and_valid_QDS(dt[2], valid, error);
+                            return dvnci::short_value::create_timed<boost::int16_t>(to_int16_t(octet_sequence(dt.begin(), 
+                                    dt.begin()+2)),to_datetime_7(octet_sequence(dt.begin() + 3, dt.end())), valid, error);
+                        }
+                        case M_ME_TF_1: /*36*/ //4 + 1(q) + 7(tb)
+                        {
+                            error_and_valid_QDS(dt[4], valid, error);
                             return dvnci::short_value::create_timed<float>(to_float_4(octet_sequence(dt.begin(), dt.begin() + 4)),
-                                    to_datetime_7(octet_sequence(dt.begin() + 5, dt.end())));
+                                    to_datetime_7(octet_sequence(dt.begin() + 5, dt.end())), valid, error);
                         }
                         default:
                         {

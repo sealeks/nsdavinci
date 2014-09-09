@@ -280,6 +280,7 @@ namespace dvnci {
         typedef std::pair<dvnci::indx, dataobject_ptr> indx_dataobject_pair;
         typedef std::vector<indx_dataobject_pair> indx_dataobject_vct;
 
+        void  error_and_valid_QDS(boost::uint8_t vl, vlvtype& vld, ns_error& err);        
         datetime to_datetime_7(const octet_sequence& v);
         datetime to_datetime_3(const octet_sequence& vl);
         boost::int16_t to_int16_t(const octet_sequence& vl);
