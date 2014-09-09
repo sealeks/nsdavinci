@@ -788,8 +788,6 @@ namespace dvnci {
             virtual bool uninitialize();
             
             
-            
-            void to_listener(const dataobject_vct& dt);
 
             virtual void error(boost::system::error_code& err);
             
@@ -816,14 +814,17 @@ namespace dvnci {
             iec60870_sector_ptr insert_sector(device_address dev, selector_address slct);
 
             iec60870_sector_ptr remove_sector(device_address dev, selector_address slct); 
-            
-            
+                       
             dataobject_ptr data(dataobject_ptr vl) const;
+            
+            
             
             
             void execute_data(dataobject_ptr vl);
             
             void execute_data(const dataobject_vct& vl); 
+            
+            void execute_error(device_address dev,  const boost::system::error_code& error);  
             
             
             
