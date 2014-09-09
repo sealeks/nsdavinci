@@ -24,6 +24,7 @@ namespace dvnci {
     namespace external {
 
         using dvnci::prot80670::iec60870_data_listener;
+        using dvnci::prot80670::device_address;        
         using dvnci::prot80670::dataobject_ptr;
         using dvnci::prot80670::dataobject_vct;
         using dvnci::prot80670::iec60870_thread;
@@ -42,7 +43,7 @@ namespace dvnci {
 
             virtual void execute60870(const dataobject_vct& vl);
 
-            virtual void execute60870(const boost::system::error_code& error);
+            virtual void execute60870(device_address dev,  const boost::system::error_code& error);
 
             virtual void terminate60870();
 

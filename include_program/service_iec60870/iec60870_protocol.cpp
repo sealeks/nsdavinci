@@ -440,17 +440,87 @@ namespace dvnci {
                 }
             }
         }*/
+        
+        
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //////// iec60870_datanotificator
+        /////////////////////////////////////////////////////////////////////////////////////////////////  
+
+
+            iec60870_datanotificator::iec60870_datanotificator(iec60870_data_listener_ptr listr)  : listener_(listr){           
+            }                       
+           
+            void iec60870_datanotificator::execute60870(dataobject_ptr vl){
+            iec60870_data_listener_ptr lstnr = listener();
+            if (lstnr)
+                lstnr->execute60870(vl);                
+            }           
+
+            
+            void iec60870_datanotificator::execute60870(device_address dev,  const boost::system::error_code& error){
+            iec60870_data_listener_ptr lstnr = listener();
+            if (lstnr)
+                lstnr->execute60870(dev, error);                  
+            }     
+            
+            iec60870_data_listener_ptr iec60870_datanotificator::listener() {
+                return !listener_._empty() ? listener_.lock() : iec60870_data_listener_ptr();
+            }        
+        
+     
+        
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //////// iec60870_sector
+        /////////////////////////////////////////////////////////////////////////////////////////////////         
+
+        /*bool operator==(iec60870_sector_ptr ls, iec60870_sector_ptr rs) {
+            if (ls && rs)
+                return (*ls) == (*rs);
+            if (!ls && !rs)
+                return true;
+            return false;
+        }
+
+        bool operator<(iec60870_sector_ptr ls, iec60870_sector_ptr rs) {
+            if (ls && rs)
+                return (*ls) < (*rs);
+            if (!ls && !rs)
+                return false;
+            return !ls;
+        }*/           
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //////// iec60870_device
+        /////////////////////////////////////////////////////////////////////////////////////////////////    
+        
+        /*bool operator==(iec60870_device_ptr ls, iec60870_device_ptr rs) {
+            if (ls && rs)
+                return (*ls) == (*rs);
+            if (!ls && !rs)
+                return true;
+            return false;
+        }
+
+        bool operator<(iec60870_device_ptr ls, iec60870_device_ptr rs) {
+            if (ls && rs)
+                return (*ls) < (*rs);
+            if (!ls && !rs)
+                return false;
+            return !ls;
+        }*/   
 
 
 
+        
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// iec60870_PM
         /////////////////////////////////////////////////////////////////////////////////////////////////         
 
-        iec60870_PM::iec60870_PM(timeouttype tmo, iec60870_data_listener_ptr listr) :
+        iec60870_PM::iec60870_PM(timeouttype tmo, iec60870_data_listener_ptr listr) : executable(), iec60870_datanotificator(listr),
         io_service_(), tmout_timer(io_service_), short_timer(io_service_),
-        state_(disconnected), pmstate_(noconnected), timout(tmo), need_disconnect_(false), listener_(listr) {
+        state_(disconnected), pmstate_(noconnected), timout(tmo), need_disconnect_(false) {
         }
 
         iec60870_PM::~iec60870_PM() {
@@ -528,7 +598,7 @@ namespace dvnci {
         void iec60870_PM::error(boost::system::error_code& err) {
             iec60870_data_listener_ptr lstnr = listener();
             if (lstnr)
-                lstnr->execute60870(err);
+                lstnr->execute60870(0,err);
         }
 
     }
