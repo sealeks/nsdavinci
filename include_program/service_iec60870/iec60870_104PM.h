@@ -351,6 +351,9 @@ namespace dvnci {
             }
             
             
+            
+        protected:
+            
             //virtual void insert_device_sevice(device_address dev){};             
             
             //virtual void remove_device_sevice(device_address dev){};            
