@@ -235,7 +235,7 @@ namespace dvnci {
         }
 
         bool dataobject::service() const {
-            return (((type_ >= C_IC_NA_1) || (type_ <= C_TS_TA_1)) || (type_ == M_EI_NA_1));
+            return (((type_ >= C_IC_NA_1) && (type_ <= C_TS_TA_1)) || (type_ == M_EI_NA_1));
         }       
 
         bool operator==(const dataobject& ls, const dataobject& rs) {
@@ -694,17 +694,6 @@ namespace dvnci {
             return true;
         }
 
-        void iec60870_PM::to_listener(const dataobject_vct& dt) {
-            iec60870_data_listener_ptr lstnr = listener();
-            if (lstnr) {
-                THD_EXCLUSIVE_LOCK(mtx)
-                for (dataobject_vct::const_iterator it = dt.begin(); it != dt.end(); ++it) {
-                    //if (inrequestdata_.find(*it) != inrequestdata_.end())
-                    lstnr->execute60870(dt);
-                }
-            }
-        }
-
         void iec60870_PM::error(boost::system::error_code& err) {
             iec60870_data_listener_ptr lstnr = listener();
             if (lstnr)
@@ -792,6 +781,14 @@ namespace dvnci {
                 execute_data(*it);
             }
         }
+
+        void iec60870_PM::execute_error(device_address dev, const boost::system::error_code& error) {
+            THD_EXCLUSIVE_LOCK(mtx);
+            iec60870_device_ptr devfnd = device(dev);
+            if (devfnd){
+                execute60870(dev, error); 
+            }
+        }        
 
 
     }
