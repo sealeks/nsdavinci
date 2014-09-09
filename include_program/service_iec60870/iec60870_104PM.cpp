@@ -392,8 +392,8 @@ namespace dvnci {
                 if (!k_expire()) {
                     THD_EXCLUSIVE_LOCK(mtx)
                     if (!waitrequestdata_.empty()) {
-                        send(asdu_body104::create_polling(waitrequestdata_.back()));
-                        waitrequestdata_.pop_back();
+                        send(asdu_body104::create(waitrequestdata_.front()));
+                        waitrequestdata_.pop_front();
                         return;
                     }
                 }
@@ -470,8 +470,7 @@ namespace dvnci {
                 {
                     state_ = connected;
                     pmstate(activated);
-                    send(asdu_body104::create_activation(0, 1));
-                    return true;
+                    return false;
                 }
                 case apdu_104::STOPDTact:
                 {
@@ -493,18 +492,13 @@ namespace dvnci {
             set_rx(resp->tx());
             ack_tx(resp->rx());
             dataobject_vct rslt;
-            if (resp->get(rslt)) {
-                to_listener(rslt);
-                {
-                    THD_EXCLUSIVE_LOCK(mtx)
+            if (resp->get(rslt)) 
                     execute_data(rslt);
-                }
-            }
             return true;
         }
 
         void iec60870_104PM::insert_sector_sevice(device_address dev, selector_address slct) {
-            waitrequestdata_.push_back(dataobject_ptr(new dataobject(dev, C_IC_NA_1, slct, 0)));
+            waitrequestdata_.push_back(dataobject::create_activation_1(0,slct));
         }        
         
 

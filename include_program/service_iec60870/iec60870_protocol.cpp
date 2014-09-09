@@ -182,6 +182,10 @@ namespace dvnci {
         dataobject::dataobject(device_address dev, type_id tp, selector_address sel, data_address addr, bit_number bt, cause_type cs, bool tst, bool neg, const octet_sequence& dt) :
         devnum_(dev), type_(tp), selector_(sel), ioa_(addr), bit_(NULL_BITNUMBER), cause_(cs), test_(tst), negative_(neg), data_(dt) {
         };
+        
+       dataobject_ptr dataobject::create_activation_1(device_address dev, selector_address sel, cause_type cs  , interrogation_type tp){
+           return dataobject_ptr( new dataobject(dev, C_IC_NA_1 , sel, 0,cs, false, false, octet_sequence(1,  tp)));
+       }        
 
         dataobject_ptr dataobject::build_from_bind(device_address dev, std::string bind) {
             /* Name data type without _1 example M_SP_NA_1 => M_SP_NA == X_XX_XX
@@ -229,6 +233,10 @@ namespace dvnci {
         bool dataobject::command() const {
             return ((type_ >= C_SC_NA_1) || (type_ <= C_BO_TA_1));
         }
+
+        bool dataobject::service() const {
+            return (((type_ >= C_IC_NA_1) || (type_ <= C_TS_TA_1)) || (type_ == M_EI_NA_1));
+        }       
 
         bool operator==(const dataobject& ls, const dataobject& rs) {
             return ((ls.devnum_ == rs.devnum_) && (ls.selector_ == rs.selector_) && (ls.ioa_ == rs.ioa_) /*&& (ls.type_ == rs.type_)*/);
@@ -502,15 +510,6 @@ namespace dvnci {
             return fit != line_.end() ? fit->second : dataobject_ptr();
         }
 
-        bool iec60870_sector::operator()(data_address id, dataobject_ptr vl) {
-            ioa_dataobject_map::iterator fit = line_.find(id);
-            if ((fit != line_.end()) && vl) {
-                fit->second.swap(vl);
-                return true;
-            }
-            return false;
-        }
-
         bool iec60870_sector::operator()(dataobject_ptr vl) {
             if (vl && (vl->selector() == selector_)) {
                 ioa_dataobject_map::iterator fit = line_.find(vl->ioa());
@@ -536,9 +535,10 @@ namespace dvnci {
             if (vl->selector() == selector_) {
                 if (line_.find(vl->ioa()) != line_.end()) {
                     line_.erase(vl->ioa());
+                    return true;
                 }
             }
-            return line_.empty();
+            return false;
         }
 
 
@@ -559,14 +559,12 @@ namespace dvnci {
             return ((fit != sectors_.end()) && (fit->second)) ? fit->second->operator ()(id) : dataobject_ptr();
         }
 
-        bool iec60870_device::operator()(selector_address sl, data_address id, dataobject_ptr vl) {
-            id_selestor_map::iterator fit = sectors_.find(sl);
+        bool iec60870_device::operator()(dataobject_ptr vl) {
+            id_selestor_map::iterator fit = sectors_.find(vl->selector());
             if ((fit != sectors_.end()) && (fit->second))
-                return fit->second->operator ()(id, vl);
+                return fit->second->operator ()(vl);
             return false;
         }
-
-        // result if new created
 
         iec60870_sector_ptr iec60870_device::insert(selector_address vl) {
             id_selestor_map::const_iterator fit = sectors_.find(vl);
@@ -575,14 +573,14 @@ namespace dvnci {
                 sectors_.insert(id_selestor_pair(vl, newsel));
                 return newsel;
             }
-            return iec60870_sector_ptr();
+            return fit->second;
         }
 
         bool iec60870_device::insert(dataobject_ptr vl) {
             id_selestor_map::const_iterator fit = sectors_.find(vl->selector());
             if (fit != sectors_.end()) {
                 fit->second->insert(vl);
-                return false;
+                return true;
             } else {
                 iec60870_sector_ptr newsel = iec60870_sector_ptr(new iec60870_sector(vl->selector()));
                 newsel->insert(vl);
@@ -591,8 +589,7 @@ namespace dvnci {
             }
             return false;
         }
-
-        // result if realy erased            
+          
 
         iec60870_sector_ptr iec60870_device::erase(selector_address vl) {
             id_selestor_map::const_iterator fit = sectors_.find(vl);
@@ -612,7 +609,14 @@ namespace dvnci {
             return false;
         }
 
-
+        bool iec60870_device::empty() const {
+            if (sectors_.empty())
+                return true;
+            for (id_selestor_map::const_iterator it = sectors_.begin(); it != sectors_.end(); ++it) 
+                if (!it->second->empty())
+                    return false;
+            return true;
+        }   
 
 
 
@@ -732,6 +736,7 @@ namespace dvnci {
                 devices_.erase(dev);
                 return rslt;
             }
+            return iec60870_device_ptr();
         }
 
         iec60870_sector_ptr iec60870_PM::sector(device_address dev, selector_address slct) const {
@@ -768,15 +773,21 @@ namespace dvnci {
             }
             return dataobject_ptr();
         }
+        
 
         void iec60870_PM::execute_data(dataobject_ptr vl) {
-            iec60870_device_ptr devfnd = device(vl->devnum());
-            if (devfnd) {
-                devfnd->operator ()(vl->selector(), vl->ioa());
+            {               
+                THD_EXCLUSIVE_LOCK(mtx);
+                if ((!vl->service()) && (data(vl)))
+                    execute60870(vl);                               
+                iec60870_device_ptr devfnd = device(vl->devnum());
+                if (devfnd) {
+                    devfnd->operator ()(vl);
+                }
             }
         }
 
-        void iec60870_PM::execute_data(const dataobject_vct& vl) {
+        void iec60870_PM::execute_data(const dataobject_vct& vl) {            
             for (dataobject_vct::const_iterator it = vl.begin(); it != vl.end(); ++it) {
                 execute_data(*it);
             }
