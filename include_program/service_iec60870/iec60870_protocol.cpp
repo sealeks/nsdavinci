@@ -483,13 +483,20 @@ namespace dvnci {
         iec60870_datanotificator::iec60870_datanotificator(iec60870_data_listener_ptr listr) : listener_(listr) {
         }
 
-        void iec60870_datanotificator::execute60870(dataobject_ptr vl) {
+        
+        void iec60870_datanotificator::execute60870(dataobject_ptr vl, const ns_error& error) {
             iec60870_data_listener_ptr lstnr = listener();
             if (lstnr)
-                lstnr->execute60870(vl);
-        }
+                lstnr->execute60870(vl, error);
+        }      
+        
+        void iec60870_datanotificator::execute60870(const dataobject_vct& vl, const ns_error& error) {
+            iec60870_data_listener_ptr lstnr = listener();
+            if (lstnr)
+                lstnr->execute60870(vl, error);
+        }    
 
-        void iec60870_datanotificator::execute60870(device_address dev, const boost::system::error_code& error) {
+        void iec60870_datanotificator::execute60870(device_address dev, const ns_error& error) {
             iec60870_data_listener_ptr lstnr = listener();
             if (lstnr)
                 lstnr->execute60870(dev, error);
@@ -503,19 +510,62 @@ namespace dvnci {
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// iec60870_sector
-        /////////////////////////////////////////////////////////////////////////////////////////////////         
+        /////////////////////////////////////////////////////////////////////////////////////////////////        
+
+        void iec60870_sector::state(iec60870_sector::SectorState vl) {          
+            state_ = vl;
+        }          
 
         dataobject_ptr iec60870_sector::operator()(data_address id) const {
             ioa_dataobject_map::const_iterator fit = line_.find(id);
             return fit != line_.end() ? fit->second : dataobject_ptr();
         }
 
+        bool iec60870_sector::as_service(dataobject_ptr vl) {
+            bool neg = vl->negative();
+            bool tst = vl->test();
+            cause_type cs = vl->cause();
+            type_id tp = vl->type();
+            switch (tp) {
+                case C_IC_NA_1:
+                {
+                    switch (cs) {
+                        case CS_CONF_ACT:
+                        {
+                            state(s_confirmactivated);
+                            break;
+                        }
+                        case CS_END_ACT:
+                        {
+                            state(s_fullactivated);
+                            break;
+                        }
+                        default:
+                        {
+
+                        }
+                    }
+                    break;
+                }
+                default:
+                {
+
+                }
+            }
+            return true;
+        }        
+
         bool iec60870_sector::operator()(dataobject_ptr vl) {
             if (vl && (vl->selector() == selector_)) {
-                ioa_dataobject_map::iterator fit = line_.find(vl->ioa());
-                if ((fit != line_.end())) {
-                    fit->second.swap(vl);
-                    return true;
+                if (vl->service()) {
+                    as_service(vl);
+                } else {
+                    ioa_dataobject_map::iterator fit = line_.find(vl->ioa());
+                    if ((fit != line_.end())) {
+                        execute60870(vl);
+                        fit->second.swap(vl);
+                        return true;
+                    }
                 }
             }
             return false;
@@ -569,7 +619,7 @@ namespace dvnci {
         iec60870_sector_ptr iec60870_device::insert(selector_address vl) {
             id_selestor_map::const_iterator fit = sectors_.find(vl);
             if (fit == sectors_.end()) {
-                iec60870_sector_ptr newsel = iec60870_sector_ptr(new iec60870_sector(vl));
+                iec60870_sector_ptr newsel = iec60870_sector_ptr(new iec60870_sector(vl, listener()));
                 sectors_.insert(id_selestor_pair(vl, newsel));
                 return newsel;
             }
@@ -582,7 +632,7 @@ namespace dvnci {
                 fit->second->insert(vl);
                 return true;
             } else {
-                iec60870_sector_ptr newsel = iec60870_sector_ptr(new iec60870_sector(vl->selector()));
+                iec60870_sector_ptr newsel = iec60870_sector_ptr(new iec60870_sector(vl->selector(), listener()));
                 newsel->insert(vl);
                 sectors_.insert(id_selestor_pair(vl->selector(), newsel));
                 return true;
@@ -694,10 +744,10 @@ namespace dvnci {
             return true;
         }
 
-        void iec60870_PM::error(boost::system::error_code& err) {
+        void iec60870_PM::error(const boost::system::error_code& err) {
             iec60870_data_listener_ptr lstnr = listener();
             if (lstnr)
-                lstnr->execute60870(0, err);
+                lstnr->execute60870(err);
         }
 
         iec60870_device_ptr iec60870_PM::device(device_address dev) const {
@@ -711,7 +761,7 @@ namespace dvnci {
 
         iec60870_device_ptr iec60870_PM::insert_device(device_address dev) {
             if (!device(dev)) {
-                iec60870_device_ptr newdev = iec60870_device_ptr(new iec60870_device(dev));
+                iec60870_device_ptr newdev = iec60870_device_ptr(new iec60870_device(dev,listener()));
                 devices_.insert(id_device_pair(dev, newdev));
                 return newdev;
             }
@@ -766,9 +816,7 @@ namespace dvnci {
 
         void iec60870_PM::execute_data(dataobject_ptr vl) {
             {               
-                THD_EXCLUSIVE_LOCK(mtx);
-                if ((!vl->service()) && (data(vl)))
-                    execute60870(vl);                               
+                THD_EXCLUSIVE_LOCK(mtx);                              
                 iec60870_device_ptr devfnd = device(vl->devnum());
                 if (devfnd) {
                     devfnd->operator ()(vl);
@@ -782,7 +830,7 @@ namespace dvnci {
             }
         }
 
-        void iec60870_PM::execute_error(device_address dev, const boost::system::error_code& error) {
+        void iec60870_PM::execute_error(device_address dev, const ns_error& error) {
             THD_EXCLUSIVE_LOCK(mtx);
             iec60870_device_ptr devfnd = device(dev);
             if (devfnd){

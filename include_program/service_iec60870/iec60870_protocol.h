@@ -291,6 +291,7 @@ namespace dvnci {
 
             friend bool operator==(const dataobject& ls, const dataobject& rs);
             friend bool operator<(const dataobject& ls, const dataobject& rs);
+            
         protected:
 
             device_address devnum_;
@@ -452,12 +453,12 @@ namespace dvnci {
                                 data_address addr = *reinterpret_cast<const data_address*> (&(body()[it])) & 0xFFFFFF;
                                 octet_sequence data(&body()[it + ioasz], &body()[it + ioasz] + szdata);
                                 rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, selctr, addr, cs, tst, neg, data)));
-                                it = it + ioasz + szdata;
+                                it = it + ioasz +  szdata;
                                 datacnt--;
                                 while ((datacnt--) && ((it + szdata) <= body().size())) {
                                     octet_sequence data(&body()[it], &body()[it] + szdata);
                                     rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, selctr, ++addr,cs, tst, neg, data)));
-                                    it = it + ioasz + szdata;
+                                    it = it +  szdata;
                                 }
                                 return !(rslt.empty());
                             }
@@ -543,9 +544,10 @@ namespace dvnci {
 
         public:
 
-            virtual void execute60870(dataobject_ptr vl) = 0;
-            virtual void execute60870(const dataobject_vct& vl) = 0;
-            virtual void execute60870(device_address dev,  const boost::system::error_code& error) = 0;
+            virtual void execute60870(dataobject_ptr vl, const ns_error& error = 0) = 0;
+            virtual void execute60870(const dataobject_vct& vl, const ns_error& error = 0) = 0;
+            virtual void execute60870(device_address dev,  const ns_error& error = 0) = 0;
+            virtual void execute60870(const boost::system::error_code& err) = 0;
             virtual void terminate60870() = 0;
 
         };
@@ -566,8 +568,9 @@ namespace dvnci {
             
             ~iec60870_datanotificator(){};
             
-            void execute60870(dataobject_ptr vl);
-            void execute60870(device_address dev,  const boost::system::error_code& error);            
+            void execute60870(dataobject_ptr vl, const ns_error& error=0);
+            void execute60870(const dataobject_vct& vl, const ns_error& error=0);
+            void execute60870(device_address dev, const ns_error& error=0);            
             
         protected:
 
@@ -593,15 +596,16 @@ namespace dvnci {
         class iec60870_sector;
         typedef boost::shared_ptr<iec60870_sector> iec60870_sector_ptr;
         
-        class iec60870_sector {
+        class iec60870_sector : public iec60870_datanotificator {
             
         public:            
             
             enum SectorState {
-                s_noaciveted, s_activate, s_activated, s_fullactivated, s_deactivate, s_deactivated, s_error
+                s_noaciveted, s_activate, s_confirmactivated, s_fullactivated, s_deactivate, s_deactivated, s_error
             };            
 
-            iec60870_sector(selector_address sl) : selector_(sl), state_(s_noaciveted){}
+            iec60870_sector(selector_address sl, iec60870_data_listener_ptr listr) : 
+            iec60870_datanotificator(listr), selector_(sl), state_(s_noaciveted){}
             ~iec60870_sector(){}
             
             selector_address selector() const {
@@ -612,9 +616,7 @@ namespace dvnci {
                 return state_;
             }
             
-            void state(SectorState vl){
-                state_=vl;
-            }               
+            void state(SectorState vl);            
                                 
             const ioa_dataobject_map& line() const {
                 return line_;
@@ -622,7 +624,9 @@ namespace dvnci {
 
             dataobject_ptr operator()(data_address id) const;
             
-            bool operator()(dataobject_ptr vl);          
+            bool operator()(dataobject_ptr vl);      
+
+            bool as_service(dataobject_ptr vl);            
             
             bool insert(dataobject_ptr vl);
                        
@@ -662,7 +666,7 @@ namespace dvnci {
         typedef boost::shared_ptr<iec60870_device> iec60870_device_ptr;       
         
         
-        class iec60870_device {
+        class iec60870_device : public iec60870_datanotificator {
             
             enum DeviceState {
                 d_disconnect, d_connected
@@ -670,7 +674,9 @@ namespace dvnci {
 
         public:
             
-            iec60870_device(device_address adr) : address_(adr), state_(d_disconnect){}
+            iec60870_device(device_address adr, iec60870_data_listener_ptr listr) : 
+            iec60870_datanotificator(listr), address_(adr), state_(d_disconnect){}
+            
             ~iec60870_device(){}
                         
             device_address address() const {
@@ -789,7 +795,7 @@ namespace dvnci {
             
             
 
-            virtual void error(boost::system::error_code& err);
+            virtual void error(const boost::system::error_code& err);
             
             const id_device_map& devices() const {
                 return devices_;
@@ -824,7 +830,7 @@ namespace dvnci {
             
             void execute_data(const dataobject_vct& vl); 
             
-            void execute_error(device_address dev,  const boost::system::error_code& error);  
+            void execute_error(device_address dev,  const ns_error& error);  
             
             
             
@@ -839,6 +845,8 @@ namespace dvnci {
             virtual void insert_data_sevice(dataobject_ptr vl){};             
             
             virtual void remove_data_sevice(dataobject_ptr vl){};             
+            
+            
 
             boost::asio::io_service io_service_;
             boost::asio::deadline_timer tmout_timer;
