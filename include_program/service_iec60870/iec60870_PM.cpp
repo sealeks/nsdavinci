@@ -10,9 +10,9 @@ namespace dvnci {
         //////// iec60870_thread
         /////////////////////////////////////////////////////////////////////////////////////////////////        
 
-        iec60870_thread::iec60870_thread(std::string host, std::string port, timeouttype tmo, iec60870_data_listener_ptr listr) {
-            pm_ = callable_shared_ptr<iec60870_PM>(new iec60870_104PM(host, port, tmo, listr));
-            ioth = boost::shared_ptr<boost::thread>(new boost::thread(pm_));
+        iec60870_thread::iec60870_thread(std::string host, std::string port, timeouttype tmo, iec60870_data_listener_ptr listr) : 
+        pm_(new iec60870_104PM(host, port, tmo, listr)) , cpm_(pm_){
+            ioth = boost::shared_ptr<boost::thread>(new boost::thread(cpm_));
         }
 
          iec60870_thread::~iec60870_thread() {
@@ -30,11 +30,11 @@ namespace dvnci {
                 ioth->join();
         }       
 
-        callable_shared_ptr<iec60870_PM>iec60870_thread::pm() const {
+        iec60870_PM_ptr iec60870_thread::pm() const {
             return pm_;
         }
 
-        callable_shared_ptr<iec60870_PM>iec60870_thread::pm() {
+        iec60870_PM_ptr iec60870_thread::pm() {
             return pm_;
         }
 

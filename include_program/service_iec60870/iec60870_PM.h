@@ -37,13 +37,14 @@ namespace dvnci {
             static iec60870_thread_ptr create(std::string host, std::string port, timeouttype tmo,
                     iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
 
-            callable_shared_ptr<iec60870_PM> pm() const;
+            iec60870_PM_ptr pm() const;
 
-            callable_shared_ptr<iec60870_PM> pm();
+            iec60870_PM_ptr pm();
 
         private:
-
-            callable_shared_ptr<iec60870_PM> pm_;
+           
+            iec60870_PM_ptr pm_;
+            callable_shared<iec60870_PM> cpm_;
             boost::shared_ptr<boost::thread> ioth;
         };
 
