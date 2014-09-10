@@ -674,7 +674,7 @@ namespace dvnci {
         //////// iec60870_PM
         /////////////////////////////////////////////////////////////////////////////////////////////////         
 
-        iec60870_PM::iec60870_PM(timeouttype tmo, iec60870_data_listener_ptr listr) : executable(), iec60870_datanotificator(listr),
+        iec60870_PM::iec60870_PM(timeouttype tmo, iec60870_data_listener_ptr listr) : iec60870_datanotificator(listr),
         io_service_(), tmout_timer(io_service_), short_timer(io_service_),
         state_(disconnected), pmstate_(noconnected), timout(tmo), need_disconnect_(false) {
         }
@@ -685,14 +685,6 @@ namespace dvnci {
 
         void iec60870_PM::pmstate(iec60870_PM::PMState vl) {
             pmstate_ = vl;
-        }
-
-        bool iec60870_PM::initialize() {
-            return true;
-        }
-
-        bool iec60870_PM::uninitialize() {
-            return true;
         }
 
         bool iec60870_PM::operator()() {

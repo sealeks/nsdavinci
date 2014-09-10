@@ -19,12 +19,39 @@
 namespace dvnci {
     namespace prot80670 {
 
+        template<typename T>
+        class callable_shared {
+
+            typedef boost::shared_ptr<T> shared_type;
+
+        public:
+
+            callable_shared() {
+            }
+
+            callable_shared(shared_type sh) : shr_(sh) {
+            }
+
+            ~callable_shared() {
+            }
+
+            void operator()() {
+                if (shr_)
+                    shr_->operator()();
+            }
+
+        private:
+
+            shared_type shr_;
+
+        };
+
         typedef std::vector<boost::uint8_t> octet_sequence;
         typedef boost::shared_ptr<octet_sequence> octet_sequence_ptr;
 
         typedef boost::uint8_t type_id;
         typedef boost::uint8_t cause_type;
-        typedef boost::uint8_t sourse_type;        
+        typedef boost::uint8_t sourse_type;
         typedef boost::uint8_t interrogation_type;
         typedef boost::uint16_t device_address; // 1,2
         typedef boost::uint16_t selector_address; // 1,2
@@ -154,49 +181,48 @@ namespace dvnci {
         type_id find_type_id(const std::string& val);
         std::size_t find_type_size(type_id val);
 
+        template<std::size_t LinkAddress, std::size_t COT, std::size_t Selector, std::size_t IOA>
+        struct protocol_traits {
 
-
-
-
-        template<std::size_t LinkAddress,  std::size_t COT, std::size_t Selector,  std::size_t IOA>
-        struct protocol_traits{
-            static std::size_t link_size(){
-                return  LinkAddress;
+            static std::size_t link_size() {
+                return LinkAddress;
             }
-            static std::size_t selector_size(){
-                return  Selector;
-            } 
-            
-            static std::size_t start_selector(){
-                return  2+COT;
-            } 
-            
-            static std::size_t stop_selector(){
-                return  2+COT+Selector;
-            }             
-            
-            static std::size_t min_size(){
-                return  2+COT+Selector;
-            } 
-            
-            static std::size_t ioa_size(){
-                return  IOA;
+
+            static std::size_t selector_size() {
+                return Selector;
             }
-            static std::size_t cot_size(){
-                return  COT;
-            }    
-            
-            static bool has_OA(){
-                return (COT>1);
+
+            static std::size_t start_selector() {
+                return 2 + COT;
             }
-            
+
+            static std::size_t stop_selector() {
+                return 2 + COT + Selector;
+            }
+
+            static std::size_t min_size() {
+                return 2 + COT + Selector;
+            }
+
+            static std::size_t ioa_size() {
+                return IOA;
+            }
+
+            static std::size_t cot_size() {
+                return COT;
+            }
+
+            static bool has_OA() {
+                return (COT > 1);
+            }
+
         };
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// dataobject
         /////////////////////////////////////////////////////////////////////////////////////////////////    
-                
+
 
         class dataobject;
         typedef boost::shared_ptr<dataobject> dataobject_ptr;
@@ -208,56 +234,56 @@ namespace dvnci {
             dataobject();
 
             dataobject(device_address dev, type_id tp, selector_address sel,
-            data_address addr, const octet_sequence& dt = octet_sequence());
+                    data_address addr, const octet_sequence& dt = octet_sequence());
 
-            dataobject(device_address dev, type_id tp, selector_address sel,          
-            data_address addr, bit_number bt, const octet_sequence& dt = octet_sequence());
-            
-            dataobject(device_address dev, type_id tp, selector_address sel, data_address addr,
-            cause_type cs, bool tst,  bool neg, const octet_sequence& dt = octet_sequence());
+            dataobject(device_address dev, type_id tp, selector_address sel,
+                    data_address addr, bit_number bt, const octet_sequence& dt = octet_sequence());
 
             dataobject(device_address dev, type_id tp, selector_address sel, data_address addr,
-            bit_number bt, cause_type cs, bool tst,  bool neg, const octet_sequence& dt = octet_sequence());         
+                    cause_type cs, bool tst, bool neg, const octet_sequence& dt = octet_sequence());
 
-            ~ dataobject() {
+            dataobject(device_address dev, type_id tp, selector_address sel, data_address addr,
+                    bit_number bt, cause_type cs, bool tst, bool neg, const octet_sequence& dt = octet_sequence());
+
+            ~dataobject() {
             };
-            
-            static dataobject_ptr create_activation_1(device_address dev, selector_address sel, cause_type cs =CS_ACT , interrogation_type tp =SC_INTERROG_GEN);
-            
+
+            static dataobject_ptr create_activation_1(device_address dev, selector_address sel, cause_type cs = CS_ACT, interrogation_type tp = SC_INTERROG_GEN);
+
 
             static dataobject_ptr build_from_bind(device_address dev, std::string bind);
-            
+
             device_address devnum() const {
                 return devnum_;
-            }            
+            }
 
             cause_type cause() const {
                 return cause_;
             }
-            
-            void cause(cause_type vl)  {
-                cause_=vl;
-            }       
-            
+
+            void cause(cause_type vl) {
+                cause_ = vl;
+            }
+
             bool test() const {
                 return test_;
             }
-            
-            void test(bool vl)  {
-                test_=vl;
-            }    
-            
+
+            void test(bool vl) {
+                test_ = vl;
+            }
+
             bool negative() const {
                 return negative_;
             }
-            
-            void negative(bool vl)  {
-                negative_=vl;
-            }             
-            
+
+            void negative(bool vl) {
+                negative_ = vl;
+            }
+
             selector_address selector() const {
                 return selector_;
-            }            
+            }
 
             data_address ioa() const {
                 return ioa_;
@@ -286,12 +312,12 @@ namespace dvnci {
             bool readable() const;
 
             bool command() const;
-            
-            bool service() const;            
+
+            bool service() const;
 
             friend bool operator==(const dataobject& ls, const dataobject& rs);
             friend bool operator<(const dataobject& ls, const dataobject& rs);
-            
+
         protected:
 
             device_address devnum_;
@@ -300,10 +326,10 @@ namespace dvnci {
             type_id type_;
             bit_number bit_;
             cause_type cause_;
-            bool test_;            
+            bool test_;
             bool negative_;
             octet_sequence data_;
-            
+
         };
 
         bool operator==(dataobject_ptr ls, dataobject_ptr rs);
@@ -317,7 +343,7 @@ namespace dvnci {
         typedef std::pair<dvnci::indx, dataobject_ptr> indx_dataobject_pair;
         typedef std::vector<indx_dataobject_pair> indx_dataobject_vct;
 
-        void  error_and_valid_QDS(boost::uint8_t vl, vlvtype& vld, ns_error& err);        
+        void error_and_valid_QDS(boost::uint8_t vl, vlvtype& vld, ns_error& err);
         datetime to_datetime_7(const octet_sequence& v);
         datetime to_datetime_3(const octet_sequence& vl);
         boost::int16_t to_int16_t(const octet_sequence& vl);
@@ -325,7 +351,7 @@ namespace dvnci {
 
         dvnci::short_value to_short_value(dataobject_ptr v);
 
-        
+
 
 
 
@@ -336,17 +362,16 @@ namespace dvnci {
         const std::size_t MAX_ASDU_SIZE = 249;
 
         template<std::size_t LinkAddress, std::size_t Selector, std::size_t COT, std::size_t IOA>
-        class asdu_body {           
+        class asdu_body {
+                   public:
 
-        public:
-            
             typedef protocol_traits<LinkAddress, Selector, COT, IOA> protocol_traits_type;
 
             asdu_body(dataobject_ptr vl, bool sq = false)
             : body_(new octet_sequence()) {
                 body_->reserve(MAX_ASDU_SIZE);
                 encode(vl, sq);
-            };                   
+            };
 
             asdu_body(const dataobject_vct& vl, cause_type cs, std::size_t cnt, bool sq = false, bool ngt = false, bool tst = false)
             : body_(new octet_sequence()) { // sq = 1 only the first information object has an information object address, all other information objects have the addresses +1, +2, ...
@@ -358,8 +383,8 @@ namespace dvnci {
             : body_(new octet_sequence()) {// sq = 0  each information object has its own information object address in the message       
                 body_->reserve(MAX_ASDU_SIZE);
                 encode(vl, cs, sq, ngt, tst);
-            };       
-            
+            };
+
             asdu_body(octet_sequence_ptr dt) : body_(dt) {
             }
 
@@ -435,13 +460,13 @@ namespace dvnci {
 
             bool get(dataobject_vct& rslt, device_address devaddr = 0) {
                 rslt.clear();
-                if (body().size() >=protocol_traits_type::min_size()) {
+                if (body().size() >= protocol_traits_type::min_size()) {
                     type_id tp = type();
                     selector_address selctr = selector();
                     std::size_t szdata = find_type_size(tp);
                     std::size_t datacnt = count();
                     std::size_t it = protocol_traits_type::min_size();
-                    std::size_t ioasz =protocol_traits_type::ioa_size();
+                    std::size_t ioasz = protocol_traits_type::ioa_size();
                     cause_type cs = cause();
                     bool tst = test();
                     bool neg = negative();
@@ -453,12 +478,12 @@ namespace dvnci {
                                 data_address addr = *reinterpret_cast<const data_address*> (&(body()[it])) & 0xFFFFFF;
                                 octet_sequence data(&body()[it + ioasz], &body()[it + ioasz] + szdata);
                                 rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, selctr, addr, cs, tst, neg, data)));
-                                it = it + ioasz +  szdata;
+                                it = it + ioasz + szdata;
                                 datacnt--;
                                 while ((datacnt--) && ((it + szdata) <= body().size())) {
                                     octet_sequence data(&body()[it], &body()[it] + szdata);
-                                    rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, selctr, ++addr,cs, tst, neg, data)));
-                                    it = it +  szdata;
+                                    rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, selctr, ++addr, cs, tst, neg, data)));
+                                    it = it + szdata;
                                 }
                                 return !(rslt.empty());
                             }
@@ -466,7 +491,7 @@ namespace dvnci {
                             while ((datacnt--) && ((it + ioasz + szdata) <= body().size())) {
                                 data_address addr = (*reinterpret_cast<const data_address*> (&(body()[it]))) & 0xFFFFFF;
                                 octet_sequence data(&body()[it + ioasz], &body()[it + ioasz] + szdata);
-                                rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp,selctr, addr,cs, tst, neg, data)));
+                                rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, selctr, addr, cs, tst, neg, data)));
                                 it = it + ioasz + szdata;
                             }
                             return !(rslt.empty());
@@ -477,27 +502,27 @@ namespace dvnci {
             }
 
         private:
-            
+
             void encode(dataobject_ptr vl, bool sq, sourse_type src = 0) {
                 dataobject_vct tmp;
                 tmp.push_back(vl);
                 encode(tmp, sq, src);
-            }                
-            
-            void encode(const dataobject_vct& vl, bool sq, sourse_type src=0) { 
+            }
+
+            void encode(const dataobject_vct& vl, bool sq, sourse_type src = 0) {
                 if (!vl.empty()) {
                     dataobject_ptr hdrelm = vl[0];
-                    encode(vl, hdrelm->cause(),sq, hdrelm->negative(), hdrelm->test(), src);
+                    encode(vl, hdrelm->cause(), sq, hdrelm->negative(), hdrelm->test(), src);
                 }
-            }     
- 
-            void encode(dataobject_ptr vl, cause_type cs, bool sq, bool ngt, bool tst, sourse_type src=0) {
-                dataobject_vct tmp;
-                tmp.push_back(vl);   
-                encode(tmp, cs, sq, ngt, tst, src);
-            }            
+            }
 
-            void encode(const dataobject_vct& vl, cause_type cs, bool sq, bool ngt, bool tst, sourse_type src=0) {
+            void encode(dataobject_ptr vl, cause_type cs, bool sq, bool ngt, bool tst, sourse_type src = 0) {
+                dataobject_vct tmp;
+                tmp.push_back(vl);
+                encode(tmp, cs, sq, ngt, tst, src);
+            }
+
+            void encode(const dataobject_vct& vl, cause_type cs, bool sq, bool ngt, bool tst, sourse_type src = 0) {
                 body().clear();
                 if (!vl.empty()) {
                     dataobject_ptr hdrelm = vl[0];
@@ -546,197 +571,205 @@ namespace dvnci {
 
             virtual void execute60870(dataobject_ptr vl, const ns_error& error = 0) = 0;
             virtual void execute60870(const dataobject_vct& vl, const ns_error& error = 0) = 0;
-            virtual void execute60870(device_address dev,  const ns_error& error = 0) = 0;
+            virtual void execute60870(device_address dev, const ns_error& error = 0) = 0;
             virtual void execute60870(const boost::system::error_code& err) = 0;
             virtual void terminate60870() = 0;
 
         };
-        
+
 
         typedef boost::shared_ptr<iec60870_data_listener> iec60870_data_listener_ptr;
-        typedef boost::weak_ptr<iec60870_data_listener> iec60870_data_listener_wptr;        
-        
-        
+        typedef boost::weak_ptr<iec60870_data_listener> iec60870_data_listener_wptr;
+
+
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// iec60870_datanotificator
         /////////////////////////////////////////////////////////////////////////////////////////////////  
 
         class iec60870_datanotificator {
+
         public:
-            
+
             iec60870_datanotificator(iec60870_data_listener_ptr listr);
-            
-            ~iec60870_datanotificator(){};
-            
-            void execute60870(dataobject_ptr vl, const ns_error& error=0);
-            void execute60870(const dataobject_vct& vl, const ns_error& error=0);
-            void execute60870(device_address dev, const ns_error& error=0);            
-            
+
+            ~iec60870_datanotificator() {
+            };
+
+            void execute60870(dataobject_ptr vl, const ns_error& error = 0);
+            void execute60870(const dataobject_vct& vl, const ns_error& error = 0);
+            void execute60870(device_address dev, const ns_error& error = 0);
+
         protected:
 
             iec60870_data_listener_ptr listener();
-            
+
             iec60870_data_listener_wptr listener_;
-        };        
-        
-        
-        
-        
-        
-        
+        };
+
+
+
+
+
+
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// iec60870_sector
         /////////////////////////////////////////////////////////////////////////////////////////////////  
-        
-        
+
+
         typedef std::pair<data_address, dataobject_ptr> ioa_dataobject_pair;
-        typedef std::map<data_address, dataobject_ptr> ioa_dataobject_map;        
-        
-        
+        typedef std::map<data_address, dataobject_ptr> ioa_dataobject_map;
+
+
         class iec60870_sector;
         typedef boost::shared_ptr<iec60870_sector> iec60870_sector_ptr;
-        
-        class iec60870_sector : public iec60870_datanotificator {
-            
-        public:            
-            
-            enum SectorState {
-                s_noaciveted, s_activate, s_confirmactivated, s_fullactivated, s_deactivate, s_deactivated, s_error
-            };            
 
-            iec60870_sector(selector_address sl, iec60870_data_listener_ptr listr) : 
-            iec60870_datanotificator(listr), selector_(sl), state_(s_noaciveted){}
-            ~iec60870_sector(){}
-            
+        class iec60870_sector : public iec60870_datanotificator {
+
+        public:
+
+            enum SectorState {
+
+                s_noaciveted, s_activate, s_confirmactivated, s_fullactivated, s_deactivate, s_deactivated, s_error
+            };
+
+            iec60870_sector(selector_address sl, iec60870_data_listener_ptr listr) :
+            iec60870_datanotificator(listr), selector_(sl), state_(s_noaciveted) {
+            }
+
+            ~iec60870_sector() {
+            }
+
             selector_address selector() const {
                 return selector_;
-            }               
-            
+            }
+
             SectorState state() const {
                 return state_;
             }
-            
-            void state(SectorState vl);            
-                                
+
+            void state(SectorState vl);
+
             const ioa_dataobject_map& line() const {
                 return line_;
             }
 
             dataobject_ptr operator()(data_address id) const;
-            
-            bool operator()(dataobject_ptr vl);      
 
-            bool as_service(dataobject_ptr vl);            
-            
+            bool operator()(dataobject_ptr vl);
+
+            bool as_service(dataobject_ptr vl);
+
             bool insert(dataobject_ptr vl);
-                       
-            bool erase(dataobject_ptr vl);  
-            
+
+            bool erase(dataobject_ptr vl);
+
             std::size_t size() const {
                 return line_.size();
             }
-            
-            bool empty() const{
+
+            bool empty() const {
                 return line_.empty();
             }
-       
-                           
+
+
         private:
-            
+
             selector_address selector_;
             SectorState state_;
             ioa_dataobject_map line_;
-            
-        };       
-        
-        
+
+        };
+
+
         typedef std::pair<selector_address, iec60870_sector_ptr> id_selestor_pair;
         typedef std::map<selector_address, iec60870_sector_ptr> id_selestor_map;
-        
 
-        
-        
-        
+
+
+
+
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// iec60870_device
         /////////////////////////////////////////////////////////////////////////////////////////////////        
-        
-        
+
+
         class iec60870_device;
-        typedef boost::shared_ptr<iec60870_device> iec60870_device_ptr;       
-        
-        
+        typedef boost::shared_ptr<iec60870_device> iec60870_device_ptr;
+
         class iec60870_device : public iec60870_datanotificator {
-            
+
             enum DeviceState {
+
                 d_disconnect, d_connected
-            };               
+            };
 
         public:
-            
-            iec60870_device(device_address adr, iec60870_data_listener_ptr listr) : 
-            iec60870_datanotificator(listr), address_(adr), state_(d_disconnect){}
-            
-            ~iec60870_device(){}
-                        
+
+            iec60870_device(device_address adr, iec60870_data_listener_ptr listr) :
+            iec60870_datanotificator(listr), address_(adr), state_(d_disconnect) {
+            }
+
+            ~iec60870_device() {
+            }
+
             device_address address() const {
                 return address_;
-            }               
-            
+            }
+
             DeviceState state() const {
                 return state_;
             }
-            
-            void state(DeviceState vl){
-                state_=vl;
-            }   
-            
+
+            void state(DeviceState vl) {
+                state_ = vl;
+            }
+
             const id_selestor_map& sectors() const {
                 return sectors_;
-            }            
-            
+            }
+
             iec60870_sector_ptr operator()(selector_address id) const;
-            
-            dataobject_ptr operator()(selector_address sl, data_address id) const;       
-            
+
+            dataobject_ptr operator()(selector_address sl, data_address id) const;
+
             bool operator()(dataobject_ptr vl);
-            
+
             // result if new created
             iec60870_sector_ptr insert(selector_address vl);
-            
-            bool insert(dataobject_ptr vl);   
-            
+
+            bool insert(dataobject_ptr vl);
+
             // result if realy erased            
-            iec60870_sector_ptr erase(selector_address vl);   
-                   
-            bool erase(dataobject_ptr vl);     
-            
+            iec60870_sector_ptr erase(selector_address vl);
+
+            bool erase(dataobject_ptr vl);
+
             std::size_t size() const {
                 return sectors_.size();
             }
 
-            bool empty() const;          
-                        
-            
+            bool empty() const;
+
+
         private:
-            
+
             device_address address_;
-            DeviceState state_;    
+            DeviceState state_;
             id_selestor_map sectors_;
-        };        
+        };
 
-        
+
         typedef std::pair<device_address, iec60870_device_ptr> id_device_pair;
-        typedef std::map<device_address, iec60870_device_ptr> id_device_map;   
-        
-        
-        
-        
-        
-        
+        typedef std::map<device_address, iec60870_device_ptr> id_device_map;
 
 
-        
+
+
+
+
+
+
+
 
         const std::size_t PM_SHORT_TIMER = 10;
 
@@ -744,12 +777,12 @@ namespace dvnci {
         //////// iec60870_PM
         /////////////////////////////////////////////////////////////////////////////////////////////////        
 
-        class iec60870_PM : public executable, public iec60870_datanotificator {
+        class iec60870_PM : public iec60870_datanotificator {
 
         public:
 
             enum State {
-                
+
                 connected, disconnected
             };
 
@@ -775,10 +808,10 @@ namespace dvnci {
             virtual bool operator()();
 
             virtual bool add_items(const indx_dataobject_vct& cids, indx_dataobject_vct& rslt);
-            
-            virtual bool read_items(const dataobject_set& cids);            
-            
-            virtual bool remove_items(const dataobject_set& cids);            
+
+            virtual bool read_items(const dataobject_set& cids);
+
+            virtual bool remove_items(const dataobject_set& cids);
 
             virtual void disconnect() = 0;
 
@@ -792,61 +825,65 @@ namespace dvnci {
             virtual bool initialize();
 
             virtual bool uninitialize();
-            
-            
+
+
 
             virtual void error(const boost::system::error_code& err);
-            
+
             const id_device_map& devices() const {
                 return devices_;
-            }  
-            
-            
-            
-            
+            }
+
+
+
+
             iec60870_device_ptr device(device_address dev) const;
-            
-            iec60870_device_ptr device(dataobject_ptr vl) const;      
-            
-            iec60870_device_ptr insert_device(device_address dev);  
-            
-            iec60870_device_ptr remove_device(device_address dev); 
-            
-            
+
+            iec60870_device_ptr device(dataobject_ptr vl) const;
+
+            iec60870_device_ptr insert_device(device_address dev);
+
+            iec60870_device_ptr remove_device(device_address dev);
+
+
             iec60870_sector_ptr sector(device_address dev, selector_address slct) const;
-            
-            iec60870_sector_ptr sector(dataobject_ptr vl) const;  
-            
+
+            iec60870_sector_ptr sector(dataobject_ptr vl) const;
+
             iec60870_sector_ptr insert_sector(device_address dev, selector_address slct);
 
-            iec60870_sector_ptr remove_sector(device_address dev, selector_address slct); 
-                       
+            iec60870_sector_ptr remove_sector(device_address dev, selector_address slct);
+
             dataobject_ptr data(dataobject_ptr vl) const;
-            
-            
-            
-            
+
+
+
+
             void execute_data(dataobject_ptr vl);
-            
-            void execute_data(const dataobject_vct& vl); 
-            
-            void execute_error(device_address dev,  const ns_error& error);  
-            
-            
-            
-            virtual void insert_device_sevice(device_address dev){};             
-            
-            virtual void remove_device_sevice(device_address dev){};            
-            
-            virtual void insert_sector_sevice(device_address dev, selector_address slct){};             
-            
-            virtual void remove_sector_sevice(device_address dev, selector_address slct){}; 
-            
-            virtual void insert_data_sevice(dataobject_ptr vl){};             
-            
-            virtual void remove_data_sevice(dataobject_ptr vl){};             
-            
-            
+
+            void execute_data(const dataobject_vct& vl);
+
+            void execute_error(device_address dev, const ns_error& error);
+
+            virtual void insert_device_sevice(device_address dev) {
+            };
+
+            virtual void remove_device_sevice(device_address dev) {
+            };
+
+            virtual void insert_sector_sevice(device_address dev, selector_address slct) {
+            };
+
+            virtual void remove_sector_sevice(device_address dev, selector_address slct) {
+            };
+
+            virtual void insert_data_sevice(dataobject_ptr vl) {
+            };
+
+            virtual void remove_data_sevice(dataobject_ptr vl) {
+            };
+
+
 
             boost::asio::io_service io_service_;
             boost::asio::deadline_timer tmout_timer;
@@ -854,14 +891,14 @@ namespace dvnci {
             volatile State state_;
             volatile PMState pmstate_;
             timeouttype timout;
-            bool need_disconnect_;            
+            bool need_disconnect_;
 
             boost::mutex mtx;
             id_device_map devices_;
             dataobject_set inrequestdata_;
             dataobject_deq waitrequestdata_;
             dataobject_deq waitcommanddata_;
-            
+
 
         };
 
