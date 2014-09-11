@@ -137,8 +137,8 @@ namespace dvnci {
 
                 //friend  class opc_callback;
 
-                opcintf(tagsbase_ptr intf_, executor* exctr, indx grp);
-
+                explicit opcintf(tagsbase_ptr intf_, executor* exctr, indx grp);
+                explicit opcintf(tagsbase_ptr intf_, executor* exctr, const indx_set& grps, const metalink& lnk);
                 virtual ~opcintf();
 
                 int native_ver() {

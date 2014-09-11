@@ -699,6 +699,11 @@ namespace dvnci {
             transactid_(1), setadviceactive(false) {
                 update_dog();
             }
+            
+            opcintf::opcintf(tagsbase_ptr intf_, executor* exctr, const indx_set& grps, const metalink& lnk):
+            extintf_wraper<OPCHANDLE>(intf_, exctr, grps, lnk, TYPE_SIMPLE_REQ, CONTYPE_SYNC),
+            transactid_(1), setadviceactive(false){              
+            }       
 
             opcintf::~opcintf() {
                 disconnect();
