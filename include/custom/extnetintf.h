@@ -41,7 +41,8 @@ namespace dvnci {
             public:
 
 
-                extnetintf(tagsbase_ptr intf_, executor* exctr, indx grp);
+                explicit extnetintf(tagsbase_ptr intf_, executor* exctr, indx grp);
+                explicit extnetintf(tagsbase_ptr intf_, executor* exctr, const indx_set& grps, const metalink& lnk);              
 
                 virtual ~extnetintf();
 
