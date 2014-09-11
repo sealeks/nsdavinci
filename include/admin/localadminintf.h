@@ -403,10 +403,10 @@ namespace dvnci {
                 return exists() ? intf->groups()->group(key_) : "";
             };
 
-            virtual void port(const std::string& val);
+            virtual void option(const std::string& val);
 
-            virtual std::string port() const {
-                return exists() ? intf->groups()->port(key_) : "";
+            virtual std::string option() const {
+                return exists() ? intf->groups()->option(key_) : "";
             };
 
             virtual void topic(const std::string& val);

@@ -772,7 +772,7 @@ namespace dvnci {
                 tmpentity.password = group(*it).password();
                 tmpentity.server = group(*it).server();
                 tmpentity.group = group(*it).group();
-                tmpentity.port = group(*it).port();
+                tmpentity.port = group(*it).option();
                 tmpentity.topic = group(*it).topic();
                 tmpentity.ether = group(*it).ether();
                 tmpentity.changeset = 0;
@@ -813,7 +813,7 @@ namespace dvnci {
                     group(id).group(it->group);
                 };
                 if ((changeset & MASK_GR_CHANGE_PORT) != 0) {
-                    group(id).port(it->port);
+                    group(id).option(it->port);
                 };
                 if ((changeset & MASK_GR_CHANGE_TOPIC) != 0) {
                     group(id).server(it->topic);

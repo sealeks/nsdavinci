@@ -108,10 +108,10 @@ namespace dvnci {
             }
         };
 
-        void localgroupintf::port(const std::string& val) {
+        void localgroupintf::option(const std::string& val) {
             if (exists()) {
                 try {
-                    intf->groups()->port(key_, val);
+                    intf->groups()->option(key_, val);
                 }                catch (dvncierror& err_) {
                     root->adderror(err_);
                 };
