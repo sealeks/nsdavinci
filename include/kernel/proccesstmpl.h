@@ -202,6 +202,10 @@ namespace dvnci {
             return groupset_;
         };
 
+        bool multigroup() const {
+            return groupset_.size() > 1;
+        }           
+
         void groupset(const indx_set& vl) {
             groupset_ = vl;
         };

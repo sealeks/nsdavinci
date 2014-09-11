@@ -27,10 +27,16 @@ namespace dvnci {
                 disconnected, connected
             };
 
-            externalintf(tagsbase_ptr inf, executor* exctr, indx grp, tagtype provide_man, subcripttype subsrcr = CONTYPE_SYNC) :
-            state_(disconnected), intf(inf), exectr(exctr), group_(grp),
+            explicit externalintf(tagsbase_ptr inf, executor* exctr, indx grp, tagtype provide_man, subcripttype subsrcr = CONTYPE_SYNC) :
+            state_(disconnected), intf(inf), exectr(exctr), group_(grp),groups_(), lnk_(),
             provide_(provide_man), subsrcript_(subsrcr), error_(0), mtx(new boost::mutex()) {
+                groups_.insert(grp);
             };
+            
+            explicit externalintf(tagsbase_ptr inf, executor* exctr, const indx_set& grps, const metalink& lnk, tagtype provide_man, subcripttype subsrcr = CONTYPE_SYNC) :
+            state_(disconnected), intf(inf), exectr(exctr), group_(dvnci::npos), groups_(grps), lnk_(lnk),
+            provide_(provide_man), subsrcript_(subsrcr), error_(0), mtx(new boost::mutex()) {
+            };            
 
             virtual ~externalintf() {
             };
@@ -46,6 +52,18 @@ namespace dvnci {
             indx group() const {
                 return group_;
             }
+            
+            const indx_set& groups() const {
+                return groups_;
+            }  
+            
+            const metalink& link() const {
+                return lnk_;
+            }              
+            
+            bool  multigroup() const {
+                return groups_.size()>1;
+            }            
 
             tagtype provide() const {
                 return provide_;
@@ -93,6 +111,8 @@ namespace dvnci {
             tagsbase_ptr intf;
             executor* exectr;
             indx group_;
+            indx_set groups_;
+            metalink lnk_;
             tagtype provide_;
             subcripttype subsrcript_;
             ns_error error_;
@@ -106,8 +126,8 @@ namespace dvnci {
 
         public:
 
-            externalintf_executor(tagsbase_ptr inf, indx groupind, metalink lnk, tagtype provide_man = TYPE_SIMPL) :
-            executor(inf, provide_man) {
+            externalintf_executor(tagsbase_ptr inf, indx groupind, const metalink& lnk, tagtype provide_man = TYPE_SIMPL) :
+            executor(inf, provide_man), lnk_(lnk)  {
             };
 
             virtual bool operator()() {
@@ -151,7 +171,10 @@ namespace dvnci {
 
             virtual bool initialize() {
                 if (!externmanager)
-                    externmanager = externintf_ptr(new EXTERNALINTF(intf, (executor*)this, group()));
+                    if (multigroup())
+                        externmanager = externintf_ptr(new EXTERNALINTF(intf, (executor*)this, group()));
+                    else
+                        externmanager = externintf_ptr(new EXTERNALINTF(intf, (executor*)this, groupset(), lnk_));
                 return externmanager;
             }
 
@@ -164,6 +187,7 @@ namespace dvnci {
             }
 
             externintf_ptr externmanager;
+            metalink lnk_;
         };
 
 
