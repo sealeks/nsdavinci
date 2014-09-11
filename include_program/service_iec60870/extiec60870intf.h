@@ -36,6 +36,7 @@ namespace dvnci {
         public:
 
             extiec60870intf(tagsbase_ptr intf_, executor* exctr, indx grp);
+            extiec60870intf(tagsbase_ptr intf_, executor* exctr, const indx_set& grps, const metalink& lnk);
 
             virtual ~extiec60870intf();
             

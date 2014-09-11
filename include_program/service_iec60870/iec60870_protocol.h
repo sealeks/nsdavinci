@@ -822,12 +822,6 @@ namespace dvnci {
 
             virtual void terminate() = 0;
 
-            virtual bool initialize();
-
-            virtual bool uninitialize();
-
-
-
             virtual void error(const boost::system::error_code& err);
 
             const id_device_map& devices() const {
