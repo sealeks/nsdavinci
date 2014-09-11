@@ -17,8 +17,11 @@ namespace dvnci {
 
         exmmsintf::exmmsintf(tagsbase_ptr intf_, executor* exctr, indx grp) :
         extintf_wraper<objectname_ptr>(intf_, exctr, grp, TYPE_SIMPLE_REQ, CONTYPE_SYNC) {
-            ;
         }
+        
+        exmmsintf::exmmsintf(tagsbase_ptr intf_, executor* exctr, const indx_set& grps, const metalink& lnk) :
+        extintf_wraper<objectname_ptr>(intf_, exctr, grps, lnk, TYPE_SIMPLE_REQ, CONTYPE_SYNC) {
+        }        
 
         exmmsintf::~exmmsintf() {
             disconnect();

@@ -18,7 +18,8 @@ namespace dvnci {
 
         public:
 
-            exmmsintf(tagsbase_ptr intf_, executor* exctr, indx grp);
+            explicit exmmsintf(tagsbase_ptr intf_, executor* exctr, indx grp);
+            explicit exmmsintf(tagsbase_ptr intf_, executor* exctr, const indx_set& grps, const metalink& lnk);
 
             virtual ~exmmsintf();
 
