@@ -319,8 +319,9 @@ namespace dvnci {
             switch (lnk.chanaltype()) {
                 case NT_CHTP_TCP_IP:
                 {
+                    tcp_endpoint_struct endp = get_tcp_endpoint(lnk.host(), MODBUS_TCP_PORT);
                     basis_iostream_ptr tmp_stream = basis_iostream_ptr(
-                            new tcpip_iostream(lnk.timeout(), lnk.host(), MODBUS_TCP_PORT));
+                            new tcpip_iostream(lnk.timeout(), endp.host, endp.port));
                     return ioprotocol_ptr(new tcp_modbus_protocol<modbus_value_manager > (tmp_stream));
                 }
 
