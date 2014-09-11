@@ -14,7 +14,7 @@ namespace dvnci {
 
         boost::system::error_code iec60870_com_option_setter::store(com_port_option& opt, boost::system::error_code & ec) const {
             reset_default_nill(opt);
-            switch (link.protocol()) {
+          /*  switch (link.protocol()) {
                 case NT_MODBUS_ASCII:
                 {
                     set_rs232_baudrate(opt, link.inf().cominf.boundrate);
@@ -32,7 +32,7 @@ namespace dvnci {
                     set_rs232_comoption(opt, 8, tmprty, (tmprty == NT_RS_NOPARITY) ?
                             NT_RS_TWOSTOPBITS : NT_RS_ONESTOPBIT);
                 }
-            }
+            }*/
 
             return boost::system::error_code();
         }
