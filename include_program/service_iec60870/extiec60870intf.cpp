@@ -29,7 +29,7 @@ namespace dvnci {
         extintf_wraper<dvnci::prot80670::dataobject_ptr>(intf_, exctr, grp, TYPE_SIMPLE_REQ, CONTYPE_ASYNC), iec60870_data_listener(), fatal_() {
         }
         
-        extiec60870intf::extiec60870intf(tagsbase_ptr intf_, executor* exctr, const indx_set& grps, const metalink& lnk) :
+        extiec60870intf::extiec60870intf(tagsbase_ptr intf_, executor* exctr, const indx_set& grps, const metalink& lnk): 
         extintf_wraper<dvnci::prot80670::dataobject_ptr>(intf_, exctr, grps, lnk, TYPE_SIMPLE_REQ, CONTYPE_ASYNC), iec60870_data_listener(), fatal_() {    
         }       
 
@@ -71,12 +71,10 @@ namespace dvnci {
 
         ns_error extiec60870intf::connect_impl() {           
             try {
-                std::string port = "2404"; 
-                if (port.empty())
-                    port = "2404";
+                tcp_endpoint_struct endp = get_tcp_endpoint(link().host(), "2404");
                 if (!thread_io) {
-                    thread_io = create_pm(intf->groups()->host(group()),
-                            fulltrim_copy(port), intf->groups()->timeout(group()),
+                    thread_io = create_pm(endp.host,
+                            endp.port, /*intf->groups()->timeout(group())*/ 1000,
                             iec60870_data_listener::shared_from_this());
                 }
                 state_ = connected;
