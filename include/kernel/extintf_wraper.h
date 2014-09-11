@@ -48,12 +48,19 @@ namespace dvnci {
             typedef std::map<indx, short_value,
             std::less<indx>, std::allocator<cidcmd_pair > > cidcmd_map;
 
-            extintf_wraper(tagsbase_ptr inf, executor* exctr, indx grp, tagtype provide_man, subcripttype subsrcr = CONTYPE_SYNC) :
+            explicit extintf_wraper(tagsbase_ptr inf, executor* exctr, indx grp, tagtype provide_man, subcripttype subsrcr = CONTYPE_SYNC) :
             externalintf(inf, exctr, grp, provide_man, subsrcr) {
                 next_simple_iterator = simple_req_map.left.end();
                 next_event_iterator = event_req_map.left.end();
                 next_report_iterator = report_req_map.left.end();
             }
+            
+            explicit extintf_wraper(tagsbase_ptr inf, executor* exctr, const indx_set& grps, const metalink& lnk ,tagtype provide_man, subcripttype subsrcr = CONTYPE_SYNC) :
+            externalintf(inf, exctr, grps, lnk, provide_man, subsrcr) {
+                next_simple_iterator = simple_req_map.left.end();
+                next_event_iterator = event_req_map.left.end();
+                next_report_iterator = report_req_map.left.end();
+            }            
 
             virtual ~extintf_wraper() {
             };
