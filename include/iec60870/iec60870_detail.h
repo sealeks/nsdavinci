@@ -8,10 +8,12 @@
 
 #include <kernel/driver_proccesstmpl.h>
 #include <kernel/driver_blockmodel.h>
-#include <iec60870/iec60870_protocol.h>
 
 namespace dvnci {
     namespace prot80670 {
+        
+        using dvnci::driver::com_option_setter;
+        using dvnci::driver::com_port_option;
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
