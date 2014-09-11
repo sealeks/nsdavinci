@@ -28,6 +28,10 @@ namespace dvnci {
         extiec60870intf::extiec60870intf(tagsbase_ptr intf_, executor* exctr, indx grp) :
         extintf_wraper<dvnci::prot80670::dataobject_ptr>(intf_, exctr, grp, TYPE_SIMPLE_REQ, CONTYPE_ASYNC), iec60870_data_listener(), fatal_() {
         }
+        
+        extiec60870intf::extiec60870intf(tagsbase_ptr intf_, executor* exctr, const indx_set& grps, const metalink& lnk) :
+        extintf_wraper<dvnci::prot80670::dataobject_ptr>(intf_, exctr, grps, lnk, TYPE_SIMPLE_REQ, CONTYPE_ASYNC), iec60870_data_listener(), fatal_() {    
+        }       
 
         extiec60870intf::~extiec60870intf() {
             disconnect();

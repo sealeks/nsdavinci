@@ -369,111 +369,7 @@ namespace dvnci {
 
 
 
-        /////////////////////////////////////////////////////////////////////////////////////////////////
-        //////// asdu_body
-        /////////////////////////////////////////////////////////////////////////////////////////////////
 
-        /*asdu_body::asdu_body(dataobject_ptr vl, cause_type cs, bool sq, bool ngt, bool tst) : body_(new octet_sequence()) {
-             body_->reserve(MAX_ASDU_SIZE);
-             dataobject_vct tmp;
-             tmp.push_back(vl);
-             encode(tmp, cs, sq, ngt, tst);
-         };
-
-         asdu_body::asdu_body(const dataobject_vct& vl, cause_type cs, std::size_t cnt, bool sq, bool ngt, bool tst) : body_(new octet_sequence()) { // sq = 1 only the first information object has an information object address, all other information objects have the addresses +1, +2, ...
-             body_->reserve(MAX_ASDU_SIZE);
-             encode(vl, cs, sq, ngt, tst);
-         }
-
-         asdu_body::asdu_body(const dataobject_vct& vl, cause_type cs, bool sq, bool ngt, bool tst) : body_(new octet_sequence()) {// sq = 0  each information object has its own information object address in the message       
-             body_->reserve(MAX_ASDU_SIZE);
-             encode(vl, cs, sq, ngt, tst);
-         }
-
-         asdu_body::asdu_body(octet_sequence_ptr dt) : body_(dt) {
-         }
-
-         asdu_body asdu_body::create_activation(interrogation_type tp, cause_type cs) {
-             dataobject_ptr vl(new dataobject(0, C_IC_NA_1, 1, octet_sequence(1, tp)));
-             return asdu_body(vl, cs, false, false, false);
-         }
-
-         asdu_body asdu_body::create_polling(dataobject_ptr ob, cause_type cs) {
-             dataobject_ptr vl(new dataobject(ob->devnum(), C_RD_NA_1, ob->ioa()));
-             return asdu_body(vl, cs, false, false, false);
-         }
-
-         bool asdu_body::get(dataobject_vct& rslt) {
-             rslt.clear();
-             if (body().size() > 6) {
-                 type_id tp = type();
-                 device_address devaddr = address();
-                 std::size_t szdata = find_type_size(tp);
-                 std::size_t datacnt = count();
-                 std::size_t it = 6;
-                 if (!datacnt)
-                     return true;
-                 if (szdata) {
-                     if (sq()) {
-                         if ((it + 3 + szdata) <= body().size()) {
-                             data_address addr = *reinterpret_cast<const data_address*> (&(body()[it])) & 0xFFFFFF;
-                             octet_sequence data(&body()[it + 3], &body()[it + 3] + szdata);
-                             rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, addr, data)));
-                             it = it + 3 + szdata;
-                             datacnt--;
-                             while ((datacnt--) && ((it + szdata) <= body().size())) {
-                                 octet_sequence data(&body()[it], &body()[it] + szdata);
-                                 rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, ++addr, data)));
-                                 it = it + 3 + szdata;
-                             }
-                             return !(rslt.empty());
-                         }
-                     } else {
-                         while ((datacnt--) && ((it + 3 + szdata) <= body().size())) {
-                             data_address addr = (*reinterpret_cast<const data_address*> (&(body()[it]))) & 0xFFFFFF;
-                             octet_sequence data(&body()[it + 3], &body()[it + 3] + szdata);
-                             rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, addr, data)));
-                             it = it + 3 + szdata;
-                         }
-                         return !(rslt.empty());
-                     }
-                 }
-             }
-             return false;
-         }
-
-         void asdu_body::encode(const dataobject_vct& vl, cause_type cs, bool sq, bool ngt, bool tst) {
-             body().clear();
-             if (!vl.empty()) {
-                 dataobject_ptr hdrelm = vl[0];
-                 body().push_back(hdrelm->type());
-                 boost::uint8_t szobj = static_cast<boost::uint8_t> (vl.size());
-                 if (sq)
-                     szobj |= '\x80';
-                 body().push_back(szobj);
-                 if (tst)
-                     cs |= '\x80';
-                 if (ngt)
-                     cs |= '\x40';
-                 body().push_back(cs);
-                 body().push_back(0);
-                 device_address tmpdev = hdrelm->devnum();
-                 body().insert(body().end(), (const char*) &tmpdev, (const char*) &tmpdev + 2);
-                 if (sq) {
-                     for (dataobject_vct::const_iterator it = vl.begin(); it != vl.end(); ++it) {
-                         data_address tmpaddr = (*it)->ioa();
-                         body().insert(body().end(), (const char*) &tmpaddr, (const char*) &tmpaddr + 3);
-                         body().insert(body().end(), (*it)->data().begin(), (*it)->data().end());
-                     }
-                 } else {
-                     data_address tmpaddr = hdrelm->ioa();
-                     body().insert(body().end(), (const char*) &tmpaddr, (const char*) &tmpaddr + 3);
-                     for (dataobject_vct::const_iterator it = vl.begin(); it != vl.end(); ++it) {
-                         body().insert(body().end(), (*it)->data().begin(), (*it)->data().end());
-                     }
-                 }
-             }
-         }*/
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -705,15 +601,15 @@ namespace dvnci {
                 if (it->second->readable()) {
                     if (!data(it->second)) {
                         iec60870_device_ptr dvc = device(it->second->devnum());
-                        if (!dvc) {
+                        if (!dvc) 
                             dvc = insert_device(it->second->devnum());
+                        if (dvc->empty())
                             insert_device_sevice(it->second->devnum());
-                        }
                         iec60870_sector_ptr sct = sector(it->second->devnum(), it->second->selector());
-                        if (!sct) {
+                        if (!sct) 
                             sct = insert_sector(it->second->devnum(), it->second->selector());
+                        if (sct->empty())
                             insert_sector_sevice(it->second->devnum(), it->second->selector());
-                        }
                         sct->insert(it->second);
                     }
                 }
@@ -723,8 +619,22 @@ namespace dvnci {
 
         bool iec60870_PM::remove_items(const dataobject_set& cids) {
             THD_EXCLUSIVE_LOCK(mtx)
-            for (dataobject_set::const_iterator it = cids.begin(); it != cids.end(); ++it)
-                inrequestdata_.erase(*it);
+            for (dataobject_set::const_iterator it = cids.begin(); it != cids.end(); ++it){
+                if (data(*it)) {
+                    iec60870_sector_ptr sct = sector((*it)->devnum(), (*it)->selector());
+                    if (sct) {
+                        sct->erase(*it);
+                        if (sct->empty())
+                            remove_sector_sevice((*it)->devnum(), (*it)->selector());
+                    }
+                    iec60870_device_ptr dvc = device((*it)->devnum());
+                    if (dvc){
+                        if (dvc->empty())
+                            remove_device_sevice((*it)->devnum());                        
+                    }
+                }
+            }
+                //inrequestdata_.erase(*it);
             return true;
         }
 

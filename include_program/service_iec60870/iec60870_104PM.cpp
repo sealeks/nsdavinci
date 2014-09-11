@@ -332,7 +332,9 @@ namespace dvnci {
         }
 
         void iec60870_104PM::send(apdu_104::apcitypeU u) {
-            if ((u == apdu_104::STARTDTact) || (u == apdu_104::STOPDTact) || (apdu_104::TESTFRact))
+            if ((u == apdu_104::STARTDTact) 
+                    || (u == apdu_104::STOPDTact) 
+                    || (apdu_104::TESTFRact))
                 reset_t1();
             reset_t3();
             cancel_t2();

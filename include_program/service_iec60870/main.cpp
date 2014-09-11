@@ -21,22 +21,22 @@ fspath basepath;
 typedef externalintf_executor<extiec60870intf> iec60850executor;
 typedef group_proccessor_templ<iec60850executor, TYPE_SIMPL | TYPE_TEXT > groupiec60850;
 
-class net_service : public uniintfservice < groupiec60850 > {
+class net_service : public linkdriverservice < groupiec60850 > {
 public:
 
-    net_service() : uniintfservice<groupiec60850>(basepath,
+    net_service() : linkdriverservice <groupiec60850>(basepath,
     NS_IEC60870_SERVICE) {
     }
 
 protected:
 
     virtual bool initialize_impl() {
-        uniintfservice<groupiec60850>::initialize_impl();
+        linkdriverservice<groupiec60850>::initialize_impl();
         return true;
     }
 
     virtual bool uninitialize_impl() {
-        uniintfservice<groupiec60850>::uninitialize_impl();
+        linkdriverservice<groupiec60850>::uninitialize_impl();
         if (server) server->terminate();
         //th_server.join();
         return true;
