@@ -171,7 +171,7 @@ namespace dvnci {
 
             virtual bool initialize() {
                 if (!externmanager)
-                    if (multigroup())
+                    if (strategy()!=group_proccessor::STRATEGY_TYPE_LINK)
                         externmanager = externintf_ptr(new EXTERNALINTF(intf, (executor*)this, group()));
                     else
                         externmanager = externintf_ptr(new EXTERNALINTF(intf, (executor*)this, groupset(), lnk_));

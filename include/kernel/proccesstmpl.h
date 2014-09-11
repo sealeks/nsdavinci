@@ -1,9 +1,10 @@
-/* 
+ /* 
  * File:   group_proccessor.h
  * Author: Serg
  *
  * Created on 23 Р В РїС—Р…Р РЋР вЂ№Р В Р’В»Р РЋР Р‰ 2010 Р В РЎвЂ“., 10:47
  */
+
 
 #ifndef ___BASEGROUP_PROCCESSOR_H
 #define	___BASEGROUP_PROCCESSOR_H
@@ -16,6 +17,8 @@ namespace dvnci {
 
     const size_t MAX_GROUPMESSAGE = 1000;
 
+    typedef onum strategytype;
+    
     // Стратегия отбора тегов
 
     class base_tagselector {
@@ -204,7 +207,15 @@ namespace dvnci {
 
         bool multigroup() const {
             return groupset_.size() > 1;
-        }           
+        }        
+        
+        strategytype strategy() const {
+            return strategy_;
+        }       
+        
+        void strategy(strategytype vl) {
+            strategy_=vl;
+        }             
 
         void groupset(const indx_set& vl) {
             groupset_ = vl;
@@ -277,6 +288,7 @@ namespace dvnci {
         indx_dt_map timout_map;
         indx_set tag_errorset;
         indx_set groupset_;
+        strategytype strategy_;
     };
 
     typedef intrusive_sync_share_ptr_tmpl<executor> executor_ptr;
@@ -287,7 +299,7 @@ namespace dvnci {
 
     public:
 
-        typedef onum strategytype;
+
 
         static const strategytype STRATEGY_TYPE_NO = 0;
         static const strategytype STRATEGY_TYPE_LINK = 1;
@@ -425,6 +437,7 @@ namespace dvnci {
             if (!executr) {
                 executr = executor_ptr(new executor_type(intf, selector->group(), selector->link(), TYPEPROVIDER));
                 executr->groupset(selector->groupset());
+                executr->strategy(strategy());
             }
             if (!executr->init()) return false;
 
@@ -450,7 +463,7 @@ namespace dvnci {
                 addmillisec_to_now(xt, 50);
             boost::thread::sleep(xt);
         }
-
+          
         executor_ptr executr;
     };
 
