@@ -114,7 +114,7 @@ namespace dvnci {
             map_.insert(wstringtranslate_pair("properties.1282", "Статистика"));
             map_.insert(wstringtranslate_pair("properties.609", "Тип источника"));
             map_.insert(wstringtranslate_pair("properties.865", "Адрес"));
-            map_.insert(wstringtranslate_pair("properties.1121", "Порт"));
+            map_.insert(wstringtranslate_pair("properties.1121", "Опции"));
             map_.insert(wstringtranslate_pair("properties.1377", "Номер канала"));
             map_.insert(wstringtranslate_pair("properties.17152", "Имя узла"));
             map_.insert(wstringtranslate_pair("properties.16384", "Имя отчета"));
