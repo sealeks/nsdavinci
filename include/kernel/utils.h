@@ -698,6 +698,17 @@ namespace dvnci {
         size_t cnt;
         double value;
     };
+    
+    
+    
+    struct tcp_endpoint_struct{
+        tcp_endpoint_struct(std::string hst, std::string prt) : host(hst), port(prt){}
+        std::string host;
+        std::string port;              
+    };
+
+    tcp_endpoint_struct get_tcp_endpoint(const std::string& vl, const std::string& portdefault);
+    
 }
 
 #endif	/* _NS_STRINGUTILS_H */

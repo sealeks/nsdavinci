@@ -657,12 +657,12 @@ namespace dvnci {
         }
     }
 
-    void groupsbase::port(size_type id, const std::string& val) {
+    void groupsbase::option(size_type id, const std::string& val) {
         if (exists(id)) {
-            if (port(id) != val) {
-                size_t tmp = operator[](id)->portpos();
+            if (option(id) != val) {
+                size_t tmp = operator[](id)->optionpos();
                 stringbase_src(tmp, val);
-                operator[](id)->portpos(tmp);
+                operator[](id)->optionpos(tmp);
             }
         }
     }
@@ -796,7 +796,7 @@ namespace dvnci {
         password(id, "");
         server(id, "");
         group(id, "");
-        port(id, "");
+        option(id, "");
         topic(id, "");
         ether(id, "");
         templatebase<groupsstruct>::uninitstruct(id);
@@ -848,7 +848,7 @@ namespace dvnci {
         host(idsrc, host(iddst));
         ether(idsrc, ether(iddst));
         password(idsrc, password(iddst));
-        port(idsrc, port(iddst));
+        option(idsrc, option(iddst));
         server(idsrc, server(iddst));
         topic(idsrc, topic(iddst));
         user(idsrc, user(iddst));

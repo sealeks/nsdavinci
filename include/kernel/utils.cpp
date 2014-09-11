@@ -1864,5 +1864,38 @@ namespace dvnci {
         if (vl.find("aa") != std::string::npos) rslt += 0x10;
         return rslt;
     }
+
+    tcp_endpoint_struct get_tcp_endpoint(const std::string& vl, const std::string& portdefault) {
+        std::string vls = vl;
+        std::string host ="localhost";
+        fulltrim(vls);
+        std::string port = portdefault;
+        if (!vls.empty()) {
+            std::size_t its = vls.find('[', 0);
+            std::size_t ite = vls.find(']', 0);
+            if ((its != std::string::npos) && (ite != std::string::npos) && ((its + 1) < ite)) {
+                host = vls.substr(its + 1, ite - its - 1);
+                if ((ite + 1) <= vls.size())
+                    vls = vls.substr(ite + 1);
+                std::size_t it = vls.find(':', 0);
+                if (it != std::string::npos) {
+                    if ((it + 1) < vls.size()) {
+                        port = vls.substr(it + 1);
+                    }
+                }
+            } else {
+                std::size_t it = vls.find(':', 0);
+                if (it != std::string::npos) {
+                    if (it)
+                        std::string host = vls.substr(0, it);
+                    if ((it + 1) < vls.size()) {
+                        port = vls.substr(it + 1);
+                    }
+                }
+            }
+        }
+        return tcp_endpoint_struct(host, port);
+    }    
+    
 }
 

@@ -299,7 +299,7 @@ namespace dvnci {
         userpos(0);
         passpos(0);
         grouppos(0);
-        portpos(0);
+        optionpos(0);
         etherpos(0);
         topicpos(0);
         strpos1(0);
