@@ -35,9 +35,10 @@ namespace dvnci {
             ns_error extnetintf::connect_impl() {
                 try {
                     if (!netintf) {
-                        netintf = dvnci::custom::net::netintf_ptr(dvnci::custom::net::factory::build(intf->groups()->host(group()),
-                                intf->groups()->port(group()).empty() ? "9050" : intf->groups()->port(group()),
-                                intf->groups()->user(group()), intf->groups()->password(group()),
+                        
+                        tcp_endpoint_struct endp = get_tcp_endpoint(intf->groups()->host(group()), "9050");                     
+                        netintf = dvnci::custom::net::netintf_ptr(dvnci::custom::net::factory::build(endp.host,endp.port,
+                                intf->groups()->user(group()), intf->groups()->password(group()),                        
                                 intf->groups()->timeout(group())));
                     }
                     if (!netintf) {
