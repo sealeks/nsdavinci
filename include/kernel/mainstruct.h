@@ -1044,12 +1044,12 @@ namespace dvnci {
             return static_cast<size_t> (grouppos_);
         }
 
-        void portpos(size_t val) {
-            portpos_ = static_cast<unum64> (val);
+        void optionpos(size_t val) {
+            optionpos_ = static_cast<unum64> (val);
         }
 
-        size_t portpos() const {
-            return static_cast<size_t> (portpos_);
+        size_t optionpos() const {
+            return static_cast<size_t> (optionpos_);
         }
 
         void etherpos(size_t val) {
@@ -1303,7 +1303,7 @@ namespace dvnci {
         unum64 userpos_;
         unum64 passpos_;
         unum64 grouppos_;
-        unum64 portpos_;
+        unum64 optionpos_;
         unum64 etherpos_;
         unum64 topicpos_;
         unum64 strpos1_;

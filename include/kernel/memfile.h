@@ -833,11 +833,11 @@ namespace dvnci {
 
         // group property        
 
-        std::string port(size_type id) const {
-            return stringbase_src(operator[](id)->portpos());
+        std::string option(size_type id) const {
+            return stringbase_src(operator[](id)->optionpos());
         }
 
-        void port(size_type id, const std::string& val);
+        void option(size_type id, const std::string& val);
 
 
         // ether property         
@@ -917,7 +917,7 @@ namespace dvnci {
 
         metalink link(size_type id) const {
             return exists(id) ? metalink(*operator[](id), id, host(id), user(id), password(id), server(id),
-                    group(id), port(id), ether(id), topic(id)) : metalink();
+                    group(id), option(id), ether(id), topic(id)) : metalink();
         }
 
 
