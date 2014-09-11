@@ -137,11 +137,16 @@ namespace dvnci {
 
         public:
 
-            ddeintf(tagsbase_ptr inf, indx grp) : externalintf< ddeclient_item, ddeclient_item, ddeerror_item,
+            explicit ddeintf(tagsbase_ptr inf, indx grp) : externalintf< ddeclient_item, ddeclient_item, ddeerror_item,
             std::string, ddevalue_item, ddereport_value_items, ddereport_value_item, ddeevent_value_item,
             ddecommand_item >(), intf(inf), group(grp) {
             }
 
+            explicit ddeintf(tagsbase_ptr inf, const indx_set& grps, const metalink& lnk) : externalintf< ddeclient_item, ddeclient_item, ddeerror_item,
+            std::string, ddevalue_item, ddereport_value_items, ddereport_value_item, ddeevent_value_item,
+            ddecommand_item >(), intf(inf), group(grp) {
+            }
+            
             virtual ~ddeintf();
 
             virtual bool connect();
