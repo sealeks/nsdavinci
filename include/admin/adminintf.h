@@ -322,8 +322,8 @@ namespace dvnci {
             virtual std::string server() const = 0;
             virtual void group(const std::string& val) = 0;
             virtual std::string group() const = 0;
-            virtual void port(const std::string& val) = 0;
-            virtual std::string port() const = 0;
+            virtual void option(const std::string& val) = 0;
+            virtual std::string option() const = 0;
             virtual void topic(const std::string& val) = 0;
             virtual std::string topic() const = 0;
             virtual void ether(const std::string& val) = 0;

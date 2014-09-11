@@ -632,7 +632,7 @@ namespace dvnci {
                 };
                 case PROPERTY_CHANALPORT_GROUP:
                 {
-                    _interface->group(id).port(val);
+                    _interface->group(id).option(val);
                     break;
                 };
                 case PROPERTY_ENUM_GROUP:
@@ -721,7 +721,7 @@ namespace dvnci {
                 case PROPERTY_TYPE_GROUP: return to_str(_interface->group(id).appid());
                 case PROPERTY_CHANALTYPE_GROUP: return to_str(_interface->group(id).chanaltype());
                 case PROPERTY_CHANALNUM_GROUP: return to_str(_interface->group(id).chanalnum());
-                case PROPERTY_CHANALPORT_GROUP: return to_str(_interface->group(id).port());
+                case PROPERTY_CHANALPORT_GROUP: return to_str(_interface->group(id).option());
                 case PROPERTY_DEVNUM_GROUP: return to_str(_interface->group(id).devnum());
                 case PROPERTY_GR_TO: return to_str(_interface->group(id).timeout());
                 case PROPERTY_GR_DB: return to_str(_interface->group(id).deadbound());
