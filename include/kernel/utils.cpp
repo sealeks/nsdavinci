@@ -1891,7 +1891,8 @@ namespace dvnci {
                     if ((it + 1) < vls.size()) {
                         port = vls.substr(it + 1);
                     }
-                }
+                } else
+                    host = vls;
             }
         }
         return tcp_endpoint_struct(host, port);
