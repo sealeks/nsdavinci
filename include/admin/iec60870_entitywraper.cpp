@@ -6,60 +6,99 @@
  */
 
 #include <admin/iec60870_entitywraper.h>
+#include <iec60870/iec60870_detail.h>
 
 namespace dvnci {
     namespace admin {
+       
+        
+        const propidtype iec_propmainadd[] = {PROPERTY_DEVNUM_GROUP, PROPERTY_RS232_BOUNDRATE, PROPERTY_RSNUM_GROUP, PROPERTY_CHANALHOST_ADDR_GROUP,
+            PROPERTY_GR_TCNT, PROPERTY_GR_INDTO};
 
-        const propidtype mdb_propmainadd[] = {PROPERTY_DEVNUM_GROUP, PROPERTY_RS232_BOUNDRATE, PROPERTY_RSNUM_GROUP, PROPERTY_CHANALHOST_ADDR_GROUP,
-            PROPERTY_GR_TCNT, PROPERTY_GR_INDTO, PROPERTY_RS232_PARITY,
-            PROPERTY_GR_TO, PROPERTY_GR_BS, PROPERTY_GR_ABS, PROPERTY_MODBUS_PROTOCOL};
-
-        const propidtype mdb_propmainadd_rtu_add[] = {PROPERTY_DEVNUM_GROUP, PROPERTY_RS232_BOUNDRATE, PROPERTY_RS232_PARITY,
+        const propidtype iec_propmain_101_add[] = {PROPERTY_DEVNUM_GROUP, PROPERTY_RS232_BOUNDRATE, 
             PROPERTY_GR_TCNT, PROPERTY_GR_INDTO,
             PROPERTY_RSNUM_GROUP, PROPERTY_GR_TO,
-            PROPERTY_GR_BS, PROPERTY_MODBUS_PROTOCOL};
+            PROPERTY_IEC60870_LINKADR, 
+            PROPERTY_IEC60870_COT, 
+            PROPERTY_IEC60870_SECT, 
+            PROPERTY_IEC60870_IOA};
 
-        const propidtype mdb_propmainadd_ascii_add[] = {PROPERTY_DEVNUM_GROUP, PROPERTY_RS232_BOUNDRATE, PROPERTY_RS232_PARITY,
-            PROPERTY_GR_TCNT, PROPERTY_GR_INDTO,
-            PROPERTY_RSNUM_GROUP, PROPERTY_GR_TO,
-            PROPERTY_GR_BS, PROPERTY_MODBUS_PROTOCOL};
+        const propidtype iec_propmain_104_add[] = {PROPERTY_CHANALHOST_ADDR_GROUP, PROPERTY_DEVNUM_GROUP, PROPERTY_GR_TCNT, PROPERTY_GR_INDTO,
+            PROPERTY_IEC60870_T0, PROPERTY_IEC60870_T1, PROPERTY_IEC60870_T3,  PROPERTY_IEC60870_K, PROPERTY_IEC60870_W};
+        
+        
 
-        const propidtype mdb_propmainadd_tcp_add[] = {PROPERTY_CHANALHOST_ADDR_GROUP, PROPERTY_DEVNUM_GROUP, PROPERTY_GR_TCNT, PROPERTY_GR_INDTO,
-            PROPERTY_GR_TO, PROPERTY_GR_BS};
-
-        iec60870linkpropertyeditor::iec60870linkpropertyeditor() : abstractpropertyeditor(TYPE_PE_LIST, "MBLinkbasetype") {
-            addpropertylist(NT_CHTP_NODEF);
-            addpropertylist(NT_CHTP_RS232_4XX);
-            addpropertylist(NT_CHTP_TCP_IP);
+        iec60870Link::iec60870Link() : abstractpropertyeditor(TYPE_PE_LIST, "iec60870Link") {
+            addpropertylist(static_cast<propidtype>(dvnci::prot80670::lasz_none));
+            addpropertylist(static_cast<propidtype>(dvnci::prot80670::lasz_one));
+            addpropertylist(static_cast<propidtype>(dvnci::prot80670::lasz_double));
         }
-
-        iec60870protocolpropertyeditor::iec60870protocolpropertyeditor() : abstractpropertyeditor(TYPE_PE_LIST, "MBProtocolbasetype") {
-            addpropertylist(NT_MODBUS_RTU);
-            addpropertylist(NT_MODBUS_ASCII);
+        
+        iec60870COT::iec60870COT() : abstractpropertyeditor(TYPE_PE_LIST, "iec60870COT") {
+            addpropertylist(static_cast<propidtype>(dvnci::prot80670::ctsz_one));
+            addpropertylist(static_cast<propidtype>(dvnci::prot80670::ctsz_double));
+        }       
+        
+        iec60870Selector::iec60870Selector() : abstractpropertyeditor(TYPE_PE_LIST, "iec60870Selector") {
+            addpropertylist(static_cast<propidtype>(dvnci::prot80670::select_one));
+            addpropertylist(static_cast<propidtype>(dvnci::prot80670::select_double));
         }
+        
+        iec60870IOA::iec60870IOA() : abstractpropertyeditor(TYPE_PE_LIST, "iec60870IOA") {
+            addpropertylist(static_cast<propidtype>(dvnci::prot80670::ioa_one));
+            addpropertylist(static_cast<propidtype>(dvnci::prot80670::ioa_double));
+            addpropertylist(static_cast<propidtype>(dvnci::prot80670::ioa_three));            
+        }         
+        
+        iec60870Protocol::iec60870Protocol() : abstractpropertyeditor(TYPE_PE_LIST, "iec60870Protocol") {
+            addpropertylist(static_cast<propidtype>(1));
+            addpropertylist(static_cast<propidtype>(2));
+            addpropertylist(static_cast<propidtype>(3));    
+            addpropertylist(static_cast<propidtype>(4));             
+        }            
+        
+        
+
 
         iec60870groupwraper::iec60870groupwraper(lcltype loc) : linkgroupwraper(loc) {
             enum_ = "IEC60870GROUP";
             propidtype propdel[] = {PROPERTY_GR_GR, PROPERTY_CHANALNUM_GROUP, PROPERTY_GR_SYNCT, PROPERTY_CHANALPORT_GROUP,
                 PROPERTY_RS232_DATABIT, PROPERTY_RS232_STOPBIT, PROPERTY_CHANALTYPE_GROUP};
             REMOVE_PROPERTYS(propdel);
-            propidtype propadd[] = {PROPERTY_MDB_CHANALTYPE_GROUP};
+            propidtype propadd[] = {PROPERTY_IEC60870_PROT};
             ADD_PROPERTYS(propadd);
         }
 
+          
         void iec60870groupwraper::addproprtyeditors_internal(abstractpropertymanager* mangr) {
-            mangr->registpropertyeditor(PROPERTY_MDB_CHANALTYPE_GROUP, &ModBLPrEdit);
-            mangr->registpropertyeditor(PROPERTY_MODBUS_PROTOCOL, &ModBPPrEdit);
+            mangr->registpropertyeditor(PROPERTY_IEC60870_PROT, &ProtPrEdit);
+            mangr->registpropertyeditor(PROPERTY_IEC60870_LINKADR, &LinkPrEdit);
+            mangr->registpropertyeditor(PROPERTY_IEC60870_COT, &COTPrEdit);
+            mangr->registpropertyeditor(PROPERTY_IEC60870_SECT, &SelectorPrEdit);
+            mangr->registpropertyeditor(PROPERTY_IEC60870_IOA, &IOAPrEdit);            
             mangr->registpropertyeditor(PROPERTY_RS232_BOUNDRATE, &rs232brPrEdit);
-            mangr->registpropertyeditor(PROPERTY_RS232_DATABIT, &rs232dbPrEdit);
-            mangr->registpropertyeditor(PROPERTY_RS232_STOPBIT, &rs232sbPrEdit);
-            mangr->registpropertyeditor(PROPERTY_RS232_PARITY, &rs232prtPrEdit);
-            mangr->registpropertyeditor(PROPERTY_RS232_FLOWCTRL, &boolPrEdit);
         }
 
         void iec60870groupwraper::setProperty(indx id, propidtype prop, std::string val) {
 
             switch (prop) {
+                
+                case PROPERTY_IEC60870_PROT:{
+                    _interface->group().protocol(static_cast<protocoltype>(dvnci::prot80670::protocol_from(str_to<protocoltype>(val))));
+                    break;
+                }
+                
+                case PROPERTY_IEC60870_LINKADR:{
+                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    unum8 val_ = 0;
+                    if (str_to<unum8>(val, val_)){
+                        if (val_<3){
+                            opt.addr(static_cast<dvnci::prot80670::ADDRESS_sizetype> (val_<3 ? val_ : 0));
+                            _interface->group().option(opt.to_value());
+                        }
+                    }
+                    break;
+                }                
 
                 case PROPERTY_MDB_CHANALTYPE_GROUP:
                 {
@@ -94,6 +133,18 @@ namespace dvnci {
         std::string iec60870groupwraper::getProperty(indx id, propidtype prop) {
 
             switch (prop) {
+                
+                case PROPERTY_IEC60870_PROT:{
+                    protocoltype val_ = static_cast<protocoltype>(dvnci::prot80670::protocol_from(_interface->group(id).protocol()));
+                    return to_str<protocoltype>(val_);
+                    break;
+                }             
+                
+                case PROPERTY_IEC60870_LINKADR:{
+                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    return to_str<unum8>(static_cast<unum8>(opt.addr()));
+                    break;
+                }                           
 
                 case PROPERTY_MDB_CHANALTYPE_GROUP:
                 {
@@ -121,23 +172,12 @@ namespace dvnci {
         }
 
         void iec60870groupwraper::setchaneltp_and_prtcl(chnltype tp, num32 prtcl) {
-            REMOVE_PROPERTYS(mdb_propmainadd)
+            REMOVE_PROPERTYS(iec_propmainadd)
             if (tp == NT_CHTP_RS232_4XX) {
-                switch (prtcl) {
-                    case 0:
-                    {
-                        ADD_PROPERTYS(mdb_propmainadd_rtu_add);
-                        break;
-                    }
-                    case 1:
-                    {
-                        ADD_PROPERTYS(mdb_propmainadd_ascii_add);
-                        break;
-                    }
-                }
+                ADD_PROPERTYS(iec_propmain_101_add);
             } else {
                 if (tp == NT_CHTP_TCP_IP) {
-                    ADD_PROPERTYS(mdb_propmainadd_tcp_add);
+                    ADD_PROPERTYS(iec_propmain_104_add);
                 }
             }
         }
