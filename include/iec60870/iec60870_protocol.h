@@ -16,6 +16,8 @@
 #include <kernel/constdef.h>
 #include <kernel/short_value.h>
 
+#include <iec60870/iec60870_detail.h>
+
 namespace dvnci {
     namespace prot80670 {
 
@@ -181,39 +183,39 @@ namespace dvnci {
         type_id find_type_id(const std::string& val);
         std::size_t find_type_size(type_id val);
 
-        template<std::size_t LinkAddress, std::size_t COT, std::size_t Selector, std::size_t IOA>
+        template<ADDRESS_sizetype LinkAddress, COT_sizetype COT, SECTOR_sizetype Selector, IOA_sizetype IOA>
         struct protocol_traits {
 
             static std::size_t link_size() {
-                return LinkAddress;
+                return static_cast<std::size_t>(LinkAddress);
             }
 
             static std::size_t selector_size() {
-                return Selector;
+                return static_cast<std::size_t>(Selector);
             }
 
             static std::size_t start_selector() {
-                return 2 + COT;
+                return 2 + static_cast<std::size_t>(COT);
             }
 
             static std::size_t stop_selector() {
-                return 2 + COT + Selector;
+                return 2 + static_cast<std::size_t>(COT) + static_cast<std::size_t>(Selector);
             }
 
             static std::size_t min_size() {
-                return 2 + COT + Selector;
+                return 2 + static_cast<std::size_t>(COT) + static_cast<std::size_t>(Selector);
             }
 
             static std::size_t ioa_size() {
-                return IOA;
+                return static_cast<std::size_t>(IOA);
             }
 
             static std::size_t cot_size() {
-                return COT;
+                return static_cast<std::size_t>(COT);
             }
 
             static bool has_OA() {
-                return (COT > 1);
+                return (static_cast<std::size_t>(COT) > 1);
             }
 
         };
@@ -361,11 +363,11 @@ namespace dvnci {
 
         const std::size_t MAX_ASDU_SIZE = 249;
 
-        template<std::size_t LinkAddress, std::size_t Selector, std::size_t COT, std::size_t IOA>
+        template<ADDRESS_sizetype LinkAddress, COT_sizetype COT, SECTOR_sizetype Selector, IOA_sizetype IOA>
         class asdu_body {
                    public:
 
-            typedef protocol_traits<LinkAddress, Selector, COT, IOA> protocol_traits_type;
+            typedef protocol_traits<LinkAddress, COT, Selector, IOA> protocol_traits_type;
 
             asdu_body(dataobject_ptr vl, bool sq = false)
             : body_(new octet_sequence()) {
