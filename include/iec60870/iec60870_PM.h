@@ -30,13 +30,19 @@ namespace dvnci {
 
             iec60870_thread(const std::string& host, const std::string& port, const iec_option& opt,
                     iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
+            
+            iec60870_thread(IEC_PROTOCOL prot, chnlnumtype chnm, const metalink & lnk, const iec_option& opt,
+                    iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());            
 
             ~iec60870_thread();
             
-            void join();            
+            void join();
 
-            static iec60870_thread_ptr create(const std::string& host, const std::string& port, const iec_option& opt, 
+            static iec60870_thread_ptr create(const std::string& host, const std::string& port, const iec_option& opt,
                     iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
+
+            static iec60870_thread_ptr create(IEC_PROTOCOL prot, chnlnumtype chnm, const metalink & lnk, const iec_option& opt,
+                    iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());            
 
             iec60870_PM_ptr pm() const;
 
