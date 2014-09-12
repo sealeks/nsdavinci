@@ -229,27 +229,59 @@ namespace dvnci {
         //////// iec60870_101PM
         /////////////////////////////////////////////////////////////////////////////////////////////////           
 
-        iec60870_101PM::iec60870_101PM(const std::string& hst, const std::string& prt, const iec_option& opt, iec60870_data_listener_ptr listr) :
+        iec60870_101PM::iec60870_101PM(chnlnumtype chnm, const metalink & lnk, const iec_option& opt, iec60870_data_listener_ptr listr) :
         iec60870_PM(opt, listr),
-        socket_(io_service_), t1_timer(io_service_), PM_101_T1(opt.t1()),  t2_timer(io_service_), PM_101_T2(opt.t2()), t3_timer(io_service_), PM_101_T3(opt.t3()),
+        serialport_(io_service_), serialport_io_sevice(io_service_), t1_timer(io_service_), PM_101_T1(opt.t1()),  t2_timer(io_service_), PM_101_T2(opt.t2()), t3_timer(io_service_), PM_101_T3(opt.t3()),
         t0_state(false), t1_state(false), t1_progress(false), t2_state(false), t2_progress(false), t3_state(false),
-        host(hst), port(prt), tx_(0), rx_(0), w_(0), k_fct(opt.k()), w_fct(opt.w()) {
+        chnum_(chnm), comsetter_(lnk), tx_(0), rx_(0), w_(0), k_fct(opt.k()), w_fct(opt.w()) {
         }
 
         void iec60870_101PM::connect() {
-            timout = in_bounded<timeouttype>(50, 600000, timout);
             DEBUG_STR_DVNCI(ioclient connect)
-            DEBUG_VAL_DVNCI(host)
-            DEBUG_VAL_DVNCI(port)
+            DEBUG_VAL_DVNCI(chnum_)
             DEBUG_VAL_DVNCI(timout)
-            boost::asio::ip::tcp::resolver resolver(io_service_);
-            boost::asio::ip::tcp::resolver::query query(host.c_str(), port.c_str());
+            ns_error error_cod = 0;
+                if (!chnum_) {
+                    state_ = disconnected;
+                    error_cod = ERROR_IO_CHANNOOPEN;
+                    return;
+                }
+#if defined(_DVN_WIN_) 
+                std::string device = "\\\\.\\COM" + to_str(chnum_);
+#elif defined(_DVN_LIN_)
+                std::string device = "/dev/ttyS" + to_str(chnum_ - 1);
+#endif                
 
-
-            resolver.async_resolve(query,
-                    boost::bind(&iec60870_101PM::handle_resolve, this,
-                    boost::asio::placeholders::error,
-                    boost::asio::placeholders::iterator));
+                try {
+                    serialport_.open(device);
+                    if (!serialport_.is_open()) {
+                        state_ = disconnected;
+                        error_cod = ERROR_IO_CHANNOOPEN;
+                        return;
+                    }
+                    try {
+                        if (!setoption(comsetter_)) {
+                            serialport_.close();
+                            state_ = disconnected;
+                            error_cod = ERROR_IO_CHANNOOPEN;
+                        }
+                    }                    catch (boost::system::system_error err) {
+                        serialport_.close();
+                        state_ = disconnected;
+                        error_cod = ERROR_IO_CHANNOOPEN;
+                    }
+                }                catch (boost::system::system_error err) {
+                    state_ = disconnected;
+                    error_cod = ERROR_IO_CHANNOOPEN;
+                    return;
+                }                catch (...) {
+                    state_ = disconnected;
+                    error_cod = ERROR_IO_CHANNOOPEN;
+                    return;
+                }
+                state_ = connected;
+                error_cod = 0;
+                return;
 
             set_t0();
 
@@ -263,39 +295,39 @@ namespace dvnci {
 
         void iec60870_101PM::terminate() {
             state_ = disconnected;
-            socket_.close();
+            serialport_.close();
             io_service_.stop();
         }
 
         void iec60870_101PM::handle_resolve(const boost::system::error_code& err,
                 boost::asio::ip::tcp::resolver::iterator endpoint_iterator) {
-            if (!err) {
+            /*if (!err) {
                 boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
-                socket_.async_connect(endpoint,
+                serialport_.async_connect(endpoint,
                         boost::bind(&iec60870_101PM::handle_connect, this,
                         boost::asio::placeholders::error, ++endpoint_iterator));
             } else {
                 terminate();
-            }
+            }*/
         }
 
         void iec60870_101PM::handle_connect(const boost::system::error_code& err,
                 boost::asio::ip::tcp::resolver::iterator endpoint_iterator) {
 
-            if (!err) {
+           /* if (!err) {
                 tmout_timer.cancel();
                 pmstate(noaciveted);
                 send(apdu_101::STARTDTact);
             } else
                 if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator()) {
-                socket_.close();
+                serialport_.close();
                 boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
-                socket_.async_connect(endpoint,
+                serialport_.async_connect(endpoint,
                         boost::bind(&iec60870_101PM::handle_connect, this,
                         boost::asio::placeholders::error, ++endpoint_iterator));
             } else {
                 terminate();
-            }
+            }*/
         }
 
         void iec60870_101PM::handle_request(const boost::system::error_code& error, apdu_101_ptr req) {
@@ -381,7 +413,7 @@ namespace dvnci {
                 send(rx_ + 1);
                 return;
             }
-            if (socket_.available()) {
+            if (/*serialport_.available()*/false) {
                 receive();
                 return;
             }

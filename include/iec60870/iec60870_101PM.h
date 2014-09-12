@@ -171,7 +171,7 @@ namespace dvnci {
 
         public:
 
-            iec60870_101PM(const std::string& hst, const std::string& prt, const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
+            iec60870_101PM(chnlnumtype chnm, const metalink & lnk, const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
 
             virtual void disconnect();
 
@@ -231,19 +231,19 @@ namespace dvnci {
             template< typename handler>
             struct req_operation {
 
-                req_operation(handler hnd, boost::asio::ip::tcp::socket& sock, apdu_101_ptr rq) : hndl(hnd), socket_(sock), req_(rq), headersz_(0), bodysz_(0) {
+                req_operation(handler hnd, boost::asio::serial_port& sock, apdu_101_ptr rq) : hndl(hnd), serialport_(sock), req_(rq), headersz_(0), bodysz_(0) {
                 }
 
                 void header(const boost::system::error_code& error, std::size_t bytes_transferred) {
                     if (!error) {
                         headersz_ += bytes_transferred;
                         if (headersz_ < req_->header().size())
-                            socket_.async_send(boost::asio::buffer(&(req_->header()[0]) + headersz_, req_->header().size() - headersz_),
+                            serialport_.async_write_some(boost::asio::buffer(&(req_->header()[0]) + headersz_, req_->header().size() - headersz_),
                                 boost::bind(&req_operation::header, *this,
                                 boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                         else {
                             if (!req_->body().empty())
-                                socket_.async_send(boost::asio::buffer(&(req_->body()[0]), req_->body().size()),
+                                serialport_.async_write_some(boost::asio::buffer(&(req_->body()[0]), req_->body().size()),
                                     boost::bind(&req_operation::body, *this,
                                     boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                             else
@@ -257,7 +257,7 @@ namespace dvnci {
                     if (!error) {
                         bodysz_ += bytes_transferred;
                         if (bodysz_ < req_->body().size())
-                            socket_.async_send(boost::asio::buffer(&(req_->body()[0]) + bodysz_, req_->body().size() - bodysz_),
+                            serialport_.async_write_some(boost::asio::buffer(&(req_->body()[0]) + bodysz_, req_->body().size() - bodysz_),
                                 boost::bind(&req_operation::body, *this,
                                 boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                         else
@@ -270,7 +270,7 @@ namespace dvnci {
             private:
 
                 handler hndl;
-                boost::asio::ip::tcp::socket& socket_;
+                boost::asio::serial_port& serialport_;
                 apdu_101_ptr req_;
                 std::size_t headersz_;
                 std::size_t bodysz_;
@@ -281,8 +281,8 @@ namespace dvnci {
 
                 typedef req_operation< handler> req_operation_type;
 
-                socket_.async_send(boost::asio::buffer(&(req->header()[0]), req->header().size()),
-                        boost::bind(&req_operation_type::header, req_operation_type(hnd, socket_, req),
+                serialport_.async_write_some(boost::asio::buffer(&(req->header()[0]), req->header().size()),
+                        boost::bind(&req_operation_type::header, req_operation_type(hnd, serialport_, req),
                         boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
 
 
@@ -295,20 +295,20 @@ namespace dvnci {
             template< typename handler>
             struct resp_operation {
 
-                resp_operation(handler hnd, boost::asio::ip::tcp::socket& sock, apdu_101_ptr rsp) : hndl(hnd), socket_(sock), resp_(rsp), headersz_(0), bodysz_(0) {
+                resp_operation(handler hnd, boost::asio::serial_port& sock, apdu_101_ptr rsp) : hndl(hnd), serialport_(sock), resp_(rsp), headersz_(0), bodysz_(0) {
                 }
 
                 void header(const boost::system::error_code& error, std::size_t bytes_transferred) {
                     if (!error) {
                         headersz_ += bytes_transferred;
                         if (headersz_ < apdu_101::apci_length)
-                            socket_.async_receive(boost::asio::buffer(&(resp_->header()[0]) + headersz_, resp_->header().size() - headersz_),
+                            serialport_.async_read_some(boost::asio::buffer(&(resp_->header()[0]) + headersz_, resp_->header().size() - headersz_),
                                 boost::bind(&resp_operation::header, *this,
                                 boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                         else {
                             if (resp_->body_length()) {
                                 resp_->body_prepare();
-                                socket_.async_receive(boost::asio::buffer(&(resp_->body()[0]), resp_->body().size()),
+                                serialport_.async_read_some(boost::asio::buffer(&(resp_->body()[0]), resp_->body().size()),
                                         boost::bind(&resp_operation::body, *this,
                                         boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                             } else
@@ -322,7 +322,7 @@ namespace dvnci {
                     if (!error) {
                         bodysz_ += bytes_transferred;
                         if (bodysz_ < resp_->body().size())
-                            socket_.async_receive(boost::asio::buffer(&(resp_->body()[0]) + bodysz_, resp_->body().size() - bodysz_),
+                            serialport_.async_read_some(boost::asio::buffer(&(resp_->body()[0]) + bodysz_, resp_->body().size() - bodysz_),
                                 boost::bind(&resp_operation::body, *this,
                                 boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                         else
@@ -334,7 +334,7 @@ namespace dvnci {
             private:
 
                 handler hndl;
-                boost::asio::ip::tcp::socket& socket_;
+                boost::asio::serial_port& serialport_;
                 apdu_101_ptr resp_;
                 std::size_t headersz_;
                 std::size_t bodysz_;
@@ -347,12 +347,19 @@ namespace dvnci {
 
                 apdu_101_ptr resp = apdu_101::create();
 
-                socket_.async_receive(boost::asio::buffer(resp->header().data(), resp->header().size()),
-                        boost::bind(&resp_operation_type::header, resp_operation_type(hnd, socket_, resp),
+                serialport_.async_read_some(boost::asio::buffer(resp->header().data(), resp->header().size()),
+                        boost::bind(&resp_operation_type::header, resp_operation_type(hnd, serialport_, resp),
                         boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
             }
-            
-            
+
+            bool setoption(const iec60870_com_option_setter& opt) {
+                try {
+                    serialport_.set_option<iec60870_com_option_setter > (opt);
+                    return true;
+                } catch (...) {
+                    return false;
+                }
+            };            
             
         protected:
             
@@ -402,9 +409,8 @@ namespace dvnci {
             void cancel_t3();
             void handle_t3_expire(const boost::system::error_code& err);
 
-            //boost::asio::serial_port serialport;
-            //boost::asio::serial_port_service serialport_io_sevice;
-            boost::asio::ip::tcp::socket socket_;
+            boost::asio::serial_port serialport_;
+            boost::asio::serial_port_service serialport_io_sevice;
             boost::asio::deadline_timer t1_timer;
             std::size_t PM_101_T1;
             boost::asio::deadline_timer t2_timer;
@@ -418,8 +424,8 @@ namespace dvnci {
             bool t2_progress;
             bool t3_state;
             bool t3_progress;
-            std::string host;
-            std::string port;
+            chnlnumtype chnum_;
+            iec60870_com_option_setter comsetter_;
             tcpcounter_type tx_;
             tcpcounter_type rx_;
             tcpcounter_type w_;
