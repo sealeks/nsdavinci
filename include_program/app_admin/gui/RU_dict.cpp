@@ -348,16 +348,16 @@ namespace dvnci {
             map_.insert(wstringtranslate_pair("iec60870Selector.1", "1"));            
             map_.insert(wstringtranslate_pair("iec60870Selector.2", "2"));     
 
-            map_.insert(wstringtranslate_pair("iec60870IOA", "1"));
+            map_.insert(wstringtranslate_pair("iec60870IOA.", "1"));
             map_.insert(wstringtranslate_pair("iec60870IOA.1", "1"));
             map_.insert(wstringtranslate_pair("iec60870IOA.2", "2"));
             map_.insert(wstringtranslate_pair("iec60870IOA.3", "3"));      
             
-            map_.insert(wstringtranslate_pair("iec60870Protocol", "101"));
+            map_.insert(wstringtranslate_pair("iec60870Protocol.", "101"));
             map_.insert(wstringtranslate_pair("iec60870Protocol.1", "101"));
             map_.insert(wstringtranslate_pair("iec60870Protocol.2", "102"));
             map_.insert(wstringtranslate_pair("iec60870Protocol.3", "103"));   
-            map_.insert(wstringtranslate_pair("iec60870Protocol.3", "104"));            
+            map_.insert(wstringtranslate_pair("iec60870Protocol.4", "104"));            
 
             map_.insert(wstringtranslate_pair("importform", "Импорт"));
             map_.insert(wstringtranslate_pair("importform.addpreftitle", "Преффикс"));
