@@ -473,12 +473,12 @@ namespace dvnci {
                 return exists() ? gets_()->group : "";
             };
 
-            virtual void port(const std::string& val) {
+            virtual void option(const std::string& val) {
                 gets_()->port = val;
                 in_cangeset(MASK_GR_CHANGE_PORT);
             };
 
-            virtual std::string port() const {
+            virtual std::string option() const {
                 return exists() ? gets_()->port : "";
             };
 
