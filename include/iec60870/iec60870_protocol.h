@@ -879,6 +879,10 @@ namespace dvnci {
             virtual void remove_data_sevice(dataobject_ptr vl) {
             };
 
+            
+            boost::asio::io_service io_service_;
+            boost::asio::deadline_timer tmout_timer;
+            boost::asio::deadline_timer short_timer;            
             volatile State state_;
             volatile PMState pmstate_;
             timeouttype timout;
