@@ -365,11 +365,7 @@ namespace dvnci {
             //virtual void insert_data_sevice(dataobject_ptr vl){};             
             
             //virtual void remove_data_sevice(dataobject_ptr vl){};    
-            
-
-            boost::asio::io_service io_service_;
-            boost::asio::deadline_timer tmout_timer;
-            boost::asio::deadline_timer short_timer;            
+                     
 
         private:
 

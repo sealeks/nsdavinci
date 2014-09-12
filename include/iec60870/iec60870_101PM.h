@@ -9,6 +9,7 @@
 #define	_DVNCI_KRNL_NS_IEC60850_101PM_H
 
 #include <iec60870/iec60870_protocol.h>
+#include <boost/asio/serial_port.hpp>
 
 namespace dvnci {
     namespace prot80670 {
@@ -366,11 +367,7 @@ namespace dvnci {
             //virtual void insert_data_sevice(dataobject_ptr vl){};             
             
             //virtual void remove_data_sevice(dataobject_ptr vl){};    
-            
-
-            boost::asio::io_service io_service_;
-            boost::asio::deadline_timer tmout_timer;
-            boost::asio::deadline_timer short_timer;            
+                        
 
         private:
 
@@ -405,7 +402,8 @@ namespace dvnci {
             void cancel_t3();
             void handle_t3_expire(const boost::system::error_code& err);
 
-
+            //boost::asio::serial_port serialport;
+            //boost::asio::serial_port_service serialport_io_sevice;
             boost::asio::ip::tcp::socket socket_;
             boost::asio::deadline_timer t1_timer;
             std::size_t PM_101_T1;

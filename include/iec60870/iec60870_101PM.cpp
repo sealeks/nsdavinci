@@ -231,7 +231,6 @@ namespace dvnci {
 
         iec60870_101PM::iec60870_101PM(const std::string& hst, const std::string& prt, const iec_option& opt, iec60870_data_listener_ptr listr) :
         iec60870_PM(opt, listr),
-        io_service_(), tmout_timer(io_service_), short_timer(io_service_),
         socket_(io_service_), t1_timer(io_service_), PM_101_T1(opt.t1()),  t2_timer(io_service_), PM_101_T2(opt.t2()), t3_timer(io_service_), PM_101_T3(opt.t3()),
         t0_state(false), t1_state(false), t1_progress(false), t2_state(false), t2_progress(false), t3_state(false),
         host(hst), port(prt), tx_(0), rx_(0), w_(0), k_fct(opt.k()), w_fct(opt.w()) {
