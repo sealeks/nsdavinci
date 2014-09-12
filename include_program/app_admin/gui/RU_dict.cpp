@@ -46,6 +46,8 @@ namespace dvnci {
             map_.insert(wstringtranslate_pair("properties.295", "Роль"));            
             map_.insert(wstringtranslate_pair("properties.512", "Коментарий"));
             map_.insert(wstringtranslate_pair("properties.592", "Сообщение"));
+            map_.insert(wstringtranslate_pair("properties.611", "Chanal"));                
+            map_.insert(wstringtranslate_pair("properties.612", "Chanal"));                 
             map_.insert(wstringtranslate_pair("properties.4688", "Тип доступа"));
             map_.insert(wstringtranslate_pair("properties.337", "Тип"));
             map_.insert(wstringtranslate_pair("properties.768", "Привязка"));
@@ -56,6 +58,7 @@ namespace dvnci {
             map_.insert(wstringtranslate_pair("properties.868", "IPv6"));
             map_.insert(wstringtranslate_pair("properties.869", "Номер com-порта"));
             map_.insert(wstringtranslate_pair("properties.897", "Протокол"));
+            map_.insert(wstringtranslate_pair("properties.899", "Protocol"));            
             map_.insert(wstringtranslate_pair("properties.1122", "Номер устойства"));
             map_.insert(wstringtranslate_pair("properties.1138", "Имя группы"));
             map_.insert(wstringtranslate_pair("properties.1137", "Пользователь"));
@@ -80,7 +83,18 @@ namespace dvnci {
             map_.insert(wstringtranslate_pair("properties.1166", "WTC ms."));
             map_.insert(wstringtranslate_pair("properties.1280", "Единицы изм. контролера max"));
             map_.insert(wstringtranslate_pair("properties.1281", "Смещение подпериода"));
-            map_.insert(wstringtranslate_pair("properties.1379", "Таймаут"));
+            map_.insert(wstringtranslate_pair("properties.810", "Protocol Spec"));      
+            map_.insert(wstringtranslate_pair("properties.1360", "Link size"));       
+            map_.insert(wstringtranslate_pair("properties.1361", "COT size"));            
+            map_.insert(wstringtranslate_pair("properties.1362", "Sector size"));       
+            map_.insert(wstringtranslate_pair("properties.1363", "IOA size"));   
+            map_.insert(wstringtranslate_pair("properties.1364", "t0"));       
+            map_.insert(wstringtranslate_pair("properties.1365", "t1"));            
+            map_.insert(wstringtranslate_pair("properties.1366", "t2"));       
+            map_.insert(wstringtranslate_pair("properties.1367", "t3"));     
+            map_.insert(wstringtranslate_pair("properties.1368", "k"));       
+            map_.insert(wstringtranslate_pair("properties.1369", "w"));                  
+            map_.insert(wstringtranslate_pair("properties.1379", "Таймаут"));            
             map_.insert(wstringtranslate_pair("properties.1381", "Мертвая зона группы%"));
             map_.insert(wstringtranslate_pair("properties.1383", "Период обновления "));
             map_.insert(wstringtranslate_pair("properties.1385", "Синхронизация времени"));
@@ -320,6 +334,30 @@ namespace dvnci {
             map_.insert(wstringtranslate_pair("GrLocaltype.1", "LOC8"));
             map_.insert(wstringtranslate_pair("GrLocaltype.2", "W16"));
             map_.insert(wstringtranslate_pair("GrLocaltype.3", "W32"));
+            
+            map_.insert(wstringtranslate_pair("iec60870Link.", "Not used"));
+            map_.insert(wstringtranslate_pair("iec60870Link.0", "Not used"));            
+            map_.insert(wstringtranslate_pair("iec60870Link.1", "1"));
+            map_.insert(wstringtranslate_pair("iec60870Link.2", "2"));     
+            
+            map_.insert(wstringtranslate_pair("iec60870COT.", "1"));
+            map_.insert(wstringtranslate_pair("iec60870COT.1", "1"));            
+            map_.insert(wstringtranslate_pair("iec60870COT.2", "2"));     
+            
+            map_.insert(wstringtranslate_pair("iec60870Selector.", "1"));
+            map_.insert(wstringtranslate_pair("iec60870Selector.1", "1"));            
+            map_.insert(wstringtranslate_pair("iec60870Selector.2", "2"));     
+
+            map_.insert(wstringtranslate_pair("iec60870IOA", "1"));
+            map_.insert(wstringtranslate_pair("iec60870IOA.1", "1"));
+            map_.insert(wstringtranslate_pair("iec60870IOA.2", "2"));
+            map_.insert(wstringtranslate_pair("iec60870IOA.3", "3"));      
+            
+            map_.insert(wstringtranslate_pair("iec60870Protocol", "101"));
+            map_.insert(wstringtranslate_pair("iec60870Protocol.1", "101"));
+            map_.insert(wstringtranslate_pair("iec60870Protocol.2", "102"));
+            map_.insert(wstringtranslate_pair("iec60870Protocol.3", "103"));   
+            map_.insert(wstringtranslate_pair("iec60870Protocol.3", "104"));            
 
             map_.insert(wstringtranslate_pair("importform", "Импорт"));
             map_.insert(wstringtranslate_pair("importform.addpreftitle", "Преффикс"));
