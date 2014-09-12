@@ -7,17 +7,35 @@
 namespace dvnci {
     namespace admin {
 
-        class iec60870linkpropertyeditor : public abstractpropertyeditor {
+        class iec60870Link : public abstractpropertyeditor {
 
         public:
-            iec60870linkpropertyeditor();
+            iec60870Link();
         };
-
-        class iec60870protocolpropertyeditor : public abstractpropertyeditor {
+        
+        class iec60870COT : public abstractpropertyeditor {
 
         public:
-            iec60870protocolpropertyeditor();
+            iec60870COT();
+        };        
+
+        class iec60870Selector : public abstractpropertyeditor {
+
+        public:
+            iec60870Selector();
         };
+        
+        class iec60870IOA : public abstractpropertyeditor {
+
+        public:
+            iec60870IOA();
+        };   
+        
+        class iec60870Protocol : public abstractpropertyeditor {
+
+        public:
+            iec60870Protocol();
+        };           
 
         class iec60870groupwraper : public linkgroupwraper {
 
@@ -27,8 +45,11 @@ namespace dvnci {
             virtual std::string getProperty(indx id, propidtype prop);
             virtual void setids(const entity_map& vl);
         protected:
-            iec60870linkpropertyeditor ModBLPrEdit;
-            iec60870protocolpropertyeditor ModBPPrEdit;
+            iec60870Link LinkPrEdit;
+            iec60870COT COTPrEdit;
+            iec60870Selector SelectorPrEdit;
+            iec60870IOA IOAPrEdit;  
+            iec60870Protocol ProtPrEdit;  
             virtual void addproprtyeditors_internal(abstractpropertymanager* mangr);
             void setchaneltp_and_prtcl(chnltype tp, num32 prtcl);
         };
