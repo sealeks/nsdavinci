@@ -71,11 +71,24 @@ namespace dvnci {
 
         ns_error extiec60870intf::connect_impl() {           
             try {
-                tcp_endpoint_struct endp = get_tcp_endpoint(link().host(), "2404");
                 if (!thread_io) {
-                    thread_io = create_pm(endp.host,
-                            endp.port,iec_option(intf->groups()->option(group())),
-                            iec60870_data_listener::shared_from_this());
+
+                    switch(dvnci::prot80670::protocol_from(link().protocol())) {
+                        case dvnci::prot80670::IEC_104:
+                        {
+                            tcp_endpoint_struct endp = get_tcp_endpoint(link().host(), "2404");
+                            thread_io = create_pm(endp.host,
+                                    endp.port, iec_option(intf->groups()->option(group())),
+                                    iec60870_data_listener::shared_from_this());
+                            break;
+                        }
+                        default:
+                        {
+                            thread_io = create_pm( dvnci::prot80670::IEC_101, link().chanalnum(), link(),
+                                    iec_option(intf->groups()->option(group())),
+                                    iec60870_data_listener::shared_from_this());
+                        }
+                    }
                 }
                 state_ = connected;
                 return error(pm_connected() ? 0 : ERROR_IO_LINK_NOT_CONNECTION);
@@ -202,9 +215,15 @@ namespace dvnci {
             return error();
         };
 
-        iec60870_thread_ptr extiec60870intf::create_pm(const std::string& host, const std::string& port, const iec_option& opt, dvnci::prot80670::iec60870_data_listener_ptr listr) {
+        iec60870_thread_ptr extiec60870intf::create_pm(const std::string& host, const std::string& port,
+                const iec_option& opt, iec60870_data_listener_ptr listr) {
             return iec60870_thread::create(host, port,opt, listr);
         }
+
+        iec60870_thread_ptr extiec60870intf::create_pm(dvnci::prot80670::IEC_PROTOCOL prot, 
+                chnlnumtype chnm, const metalink & lnk, const iec_option& opt,iec60870_data_listener_ptr listr) {
+            return iec60870_thread::create(prot, chnm, lnk, opt, listr);
+        }  
 
         bool extiec60870intf::pm_connected() const {
             return ((thread_io) && (thread_io->pm()->state() == dvnci::prot80670::iec60870_104PM::connected));
