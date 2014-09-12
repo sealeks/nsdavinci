@@ -793,7 +793,7 @@ namespace dvnci {
                 noconnected, noaciveted, activated, todisconnect
             };
 
-            iec60870_PM(timeouttype tmo, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
+            iec60870_PM(const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
 
             virtual ~iec60870_PM();
 
@@ -879,11 +879,6 @@ namespace dvnci {
             virtual void remove_data_sevice(dataobject_ptr vl) {
             };
 
-
-
-            boost::asio::io_service io_service_;
-            boost::asio::deadline_timer tmout_timer;
-            boost::asio::deadline_timer short_timer;
             volatile State state_;
             volatile PMState pmstate_;
             timeouttype timout;

@@ -27,14 +27,14 @@ namespace dvnci {
 
         public:
 
-            iec60870_thread(std::string host, std::string port, timeouttype tmo,
+            iec60870_thread(const std::string& host, const std::string& port, const iec_option& opt,
                     iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
 
             ~iec60870_thread();
             
             void join();            
 
-            static iec60870_thread_ptr create(std::string host, std::string port, timeouttype tmo,
+            static iec60870_thread_ptr create(const std::string& host, const std::string& port, const iec_option& opt, 
                     iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
 
             iec60870_PM_ptr pm() const;

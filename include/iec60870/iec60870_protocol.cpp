@@ -570,9 +570,8 @@ namespace dvnci {
         //////// iec60870_PM
         /////////////////////////////////////////////////////////////////////////////////////////////////         
 
-        iec60870_PM::iec60870_PM(timeouttype tmo, iec60870_data_listener_ptr listr) : iec60870_datanotificator(listr),
-        io_service_(), tmout_timer(io_service_), short_timer(io_service_),
-        state_(disconnected), pmstate_(noconnected), timout(tmo), need_disconnect_(false) {
+        iec60870_PM::iec60870_PM(const iec_option& opt, iec60870_data_listener_ptr listr) : iec60870_datanotificator(listr),
+        state_(disconnected), pmstate_(noconnected), timout(opt.t0()*1000), need_disconnect_(false) {
         }
 
         iec60870_PM::~iec60870_PM() {
