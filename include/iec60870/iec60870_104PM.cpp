@@ -275,7 +275,7 @@ namespace dvnci {
                         boost::bind(&iec60870_104PM::handle_connect, this,
                         boost::asio::placeholders::error, ++endpoint_iterator));
             } else {
-                terminate();
+                //terminate();
             }
         }
 
@@ -294,7 +294,7 @@ namespace dvnci {
                         boost::bind(&iec60870_104PM::handle_connect, this,
                         boost::asio::placeholders::error, ++endpoint_iterator));
             } else {
-                terminate();
+                //terminate();
             }
         }
 
