@@ -136,7 +136,8 @@ namespace dvnci {
             }
 
             std::size_t t0() const {
-                return get<2, 1, 127, 30>();
+                std::size_t rslt = get<2, 1, 127, 30>();
+                return (rslt>2) ? rslt : 2;
             }
 
             void t0(std::size_t vl) {
@@ -144,7 +145,8 @@ namespace dvnci {
             }
 
             std::size_t t1() const {
-                return get<3, 3, 127, 10>();
+                std::size_t rslt = get<3, 3, 127, 10>();                
+                return (rslt >t0()) ? (t0()-1) : rslt;
             }
 
             void t1(std::size_t vl) {
@@ -152,7 +154,8 @@ namespace dvnci {
             }
 
             std::size_t t2() const {
-                return get<4, 1, 127, 15>();
+                std::size_t rslt = get<4, 1, 127, 15>();                
+                return (rslt >t0()) ? (t0()-1) : rslt;
             }
 
             void t2(std::size_t vl) {
@@ -160,7 +163,8 @@ namespace dvnci {
             }
 
             std::size_t t3() const {
-                return get<5, 1, 127, 20>();
+                std::size_t rslt = get<5, 1, 127, 20>();
+                return (rslt > 5) ? rslt : 5;
             }
 
             void t3(std::size_t vl) {
@@ -168,7 +172,8 @@ namespace dvnci {
             }
 
             std::size_t k() const {
-                return get<6, 1, 127, 12>();
+                std::size_t rslt = get<6, 1, 127, 12>();
+                return (!rslt) ? 1 : rslt;
             }
 
             void k(std::size_t vl) {
@@ -176,7 +181,8 @@ namespace dvnci {
             }
 
             std::size_t w() const {
-                return get<7, 1, 127, 8>();
+                std::size_t rslt = get<7, 1, 127, 8>();                
+                return (rslt>k()) ? k() : rslt;
             }
 
             void w(std::size_t vl) {
