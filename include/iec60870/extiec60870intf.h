@@ -29,6 +29,7 @@ namespace dvnci {
         using dvnci::prot80670::dataobject_vct;
         using dvnci::prot80670::iec60870_thread;
         using dvnci::prot80670::iec60870_thread_ptr;
+        using dvnci::prot80670::iec_option;        
 
         class extiec60870intf : public extintf_wraper<dvnci::prot80670::dataobject_ptr>,
         public virtual iec60870_data_listener {
@@ -74,7 +75,7 @@ namespace dvnci {
 
         private:
 
-            iec60870_thread_ptr create_pm(std::string host, std::string port, timeouttype tmo,
+            iec60870_thread_ptr create_pm(const std::string& host, const std::string& port, const iec_option& opt, 
                     dvnci::prot80670::iec60870_data_listener_ptr listr);
             
             bool pm_connected() const;

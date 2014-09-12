@@ -74,7 +74,7 @@ namespace dvnci {
                 tcp_endpoint_struct endp = get_tcp_endpoint(link().host(), "2404");
                 if (!thread_io) {
                     thread_io = create_pm(endp.host,
-                            endp.port, /*intf->groups()->timeout(group())*/ 1000,
+                            endp.port,iec_option(intf->groups()->option(group())),
                             iec60870_data_listener::shared_from_this());
                 }
                 state_ = connected;
@@ -202,8 +202,8 @@ namespace dvnci {
             return error();
         };
 
-        iec60870_thread_ptr extiec60870intf::create_pm(std::string host, std::string port, timeouttype tmo, dvnci::prot80670::iec60870_data_listener_ptr listr) {
-            return iec60870_thread::create(host, port, tmo, listr);
+        iec60870_thread_ptr extiec60870intf::create_pm(const std::string& host, const std::string& port, const iec_option& opt, dvnci::prot80670::iec60870_data_listener_ptr listr) {
+            return iec60870_thread::create(host, port,opt, listr);
         }
 
         bool extiec60870intf::pm_connected() const {

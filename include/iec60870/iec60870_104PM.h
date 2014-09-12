@@ -156,7 +156,7 @@ namespace dvnci {
         const std::size_t PM_104_T0 = 30;
         const std::size_t PM_104_T1 = 15;
         const std::size_t PM_104_T2 = 10;
-        const std::size_t PM_104_T3 = 20 - 2;
+        const std::size_t PM_104_T3 = 20;
 
         const tcpcounter_type PM_104_K = 12;
         const tcpcounter_type PM_104_W = 8;
@@ -169,7 +169,7 @@ namespace dvnci {
 
         public:
 
-            iec60870_104PM(std::string hst, std::string prt, timeouttype tmo, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
+            iec60870_104PM(const std::string& hst, const std::string& prt, const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
 
             virtual void disconnect();
 
@@ -364,7 +364,12 @@ namespace dvnci {
             
             //virtual void insert_data_sevice(dataobject_ptr vl){};             
             
-            //virtual void remove_data_sevice(dataobject_ptr vl){};             
+            //virtual void remove_data_sevice(dataobject_ptr vl){};    
+            
+
+            boost::asio::io_service io_service_;
+            boost::asio::deadline_timer tmout_timer;
+            boost::asio::deadline_timer short_timer;            
 
         private:
 
