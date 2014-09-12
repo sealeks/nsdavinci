@@ -12,6 +12,22 @@
 namespace dvnci {
     namespace prot80670 {
 
+        enum IEC_PROTOCOL {
+
+            IEC_101 = 1,
+            IEC_102 = 2,
+            IEC_103 = 3,
+            IEC_104 = 4,
+        };
+
+         inline IEC_PROTOCOL protocol_from(protocoltype vl) {
+            return (!vl || (vl > 4)) ? IEC_101 : static_cast<IEC_PROTOCOL> (vl);
+        }
+
+        inline protocoltype protocol_to(IEC_PROTOCOL vl) {
+            return static_cast<protocoltype> (vl);
+        }
+
         enum ADDRESS_sizetype {
 
             lasz_none = 0,
@@ -42,74 +58,137 @@ namespace dvnci {
 
         public:
 
-            iec_option(ADDRESS_sizetype adr, COT_sizetype ct, SECTOR_sizetype sct, IOA_sizetype ioa);
-
             iec_option(const std::string& vl) : opton_(vl) {
             };
 
-
-            ADDRESS_sizetype addr() const;
-
-            std::size_t addr_sz() const {
-                return static_cast<std::size_t> (addr());
+            iec_option(ADDRESS_sizetype adr, COT_sizetype ct, SECTOR_sizetype sct, IOA_sizetype ioa) : opton_("\x0") {
+                opton_[0] |= adr;
+                opton_[0] |= ((ct - 1) << 2);
+                opton_[0] |= ((sct - 1) << 3);
+                opton_[0] |= ((ioa - 1) << 4);
             }
 
-            void addr(ADDRESS_sizetype vl);
-
-            COT_sizetype cot() const;
-
-            std::size_t cot_sz() const {
-                return static_cast<std::size_t> (cot());
+            ADDRESS_sizetype addr() const {
+                if (opton_.empty() || ((opton_[0]&3) == 3))
+                    return lasz_none;
+                return static_cast<ADDRESS_sizetype> (opton_[0]&3);
             }
 
-            void cot(COT_sizetype vl);
-
-            SECTOR_sizetype sector() const;
-
-            std::size_t sector_sz() const {
-                return static_cast<std::size_t> (sector());
+            void addr(ADDRESS_sizetype vl) {
+                if (opton_.empty())
+                    opton_ = "\x0";
+                opton_[0] |= static_cast<std::string::value_type> (vl);
             }
 
-            void sector(SECTOR_sizetype vl);
-
-            IOA_sizetype ioa() const;
-
-            std::size_t ioa_sz() const {
-                return static_cast<std::size_t> (ioa());
+            COT_sizetype cot() const {
+                if (opton_.empty())
+                    return ctsz_one;
+                return static_cast<COT_sizetype> ((((opton_[0]&4) >> 2) & 1) + 1);
             }
 
-            void ioa(IOA_sizetype vl);
+            void cot(COT_sizetype vl) {
+                if (opton_.empty())
+                    opton_ = "\x0";
+                opton_[0] |= ((static_cast<std::string::value_type> (vl) - 1) << 2);
+            }
 
-            std::size_t trycount() const;
+            SECTOR_sizetype sector() const {
+                if (opton_.empty())
+                    return select_one;
+                return static_cast<SECTOR_sizetype> ((((opton_[0]&8) >> 3) & 1) + 1);
+            }
 
-            void trycount(std::size_t vl);
+            void sector(SECTOR_sizetype vl) {
+                if (opton_.empty())
+                    opton_ = "\x0";
+                opton_[0] |= ((static_cast<std::string::value_type> (vl) - 1) << 3);
+            }
 
-            std::size_t t0() const;
+            IOA_sizetype ioa() const {
+                if (opton_.empty())
+                    return ioa_one;
+                std::string::value_type tmp = (((opton_[0]&8) >> 4) & 1) + 1;
+                if (tmp > 3)
+                    tmp = 3;
+                return static_cast<IOA_sizetype> (tmp);
+            }
 
-            void t0(std::size_t vl);
+            void ioa(IOA_sizetype vl) {
+                if (opton_.empty())
+                    opton_ = "\x0";
+                opton_[0] |= ((static_cast<std::string::value_type> (vl) - 1) << 4);
+            }
 
-            std::size_t t1() const;
+            std::size_t trycount() const {
+                return get<1, 3, 20, 3>();
+            }
 
-            void t1(std::size_t vl);
+            void trycount(std::size_t vl) {
+                return set<1, 3, 20>(vl);
+            }
 
-            std::size_t t2() const;
+            std::size_t t0() const {
+                return get<2, 1, 127, 30>();
+            }
 
-            void t2(std::size_t vl);
+            void t0(std::size_t vl) {
+                return set<2, 1, 127>(vl);
+            }
 
-            std::size_t t3() const;
+            std::size_t t1() const {
+                return get<3, 3, 127, 10>();
+            }
 
-            void t3(std::size_t vl);
-            
-            std::size_t k() const;
+            void t1(std::size_t vl) {
+                return set<3, 3, 127>(vl);
+            }
 
-            void k(std::size_t vl);
+            std::size_t t2() const {
+                return get<4, 1, 127, 15>();
+            }
 
-            std::size_t w() const;
+            void t2(std::size_t vl) {
+                return set<4, 1, 127>(vl);
+            }
 
-            void w(std::size_t vl);            
+            std::size_t t3() const {
+                return get<5, 1, 127, 20>();
+            }
 
-            std::string to_value();
+            void t3(std::size_t vl) {
+                return set<5, 1, 127>(vl);
+            }
 
+            std::size_t k() const {
+                return get<6, 1, 127, 12>();
+            }
+
+            void k(std::size_t vl) {
+                return set<6, 1, 127>(vl);
+            }
+
+            std::size_t w() const {
+                return get<7, 1, 127, 8>();
+            }
+
+            void w(std::size_t vl) {
+                return set<7, 1, 127>(vl);
+            }
+
+            std::string to_value() {
+                addr(addr());
+                cot(cot());
+                sector(sector());
+                ioa(ioa());
+                trycount(trycount());
+                t0(t0());
+                t1(t1());
+                t2(t2());
+                t3(t3());
+                k(k());
+                w(w());
+                return opton_;
+            }
 
 
         private:
