@@ -153,10 +153,10 @@ namespace dvnci {
         //////// iec60870_104PM
         /////////////////////////////////////////////////////////////////////////////////////////////////  
 
-        const std::size_t PM_104_T0 = 30;
-        const std::size_t PM_104_T1 = 15;
-        const std::size_t PM_104_T2 = 10;
-        const std::size_t PM_104_T3 = 20;
+        const std::size_t PM_104_T0d = 30;
+        const std::size_t PM_104_T1d = 15;
+        const std::size_t PM_104_T2d = 10;
+        const std::size_t PM_104_T3d = 20;
 
         const tcpcounter_type PM_104_K = 12;
         const tcpcounter_type PM_104_W = 8;
@@ -407,8 +407,11 @@ namespace dvnci {
 
             boost::asio::ip::tcp::socket socket_;
             boost::asio::deadline_timer t1_timer;
+            std::size_t PM_104_T1;
             boost::asio::deadline_timer t2_timer;
+            std::size_t PM_104_T2;
             boost::asio::deadline_timer t3_timer;
+            std::size_t PM_104_T3;
             bool t0_state;
             bool t1_state;
             bool t1_progress;
