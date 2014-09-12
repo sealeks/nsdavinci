@@ -22,7 +22,7 @@ namespace dvnci {
         //PROPERTY_CHANALHOST_ADDR_GROUP
         // PROPERTY_RS232_BOUNDRATE
         
-        const propidtype iec_propmain_101_add[] = {PROPERTY_DEVNUM_GROUP, PROPERTY_RS232_BOUNDRATE,
+        const propidtype iec_propmain_101_add[] = {PROPERTY_DEVNUM_GROUP, PROPERTY_RSNUM_GROUP, PROPERTY_RS232_BOUNDRATE,
             PROPERTY_GR_TCNT, 
             PROPERTY_IEC60870_LINKADR,
             PROPERTY_IEC60870_COT,
@@ -146,6 +146,17 @@ namespace dvnci {
                     }
                     break;
                 }
+                
+                case PROPERTY_GR_TCNT:
+                {
+                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    unum16 val_ = 0;
+                    if (str_to<unum16>(val, val_)) {
+                        opt.trycount(val_);
+                        _interface->group().option(opt.to_value());
+                    }
+                    break;
+                }                  
 
                 case PROPERTY_IEC60870_T0:
                 {
@@ -156,8 +167,9 @@ namespace dvnci {
                         _interface->group().option(opt.to_value());
                     }
                     break;
-                }        
+                }     
                 
+               
                 case PROPERTY_IEC60870_T1:
                 {
                     dvnci::prot80670::iec_option opt(_interface->group(id).option());
@@ -266,6 +278,12 @@ namespace dvnci {
                     return to_str<unum16>(static_cast<unum16> (opt.ioa()));
                     break;
                 }
+                
+                case PROPERTY_GR_TCNT:{
+                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    return to_str<unum16>(static_cast<unum16> (opt.trycount()));
+                    break;                    
+                }                
                 
                 case PROPERTY_IEC60870_T0:
                 {
