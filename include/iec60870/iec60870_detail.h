@@ -20,7 +20,7 @@ namespace dvnci {
             IEC_104 = 4,
         };
 
-         inline IEC_PROTOCOL protocol_from(protocoltype vl) {
+        inline IEC_PROTOCOL protocol_from(protocoltype vl) {
             return (!vl || (vl > 4)) ? IEC_101 : static_cast<IEC_PROTOCOL> (vl);
         }
 
@@ -69,15 +69,20 @@ namespace dvnci {
             }
 
             ADDRESS_sizetype addr() const {
-                if (opton_.empty() || ((opton_[0]&3) == 3))
+                if (opton_.empty())
                     return lasz_none;
+                if ((opton_[0]&3) == 3)
+                    opton_[0] &= (~1);
                 return static_cast<ADDRESS_sizetype> (opton_[0]&3);
             }
 
             void addr(ADDRESS_sizetype vl) {
                 if (opton_.empty())
-                    opton_ = "\x0";
-                opton_[0] |= static_cast<std::string::value_type> (vl);
+                    opton_ = std::string(1, '\x0');
+                opton_[0] = opton_[0] & (~0x3);
+                opton_[0] = opton_[0] | static_cast<std::string::value_type> (vl);
+
+
             }
 
             COT_sizetype cot() const {
@@ -88,26 +93,28 @@ namespace dvnci {
 
             void cot(COT_sizetype vl) {
                 if (opton_.empty())
-                    opton_ = "\x0";
-                opton_[0] |= ((static_cast<std::string::value_type> (vl) - 1) << 2);
+                    opton_ = std::string(1, '\x0');
+                opton_[0] = opton_[0] & (~0x4);
+                opton_[0] = opton_[0] | ((static_cast<std::string::value_type> (vl) - 1) << 2);
             }
 
             SECTOR_sizetype sector() const {
                 if (opton_.empty())
                     return select_one;
-                return static_cast<SECTOR_sizetype> ((((opton_[0]&8) >> 3) & 1) + 1);
+                return static_cast<SECTOR_sizetype> ((((opton_[0]&8) >> 3)) + 1);
             }
 
             void sector(SECTOR_sizetype vl) {
                 if (opton_.empty())
-                    opton_ = "\x0";
-                opton_[0] |= ((static_cast<std::string::value_type> (vl) - 1) << 3);
+                    opton_ = std::string(1, '\x0');
+                opton_[0] = opton_[0] & (~0x8);
+                opton_[0] = opton_[0] | ((static_cast<std::string::value_type> (vl) - 1) << 3);
             }
 
             IOA_sizetype ioa() const {
                 if (opton_.empty())
                     return ioa_one;
-                std::string::value_type tmp = (((opton_[0]&8) >> 4) & 1) + 1;
+                std::string::value_type tmp = (((opton_[0]&0x30) >> 4) & 3) + 1;
                 if (tmp > 3)
                     tmp = 3;
                 return static_cast<IOA_sizetype> (tmp);
@@ -115,8 +122,9 @@ namespace dvnci {
 
             void ioa(IOA_sizetype vl) {
                 if (opton_.empty())
-                    opton_ = "\x0";
-                opton_[0] |= ((static_cast<std::string::value_type> (vl) - 1) << 4);
+                    opton_ = std::string(1, '\x0');
+                opton_[0] = opton_[0] & (~0x30);
+                opton_[0] = opton_[0] | ((static_cast<std::string::value_type> (vl) - 1) << 4);
             }
 
             std::size_t trycount() const {
@@ -204,13 +212,13 @@ namespace dvnci {
             template<std::size_t POS, std::size_t MIN, std::size_t MAX>
             void set(std::size_t vl) {
                 if (opton_.empty())
-                    opton_ = std::string('\x0', POS + 1);
+                    opton_ = std::string(POS + 1, '\x0');
                 if (opton_.size() <= POS)
-                    opton_ += std::string('\x0', POS - opton_.size() + 1);
+                    opton_ += std::string(POS - opton_.size() + 1, '\x0');
                 opton_[POS] = static_cast<std::string::value_type> (vl < MIN ? MIN : (vl > MAX ? MAX : vl));
             }
 
-            std::string opton_;
+            mutable std::string opton_;
 
         };
 
