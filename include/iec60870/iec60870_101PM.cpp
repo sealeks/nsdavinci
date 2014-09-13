@@ -231,7 +231,7 @@ namespace dvnci {
 
         iec60870_101PM::iec60870_101PM(chnlnumtype chnm, const metalink & lnk, const iec_option& opt, iec60870_data_listener_ptr listr) :
         iec60870_PM(opt, listr),
-        serialport_(io_service_), serialport_io_sevice(io_service_), t1_timer(io_service_), PM_101_T1(opt.t1()),  t2_timer(io_service_), PM_101_T2(opt.t2()), t3_timer(io_service_), PM_101_T3(opt.t3()),
+        serialport_(io_service_), serialport_io_sevice(io_service_), t1_timer(io_service_), PM_101_T1(opt.t1()), t2_timer(io_service_), PM_101_T2(opt.t2()), t3_timer(io_service_), PM_101_T3(opt.t3()),
         t0_state(false), t1_state(false), t1_progress(false), t2_state(false), t2_progress(false), t3_state(false),
         chnum_(chnm), comsetter_(lnk), tx_(0), rx_(0), w_(0), k_fct(opt.k()), w_fct(opt.w()) {
         }
@@ -241,50 +241,51 @@ namespace dvnci {
             DEBUG_VAL_DVNCI(chnum_)
             DEBUG_VAL_DVNCI(timout)
             ns_error error_cod = 0;
-                if (!chnum_) {
+            if (!chnum_) {
+                state_ = disconnected;
+                error_cod = ERROR_IO_CHANNOOPEN;
+                set_t0();
+            }
+#if defined(_DVN_WIN_) 
+            std::string device = "\\\\.\\COM" + to_str(chnum_);
+#elif defined(_DVN_LIN_)
+            std::string device = "/dev/ttyS" + to_str(chnum_ - 1);
+#endif                
+
+            try {
+                serialport_.open(device);
+                if (!serialport_.is_open()) {
                     state_ = disconnected;
                     error_cod = ERROR_IO_CHANNOOPEN;
                     return;
                 }
-#if defined(_DVN_WIN_) 
-                std::string device = "\\\\.\\COM" + to_str(chnum_);
-#elif defined(_DVN_LIN_)
-                std::string device = "/dev/ttyS" + to_str(chnum_ - 1);
-#endif                
-
                 try {
-                    serialport_.open(device);
-                    if (!serialport_.is_open()) {
-                        state_ = disconnected;
-                        error_cod = ERROR_IO_CHANNOOPEN;
-                        return;
-                    }
-                    try {
-                        if (!setoption(comsetter_)) {
-                            serialport_.close();
-                            state_ = disconnected;
-                            error_cod = ERROR_IO_CHANNOOPEN;
-                        }
-                    }                    catch (boost::system::system_error err) {
+                    if (!setoption(comsetter_)) {
                         serialport_.close();
                         state_ = disconnected;
                         error_cod = ERROR_IO_CHANNOOPEN;
                     }
-                }                catch (boost::system::system_error err) {
+                } catch (boost::system::system_error err) {
+                    serialport_.close();
                     state_ = disconnected;
                     error_cod = ERROR_IO_CHANNOOPEN;
-                    return;
-                }                catch (...) {
-                    state_ = disconnected;
-                    error_cod = ERROR_IO_CHANNOOPEN;
-                    return;
                 }
+            } catch (boost::system::system_error err) {
+                state_ = disconnected;
+                error_cod = ERROR_IO_CHANNOOPEN;
+                set_t0();
+            } catch (...) {
+                state_ = disconnected;
+                error_cod = ERROR_IO_CHANNOOPEN;
+                set_t0();
+            }
+            if (!error_cod) {
                 state_ = connected;
-                error_cod = 0;
-                return;
-
-            set_t0();
-
+                short_wait();
+            }
+            else{
+                set_t0();
+            }
             io_service_.run();
 
         }
@@ -299,36 +300,6 @@ namespace dvnci {
             io_service_.stop();
         }
 
-        void iec60870_101PM::handle_resolve(const boost::system::error_code& err,
-                boost::asio::ip::tcp::resolver::iterator endpoint_iterator) {
-            /*if (!err) {
-                boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
-                serialport_.async_connect(endpoint,
-                        boost::bind(&iec60870_101PM::handle_connect, this,
-                        boost::asio::placeholders::error, ++endpoint_iterator));
-            } else {
-                terminate();
-            }*/
-        }
-
-        void iec60870_101PM::handle_connect(const boost::system::error_code& err,
-                boost::asio::ip::tcp::resolver::iterator endpoint_iterator) {
-
-           /* if (!err) {
-                tmout_timer.cancel();
-                pmstate(noaciveted);
-                send(apdu_101::STARTDTact);
-            } else
-                if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator()) {
-                serialport_.close();
-                boost::asio::ip::tcp::endpoint endpoint = *endpoint_iterator;
-                serialport_.async_connect(endpoint,
-                        boost::bind(&iec60870_101PM::handle_connect, this,
-                        boost::asio::placeholders::error, ++endpoint_iterator));
-            } else {
-                terminate();
-            }*/
-        }
 
         void iec60870_101PM::handle_request(const boost::system::error_code& error, apdu_101_ptr req) {
             if (!error)
@@ -364,8 +335,8 @@ namespace dvnci {
         }
 
         void iec60870_101PM::send(apdu_101::apcitypeU u) {
-            if ((u == apdu_101::STARTDTact) 
-                    || (u == apdu_101::STOPDTact) 
+            if ((u == apdu_101::STARTDTact)
+                    || (u == apdu_101::STOPDTact)
                     || (apdu_101::TESTFRact))
                 reset_t1();
             reset_t3();
@@ -401,7 +372,8 @@ namespace dvnci {
                     send(apdu_101::STOPDTact);
                     receive();
                 }
-                return;}
+                return;
+            }
             if (w_expire()) {
                 w_ = 0;
                 send(rx_ + 1);
@@ -526,15 +498,14 @@ namespace dvnci {
             set_rx(resp->tx());
             ack_tx(resp->rx());
             dataobject_vct rslt;
-            if (resp->get(rslt)) 
-                    execute_data(rslt);
+            if (resp->get(rslt))
+                execute_data(rslt);
             return true;
         }
 
         void iec60870_101PM::insert_sector_sevice(device_address dev, selector_address slct) {
-            waitrequestdata_.push_back(dataobject::create_activation_1(0,slct));
-        }        
-        
+            waitrequestdata_.push_back(dataobject::create_activation_1(0, slct));
+        }
 
         tcpcounter_type iec60870_101PM::inc_tx() {
             return (tx_ < PM_101_MODULO) ? (tx_++) : (tx_ = 0);
