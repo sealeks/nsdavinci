@@ -353,7 +353,8 @@ namespace dvnci {
             map_.insert(wstringtranslate_pair("iec60870IOA.2", "2"));
             map_.insert(wstringtranslate_pair("iec60870IOA.3", "3"));      
             
-            map_.insert(wstringtranslate_pair("iec60870Protocol.", "101"));
+            map_.insert(wstringtranslate_pair("iec60870Protocol.0", "Nodef"));
+            map_.insert(wstringtranslate_pair("iec60870Protocol.", "Nodef"));            
             map_.insert(wstringtranslate_pair("iec60870Protocol.1", "101"));
             map_.insert(wstringtranslate_pair("iec60870Protocol.2", "102"));
             map_.insert(wstringtranslate_pair("iec60870Protocol.3", "103"));   
