@@ -91,6 +91,15 @@ namespace dvnci {
 
                 case PROPERTY_IEC60870_PROT:
                 {
+                    dvnci::prot80670::IEC_PROTOCOL prt = dvnci::prot80670::protocol_from(str_to<protocoltype>(val));
+                    switch(prt){
+                        case dvnci::prot80670::IEC_104:{
+                            _interface->group(id).chanaltype(NT_CHTP_TCP_IP);
+                        }
+                        default:{
+                            _interface->group(id).chanaltype(NT_CHTP_RS232_4XX);
+                        }
+                    }
                     _interface->group().protocol(static_cast<protocoltype> (dvnci::prot80670::protocol_from(str_to<protocoltype>(val))));
                     break;
                 }
@@ -247,7 +256,23 @@ namespace dvnci {
                 case PROPERTY_IEC60870_PROT:
                 {
                     protocoltype val_ = static_cast<protocoltype> (dvnci::prot80670::protocol_from(_interface->group(id).protocol()));
-                    return to_str<protocoltype>(val_);
+                    dvnci::prot80670::IEC_PROTOCOL prt = dvnci::prot80670::protocol_from(_interface->group(id).protocol());
+                    switch (prt) {
+                        case dvnci::prot80670::IEC_104:
+                        {
+                            if (_interface->group(id).chanaltype() == NT_CHTP_TCP_IP) {
+                                return to_str<protocoltype>(val_);
+                            }
+                            break;
+                        }
+                        default:
+                        {
+                            if (_interface->group(id).chanaltype() == NT_CHTP_RS232_4XX) {
+                                return to_str<protocoltype>(val_);
+                            }
+                        }
+                    }
+                    return to_str<protocoltype>(0);
                     break;
                 }
 
