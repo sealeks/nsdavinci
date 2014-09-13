@@ -14,6 +14,7 @@ namespace dvnci {
 
         enum IEC_PROTOCOL {
 
+            IEC_NULL = 0,
             IEC_101 = 1,
             IEC_102 = 2,
             IEC_103 = 3,
@@ -21,7 +22,7 @@ namespace dvnci {
         };
 
         inline IEC_PROTOCOL protocol_from(protocoltype vl) {
-            return (!vl || (vl > 4)) ? IEC_101 : static_cast<IEC_PROTOCOL> (vl);
+            return (vl > 4) ? IEC_NULL : static_cast<IEC_PROTOCOL> (vl);
         }
 
         inline protocoltype protocol_to(IEC_PROTOCOL vl) {

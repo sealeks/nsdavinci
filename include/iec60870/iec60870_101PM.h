@@ -183,11 +183,6 @@ namespace dvnci {
 
         private:
 
-            void handle_resolve(const boost::system::error_code& err,
-                    boost::asio::ip::tcp::resolver::iterator endpoint_iterator);
-
-            void handle_connect(const boost::system::error_code& err,
-                    boost::asio::ip::tcp::resolver::iterator endpoint_iterator);
 
             void handle_request(const boost::system::error_code& error, apdu_101_ptr req);
 
