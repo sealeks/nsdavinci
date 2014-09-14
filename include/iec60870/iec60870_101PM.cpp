@@ -232,7 +232,7 @@ namespace dvnci {
         iec60870_101PM::iec60870_101PM(chnlnumtype chnm, const metalink & lnk, const iec_option& opt, iec60870_data_listener_ptr listr) :
         iec60870_PM(opt, listr),
         serialport_(io_service_), serialport_io_sevice(io_service_), req_timer(io_service_),
-        terminate_(false), is_timout(false), is_error(false), error_cod(0),
+        terminate_(false), is_timout(false), is_error(false), error_cod(0), reqtmo_(1000),
         chnum_(chnm), comsetter_(lnk) {
         }
         
@@ -325,14 +325,14 @@ namespace dvnci {
 
         void iec60870_101PM::handle_request(const boost::system::error_code& err, apdu_101_ptr req) {
             if (!err) {
-                tmout_timer.cancel();
+                req_timer.cancel();
                 data_ready_ = req;
                 is_timout = false;
                 error_cod = err.value();
                 is_error = false;
                 io_service_.stop();
             } else {
-                tmout_timer.cancel();
+                req_timer.cancel();
                 is_timout = false;
                 data_ready_ = apdu_101_ptr();
                 error_cod = err.value();
@@ -343,14 +343,14 @@ namespace dvnci {
 
         void iec60870_101PM::handle_response(const boost::system::error_code& err, apdu_101_ptr resp) {
             if (!err) {
-                tmout_timer.cancel();
+                req_timer.cancel();
                 data_ready_ = resp;
                 is_timout = false;
                 error_cod = err.value();
                 is_error = false;
                 io_service_.stop();
             } else {
-                tmout_timer.cancel();
+                req_timer.cancel();
                 is_timout = false;
                 data_ready_ = apdu_101_ptr();
                 error_cod = err.value();
@@ -372,6 +372,8 @@ namespace dvnci {
                     boost::bind(&iec60870_101PM::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred),
                     req);
 
+            set_t_req();
+            
             io_service_.run();
 
             if (is_error || is_timout)
@@ -393,6 +395,8 @@ namespace dvnci {
             async_request(
                     boost::bind(&iec60870_101PM::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred),
                     req);
+            
+            set_t_req();
 
             io_service_.run();
 
@@ -408,6 +412,8 @@ namespace dvnci {
 
             async_response(
                     boost::bind(&iec60870_101PM::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+            
+            set_t_req();
 
             io_service_.run();
 
@@ -509,18 +515,18 @@ namespace dvnci {
             waitrequestdata_.push_back(dataobject::create_activation_1(0, slct));
         }
 
-        void iec60870_101PM::set_t0() {
-            std::cout << "set t0 " << std::endl;
-            tmout_timer.cancel();
-            tmout_timer.expires_from_now(boost::posix_time::milliseconds(timout));
-            tmout_timer.async_wait(boost::bind(
-                    &iec60870_101PM::handle_t0_expire, this,
+        void iec60870_101PM::set_t_req() {
+            std::cout << "set t_req" << std::endl;
+            req_timer.cancel();
+            req_timer.expires_from_now(boost::posix_time::milliseconds(reqtmo_));
+            req_timer.async_wait(boost::bind(
+                    &iec60870_101PM::handle_t_req_expire, this,
                     boost::asio::placeholders::error));
         }
 
-        void iec60870_101PM::handle_t0_expire(const boost::system::error_code& err) {
+        void iec60870_101PM::handle_t_req_expire(const boost::system::error_code& err) {
             if (!err) {
-                std::cout << "exp t0 " << std::endl;
+                std::cout << "exp t req" << std::endl;
                 is_timout = true;
                 data_ready_ = apdu_101_ptr();
                 error_cod = err.value();

@@ -357,8 +357,8 @@ namespace dvnci {
             bool parse_data(apdu_101_ptr resp);
 
 
-            void set_t0();
-            void handle_t0_expire(const boost::system::error_code& err);
+            void set_t_req();
+            void handle_t_req_expire(const boost::system::error_code& err);
 
             boost::asio::serial_port serialport_;
             boost::asio::serial_port_service serialport_io_sevice;
@@ -370,6 +370,7 @@ namespace dvnci {
             volatile bool is_timout;
             volatile bool is_error;
             volatile int error_cod;
+            std::size_t reqtmo_;
             apdu_101_deq sended_;
 
         };
