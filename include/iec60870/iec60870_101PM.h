@@ -21,9 +21,9 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// class apdu_101
         /////////////////////////////////////////////////////////////////////////////////////////////////       
-        
+
         typedef asdu_body<lasz_none, ctsz_double, select_double, ioa_three> asdu_body101;
-        
+
         const octet_sequence::value_type FC_START101 = '\x68';
         const unum32 HD101_STARTDTact = 0x0003 | 0x0004;
         const unum32 HD101_STARTDTcon = 0x0003 | 0x0008;
@@ -31,7 +31,7 @@ namespace dvnci {
         const unum32 HD101_STOPDTcon = 0x0003 | 0x0020;
         const unum32 HD101_TESTFRact = 0x0003 | 0x0040;
         const unum32 HD101_TESTFRcon = 0x0003 | 0x0080;
-        const unum16 HD101_U_IND = 0x01;        
+        const unum16 HD101_U_IND = 0x01;
 
 
         class apdu_101;
@@ -155,23 +155,13 @@ namespace dvnci {
         //////// iec60870_101PM
         /////////////////////////////////////////////////////////////////////////////////////////////////  
 
-        const std::size_t PM_101_T0d = 30;
-        const std::size_t PM_101_T1d = 15;
-        const std::size_t PM_101_T2d = 10;
-        const std::size_t PM_101_T3d = 20;
-
-        const tcpcounter_type PM_101_K = 12;
-        const tcpcounter_type PM_101_W = 8;
-        const tcpcounter_type PM_101_MODULO = 0x8000;
-
-        BOOST_STATIC_ASSERT(sizeof (tcpcounter_type) == 2);
-        BOOST_STATIC_ASSERT(!std::numeric_limits<tcpcounter_type>::is_signed);
-
         class iec60870_101PM : public iec60870_PM {
 
         public:
 
             iec60870_101PM(chnlnumtype chnm, const metalink & lnk, const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
+            
+            virtual  bool operator()();
 
             virtual void disconnect();
 
@@ -183,17 +173,17 @@ namespace dvnci {
 
         private:
 
+            void work();
 
             void handle_request(const boost::system::error_code& error, apdu_101_ptr req);
 
             void handle_response(const boost::system::error_code& error, apdu_101_ptr resp);
 
-            void handle_short_timout_expire(const boost::system::error_code& err);
+            bool send_S1(const apdu_101_ptr & req, std::size_t tmo);
 
+            apdu_101_ptr request(const apdu_101_ptr & req, std::size_t tmo);
 
-
-
-            void send(const asdu_body101& asdu);
+            /*void send(const asdu_body101& asdu);
 
             void send(apdu_101_ptr msg);
 
@@ -203,21 +193,9 @@ namespace dvnci {
 
             void receive();
 
-            void short_wait();
-
             void check_work_available();
 
-
-
-            void ack_tx(tcpcounter_type vl);
-
-            void set_rx(tcpcounter_type vl);
-
-            bool parse_response(apdu_101_ptr resp);
-
-            bool parse_data(apdu_101_ptr resp);
-
-            bool parse_U(apdu_101_ptr resp);
+            bool parse_data(apdu_101_ptr resp);*/
 
 
 
@@ -354,78 +332,44 @@ namespace dvnci {
                 } catch (...) {
                     return false;
                 }
-            };            
-            
+            };
+
+
+
         protected:
-            
+
             //virtual void insert_device_sevice(device_address dev){};             
-            
+
             //virtual void remove_device_sevice(device_address dev){};            
-            
-            virtual void insert_sector_sevice(device_address dev, selector_address slct);             
-            
+
+            virtual void insert_sector_sevice(device_address dev, selector_address slct);
+
             //virtual void remove_sector_sevice(device_address dev, selector_address slct){}; 
-            
+
             //virtual void insert_data_sevice(dataobject_ptr vl){};             
-            
+
             //virtual void remove_data_sevice(dataobject_ptr vl){};    
-                        
+
 
         private:
 
-            tcpcounter_type w() const {
-                return w_;
-            }
 
-            bool w_expire() const {
-                return w_ >= w_fct;
-            }
+            bool parse_data(apdu_101_ptr resp);
 
-            tcpcounter_type inc_tx();
-            bool in_rx_range(tcpcounter_type inlist_vl, tcpcounter_type confirmed_rx);
-            bool k_expire() const;
 
             void set_t0();
-            void cancel_t0();
             void handle_t0_expire(const boost::system::error_code& err);
-
-            void reset_t1();
-            void set_t1();
-            void cancel_t1();
-            void handle_t1_expire(const boost::system::error_code& err);
-
-            void reset_t2();
-            void set_t2();
-            void cancel_t2();
-            void handle_t2_expire(const boost::system::error_code& err);
-
-            void reset_t3();
-            void set_t3();
-            void cancel_t3();
-            void handle_t3_expire(const boost::system::error_code& err);
 
             boost::asio::serial_port serialport_;
             boost::asio::serial_port_service serialport_io_sevice;
-            boost::asio::deadline_timer t1_timer;
-            std::size_t PM_101_T1;
-            boost::asio::deadline_timer t2_timer;
-            std::size_t PM_101_T2;
-            boost::asio::deadline_timer t3_timer;
-            std::size_t PM_101_T3;
-            bool t0_state;
-            bool t1_state;
-            bool t1_progress;
-            bool t2_state;
-            bool t2_progress;
-            bool t3_state;
-            bool t3_progress;
+            boost::asio::deadline_timer req_timer;
             chnlnumtype chnum_;
             iec60870_com_option_setter comsetter_;
-            tcpcounter_type tx_;
-            tcpcounter_type rx_;
-            tcpcounter_type w_;
-            tcpcounter_type k_fct;
-            tcpcounter_type w_fct;
+            volatile bool terminate_;
+            apdu_101_ptr data_ready_;
+            volatile bool is_timout;
+            volatile bool is_error;
+            volatile int error_cod;
             apdu_101_deq sended_;
 
         };
