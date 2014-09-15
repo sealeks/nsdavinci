@@ -26,11 +26,11 @@ namespace dvnci {
 
         //  PRM=1
 
-        const octet_sequence::value_type FNC_SET_CANAL = '\x1'; // S2
-        const octet_sequence::value_type FNC_SET_PROCESS = '\x2'; // S2
-        const octet_sequence::value_type FNC_TEST_CANAL = '\x3'; // S2
-        const octet_sequence::value_type FNC_SEND_ = '\x4'; // S2
-        const octet_sequence::value_type FNC_SEND_S1 = '\x5'; //S1
+        const octet_sequence::value_type FNC_SET_CANAL = '\x0'; // S2
+        const octet_sequence::value_type FNC_SET_PROCESS = '\x1'; // S2
+        const octet_sequence::value_type FNC_TEST_CANAL = '\x2'; // S2
+        const octet_sequence::value_type FNC_SEND_ = '\x3'; // S2
+        const octet_sequence::value_type FNC_SEND_S1 = '\x4'; //S1
         const octet_sequence::value_type FNC_SEND_GEN = '\x8'; // S3
         const octet_sequence::value_type FNC_REQ_STATUS = '\x9'; // S3
         const octet_sequence::value_type FNC_REQ_CLS1 = '\xA'; // S3
@@ -57,7 +57,7 @@ namespace dvnci {
             explicit func850(octet_sequence::value_type vl) : vl_(vl) {
             }
 
-            explicit func850(bool fcb_, bool fcv_, octet_sequence::value_type vl, bool prm_ = false, bool res_ = false) : vl_(vl_ & FNC_MASK) {
+            explicit func850(bool fcb_, bool fcv_, octet_sequence::value_type vl, bool prm_ = false, bool res_ = false) : vl_(vl & FNC_MASK) {
                 fcb(fcb_);
                 fcv(fcv_);
                 res(res_);
@@ -260,6 +260,11 @@ namespace dvnci {
                 encode_header(FC_START2_F1_2, dev, fcb_, fcv_, fc, prm_, res_);
             }
 
+            explicit apdu_870(dataobject_ptr obj, device_address dev, bool fcb_, bool fcv_, octet_sequence::value_type fc, bool prm_ = true, bool res_ = false) :
+            header_(new octet_sequence()), body_(new octet_sequence(asdu_body_type(obj).body())) {
+                encode_header(FC_START2_F1_2, dev, fcb_, fcv_, fc, prm_, res_);
+            }
+
             ~apdu_870() {
             };
 
@@ -286,6 +291,10 @@ namespace dvnci {
                 return self_type_ptr(new self_type(dev, fcb_, fcv_, fc, prm_, res_));
             }
 
+            static self_type_ptr create(dataobject_ptr obj, device_address dev, bool fcb_, bool fcv_, octet_sequence::value_type fc, bool prm_ = true, bool res_ = false) {
+                return self_type_ptr(new self_type(obj, dev, fcb_, fcv_, fc, prm_, res_));
+            }
+
             octet_sequence&header() {
                 return *header_;
             }
@@ -302,12 +311,26 @@ namespace dvnci {
                 return *body_;
             }
 
+            //!! All Sended Message in Header
+
+            octet_sequence& smessage() {
+                return *header_;
+            }
+
+            const octet_sequence& smessage() const {
+                return *header_;
+            }
+
+            size_t smessage_length() const {
+                return smessage().size();
+            }
+
             size_t header_length() const {
                 switch (type()) {
-                    case FC_START1_F1_2: return (2 + lnk_traints::link_size()); // 10h(1) + FC(1) +  Addr(?) 
-                    case FC_START2_F1_2: return (5 + lnk_traints::link_size()); // 68h(1) + L(1) + L(1) +68h(1) +FC(1)) +  Addr(?) 
-                    case FC_SEQ1: return 1;
-                    case FC_SEQ2: return 1;
+                    case Fx_type: return (2 + lnk_traints::link_size()); // 10h(1) + FC(1) +  Addr(?) 
+                    case Vr_type: return (5 + lnk_traints::link_size()); // 68h(1) + L(1) + L(1) +68h(1) +FC(1)) +  Addr(?) 
+                    case E5_type: return 1;
+                    case A2_type: return 1;
                     default:
                     {
                     }
@@ -317,13 +340,13 @@ namespace dvnci {
 
             std::size_t body_length() const {
                 switch (type()) {
-                    case FC_START1_F1_2: return 2; // CRC(1) + 0x16(1) 
-                    case FC_START2_F1_2:
+                    case Fx_type: return 2; // CRC(1) + 0x16(1) 
+                    case Vr_type:
                     {
                         if ((body_->size() > 3) && (body_->operator [](1) == body_->operator [](2))) {
                             std::size_t sz = static_cast<std::size_t> (body_->operator [](1));
                             if (sz > (lnk_traints::link_size() + 1))
-                                return (sz - (lnk_traints::link_size() + 1));
+                                return (sz - lnk_traints::link_size() + 1); // -2 + 1= +1
                         }
                         break;
                     }
@@ -336,7 +359,7 @@ namespace dvnci {
 
             apcitype type() const {
                 if (!header_->empty()) {
-                    switch ((*header_)[1]) {
+                    switch (header_->operator[](0)) {
                         case FC_START1_F1_2: return Fx_type;
                         case FC_START2_F1_2: return Vr_type;
                         case FC_SEQ1: return E5_type;
@@ -357,12 +380,12 @@ namespace dvnci {
 
             octet_sequence::size_type header_expand() {
                 switch (type()) {
-                    case FC_START1_F1_2:
+                    case Fx_type:
                     {
                         header().insert(header().end(), 1 + lnk_traints::link_size(), '\x0');
                         return 1;
                     }
-                    case FC_START2_F1_2:
+                    case Vr_type:
                     {
                         header().insert(header().end(), 4 + lnk_traints::link_size(), '\x0');
                         return 1;
@@ -403,28 +426,32 @@ namespace dvnci {
         private:
 
             void encode_header(octet_sequence::value_type vl) {
-                header_->clear();
-                header_->push_back(vl);
+                smessage().clear();
+                smessage().push_back(vl);
             }
 
             void encode_header(octet_sequence::value_type st, device_address dev, bool fcb_, bool fcv_, octet_sequence::value_type vl, bool prm_ = false, bool res_ = false) {
-                //header_->reserve(apci_fixlength()+2);
-                header_->clear();
-                header_->push_back(st);
+                //smessage().reserve(apci_fixlength()+2);
+                smessage().clear();
+                smessage().push_back(st);
                 if (st == FC_START2_F1_2) {
                     octet_sequence::value_type sz =
-                            static_cast<octet_sequence::value_type> (body_->size() + 3 + lnk_traints::link_size()); // FC(1) +  Addr(?) +Body() +  CRC(1) + 0x16(1) 
-                    header_->push_back(sz);
-                    header_->push_back(sz);
-                    header_->push_back(st);
+                            static_cast<octet_sequence::value_type> (body().size() + 1 + lnk_traints::link_size()); // FC(1) +  Addr(?) +Body();//
+                    smessage().push_back(sz);
+                    smessage().push_back(sz);
+                    smessage().push_back(st);
                 }
-                octet_sequence::size_type crc_strt = header_->size();
-                header_->push_back(func850(fcb_, fcv_, vl, prm_, res_).val());
+                octet_sequence::size_type crc_strt = smessage().size();
+                smessage().push_back(func850(fcb_, fcv_, vl, prm_, res_).val());
                 if (lnk_traints::link_size()) {
-                    header_->insert(header().end(), (const char*) &dev, (const char*) &dev + lnk_traints::link_size());
+                    smessage().insert(header().end(), (const char*) &dev, (const char*) &dev + lnk_traints::link_size());
                 }
-                body_->push_back(crc_calculate(octet_sequence(header_->begin() + crc_strt, header_->end()), body()));
-                body_->push_back(FC_END_F1_2);
+                body().push_back(crc_calculate(octet_sequence(smessage().begin() + crc_strt, smessage().end()), body()));
+                body().push_back(FC_END_F1_2);
+                //!! All Sended Message in Header
+                smessage().insert(smessage().end(), body().begin(), body().end());
+                body().clear();
+
             }
 
             /*bool decode_header();*/
@@ -521,7 +548,9 @@ namespace dvnci {
             virtual void work() {
                 THD_EXCLUSIVE_LOCK(mtx)
                 if (!waitrequestdata_.empty()) {
-                    apdu_ptr resp = request(apdu_type::create(1, false, false, FNC_SET_CANAL));
+                    apdu_ptr resp = request(apdu_type::create(1, false, false, FNC_REQ_STATUS));
+                    resp = request(apdu_type::create(1, false, false, FNC_SET_CANAL));
+                    request(apdu_type::create(dataobject::create_activation_1(0, 1), 1, true, true, FNC_TEST_CANAL));
                     waitrequestdata_.pop_front();
                 }
             }
@@ -632,34 +661,15 @@ namespace dvnci {
             template< typename handler>
             struct req_operation {
 
-                req_operation(handler hnd, boost::asio::serial_port& sock, apdu_ptr rq) : hndl(hnd), serialport_(sock), req_(rq), headersz_(0), bodysz_(0) {
+                req_operation(handler hnd, boost::asio::serial_port& sock, apdu_ptr rq) : hndl(hnd), serialport_(sock), req_(rq), messagesz_(0) {
                 }
 
-                void header(const boost::system::error_code& error, std::size_t bytes_transferred) {
+                void message(const boost::system::error_code& error, std::size_t bytes_transferred) {
                     if (!error) {
-                        headersz_ += bytes_transferred;
-                        if (headersz_ < req_->header().size())
-                            serialport_.async_write_some(boost::asio::buffer(&(req_->header()[0]) + headersz_, req_->header().size() - headersz_),
-                                boost::bind(&req_operation::header, *this,
-                                boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
-                        else {
-                            if (!req_->body().empty())
-                                serialport_.async_write_some(boost::asio::buffer(&(req_->body()[0]), req_->body().size()),
-                                    boost::bind(&req_operation::body, *this,
-                                    boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
-                            else
-                                hndl(error, req_);
-                        }
-                    } else
-                        hndl(error, req_);
-                }
-
-                void body(const boost::system::error_code& error, std::size_t bytes_transferred) {
-                    if (!error) {
-                        bodysz_ += bytes_transferred;
-                        if (bodysz_ < req_->body().size())
-                            serialport_.async_write_some(boost::asio::buffer(&(req_->body()[0]) + bodysz_, req_->body().size() - bodysz_),
-                                boost::bind(&req_operation::body, *this,
+                        messagesz_ += bytes_transferred;
+                        if (messagesz_ < req_->smessage_length())
+                            serialport_.async_write_some(boost::asio::buffer(&(req_->smessage()[0]) + messagesz_, req_->smessage().size() - messagesz_),
+                                boost::bind(&req_operation::message, *this,
                                 boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
                         else
                             hndl(error, req_);
@@ -673,8 +683,7 @@ namespace dvnci {
                 handler hndl;
                 boost::asio::serial_port& serialport_;
                 apdu_ptr req_;
-                std::size_t headersz_;
-                std::size_t bodysz_;
+                std::size_t messagesz_;
             };
 
             template< typename handler>
@@ -682,8 +691,8 @@ namespace dvnci {
 
                 typedef req_operation< handler> req_operation_type;
 
-                serialport_.async_write_some(boost::asio::buffer(&(req->header()[0]), req->header().size()),
-                        boost::bind(&req_operation_type::header, req_operation_type(hnd, serialport_, req),
+                serialport_.async_write_some(boost::asio::buffer(&(req->smessage()[0]), req->smessage().size()),
+                        boost::bind(&req_operation_type::message, req_operation_type(hnd, serialport_, req),
                         boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
 
 
