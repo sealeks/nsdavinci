@@ -22,7 +22,7 @@ namespace dvnci {
         //////// class apdu_101
         /////////////////////////////////////////////////////////////////////////////////////////////////       
 
-        typedef asdu_body<lasz_none, ctsz_double, select_double, ioa_three> asdu_body101;
+        typedef asdu_body<ctsz_double, select_double, ioa_three> asdu_body101;
 
         const octet_sequence::value_type FC_START101 = '\x68';
         const unum32 HD101_STARTDTact = 0x0003 | 0x0004;
@@ -37,6 +37,7 @@ namespace dvnci {
         class apdu_101;
         typedef boost::shared_ptr<apdu_101> apdu_101_ptr;
 
+        //template<ADDRESS_sizetype LinkAddress, COT_sizetype COT, SECTOR_sizetype Selector, IOA_sizetype IOA>        
         class apdu_101 {
 
         public:
