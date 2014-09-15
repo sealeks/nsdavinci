@@ -183,12 +183,8 @@ namespace dvnci {
         type_id find_type_id(const std::string& val);
         std::size_t find_type_size(type_id val);
 
-        template<ADDRESS_sizetype LinkAddress, COT_sizetype COT, SECTOR_sizetype Selector, IOA_sizetype IOA>
+        template<COT_sizetype COT, SECTOR_sizetype Selector, IOA_sizetype IOA>
         struct protocol_traits {
-
-            static std::size_t link_size() {
-                return static_cast<std::size_t> (LinkAddress);
-            }
 
             static std::size_t selector_size() {
                 return static_cast<std::size_t> (Selector);
@@ -219,7 +215,17 @@ namespace dvnci {
             }
 
         };
+        
+        
+        template<ADDRESS_sizetype LinkAddress>        
+        struct link_traits {
 
+            static std::size_t link_size() {
+                return static_cast<std::size_t> (LinkAddress);
+            }
+            
+        };
+                
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// dataobject
@@ -363,12 +369,12 @@ namespace dvnci {
 
         const std::size_t MAX_ASDU_SIZE = 249;
 
-        template<ADDRESS_sizetype LinkAddress, COT_sizetype COT, SECTOR_sizetype Selector, IOA_sizetype IOA>
+        template<COT_sizetype COT, SECTOR_sizetype Selector, IOA_sizetype IOA>
         class asdu_body {
 
         public:
 
-            typedef protocol_traits<LinkAddress, COT, Selector, IOA> protocol_traits_type;
+            typedef protocol_traits<COT, Selector, IOA> protocol_traits_type;
 
             asdu_body(dataobject_ptr vl, bool sq = false)
             : body_(new octet_sequence()) {

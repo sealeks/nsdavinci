@@ -21,7 +21,7 @@ namespace dvnci {
         //////// class apdu_104
         /////////////////////////////////////////////////////////////////////////////////////////////////       
         
-        typedef asdu_body<lasz_none, ctsz_double, select_double, ioa_three> asdu_body104;
+        typedef asdu_body<ctsz_double, select_double, ioa_three> asdu_body104;
 
         const octet_sequence::value_type FC_START104 = '\x68';
         const unum32 HD104_STARTDTact = 0x0003 | 0x0004;
