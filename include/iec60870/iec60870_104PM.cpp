@@ -27,9 +27,9 @@ namespace dvnci {
             encode_header(S_type, NULLu, 0, rx);
         }
 
-        apdu_104::apdu_104(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs) :
+        apdu_104::apdu_104(tcpcounter_type tx, tcpcounter_type rx, dataobject_ptr vl) :
         header_(new octet_sequence()), body_(new octet_sequence()) {
-            encode_body(vl, cs);
+            encode_body(asdu_body104(vl));
             encode_header(I_type, NULLu, tx, rx);
         }
 
@@ -54,7 +54,7 @@ namespace dvnci {
             return apdu_104_ptr(new apdu_104(rx));
         }
 
-        apdu_104_ptr apdu_104::create(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs) {
+        apdu_104_ptr apdu_104::create(tcpcounter_type tx, tcpcounter_type rx, dataobject_ptr vl) {
             return apdu_104_ptr(new apdu_104(tx, rx, vl, cs));
         }
 
@@ -206,20 +206,6 @@ namespace dvnci {
 
                 }
             }
-        }
-
-        void apdu_104::encode_body(const dataobject& vl, cause_type cs) {
-            body().clear();
-            type_id tmptype = vl.type();
-            body().push_back(tmptype);
-            body().insert(body().end(), '\x1');
-            body().push_back(cs);
-            body().insert(body().end(), '\x0');
-            device_address tmpdev = vl.devnum();
-            body().insert(body().end(), (const char*) &tmpdev, (const char*) &tmpdev + 2);
-            data_address tmpaddr = vl.ioa();
-            body().insert(body().end(), (const char*) &tmpaddr, (const char*) &tmpaddr + 3);
-            body().insert(body().end(), vl.data().begin(), vl.data().end());
         }
 
         void apdu_104::encode_body(const asdu_body104& vl) {

@@ -61,7 +61,7 @@ namespace dvnci {
 
             apdu_104(tcpcounter_type rx);
 
-            apdu_104(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs);
+            apdu_104(tcpcounter_type tx, tcpcounter_type rx, dataobject_ptr vl);
 
             apdu_104(tcpcounter_type tx, tcpcounter_type rx, const asdu_body104& vl);
 
@@ -73,7 +73,7 @@ namespace dvnci {
 
             static apdu_104_ptr create(tcpcounter_type rx);
 
-            static apdu_104_ptr create(tcpcounter_type tx, tcpcounter_type rx, const dataobject& vl, cause_type cs);
+            static apdu_104_ptr create(tcpcounter_type tx, tcpcounter_type rx, dataobject_ptr vl);
 
             static apdu_104_ptr create(tcpcounter_type tx, tcpcounter_type rx, const asdu_body104& vl);
 
@@ -129,11 +129,7 @@ namespace dvnci {
 
             void encode_header(apcitype tp, apcitypeU tpu, tcpcounter_type tx = 0, tcpcounter_type rx = 0);
 
-            void encode_body(const dataobject& vl, cause_type cs);
-
             void encode_body(const asdu_body104& vl);
-
-            /*bool decode_header();*/
 
 
             octet_sequence_ptr header_;
