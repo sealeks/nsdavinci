@@ -12,13 +12,13 @@ namespace dvnci {
         //////// iec60870_101PM
         /////////////////////////////////////////////////////////////////////////////////////////////////           
 
-        iec60870_101PM::iec60870_101PM(chnlnumtype chnm, const metalink & lnk, const iec_option& opt, iec60870_data_listener_ptr listr) :
+        /*iec60870_101PM::iec60870_101PM(chnlnumtype chnm, const metalink & lnk, const iec_option& opt, iec60870_data_listener_ptr listr) :
         iec60870_PM(opt, listr),
         serialport_(io_service_), serialport_io_sevice(io_service_), req_timer(io_service_),
         is_timout(false), is_error(false), error_cod(0), reqtmo_(1000), chnum_(chnm), comsetter_(lnk) {
-        }
+        }*/
 
-        void iec60870_101PM::connect() {
+        /*void iec60870_101PM::connect() {
             DEBUG_STR_DVNCI(ioclient connect)
             DEBUG_VAL_DVNCI(chnum_)
             DEBUG_VAL_DVNCI(timout)
@@ -72,7 +72,7 @@ namespace dvnci {
             }
         }
 
-        void iec60870_101PM::disconnect() {
+      void iec60870_101PM::disconnect() {
             terminate_ = true;
             need_disconnect_ = true;
         }
@@ -187,81 +187,6 @@ namespace dvnci {
 
 
 
-        /* void iec60870_101PM::check_work_available() {
-           if (need_disconnect_) {
-                if (pmstate() != todisconnect) {
-                    pmstate(todisconnect);
-                    send(apdu_870::STOPDTact);
-                    receive();
-                }
-                return;
-            }
-            if (w_expire()) {
-                w_ = 0;
-                send(rx_ + 1);
-                return;
-            }
-            if (t2_state) {
-                t2_state = false;
-                w_ = 0;
-                send(rx_ + 1);
-                return;
-            }
-            if (alse) {
-                receive();
-                return;
-            }
-            if (t3_state) {
-                t3_state = false;
-                send(apdu_870::TESTFRact);
-                return;
-            }
-            {
-                if (!k_expire()) {
-                    THD_EXCLUSIVE_LOCK(mtx)
-                    if (!waitrequestdata_.empty()) {
-                        send(asdu_body101::create(waitrequestdata_.front()));
-                        waitrequestdata_.pop_front();
-                        return;
-                    }
-                }
-            }
-            set_t3();
-            short_wait();
-        }*/
-
-        /*bool iec60870_101PM::parse_response(apdu_870_ptr resp) {
-          if (resp) {
-               cancel_t1();
-               reset_t3();
-               switch (resp->type()) {
-                   case apdu_870::S_type:
-                   {
-                       ack_tx(resp->rx());
-                       break;
-                   }
-                   case apdu_870::U_type:
-                   {
-                       if (parse_U(resp))
-                           return true;
-                       break;
-                   }
-                   case apdu_870::I_type:
-                   {
-                       reset_t2();
-                       parse_data(resp);
-                       w_++;
-                       break;
-                   }
-                   default:
-                   {
-                   }
-               }
-               check_work_available();
-               return true;
-           }
-           return false;
-       }*/
 
 
 
@@ -270,13 +195,13 @@ namespace dvnci {
             if (resp->get(rslt))
                 execute_data(rslt);
             return true;
-        }
+        }*/
 
         void iec60870_101PM::insert_sector_sevice(device_address dev, selector_address slct) {
             waitrequestdata_.push_back(dataobject::create_activation_1(0, slct));
         }
 
-        void iec60870_101PM::set_t_req() {
+        /*void iec60870_101PM::set_t_req() {
             std::cout << "set t_req" << std::endl;
             req_timer.cancel();
             req_timer.expires_from_now(boost::posix_time::milliseconds(reqtmo_));
@@ -296,7 +221,7 @@ namespace dvnci {
             } else {
                 //t0_state = false;
             }
-        }
+        }*/
 
     }
 }
