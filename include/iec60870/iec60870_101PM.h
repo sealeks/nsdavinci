@@ -245,16 +245,16 @@ namespace dvnci {
             }
 
             explicit apdu_870(octet_sequence::value_type vl) : 
-            header(new octet_sequence()), body_(new octet_sequence()) {
+            header_(new octet_sequence()), body_(new octet_sequence()) {
                 encode_header(vl);
             }        
 
-             explicit apdu_870(device_address dev, bool fcb_, bool fcv_, octet_sequence::value_type fc, bool prm_=false, bool res_=false) : 
+             explicit apdu_870(device_address dev, bool fcb_, bool fcv_, octet_sequence::value_type fc, bool prm_=true, bool res_=false) : 
             header_(new octet_sequence()), body_(new octet_sequence()) {
-                encode_header(FC_START1_F1_2, dev, fcb_, fcv_, fc, bool prm_, bool res_);
+                encode_header(FC_START1_F1_2, dev, fcb_, fcv_, fc, prm_, res_);
             }
              
-             explicit apdu_870(const asdu_body_type& asdu_, device_address dev, bool fcb_, bool fcv_, octet_sequence::value_type fc, bool prm_=false, bool res_=false) : 
+             explicit apdu_870(const asdu_body_type& asdu_, device_address dev, bool fcb_, bool fcv_, octet_sequence::value_type fc, bool prm_=true, bool res_=false) : 
             header_(new octet_sequence()), body_(new octet_sequence(asdu_.body())) {    
                 encode_header(FC_START2_F1_2, dev, fcb_, fcv_, fc, prm_, res_);
             }             
@@ -276,7 +276,18 @@ namespace dvnci {
                 return create();
             }
             
-
+            static self_type_ptr create(const asdu_body_type& asdu_, device_address dev, bool fcb_, bool fcv_, octet_sequence::value_type fc, bool prm_=true, bool res_=false) {
+                return self_type_ptr(new self_type(asdu_,  dev, fcb_, fcv_, fc, prm_, res_));
+            }            
+            
+            static self_type_ptr create(device_address dev, bool fcb_, bool fcv_, octet_sequence::value_type fc, bool prm_=true, bool res_=false) {
+                return self_type_ptr(new self_type(dev, fcb_, fcv_, fc, prm_, res_));
+            }                      
+            
+            octet_sequence&header() {
+                return *header_;
+            }
+            
             octet_sequence& body() {
                 return *body_;
             }
@@ -289,14 +300,40 @@ namespace dvnci {
             const octet_sequence& body() const {
                 return *body_;
             }
+            
+            size_t header_length() const {
+                switch (type()) {
+                    case FC_START1_F1_2: return (2+ lnk_traints::link_size()); // 10h(1) + FC(1) +  Addr(?) 
+                    case FC_START2_F1_2: return (5+ lnk_traints::link_size()); // 68h(1) + L(1) + L(1) +68h(1) +FC(1)) +  Addr(?) 
+                    case FC_SEQ1: return 1;
+                    case FC_SEQ2: return 1;                     
+                    default:
+                    {
+                    }
+                }
+                return 0;
+            }            
 
-            void body(const boost::asio::streambuf& vl);
-
-            size_t body_length() const;
+            std::size_t body_length() const {
+                switch (type()) {
+                    case FC_START1_F1_2: return 2; // CRC(1) + 0x16(1) 
+                    case FC_START2_F1_2:  {        
+                        if ((body_->size()>3) && (*body[1]==*body[2])){
+                            std::size_t sz =static_cast<std::size_t > (body[1]);
+                            if (sz>(lnk_traints::link_size()+1))
+                                return (sz-(lnk_traints::link_size()+1));
+                        }
+                    }
+                    default:
+                    {
+                    }
+                }
+                return 0;
+            }
 
             apcitype type() const{
                 if (!header_->empty()){
-                    switch(*header_[]){
+                    switch((*header_)[1]){
                         case FC_START1_F1_2: return Fx_type;
                         case FC_START2_F1_2: return Vr_type;
                         case FC_SEQ1: return E5_type;
@@ -388,47 +425,188 @@ namespace dvnci {
         //////// iec60870_101PM
         /////////////////////////////////////////////////////////////////////////////////////////////////  
 
+        template<ADDRESS_sizetype LinkAddress, COT_sizetype COT, SECTOR_sizetype Selector, IOA_sizetype IOA>        
         class iec60870_101PM : public iec60870_PM {
 
         public:
+            
+            typedef apdu_870<LinkAddress, COT, Selector, IOA> apdu_type;
+            typedef boost::shared_ptr<apdu_type> apdu_ptr;  
+            typedef std::deque<apdu_ptr> apdu_deq;
 
-            iec60870_101PM(chnlnumtype chnm, const metalink & lnk, const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
+            iec60870_101PM(chnlnumtype chnm, const metalink & lnk, const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr()) :
+            iec60870_PM(opt, listr),
+            serialport_(io_service_), serialport_io_sevice(io_service_), req_timer(io_service_),
+            is_timout(false), is_error(false), error_cod(0), reqtmo_(1000), chnum_(chnm), comsetter_(lnk) {
+            }
 
-            virtual void disconnect();
+            virtual void disconnect() {
+                terminate_ = true;
+                need_disconnect_ = true;
+            };
 
         protected:
 
-            virtual void connect();
+            virtual void connect() {
+                DEBUG_STR_DVNCI(ioclient connect)
+                DEBUG_VAL_DVNCI(chnum_)
+                DEBUG_VAL_DVNCI(timout)
+                if (!chnum_) {
+                    state_ = disconnected;
+                    error_cod = ERROR_IO_CHANNOOPEN;
+                }
+#if defined(_DVN_WIN_) 
+                std::string device = "\\\\.\\COM" + to_str(chnum_);
+#elif defined(_DVN_LIN_)
+                std::string device = "/dev/ttyS" + to_str(chnum_ - 1);
+#endif                
 
-            virtual void terminate();
+                try {
+                    serialport_.open(device);
+                    if (!serialport_.is_open()) {
+                        state_ = disconnected;
+                        error_cod = ERROR_IO_CHANNOOPEN;
+                        return;
+                    }
+                    try {
+                        if (!setoption(comsetter_)) {
+                            serialport_.close();
+                            state_ = disconnected;
+                            error_cod = ERROR_IO_CHANNOOPEN;
+                        }
+                    } catch (boost::system::system_error err) {
+                        serialport_.close();
+                        state_ = disconnected;
+                        error_cod = ERROR_IO_CHANNOOPEN;
+                    }
+                } catch (boost::system::system_error err) {
+                    state_ = disconnected;
+                    error_cod = ERROR_IO_CHANNOOPEN;
+                } catch (...) {
+                    state_ = disconnected;
+                    error_cod = ERROR_IO_CHANNOOPEN;
+                }
+                if (!error_cod) {
+                    state_ = connected;
+                } else {
+                }
 
-            virtual void work();
+            }
 
+            virtual void terminate() {
+                terminate_ = true;
+                state_ = disconnected;
+                serialport_.close();
+                io_service_.stop();
+            }
+
+            virtual void work() {
+                THD_EXCLUSIVE_LOCK(mtx)
+                if (!waitrequestdata_.empty()) {
+                    apdu_ptr resp = request(apdu_type::create(1, false, false, FNC_SET_CANAL));
+                    waitrequestdata_.pop_front();
+                }
+            }
 
         private:
 
-            void handle_request(const boost::system::error_code& error, apdu_870_ptr req);
+            void handle_request(const boost::system::error_code& err, apdu_ptr req) {
+                if (!err) {
+                    req_timer.cancel();
+                    data_ready_ = req;
+                    is_timout = false;
+                    error_cod = err.value();
+                    is_error = false;
+                    io_service_.stop();
+                } else {
+                    req_timer.cancel();
+                    is_timout = false;
+                    data_ready_ = apdu_ptr();
+                    error_cod = err.value();
+                    is_error = true;
+                    io_service_.stop();
+                }
+            }
 
-            void handle_response(const boost::system::error_code& error, apdu_870_ptr resp);
+            void handle_response(const boost::system::error_code& err, apdu_ptr resp) {
+                if (!err) {
+                    req_timer.cancel();
+                    data_ready_ = resp;
+                    is_timout = false;
+                    error_cod = err.value();
+                    is_error = false;
+                    io_service_.stop();
+                } else {
+                    req_timer.cancel();
+                    is_timout = false;
+                    data_ready_ = apdu_ptr();
+                    error_cod = err.value();
+                    is_error = true;
+                    io_service_.stop();
+                }
+            }
 
-            bool send_S1(apdu_870_ptr req);
+            bool send_S1(apdu_ptr req) {
 
-            apdu_870_ptr request(apdu_870_ptr req);
+                io_service_.reset();
 
-            /*void send(const asdu_body101& asdu);
+                is_timout = false;
+                data_ready_ = apdu_ptr();
+                error_cod = 0;
+                is_error = false;
 
-            void send(apdu_870_ptr msg);
+                async_request(
+                        boost::bind(&iec60870_101PM::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred),
+                        req);
 
-            void send(apdu_870::apcitypeU u);
+                set_t_req();
 
-            void send(tcpcounter_type cnt);
+                io_service_.run();
 
-            void receive();
+                if (is_error || is_timout)
+                    return false;
 
-            void check_work_available();
+                return true;
+            }
 
-            bool parse_data(apdu_870_ptr resp);*/
+            apdu_ptr request(apdu_ptr req) {
+                io_service_.reset();
 
+                is_timout = false;
+                data_ready_ = apdu_ptr();
+                error_cod = 0;
+                is_error = true;
+
+                async_request(
+                        boost::bind(&iec60870_101PM::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred),
+                        req);
+
+                set_t_req();
+
+                io_service_.run();
+
+                if (is_error || is_timout)
+                    return apdu_ptr();
+
+                io_service_.reset();
+
+                is_timout = false;
+                data_ready_ = apdu_ptr();
+                error_cod = 0;
+                is_error = false;
+
+                async_response(
+                        boost::bind(&iec60870_101PM::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+
+                set_t_req();
+
+                io_service_.run();
+
+                if (is_error || is_timout)
+                    return apdu_ptr();
+
+                return data_ready_;
+            }
 
 
             //////// request_operation 
@@ -436,7 +614,7 @@ namespace dvnci {
             template< typename handler>
             struct req_operation {
 
-                req_operation(handler hnd, boost::asio::serial_port& sock, apdu_870_ptr rq) : hndl(hnd), serialport_(sock), req_(rq), headersz_(0), bodysz_(0) {
+                req_operation(handler hnd, boost::asio::serial_port& sock, apdu_ptr rq) : hndl(hnd), serialport_(sock), req_(rq), headersz_(0), bodysz_(0) {
                 }
 
                 void header(const boost::system::error_code& error, std::size_t bytes_transferred) {
@@ -476,13 +654,13 @@ namespace dvnci {
 
                 handler hndl;
                 boost::asio::serial_port& serialport_;
-                apdu_870_ptr req_;
+                apdu_ptr req_;
                 std::size_t headersz_;
                 std::size_t bodysz_;
             };
 
             template< typename handler>
-            void async_request(handler hnd, apdu_870_ptr req) {
+            void async_request(handler hnd, apdu_ptr req) {
 
                 typedef req_operation< handler> req_operation_type;
 
@@ -500,13 +678,13 @@ namespace dvnci {
             template< typename handler>
             struct resp_operation {
 
-                resp_operation(handler hnd, boost::asio::serial_port& sock, apdu_870_ptr rsp) : hndl(hnd), serialport_(sock), resp_(rsp), headersz_(0), bodysz_(0) {
+                resp_operation(handler hnd, boost::asio::serial_port& sock, apdu_ptr rsp) : hndl(hnd), serialport_(sock), resp_(rsp), headersz_(0), bodysz_(0) {
                 }
 
                 void header(const boost::system::error_code& error, std::size_t bytes_transferred) {
                     if (!error) {
                         headersz_ += bytes_transferred;
-                        if (headersz_ < apdu_870::apci_length)
+                        if (headersz_ < apdu_type::apci_length)
                             serialport_.async_read_some(boost::asio::buffer(&(resp_->header()[0]) + headersz_, resp_->header().size() - headersz_),
                                 boost::bind(&resp_operation::header, *this,
                                 boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
@@ -540,7 +718,7 @@ namespace dvnci {
 
                 handler hndl;
                 boost::asio::serial_port& serialport_;
-                apdu_870_ptr resp_;
+                apdu_ptr resp_;
                 std::size_t headersz_;
                 std::size_t bodysz_;
             };
@@ -550,7 +728,7 @@ namespace dvnci {
 
                 typedef resp_operation< handler> resp_operation_type;
 
-                apdu_870_ptr resp = apdu_870::create();
+                apdu_ptr resp = apdu_type::create();
 
                 serialport_.async_read_some(boost::asio::buffer(resp->header().data(), resp->header().size()),
                         boost::bind(&resp_operation_type::header, resp_operation_type(hnd, serialport_, resp),
@@ -574,7 +752,9 @@ namespace dvnci {
 
             //virtual void remove_device_sevice(device_address dev){};            
 
-            virtual void insert_sector_sevice(device_address dev, selector_address slct);
+            virtual void insert_sector_sevice(device_address dev, selector_address slct){
+                waitrequestdata_.push_back(dataobject::create_activation_1(0, slct));
+            }
 
             //virtual void remove_sector_sevice(device_address dev, selector_address slct){}; 
 
@@ -586,23 +766,46 @@ namespace dvnci {
         private:
 
 
-            bool parse_data(apdu_870_ptr resp);
+            bool parse_data(apdu_ptr resp) {
+                dataobject_vct rslt;
+                if (resp->get(rslt))
+                    execute_data(rslt);
+                return true;                
+            }
 
+            void set_t_req() {
+                std::cout << "set t_req" << std::endl;
+                req_timer.cancel();
+                req_timer.expires_from_now(boost::posix_time::milliseconds(reqtmo_));
+                req_timer.async_wait(boost::bind(
+                        &iec60870_101PM::handle_t_req_expire, this,
+                        boost::asio::placeholders::error));
+            }
 
-            void set_t_req();
-            void handle_t_req_expire(const boost::system::error_code& err);
+            void handle_t_req_expire(const boost::system::error_code& err) {
+                if (!err) {
+                    std::cout << "exp t req" << std::endl;
+                    is_timout = true;
+                    data_ready_ = apdu_ptr();
+                    error_cod = err.value();
+                    is_error = true;
+                    io_service_.stop();
+                } else {
+                    //t0_state = false;                
+                }
+            }
 
             boost::asio::serial_port serialport_;
             boost::asio::serial_port_service serialport_io_sevice;
             boost::asio::deadline_timer req_timer;
             chnlnumtype chnum_;
             iec60870_com_option_setter comsetter_;
-            apdu_870_ptr data_ready_;
+            apdu_ptr data_ready_;
             volatile bool is_timout;
             volatile bool is_error;
             volatile int error_cod;
             std::size_t reqtmo_;
-            apdu_870_deq sended_;
+            apdu_deq sended_;
 
         };
 
