@@ -232,32 +232,8 @@ namespace dvnci {
         iec60870_101PM::iec60870_101PM(chnlnumtype chnm, const metalink & lnk, const iec_option& opt, iec60870_data_listener_ptr listr) :
         iec60870_PM(opt, listr),
         serialport_(io_service_), serialport_io_sevice(io_service_), req_timer(io_service_),
-        terminate_(false), is_timout(false), is_error(false), error_cod(0), reqtmo_(1000),
-        chnum_(chnm), comsetter_(lnk) {
+        is_timout(false), is_error(false), error_cod(0), reqtmo_(1000), chnum_(chnm), comsetter_(lnk) {
         }
-        
-        bool iec60870_101PM::operator()() {
-            boost::xtime xt;
-            try {
-                while(!terminate_){
-                    if (state_ == disconnected){
-                        connect();
-                        if (state_ == disconnected) {
-                            addmillisec_to_now(xt, 1000);
-                            boost::thread::sleep(xt);
-                            break;
-                        }
-                    }
-                    work();
-                }
-            } catch (...) {
-
-            }
-            iec60870_data_listener_ptr lstnr = listener();
-            if (lstnr)
-                lstnr->terminate60870();
-            return true;
-        }        
 
         void iec60870_101PM::connect() {
             DEBUG_STR_DVNCI(ioclient connect)
@@ -307,21 +283,19 @@ namespace dvnci {
 
         void iec60870_101PM::work() {
 
-        }        
+        }
 
         void iec60870_101PM::disconnect() {
-            terminate_=true;
+            terminate_ = true;
             need_disconnect_ = true;
         }
 
         void iec60870_101PM::terminate() {
-            terminate_-true;
+            terminate_ = true;
             state_ = disconnected;
             serialport_.close();
             io_service_.stop();
         }
-        
-
 
         void iec60870_101PM::handle_request(const boost::system::error_code& err, apdu_101_ptr req) {
             if (!err) {
@@ -373,7 +347,7 @@ namespace dvnci {
                     req);
 
             set_t_req();
-            
+
             io_service_.run();
 
             if (is_error || is_timout)
@@ -395,7 +369,7 @@ namespace dvnci {
             async_request(
                     boost::bind(&iec60870_101PM::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred),
                     req);
-            
+
             set_t_req();
 
             io_service_.run();
@@ -412,7 +386,7 @@ namespace dvnci {
 
             async_response(
                     boost::bind(&iec60870_101PM::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
-            
+
             set_t_req();
 
             io_service_.run();

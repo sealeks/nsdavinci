@@ -1,4 +1,6 @@
 
+#include <deque>
+
 #include "iec60870_104PM.h"
 
 
@@ -231,7 +233,7 @@ namespace dvnci {
 
         iec60870_104PM::iec60870_104PM(const std::string& hst, const std::string& prt, const iec_option& opt, iec60870_data_listener_ptr listr) :
         iec60870_PM(opt, listr),
-        socket_(io_service_), t1_timer(io_service_), PM_104_T1(opt.t1()),  t2_timer(io_service_), PM_104_T2(opt.t2()), t3_timer(io_service_), PM_104_T3(opt.t3()),
+        socket_(io_service_), t1_timer(io_service_), PM_104_T1(opt.t1()), t2_timer(io_service_), PM_104_T2(opt.t2()), t3_timer(io_service_), PM_104_T3(opt.t3()),
         t0_state(false), t1_state(false), t1_progress(false), t2_state(false), t2_progress(false), t3_state(false),
         host(hst), port(prt), tx_(0), rx_(0), w_(0), k_fct(opt.k()), w_fct(opt.w()) {
         }
@@ -245,6 +247,23 @@ namespace dvnci {
             boost::asio::ip::tcp::resolver resolver(io_service_);
             boost::asio::ip::tcp::resolver::query query(host.c_str(), port.c_str());
 
+            t0_state = false;
+            t1_state = false;
+            t2_state = false;
+            t3_state = false;
+
+            t1_progress = false;
+            t2_progress = false;
+            t3_progress = false;
+
+            tx_ = 0;
+            rx_ = 0;
+            w_ = 0;
+            
+            sended_.clear();
+
+            io_service_.reset();
+
 
             resolver.async_resolve(query,
                     boost::bind(&iec60870_104PM::handle_resolve, this,
@@ -257,11 +276,21 @@ namespace dvnci {
 
         }
 
+        void iec60870_104PM::reconnect(const boost::system::error_code& err) {
+            io_service_.stop();
+            iec60870_data_listener_ptr lstnr = listener();
+            if (lstnr)
+                lstnr->execute60870(err);
+
+        }
+
         void iec60870_104PM::disconnect() {
+            terminate_ = true;
             need_disconnect_ = true;
         }
 
         void iec60870_104PM::terminate() {
+            terminate_ = true;
             state_ = disconnected;
             socket_.close();
             io_service_.stop();
@@ -275,7 +304,7 @@ namespace dvnci {
                         boost::bind(&iec60870_104PM::handle_connect, this,
                         boost::asio::placeholders::error, ++endpoint_iterator));
             } else {
-                //terminate();
+                reconnect(err);
             }
         }
 
@@ -294,7 +323,7 @@ namespace dvnci {
                         boost::bind(&iec60870_104PM::handle_connect, this,
                         boost::asio::placeholders::error, ++endpoint_iterator));
             } else {
-                //terminate();
+                reconnect(err);
             }
         }
 
@@ -332,8 +361,8 @@ namespace dvnci {
         }
 
         void iec60870_104PM::send(apdu_104::apcitypeU u) {
-            if ((u == apdu_104::STARTDTact) 
-                    || (u == apdu_104::STOPDTact) 
+            if ((u == apdu_104::STARTDTact)
+                    || (u == apdu_104::STOPDTact)
                     || (apdu_104::TESTFRact))
                 reset_t1();
             reset_t3();
@@ -369,7 +398,8 @@ namespace dvnci {
                     send(apdu_104::STOPDTact);
                     receive();
                 }
-                return;}
+                return;
+            }
             if (w_expire()) {
                 w_ = 0;
                 send(rx_ + 1);
@@ -494,15 +524,14 @@ namespace dvnci {
             set_rx(resp->tx());
             ack_tx(resp->rx());
             dataobject_vct rslt;
-            if (resp->get(rslt)) 
-                    execute_data(rslt);
+            if (resp->get(rslt))
+                execute_data(rslt);
             return true;
         }
 
         void iec60870_104PM::insert_sector_sevice(device_address dev, selector_address slct) {
-            waitrequestdata_.push_back(dataobject::create_activation_1(0,slct));
-        }        
-        
+            waitrequestdata_.push_back(dataobject::create_activation_1(0, slct));
+        }
 
         tcpcounter_type iec60870_104PM::inc_tx() {
             return (tx_ < PM_104_MODULO) ? (tx_++) : (tx_ = 0);
@@ -537,7 +566,7 @@ namespace dvnci {
         void iec60870_104PM::handle_t0_expire(const boost::system::error_code& err) {
             if (!err) {
                 std::cout << "exp t0 = terminate " << std::endl;
-                terminate();
+                reconnect(err);
             } else {
                 t0_state = false;
             }
@@ -631,9 +660,6 @@ namespace dvnci {
                 t3_state = false;
             }
         }
-
-
-
 
     }
 }

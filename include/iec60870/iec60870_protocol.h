@@ -187,35 +187,35 @@ namespace dvnci {
         struct protocol_traits {
 
             static std::size_t link_size() {
-                return static_cast<std::size_t>(LinkAddress);
+                return static_cast<std::size_t> (LinkAddress);
             }
 
             static std::size_t selector_size() {
-                return static_cast<std::size_t>(Selector);
+                return static_cast<std::size_t> (Selector);
             }
 
             static std::size_t start_selector() {
-                return 2 + static_cast<std::size_t>(COT);
+                return 2 + static_cast<std::size_t> (COT);
             }
 
             static std::size_t stop_selector() {
-                return 2 + static_cast<std::size_t>(COT) + static_cast<std::size_t>(Selector);
+                return 2 + static_cast<std::size_t> (COT) + static_cast<std::size_t> (Selector);
             }
 
             static std::size_t min_size() {
-                return 2 + static_cast<std::size_t>(COT) + static_cast<std::size_t>(Selector);
+                return 2 + static_cast<std::size_t> (COT) + static_cast<std::size_t> (Selector);
             }
 
             static std::size_t ioa_size() {
-                return static_cast<std::size_t>(IOA);
+                return static_cast<std::size_t> (IOA);
             }
 
             static std::size_t cot_size() {
-                return static_cast<std::size_t>(COT);
+                return static_cast<std::size_t> (COT);
             }
 
             static bool has_OA() {
-                return (static_cast<std::size_t>(COT) > 1);
+                return (static_cast<std::size_t> (COT) > 1);
             }
 
         };
@@ -365,7 +365,8 @@ namespace dvnci {
 
         template<ADDRESS_sizetype LinkAddress, COT_sizetype COT, SECTOR_sizetype Selector, IOA_sizetype IOA>
         class asdu_body {
-                   public:
+
+        public:
 
             typedef protocol_traits<LinkAddress, COT, Selector, IOA> protocol_traits_type;
 
@@ -824,6 +825,9 @@ namespace dvnci {
 
             virtual void terminate() = 0;
 
+            virtual void work() {
+            }
+
             virtual void error(const boost::system::error_code& err);
 
             const id_device_map& devices() const {
@@ -879,10 +883,11 @@ namespace dvnci {
             virtual void remove_data_sevice(dataobject_ptr vl) {
             };
 
-            
+
             boost::asio::io_service io_service_;
             boost::asio::deadline_timer tmout_timer;
-            boost::asio::deadline_timer short_timer;            
+            boost::asio::deadline_timer short_timer;
+            volatile bool terminate_;
             volatile State state_;
             volatile PMState pmstate_;
             timeouttype timout;
