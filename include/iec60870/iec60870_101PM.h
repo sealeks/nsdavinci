@@ -178,9 +178,9 @@ namespace dvnci {
 
             void handle_response(const boost::system::error_code& error, apdu_101_ptr resp);
 
-            bool send_S1(const apdu_101_ptr & req, std::size_t tmo);
+            bool send_S1(apdu_101_ptr req);
 
-            apdu_101_ptr request(const apdu_101_ptr & req, std::size_t tmo);
+            apdu_101_ptr request(apdu_101_ptr req);
 
             /*void send(const asdu_body101& asdu);
 

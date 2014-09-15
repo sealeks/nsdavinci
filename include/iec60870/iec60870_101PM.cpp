@@ -1,4 +1,6 @@
 
+#include <deque>
+
 #include "iec60870_101PM.h"
 
 
@@ -282,7 +284,11 @@ namespace dvnci {
         }
 
         void iec60870_101PM::work() {
-
+            THD_EXCLUSIVE_LOCK(mtx)
+            if (!waitrequestdata_.empty()){
+                apdu_101_ptr resp =request(apdu_101::create(0));
+                waitrequestdata_.pop_front();
+            }
         }
 
         void iec60870_101PM::disconnect() {
@@ -333,7 +339,7 @@ namespace dvnci {
             }
         }
 
-        bool iec60870_101PM::send_S1(const apdu_101_ptr & req, std::size_t tmo) {
+        bool iec60870_101PM::send_S1(apdu_101_ptr req) {
 
             io_service_.reset();
 
@@ -357,7 +363,7 @@ namespace dvnci {
 
         }
 
-        apdu_101_ptr iec60870_101PM::request(const apdu_101_ptr & req, std::size_t tmo) {
+        apdu_101_ptr iec60870_101PM::request(apdu_101_ptr req) {
 
             io_service_.reset();
 

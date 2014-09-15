@@ -16,10 +16,8 @@ namespace dvnci {
 
         boost::system::error_code iec60870_com_option_setter::store(com_port_option& opt, boost::system::error_code & ec) const {
                       set_rs232_baudrate(opt, link.inf().cominf.boundrate);
-                      rsparitytype tmprty = (link.inf().cominf.parity > NT_RS_EVENPARITY) ?
-                              NT_RS_NOPARITY : link.inf().cominf.parity;
-                      set_rs232_comoption(opt, 7, tmprty, (tmprty == NT_RS_NOPARITY) ?
-                              NT_RS_TWOSTOPBITS : NT_RS_ONESTOPBIT);
+                      rsparitytype tmprty =  NT_RS_EVENPARITY;
+                      set_rs232_comoption(opt, 8, tmprty, NT_RS_ONESTOPBIT);
             return boost::system::error_code();
         }
 
