@@ -224,13 +224,6 @@ namespace dvnci {
             typedef apdu_870<LinkAddress, COT, Selector, IOA> self_type;
             typedef boost::shared_ptr<self_type> self_type_ptr;
 
-            static std::size_t apci_fixlength() {
-                return 2 + lnk_traints::link_size(); // 10h(1) + FC (1) + Addr(?);// 
-            };
-
-            static std::size_t apci_varlength() {
-                return 4 + lnk_traints::link_size(); // 68h(1) + L(1) +  68h(1)  + FC (1) + Addr(?)   //
-            };
 
             enum apcitype {
 
@@ -550,7 +543,7 @@ namespace dvnci {
                 if (!waitrequestdata_.empty()) {
                     apdu_ptr resp = request(apdu_type::create(1, false, false, FNC_REQ_STATUS));
                     resp = request(apdu_type::create(1, false, false, FNC_SET_CANAL));
-                    request(apdu_type::create(dataobject::create_activation_1(0, 1), 1, true, true, FNC_TEST_CANAL));
+                    resp = request(apdu_type::create(dataobject::create_activation_1(0, 1), 1, true, true, FNC_TEST_CANAL));
                     waitrequestdata_.pop_front();
                 }
             }
