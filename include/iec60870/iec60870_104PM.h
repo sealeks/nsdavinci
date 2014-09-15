@@ -170,12 +170,15 @@ namespace dvnci {
         public:
 
             iec60870_104PM(const std::string& hst, const std::string& prt, const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
-
+            
+            
             virtual void disconnect();
 
         protected:
 
             virtual void connect();
+            
+            void reconnect(const boost::system::error_code& err);            
 
             virtual void terminate();
 
@@ -401,7 +404,7 @@ namespace dvnci {
             void handle_t3_expire(const boost::system::error_code& err);
 
 
-            boost::asio::ip::tcp::socket socket_;
+            boost::asio::ip::tcp::socket socket_;            
             boost::asio::deadline_timer t1_timer;
             std::size_t PM_104_T1;
             boost::asio::deadline_timer t2_timer;

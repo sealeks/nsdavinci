@@ -160,8 +160,6 @@ namespace dvnci {
         public:
 
             iec60870_101PM(chnlnumtype chnm, const metalink & lnk, const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
-            
-            virtual  bool operator()();
 
             virtual void disconnect();
 
@@ -171,9 +169,10 @@ namespace dvnci {
 
             virtual void terminate();
 
-        private:
+            virtual void work();
 
-            void work();
+
+        private:
 
             void handle_request(const boost::system::error_code& error, apdu_101_ptr req);
 
@@ -365,7 +364,6 @@ namespace dvnci {
             boost::asio::deadline_timer req_timer;
             chnlnumtype chnum_;
             iec60870_com_option_setter comsetter_;
-            volatile bool terminate_;
             apdu_101_ptr data_ready_;
             volatile bool is_timout;
             volatile bool is_error;
