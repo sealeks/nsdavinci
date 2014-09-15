@@ -684,7 +684,7 @@ namespace dvnci {
                 void header(const boost::system::error_code& error, std::size_t bytes_transferred) {
                     if (!error) {
                         headersz_ += bytes_transferred;
-                        if (headersz_ < apdu_type::apci_length)
+                        if (headersz_ < apdu_type::apci_length())
                             serialport_.async_read_some(boost::asio::buffer(&(resp_->header()[0]) + headersz_, resp_->header().size() - headersz_),
                                 boost::bind(&resp_operation::header, *this,
                                 boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));

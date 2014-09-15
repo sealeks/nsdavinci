@@ -17,8 +17,12 @@ namespace dvnci {
         }
         
         iec60870_thread::iec60870_thread(IEC_PROTOCOL prot, chnlnumtype chnm, const metalink & lnk, 
-                const iec_option& opt, iec60870_data_listener_ptr listr) : 
-        pm_(new iec60870_101PM(chnm, lnk, opt, listr)) , cpm_(pm_){
+                const iec_option& opt, iec60870_data_listener_ptr listr) {
+                
+        typedef iec60870_101PM<lasz_one, ctsz_one, select_double, ioa_double> iec60870_101PM_tst;
+
+            pm_ = iec60870_PM_ptr(new iec60870_101PM_tst(chnm, lnk, opt, listr));
+            cpm_ = pm_;
             ioth = boost::shared_ptr<boost::thread>(new boost::thread(cpm_));
         }        
 

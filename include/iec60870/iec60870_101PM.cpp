@@ -195,11 +195,11 @@ namespace dvnci {
             if (resp->get(rslt))
                 execute_data(rslt);
             return true;
-        }*/
+        }
 
         void iec60870_101PM::insert_sector_sevice(device_address dev, selector_address slct) {
             waitrequestdata_.push_back(dataobject::create_activation_1(0, slct));
-        }
+        }*/
 
         /*void iec60870_101PM::set_t_req() {
             std::cout << "set t_req" << std::endl;
