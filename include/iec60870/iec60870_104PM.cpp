@@ -55,7 +55,7 @@ namespace dvnci {
         }
 
         apdu_104_ptr apdu_104::create(tcpcounter_type tx, tcpcounter_type rx, dataobject_ptr vl) {
-            return apdu_104_ptr(new apdu_104(tx, rx, vl, cs));
+            return apdu_104_ptr(new apdu_104(tx, rx, vl));
         }
 
         apdu_104_ptr apdu_104::create(tcpcounter_type tx, tcpcounter_type rx, const asdu_body104& vl) {
