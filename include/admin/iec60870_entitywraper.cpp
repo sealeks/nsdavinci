@@ -95,12 +95,13 @@ namespace dvnci {
                     switch(prt){
                         case dvnci::prot80670::IEC_104:{
                             _interface->group(id).chanaltype(NT_CHTP_TCP_IP);
+                            break;
                         }
                         default:{
                             _interface->group(id).chanaltype(NT_CHTP_RS232_4XX);
                         }
                     }
-                    _interface->group().protocol(static_cast<protocoltype> (dvnci::prot80670::protocol_from(str_to<protocoltype>(val))));
+                    _interface->group(id).protocol(static_cast<protocoltype> (dvnci::prot80670::protocol_from(str_to<protocoltype>(val))));
                     break;
                 }
 
@@ -111,7 +112,7 @@ namespace dvnci {
                     if (str_to<unum16>(val, val_)) {
                         if (val_ < 3) {
                             opt.addr(static_cast<dvnci::prot80670::ADDRESS_sizetype> (val_ < 3 ? val_ : 0));
-                            _interface->group().option(opt.to_value());
+                            _interface->group(id).option(opt.to_value());
                         }
                     }
                     break;
@@ -124,7 +125,7 @@ namespace dvnci {
                     if (str_to<unum16>(val, val_)) {
                         if (val_ < 3) {
                             opt.cot(static_cast<dvnci::prot80670::COT_sizetype> (((val_) &&(val_ < 3)) ? val_ : 1));
-                            _interface->group().option(opt.to_value());
+                            _interface->group(id).option(opt.to_value());
                         }
                     }
                     break;
@@ -137,7 +138,7 @@ namespace dvnci {
                     if (str_to<unum16>(val, val_)) {
                         if (val_ < 3) {
                             opt.sector(static_cast<dvnci::prot80670::SECTOR_sizetype> (val_ < 3 ? ( val_ ? val_ : 1) : 2));
-                            _interface->group().option(opt.to_value());
+                            _interface->group(id).option(opt.to_value());
                         }
                     }
                     break;
@@ -150,7 +151,7 @@ namespace dvnci {
                     if (str_to<unum16>(val, val_)) {
                         if (val_ < 4) {
                             opt.ioa(static_cast<dvnci::prot80670::IOA_sizetype> (val_ < 4 ? ( val_ ? val_ : 1)  : 3));
-                                    _interface->group().option(opt.to_value());
+                                    _interface->group(id).option(opt.to_value());
                         }
                     }
                     break;
@@ -162,7 +163,7 @@ namespace dvnci {
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         opt.trycount(val_);
-                        _interface->group().option(opt.to_value());
+                        _interface->group(id).option(opt.to_value());
                     }
                     break;
                 }                  
@@ -173,7 +174,7 @@ namespace dvnci {
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         opt.t0(val_);
-                        _interface->group().option(opt.to_value());
+                        _interface->group(id).option(opt.to_value());
                     }
                     break;
                 }     
@@ -185,7 +186,7 @@ namespace dvnci {
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         opt.t1(val_);
-                        _interface->group().option(opt.to_value());
+                        _interface->group(id).option(opt.to_value());
                     }
                     break;
                 }         
@@ -207,7 +208,7 @@ namespace dvnci {
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         opt.t3(val_);
-                        _interface->group().option(opt.to_value());
+                        _interface->group(id).option(opt.to_value());
                     }
                     break;
                 }                    
@@ -218,7 +219,7 @@ namespace dvnci {
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         opt.k(val_);
-                        _interface->group().option(opt.to_value());
+                        _interface->group(id).option(opt.to_value());
                     }
                     break;
                 }        
@@ -229,7 +230,7 @@ namespace dvnci {
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         opt.w(val_);
-                        _interface->group().option(opt.to_value());
+                        _interface->group(id).option(opt.to_value());
                     }
                     break;
                 }                        
