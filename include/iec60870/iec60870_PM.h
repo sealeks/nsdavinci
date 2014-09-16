@@ -29,7 +29,7 @@ namespace dvnci {
         const octet_sequence::value_type FNC_SET_CANAL = '\x0'; // S2
         const octet_sequence::value_type FNC_SET_PROCESS = '\x1'; // S2
         const octet_sequence::value_type FNC_TEST_CANAL = '\x2'; // S2
-        const octet_sequence::value_type FNC_SEND_ = '\x3'; // S2
+        const octet_sequence::value_type FNC_SEND = '\x3'; // S2
         const octet_sequence::value_type FNC_SEND_S1 = '\x4'; //S1
         const octet_sequence::value_type FNC_SEND_GEN = '\x8'; // S3
         const octet_sequence::value_type FNC_REQ_STATUS = '\x9'; // S3
@@ -287,7 +287,7 @@ namespace dvnci {
                 return self_type_ptr(new self_type(obj, dev, fcb_, fcv_, fc, prm_, res_));
             }
 
-            octet_sequence&header() {
+            octet_sequence& header() {
                 return *header_;
             }
 
@@ -362,6 +362,64 @@ namespace dvnci {
                     }
                 }
                 return None_type;
+            }
+
+            func850 fc() const {
+                switch (type()) {
+                    case Fx_type:
+                    {
+                        if (header().size() > 1)
+                            return func850(header()[1]);
+                        break;
+                    }
+                    case Vr_type:
+                    {
+                        if (header().size() > 4)
+                            return func850(header()[4]);
+                        break;
+                    }
+                    default:
+                    {
+                    }
+                }
+                return func850();
+            }
+
+            bool crc_check() const {
+                if (body().size() > 1) {
+                    octet_sequence::value_type crc = body()[body().size() - 2];
+                    switch (type()) {
+                        case Fx_type: return (header().size() > 1) ?
+                                    crc = crc_calculate(octet_sequence(header().begin() + 1, header().end())) : false;
+                        case Vr_type:return (header().size() > 4) ?
+                                    crc = crc_calculate(octet_sequence(header().begin() + 4, header().end()),
+                                    octet_sequence(body().begin(), body().begin()+(body().size() - 2))) : false;
+                        default:
+                        {
+                        }
+                    }
+                }
+                return false;
+            }
+
+            bool valid() const {
+                if ((header_length() == header().size()) && (body_length() == body().size())) {
+                    switch (type()) {
+                        case Fx_type: return ((!body().empty()) && (body().back() == FC_END_F1_2)) ? crc_check(): false;
+                        case Vr_type:
+                        {
+                            if ((header().size() > 4) && (header()[0] == header()[3]) && (header()[1] == header()[2]))
+                                return ((!body().empty()) && (body().back() == FC_END_F1_2)) ? crc_check() : false;
+                            return false;
+                        }
+                        case E5_type:
+                        case A2_type: return true;
+                        default:
+                        {
+                        }
+                    }
+                }
+                return false;
             }
 
             octet_sequence& header_prepare() {
@@ -540,14 +598,54 @@ namespace dvnci {
             virtual void work() {
                 THD_EXCLUSIVE_LOCK(mtx)
                 if (!waitrequestdata_.empty()) {
-                    // apdu_ptr resp = request(apdu_type::create(1, false, false, FNC_REQ_STATUS));
-                    //resp = request(apdu_type::create(1, false, false, FNC_SET_CANAL));
+                    open_device(1);
                     //resp = request(apdu_type::create(dataobject::create_activation_1(0, 1), 1, true, true, FNC_TEST_CANAL));
                     waitrequestdata_.pop_front();
                 }
             }
 
+            bool send_S1(apdu_ptr req) {
+
+                return request(req);
+
+            }
+
+            bool send_S2(apdu_ptr req) {
+
+                if (request(req)) {
+                    boost::system::error_code err;
+                    apdu_ptr resp = response(err);
+                    if (!err && resp && (resp->valid())) {
+                        return resp->fc().ack();
+                    }
+                }
+                return false;
+            }
+
+            apdu_ptr request_S3(apdu_ptr req) {
+
+                if (request(req)) {
+                    boost::system::error_code err;
+                    apdu_ptr resp = response(err);
+                    if (!err && resp && (resp->valid())) {
+                        return data_ready_;
+                    }
+                }
+                return apdu_ptr();
+            }
+
         private:
+
+            bool open_device(device_address dv) {
+
+                apdu_ptr rslt = request_S3(apdu_type::create(dv, false, false, FNC_REQ_STATUS));
+                if (rslt && (rslt->fc().status())) {
+                    if (send_S2(apdu_type::create(dv, false, false, FNC_SET_CANAL)))
+                        if (send_S2(apdu_type::create(dataobject::create_activation_1(dv, 1), dv, true, true, FNC_SEND)))
+                            return true;
+                }
+                return false;
+            }
 
             void handle_request(const boost::system::error_code& err, apdu_ptr req) {
                 if (!err) {
@@ -625,65 +723,7 @@ namespace dvnci {
                 return data_ready_;
             }
 
-            bool send_S1(apdu_ptr req) {
 
-                return request(req);
-
-            }
-
-            bool send_S2(apdu_ptr req) {
-
-                request(req);
-
-                io_service_.reset();
-
-                clear_var_req();
-
-                async_response(
-                        boost::bind(&iec60870_101PM::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
-
-                set_t_req();
-
-                io_service_.run();
-
-                if (is_error || is_timout)
-                    return false;
-
-                return data_ready_;
-            }
-
-            apdu_ptr request_S3(apdu_ptr req) {
-                io_service_.reset();
-
-                clear_var_req();
-
-                async_request(
-                        boost::bind(&iec60870_101PM::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred),
-                        req);
-
-                set_t_req();
-
-                io_service_.run();
-
-                if (is_error || is_timout)
-                    return apdu_ptr();
-
-                io_service_.reset();
-
-                clear_var_req();
-
-                async_response(
-                        boost::bind(&iec60870_101PM::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
-
-                set_t_req();
-
-                io_service_.run();
-
-                if (is_error || is_timout)
-                    return apdu_ptr();
-
-                return data_ready_;
-            }
 
 
             //////// request_operation 
@@ -848,7 +888,7 @@ namespace dvnci {
             void clear_var_req() {
                 is_timout = false;
                 data_ready_ = apdu_ptr();
-                error_cod= 0;
+                error_cod = boost::system::error_code();
                 is_error = true;
             }
 
