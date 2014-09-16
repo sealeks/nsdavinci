@@ -226,7 +226,7 @@ namespace dvnci {
         }  
 
         bool extiec60870intf::pm_connected() const {
-            return ((thread_io) && (thread_io->pm()->state() == dvnci::prot80670::iec60870_104PM::connected));
+            return ((thread_io) && (thread_io->pm()->state() == dvnci::prot80670::iec60870_PM::connected));
         }
 
         void extiec60870intf::kill_pm() {
