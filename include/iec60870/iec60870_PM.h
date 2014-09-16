@@ -574,13 +574,12 @@ namespace dvnci {
         public:
 
 
-
             typedef apdu_870<LinkAddress, COT, Selector, IOA> apdu_type;
             typedef boost::shared_ptr<apdu_type> apdu_ptr;
             typedef std::deque<apdu_ptr> apdu_deq;
 
             iec60870_101PM(chnlnumtype chnm, const metalink & lnk, const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr()) :
-            iec60870_PM(opt, listr),
+            iec60870_PM(opt, 5000, listr),
             serialport_(io_service_), serialport_io_sevice(io_service_), req_timer(io_service_),
             is_timout(false), is_error(false), reqtmo_(1000), chnum_(chnm), comsetter_(lnk) {
             }
@@ -646,10 +645,16 @@ namespace dvnci {
 
             virtual void work() {
                 update_model();
-                if (!waitrequestdata_.empty()) {
-                    open_device(1);
-                    //resp = request(apdu_type::create(dataobject::create_activation_1(0, 1), 1, true, true, FNC_TEST_CANAL));
-                    waitrequestdata_.pop_front();
+                for (id_device_map::iterator dit = devices().begin(); dit = devices().end(); ++dit) {
+                    if (dit->second->state()==iec60870_device::d_disconnect){
+                        if (open_device(dit->second->address(), dit->second->trycount())){
+                            dit->second->state(iec60870_device::d_disconnect);
+                        }
+                        else
+                            dit->second->dec_trycount();
+                    }
+                    else{
+                    }            
                 }
             }
 
@@ -686,8 +691,8 @@ namespace dvnci {
                 return false;
             }            
 
-            bool send_S3(octet_sequence::value_type fc, device_address dev, std::size_t ret = 1, bool fcb_ = false , bool fcv_= false , bool prm_ = true, bool res_ = false) {
-                return send_S3(apdu_type::create(dev, fcb_, fcv_, fc, prm_, res_), ret);
+            apdu_ptr request_S3(octet_sequence::value_type fc, device_address dev, std::size_t ret = 1, bool fcb_ = false , bool fcv_= false , bool prm_ = true, bool res_ = false) {
+                return request_S3(apdu_type::create(dev, fcb_, fcv_, fc, prm_, res_), ret);
             }   
             
             apdu_ptr request_S3(apdu_ptr req, std::size_t ret = 1) {
@@ -707,12 +712,12 @@ namespace dvnci {
 
         private:
 
-            bool open_device(device_address dv) {
+            bool open_device(device_address dev, std::size_t ret = 1) {
 
-                apdu_ptr rslt = request_S3(apdu_type::create(dv, false, false, FNC_REQ_STATUS));
-                if (rslt && (rslt->control().status())) {
-                    if (send_S2(apdu_type::create(dv, false, false, FNC_SET_CANAL)))
-                        if (send_S2(apdu_type::create(dataobject::create_activation_1(dv, 1), dv, true, true, FNC_SEND)))
+                apdu_ptr rslt = request_S3(FNC_REQ_STATUS, dev, ret);
+                if (rslt && (rslt->status()) && (!rslt->dfc())) {
+                    if (send_S2(FNC_SET_CANAL, dev, ret))
+                        //if (send_S2(apdu_type::create(dataobject::create_activation_1(dev, 1), dev, true, true, FNC_SEND)))
                             return true;
                 }
                 return false;
