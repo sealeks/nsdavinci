@@ -6,6 +6,7 @@
  */
 
 #include <cstddef>
+#include <set>
 
 #include "iec60870_protocol.h"
 
@@ -607,29 +608,65 @@ namespace dvnci {
 
         bool iec60870_PM::add_items(const indx_dataobject_vct& cids, indx_dataobject_vct& rslt) {
             THD_EXCLUSIVE_LOCK(mtx)
-            for (indx_dataobject_vct::const_iterator it = cids.begin(); it != cids.end(); ++it) {
-                if (it->second->readable()) {
-                    if (!data(it->second)) {
-                        iec60870_device_ptr dvc = device(it->second->devnum());
-                        if (!dvc)
-                            dvc = insert_device(it->second->devnum());
-                        if (dvc->empty())
-                            insert_device_sevice(it->second->devnum());
-                        iec60870_sector_ptr sct = sector(it->second->devnum(), it->second->selector());
-                        if (!sct)
-                            sct = insert_sector(it->second->devnum(), it->second->selector());
-                        if (sct->empty())
-                            insert_sector_sevice(it->second->devnum(), it->second->selector());
-                        sct->insert(it->second);
-                    }
-                }
-            }
+            for (indx_dataobject_vct::const_iterator it = cids.begin(); it != cids.end(); ++it)
+                if (additems_.find(it->second) == additems_.end())
+                    additems_.insert(it->second);
             return true;
         }
 
         bool iec60870_PM::remove_items(const dataobject_set& cids) {
             THD_EXCLUSIVE_LOCK(mtx)
             for (dataobject_set::const_iterator it = cids.begin(); it != cids.end(); ++it) {
+                if (additems_.find(*it) != additems_.end())
+                    additems_.erase(*it);
+                if (removeitems_.find(*it) == removeitems_.end())
+                    removeitems_.insert(*it);
+            }
+            return true;
+        }
+
+        bool iec60870_PM::read_items(const dataobject_set& cids) {
+            /*THD_EXCLUSIVE_LOCK(mtx)
+            for (dataobject_set::const_iterator it = cids.begin(); it != cids.end(); ++it)
+                if (std::find(waitrequestdata_.begin(), waitrequestdata_.end(), *it) == waitrequestdata_.end())
+                    waitrequestdata_.push_back(*it);*/
+            return true;
+        }
+
+        void iec60870_PM::update_model() {
+            update_model_insert();
+            update_model_read();
+            update_model_remove();
+        }
+
+        void iec60870_PM::update_model_insert() {
+            THD_EXCLUSIVE_LOCK(mtx)
+            for (dataobject_set::const_iterator it = additems_.begin(); it != additems_.end(); ++it) {
+                if ((*it)->readable()) {
+                    if (!data((*it))) {
+                        iec60870_device_ptr dvc = device((*it)->devnum());
+                        if (!dvc)
+                            dvc = insert_device((*it)->devnum());
+                        if (dvc->empty())
+                            insert_device_sevice((*it)->devnum());
+                        iec60870_sector_ptr sct = sector((*it)->devnum(), (*it)->selector());
+                        if (!sct)
+                            sct = insert_sector((*it)->devnum(), (*it)->selector());
+                        if (sct->empty())
+                            insert_sector_sevice((*it)->devnum(), (*it)->selector());
+                        sct->insert(*it);
+                    }
+                }
+            }
+        }
+
+        void iec60870_PM::update_model_read() {
+
+        }
+
+        void iec60870_PM::update_model_remove() {
+            THD_EXCLUSIVE_LOCK(mtx)
+            for (dataobject_set::const_iterator it = removeitems_.begin(); it != removeitems_.end(); ++it) {
                 if (data(*it)) {
                     iec60870_sector_ptr sct = sector((*it)->devnum(), (*it)->selector());
                     if (sct) {
@@ -644,20 +681,11 @@ namespace dvnci {
                     }
                 }
             }
-            //inrequestdata_.erase(*it);
-            return true;
-        }
-
-        bool iec60870_PM::read_items(const dataobject_set& cids) {
-            /*THD_EXCLUSIVE_LOCK(mtx)
-            for (dataobject_set::const_iterator it = cids.begin(); it != cids.end(); ++it)
-                if (std::find(waitrequestdata_.begin(), waitrequestdata_.end(), *it) == waitrequestdata_.end())
-                    waitrequestdata_.push_back(*it);*/
-            return true;
+            //inrequestdata_.erase(*it);          
         }
 
         boost::system::error_code iec60870_PM::error(const boost::system::error_code& err) {
-            error_cod=err;
+            error_cod = err;
             iec60870_data_listener_ptr lstnr = listener();
             if (lstnr)
                 lstnr->execute60870(err);
@@ -729,7 +757,6 @@ namespace dvnci {
 
         void iec60870_PM::execute_data(dataobject_ptr vl) {
             {
-                THD_EXCLUSIVE_LOCK(mtx);
                 iec60870_device_ptr devfnd = device(vl->devnum());
                 if (devfnd) {
                     devfnd->operator ()(vl);
@@ -744,7 +771,6 @@ namespace dvnci {
         }
 
         void iec60870_PM::execute_error(device_address dev, const ns_error& error) {
-            THD_EXCLUSIVE_LOCK(mtx);
             iec60870_device_ptr devfnd = device(dev);
             if (devfnd) {
                 execute60870(dev, error);

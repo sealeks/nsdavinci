@@ -106,7 +106,7 @@ namespace dvnci {
             }
 
             bool fcb() const {
-                return (vl_ & FCB_MASK);
+                return ((vl_ & PRM_MASK) && (vl_ & FCB_MASK));
             }
 
             void fcb(bool vl) {
@@ -117,7 +117,7 @@ namespace dvnci {
             }
 
             bool fcv() const {
-                return (vl_ & FCV_MASK);
+                return ((vl_ & PRM_MASK) && (vl_ & FCV_MASK));
             }
 
             void fcv(bool vl) {
@@ -128,7 +128,7 @@ namespace dvnci {
             }
 
             bool acd() const {
-                return (vl_ & ACD_MASK);
+                return (!(vl_ & PRM_MASK) && (vl_ & ACD_MASK));
             }
 
             void acd(bool vl) {
@@ -139,7 +139,7 @@ namespace dvnci {
             }
 
             bool dfc() const {
-                return (vl_ & DFC_MASK);
+                return (!(vl_ & PRM_MASK) && (vl_ & DFC_MASK));
             }
 
             void dfc(bool vl) {
@@ -348,6 +348,26 @@ namespace dvnci {
                 }
                 return 0;
             }
+            
+            bool valid() const {
+                if ((header_length() == header().size()) && (body_length() == body().size())) {
+                    switch (type()) {
+                        case Fx_type: return ((!body().empty()) && (body().back() == FC_END_F1_2)) ? crc_check(): false;
+                        case Vr_type:
+                        {
+                            if ((header().size() > 4) && (header()[0] == header()[3]) && (header()[1] == header()[2]))
+                                return ((!body().empty()) && (body().back() == FC_END_F1_2)) ? crc_check() : false;
+                            return false;
+                        }
+                        case E5_type:
+                        case A2_type: return true;
+                        default:
+                        {
+                        }
+                    }
+                }
+                return false;
+            }            
 
             apcitype type() const {
                 if (!header_->empty()) {
@@ -364,7 +384,7 @@ namespace dvnci {
                 return None_type;
             }
 
-            func850 fc() const {
+            func850 control() const {
                 switch (type()) {
                     case Fx_type:
                     {
@@ -384,6 +404,54 @@ namespace dvnci {
                 }
                 return func850();
             }
+            
+            octet_sequence::value_type fc() const {
+                return control().fc();
+            }          
+            
+            bool fcb() const {
+                return control().fcb();
+            }
+
+            bool fcv() const {
+                return control().fcv();
+            }            
+            
+            bool acd() const {
+                return control().acd();
+            }
+
+            bool dfc() const {
+                return control().dfc();
+            }           
+            
+            bool ack() const {
+                return ((control().ack()) || (type()==E5_type));
+            }
+
+            bool nack() const {
+                return control().nack();
+            }   
+            
+            bool hasdata() const {
+                return control().data();
+            }
+
+            bool nodata() const {
+                return control().nodata();
+            }
+
+            bool status() const {
+                return control().status();
+            }
+
+            bool nowork() const {
+                return control().nowork();
+            }
+
+            bool unavilable() const {
+                return control().unavilable();
+            }            
 
             bool crc_check() const {
                 if (body().size() > 1) {
@@ -402,25 +470,7 @@ namespace dvnci {
                 return false;
             }
 
-            bool valid() const {
-                if ((header_length() == header().size()) && (body_length() == body().size())) {
-                    switch (type()) {
-                        case Fx_type: return ((!body().empty()) && (body().back() == FC_END_F1_2)) ? crc_check(): false;
-                        case Vr_type:
-                        {
-                            if ((header().size() > 4) && (header()[0] == header()[3]) && (header()[1] == header()[2]))
-                                return ((!body().empty()) && (body().back() == FC_END_F1_2)) ? crc_check() : false;
-                            return false;
-                        }
-                        case E5_type:
-                        case A2_type: return true;
-                        default:
-                        {
-                        }
-                    }
-                }
-                return false;
-            }
+
 
             octet_sequence& header_prepare() {
                 header().clear();
@@ -583,6 +633,7 @@ namespace dvnci {
                 }
                 if (!error_cod) {
                     state_ = connected;
+                    pmstate_ =activated;
                 } else {
                 }
 
@@ -596,7 +647,7 @@ namespace dvnci {
             }
 
             virtual void work() {
-                THD_EXCLUSIVE_LOCK(mtx)
+                update_model();
                 if (!waitrequestdata_.empty()) {
                     open_device(1);
                     //resp = request(apdu_type::create(dataobject::create_activation_1(0, 1), 1, true, true, FNC_TEST_CANAL));
@@ -605,7 +656,6 @@ namespace dvnci {
             }
 
             bool send_S1(apdu_ptr req) {
-
                 return request(req);
 
             }
@@ -639,7 +689,7 @@ namespace dvnci {
             bool open_device(device_address dv) {
 
                 apdu_ptr rslt = request_S3(apdu_type::create(dv, false, false, FNC_REQ_STATUS));
-                if (rslt && (rslt->fc().status())) {
+                if (rslt && (rslt->control().status())) {
                     if (send_S2(apdu_type::create(dv, false, false, FNC_SET_CANAL)))
                         if (send_S2(apdu_type::create(dataobject::create_activation_1(dv, 1), dv, true, true, FNC_SEND)))
                             return true;
