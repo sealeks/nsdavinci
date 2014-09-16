@@ -409,7 +409,9 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////        
 
         void iec60870_sector::state(iec60870_sector::SectorState vl) {
-            state_ = vl;
+            if (state_ != vl) {
+                state_ = vl;
+            }
         }
 
         dataobject_ptr iec60870_sector::operator()(data_address id) const {
@@ -500,6 +502,15 @@ namespace dvnci {
             return fit != sectors_.end() ? fit->second : iec60870_sector_ptr();
         }
 
+        void iec60870_device::state(iec60870_device::DeviceState vl) {
+            if (vl != state_) {
+                state_ = vl;
+                currtrycount_ =trycount_;
+                for (id_selestor_map::iterator it = sectors().begin(); it != sectors().end(); ++it)
+                    it->second->state(iec60870_sector::s_noaciveted);
+            }
+        }        
+
         dataobject_ptr iec60870_device::operator()(selector_address sl, data_address id) const {
             id_selestor_map::const_iterator fit = sectors_.find(sl);
             return ((fit != sectors_.end()) && (fit->second)) ? fit->second->operator ()(id) : dataobject_ptr();
@@ -569,9 +580,9 @@ namespace dvnci {
         //////// iec60870_PM
         /////////////////////////////////////////////////////////////////////////////////////////////////         
 
-        iec60870_PM::iec60870_PM(const iec_option& opt, iec60870_data_listener_ptr listr) : iec60870_datanotificator(listr),
-        io_service_(), tmout_timer(io_service_), short_timer(io_service_), terminate_(false),
-        state_(disconnected), pmstate_(noconnected), error_cod(), timout(opt.t0()*1000), need_disconnect_(false) {
+        iec60870_PM::iec60870_PM(const iec_option& opt,timeouttype tout,  iec60870_data_listener_ptr listr) : iec60870_datanotificator(listr),
+        io_service_(), tmout_timer(io_service_), short_timer(io_service_), trycount_(opt.trycount() ? ((opt.trycount()< 15) ? opt.trycount() : 15) : 3), terminate_(false),
+        state_(disconnected), pmstate_(noconnected), error_cod(), timout( tout<10 ? 10 : tout), need_disconnect_(false) {
         }
 
         iec60870_PM::~iec60870_PM() {
@@ -703,7 +714,7 @@ namespace dvnci {
 
         iec60870_device_ptr iec60870_PM::insert_device(device_address dev) {
             if (!device(dev)) {
-                iec60870_device_ptr newdev = iec60870_device_ptr(new iec60870_device(dev, listener()));
+                iec60870_device_ptr newdev = iec60870_device_ptr(new iec60870_device(dev, trycount(), listener()));
                 devices_.insert(id_device_pair(dev, newdev));
                 return newdev;
             }
