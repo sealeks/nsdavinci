@@ -348,7 +348,7 @@ namespace dvnci {
                 }
                 return 0;
             }
-            
+
             bool valid() const {
                 if ((header_length() == header().size()) && (body_length() == body().size())) {
                     switch (type()) {
@@ -367,7 +367,7 @@ namespace dvnci {
                     }
                 }
                 return false;
-            }            
+            }
 
             apcitype type() const {
                 if (!header_->empty()) {
@@ -404,35 +404,35 @@ namespace dvnci {
                 }
                 return func850();
             }
-            
+
             octet_sequence::value_type fc() const {
                 return control().fc();
-            }          
-            
+            }
+
             bool fcb() const {
                 return control().fcb();
             }
 
             bool fcv() const {
                 return control().fcv();
-            }            
-            
+            }
+
             bool acd() const {
                 return control().acd();
             }
 
             bool dfc() const {
                 return control().dfc();
-            }           
-            
+            }
+
             bool ack() const {
-                return ((control().ack()) || (type()==E5_type));
+                return ((control().ack()) || (type() == E5_type));
             }
 
             bool nack() const {
                 return control().nack();
-            }   
-            
+            }
+
             bool hasdata() const {
                 return control().data();
             }
@@ -451,7 +451,7 @@ namespace dvnci {
 
             bool unavilable() const {
                 return control().unavilable();
-            }            
+            }
 
             bool crc_check() const {
                 if (body().size() > 1) {
@@ -469,8 +469,6 @@ namespace dvnci {
                 }
                 return false;
             }
-
-
 
             octet_sequence& header_prepare() {
                 header().clear();
@@ -633,7 +631,7 @@ namespace dvnci {
                 }
                 if (!error_cod) {
                     state_ = connected;
-                    pmstate_ =activated;
+                    pmstate_ = activated;
                 } else {
                 }
 
@@ -655,30 +653,53 @@ namespace dvnci {
                 }
             }
 
-            bool send_S1(apdu_ptr req) {
-                return request(req);
+            bool send_S1(octet_sequence::value_type fc, device_address dev, std::size_t ret = 1, bool prm_ = true, bool res_ = false) {
+                return send_S1(apdu_type::create(dev, false, false, fc, prm_, res_), ret);
+            }         
 
+            bool send_S1(apdu_ptr req, std::size_t ret = 1) {
+                ret &= 0xF;
+                ret = ret ? ret : 1;
+                while (ret--) {
+                    if (request(req))
+                        return true;
+                    return false;
+                }
             }
-
-            bool send_S2(apdu_ptr req) {
-
-                if (request(req)) {
-                    boost::system::error_code err;
-                    apdu_ptr resp = response(err);
-                    if (!err && resp && (resp->valid())) {
-                        return resp->fc().ack();
+            
+            bool send_S2(octet_sequence::value_type fc, device_address dev, std::size_t ret =1 , bool fcb_ = false , bool fcv_= false , bool prm_ = true, bool res_ = false) {
+                return send_S2(apdu_type::create(dev, fcb_, fcv_, fc, prm_, res_), ret);
+            }               
+            
+            bool send_S2(apdu_ptr req, std::size_t ret = 1) {
+                ret &= 0xF;
+                ret = ret ? ret : 1;
+                while (ret--) {
+                    if (request(req)) {
+                        boost::system::error_code err;
+                        apdu_ptr resp = response(err);
+                        if (!err && resp && (resp->valid())) {
+                            return resp->ack();
+                        }
                     }
                 }
                 return false;
-            }
+            }            
 
-            apdu_ptr request_S3(apdu_ptr req) {
-
-                if (request(req)) {
-                    boost::system::error_code err;
-                    apdu_ptr resp = response(err);
-                    if (!err && resp && (resp->valid())) {
-                        return data_ready_;
+            bool send_S3(octet_sequence::value_type fc, device_address dev, std::size_t ret = 1, bool fcb_ = false , bool fcv_= false , bool prm_ = true, bool res_ = false) {
+                return send_S3(apdu_type::create(dev, fcb_, fcv_, fc, prm_, res_), ret);
+            }   
+            
+            apdu_ptr request_S3(apdu_ptr req, std::size_t ret = 1) {
+                ret &= 0xF;
+                ret = ret ? ret : 1;
+                while (ret--) {
+                    if (request(req)) {
+                        boost::system::error_code err;
+                        apdu_ptr resp = response(err);
+                        if (!err && resp && (resp->valid())) {
+                            return data_ready_;
+                        }
                     }
                 }
                 return apdu_ptr();
