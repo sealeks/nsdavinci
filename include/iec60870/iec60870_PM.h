@@ -645,22 +645,47 @@ namespace dvnci {
 
             virtual void work() {
                 update_model();
-                for (id_device_map::iterator dit = devices().begin(); dit = devices().end(); ++dit) {
-                    if (dit->second->state()==iec60870_device::d_disconnect){
-                        if (open_device(dit->second->address(), dit->second->trycount())){
-                            dit->second->state(iec60870_device::d_disconnect);
-                        }
-                        else
+                for (id_device_map::iterator dit = devices().begin(); dit != devices().end(); ++dit) {
+                    if (dit->second->state() == iec60870_device::d_disconnect) {
+                        if (open_device(dit->second->address(), dit->second->trycount())) {
+                            dit->second->state(iec60870_device::d_connected);
+                        } else
                             dit->second->dec_trycount();
+                        if (terminate_)
+                            return;
+                        if (dit->second->state() == iec60870_device::d_disconnect)
+                            continue;
                     }
-                    else{
-                    }            
+                    for (id_selestor_map::iterator sit = dit->second->sectors().begin(); sit != dit->second->sectors().end(); ++sit) {
+                        if (sit->second->state() == iec60870_sector::s_noaciveted) {
+                            if (init_selector(dit->second->address(), sit->second->selector(), dit->second->fcb(), 3))
+                                sit->second->state(iec60870_sector::s_activate);
+                            else
+                                continue;
+                        }
+                        if (sit->second->state() == iec60870_sector::s_activate) {
+                            apdu_ptr rslt = req_selectorCLS2(dit->second->address(), dit->second->fcb(), 3);
+                            if (rslt) {
+                                sit->second->state(iec60870_sector::s_confirmactivated);
+                            } else
+                                continue;
+                        }
+                        if (sit->second->state() == iec60870_sector::s_confirmactivated) {
+                            apdu_ptr rslt;
+                            do {
+                                rslt = req_selectorCLS1(dit->second->address(), dit->second->fcb(), 3);
+                            } while (rslt && (rslt->acd()));
+                            if (!rslt)
+                                continue;
+                            sit->second->state(iec60870_sector::s_fullactivated);
+                        }
+                    }
                 }
             }
 
             bool send_S1(octet_sequence::value_type fc, device_address dev, std::size_t ret = 1, bool prm_ = true, bool res_ = false) {
                 return send_S1(apdu_type::create(dev, false, false, fc, prm_, res_), ret);
-            }         
+            }
 
             bool send_S1(apdu_ptr req, std::size_t ret = 1) {
                 ret &= 0xF;
@@ -671,11 +696,11 @@ namespace dvnci {
                     return false;
                 }
             }
-            
-            bool send_S2(octet_sequence::value_type fc, device_address dev, std::size_t ret =1 , bool fcb_ = false , bool fcv_= false , bool prm_ = true, bool res_ = false) {
+
+            bool send_S2(octet_sequence::value_type fc, device_address dev, std::size_t ret = 1, bool fcb_ = false, bool fcv_ = false, bool prm_ = true, bool res_ = false) {
                 return send_S2(apdu_type::create(dev, fcb_, fcv_, fc, prm_, res_), ret);
-            }               
-            
+            }
+
             bool send_S2(apdu_ptr req, std::size_t ret = 1) {
                 ret &= 0xF;
                 ret = ret ? ret : 1;
@@ -689,12 +714,12 @@ namespace dvnci {
                     }
                 }
                 return false;
-            }            
+            }
 
-            apdu_ptr request_S3(octet_sequence::value_type fc, device_address dev, std::size_t ret = 1, bool fcb_ = false , bool fcv_= false , bool prm_ = true, bool res_ = false) {
+            apdu_ptr request_S3(octet_sequence::value_type fc, device_address dev, std::size_t ret = 1, bool fcb_ = false, bool fcv_ = false, bool prm_ = true, bool res_ = false) {
                 return request_S3(apdu_type::create(dev, fcb_, fcv_, fc, prm_, res_), ret);
-            }   
-            
+            }
+
             apdu_ptr request_S3(apdu_ptr req, std::size_t ret = 1) {
                 ret &= 0xF;
                 ret = ret ? ret : 1;
@@ -718,9 +743,23 @@ namespace dvnci {
                 if (rslt && (rslt->status()) && (!rslt->dfc())) {
                     if (send_S2(FNC_SET_CANAL, dev, ret))
                         //if (send_S2(apdu_type::create(dataobject::create_activation_1(dev, 1), dev, true, true, FNC_SEND)))
-                            return true;
+                        return true;
                 }
                 return false;
+            }
+
+            bool init_selector(device_address dev, selector_address sel, bool fcb, std::size_t ret = 1) {
+                if (send_S2(apdu_type::create(dataobject::create_activation_1(dev, sel), dev, fcb, true, FNC_SEND)))
+                    return true;
+                return false;
+            }
+
+            apdu_ptr req_selectorCLS1(device_address dev, bool fcb, std::size_t ret = 1) {
+                return request_S3(FNC_REQ_CLS1, dev, ret, fcb, true);
+            }
+
+            apdu_ptr req_selectorCLS2(device_address dev, bool fcb, std::size_t ret = 1) {
+                return request_S3(FNC_REQ_CLS2, dev, ret, fcb, true);
             }
 
             void handle_request(const boost::system::error_code& err, apdu_ptr req) {
