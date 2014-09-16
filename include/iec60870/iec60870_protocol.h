@@ -706,15 +706,15 @@ namespace dvnci {
 
         class iec60870_device : public iec60870_datanotificator {
 
+        public:
+
             enum DeviceState {
 
                 d_disconnect, d_connected
-            };
+            };           
 
-        public:
-
-            iec60870_device(device_address adr, iec60870_data_listener_ptr listr) :
-            iec60870_datanotificator(listr), address_(adr), state_(d_disconnect) {
+            iec60870_device(device_address adr, std::size_t trycnt, iec60870_data_listener_ptr listr) :
+            iec60870_datanotificator(listr), address_(adr), state_(d_disconnect), trycount_(trycnt ? trycnt : 3), currtrycount_(trycount_) {
             }
 
             ~iec60870_device() {
@@ -728,13 +728,15 @@ namespace dvnci {
                 return state_;
             }
 
-            void state(DeviceState vl) {
-                state_ = vl;
-            }
+            void state(DeviceState vl);
 
             const id_selestor_map& sectors() const {
                 return sectors_;
             }
+            
+            id_selestor_map& sectors()  {
+                return sectors_;
+            }            
 
             iec60870_sector_ptr operator()(selector_address id) const;
 
@@ -758,12 +760,23 @@ namespace dvnci {
 
             bool empty() const;
 
+            std::size_t trycount() const {
+                return currtrycount_ ? currtrycount_ : 1;
+            }
 
+            void dec_trycount() {
+                if (currtrycount_ > 1)
+                    currtrycount_--;
+            }            
+            
+            
         private:
 
             device_address address_;
             DeviceState state_;
             id_selestor_map sectors_;
+            std::size_t trycount_;
+            std::size_t currtrycount_;
         };
 
 
@@ -800,7 +813,7 @@ namespace dvnci {
                 noconnected, noaciveted, activated, todisconnect
             };
 
-            iec60870_PM(const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
+            iec60870_PM(const iec_option& opt, timeouttype tout,  iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
 
             virtual ~iec60870_PM();
 
@@ -852,8 +865,13 @@ namespace dvnci {
                 return devices_;
             }
 
+            id_device_map& devices() {
+                return devices_;
+            }
 
-
+            std::size_t trycount() const {
+                return trycount_ ? trycount_ : 3;
+            }
 
             iec60870_device_ptr device(device_address dev) const;
 
@@ -905,6 +923,7 @@ namespace dvnci {
             boost::asio::io_service io_service_;
             boost::asio::deadline_timer tmout_timer;
             boost::asio::deadline_timer short_timer;
+            std::size_t trycount_;
             volatile bool terminate_;
             volatile State state_;
             volatile PMState pmstate_;
