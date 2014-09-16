@@ -9,7 +9,7 @@
 #define	_DVNCI_KRNL_NS_IEC60850PM_H
 
 #include <iec60870/iec60870_104PM.h>
-#include <iec60870/iec60870_101PM.h>
+#include <iec60870/iec60870_PM.h>
 
 namespace dvnci {
     namespace prot80670 {
