@@ -776,8 +776,9 @@ namespace dvnci {
 
 
 
-
-
+        const boost::system::error_code ERR_BADADDRESS = boost::system::error_code(boost::system::errc::bad_address, boost::system::system_category());
+        const boost::system::error_code ERR_TIMEOUT = boost::system::error_code(boost::system::errc::timed_out, boost::system::system_category());
+        const boost::system::error_code ERR_BEDSEQ = boost::system::error_code(boost::system::errc::illegal_byte_sequence, boost::system::system_category());
 
 
         const std::size_t PM_SHORT_TIMER = 10;
@@ -811,6 +812,10 @@ namespace dvnci {
             PMState pmstate() const {
                 return pmstate_;
             }
+            
+            boost::system::error_code error() const {
+                return error_cod;
+            }             
 
             void pmstate(PMState vl);
 
@@ -834,7 +839,7 @@ namespace dvnci {
             virtual void work() {
             }
 
-            virtual void error(const boost::system::error_code& err);
+            virtual  boost::system::error_code error(const boost::system::error_code& vl);
 
             const id_device_map& devices() const {
                 return devices_;
@@ -896,6 +901,7 @@ namespace dvnci {
             volatile bool terminate_;
             volatile State state_;
             volatile PMState pmstate_;
+            boost::system::error_code error_cod;            
             timeouttype timout;
             bool need_disconnect_;
 

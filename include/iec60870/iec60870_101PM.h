@@ -456,9 +456,7 @@ namespace dvnci {
 
 
 
-        const boost::system::error_code ERR_BADADDRESS = boost::system::error_code(boost::system::errc::bad_address, boost::system::system_category());
-        const boost::system::error_code ERR_TIMEOUT = boost::system::error_code(boost::system::errc::timed_out, boost::system::system_category());
-        const boost::system::error_code ERR_BEDSEQ = boost::system::error_code(boost::system::errc::illegal_byte_sequence, boost::system::system_category());
+
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// iec60870_101PM
@@ -478,7 +476,7 @@ namespace dvnci {
             iec60870_101PM(chnlnumtype chnm, const metalink & lnk, const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr()) :
             iec60870_PM(opt, listr),
             serialport_(io_service_), serialport_io_sevice(io_service_), req_timer(io_service_),
-            is_timout(false), is_error(false), error_cod(), reqtmo_(1000), chnum_(chnm), comsetter_(lnk) {
+            is_timout(false), is_error(false), reqtmo_(1000), chnum_(chnm), comsetter_(lnk) {
             }
 
             virtual void disconnect() {
@@ -522,7 +520,6 @@ namespace dvnci {
                 } catch (boost::system::system_error err) {
                     state_ = disconnected;
                     error_cod = err.code();
-                    ;
                 } catch (...) {
                     state_ = disconnected;
                 }
@@ -851,7 +848,7 @@ namespace dvnci {
             void clear_var_req() {
                 is_timout = false;
                 data_ready_ = apdu_ptr();
-                error_cod = 0;
+                error_cod= 0;
                 is_error = true;
             }
 
@@ -884,7 +881,6 @@ namespace dvnci {
             apdu_ptr data_ready_;
             volatile bool is_timout;
             volatile bool is_error;
-            boost::system::error_code error_cod;
             std::size_t reqtmo_;
             apdu_deq sended_;
 

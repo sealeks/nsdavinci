@@ -570,7 +570,7 @@ namespace dvnci {
 
         iec60870_PM::iec60870_PM(const iec_option& opt, iec60870_data_listener_ptr listr) : iec60870_datanotificator(listr),
         io_service_(), tmout_timer(io_service_), short_timer(io_service_), terminate_(false),
-        state_(disconnected), pmstate_(noconnected), timout(opt.t0()*1000), need_disconnect_(false) {
+        state_(disconnected), pmstate_(noconnected), error_cod(), timout(opt.t0()*1000), need_disconnect_(false) {
         }
 
         iec60870_PM::~iec60870_PM() {
@@ -656,10 +656,12 @@ namespace dvnci {
             return true;
         }
 
-        void iec60870_PM::error(const boost::system::error_code& err) {
+        boost::system::error_code iec60870_PM::error(const boost::system::error_code& err) {
+            error_cod=err;
             iec60870_data_listener_ptr lstnr = listener();
             if (lstnr)
                 lstnr->execute60870(err);
+            return error_cod;
         }
 
         iec60870_device_ptr iec60870_PM::device(device_address dev) const {
