@@ -17,7 +17,7 @@
 #include <kernel/interface_proccesstmpl.h>
 #include <kernel/extintf_wraper.h>
 
-#include <iec60870/iec60870_PM.h>
+#include <iec60870/iec60870_factory.h>
 
 namespace dvnci {
 
@@ -27,7 +27,7 @@ namespace dvnci {
         using dvnci::prot80670::device_address;        
         using dvnci::prot80670::dataobject_ptr;
         using dvnci::prot80670::dataobject_vct;
-        using dvnci::prot80670::iec60870_thread;
+        using dvnci::prot80670::iec60870_factory;
         using dvnci::prot80670::iec60870_thread_ptr;
         using dvnci::prot80670::iec_option;     
         using dvnci::prot80670::iec60870_data_listener_ptr;        
