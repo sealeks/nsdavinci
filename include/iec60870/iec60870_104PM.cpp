@@ -411,9 +411,9 @@ namespace dvnci {
                 send(apdu_104::TESTFRact);
                 return;
             }
+            update_model();
             {
                 if (!k_expire()) {
-                    THD_EXCLUSIVE_LOCK(mtx)
                     if (!waitrequestdata_.empty()) {
                         send(asdu_body104::create(waitrequestdata_.front()));
                         waitrequestdata_.pop_front();

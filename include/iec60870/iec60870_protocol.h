@@ -215,17 +215,16 @@ namespace dvnci {
             }
 
         };
-        
-        
-        template<ADDRESS_sizetype LinkAddress>        
+
+        template<ADDRESS_sizetype LinkAddress>
         struct link_traits {
 
             static std::size_t link_size() {
                 return static_cast<std::size_t> (LinkAddress);
             }
-            
+
         };
-                
+
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// dataobject
@@ -812,10 +811,10 @@ namespace dvnci {
             PMState pmstate() const {
                 return pmstate_;
             }
-            
+
             boost::system::error_code error() const {
                 return error_cod;
-            }             
+            }
 
             void pmstate(PMState vl);
 
@@ -839,7 +838,15 @@ namespace dvnci {
             virtual void work() {
             }
 
-            virtual  boost::system::error_code error(const boost::system::error_code& vl);
+            virtual void update_model();
+
+            virtual void update_model_insert();
+
+            virtual void update_model_read();
+
+            virtual void update_model_remove();
+
+            virtual boost::system::error_code error(const boost::system::error_code& vl);
 
             const id_device_map& devices() const {
                 return devices_;
@@ -901,12 +908,17 @@ namespace dvnci {
             volatile bool terminate_;
             volatile State state_;
             volatile PMState pmstate_;
-            boost::system::error_code error_cod;            
+            boost::system::error_code error_cod;
             timeouttype timout;
             bool need_disconnect_;
+            id_device_map devices_;
 
             boost::mutex mtx;
-            id_device_map devices_;
+            // start protected block
+            dataobject_set additems_;
+            dataobject_set removeitems_;
+            // end protected block
+
             dataobject_set inrequestdata_;
             dataobject_deq waitrequestdata_;
             dataobject_deq waitcommanddata_;
