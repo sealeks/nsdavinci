@@ -1,5 +1,5 @@
 
-#include "iec60870_PM.h"
+#include "iec60870_factory.h"
 
 
 namespace dvnci {
@@ -10,13 +10,13 @@ namespace dvnci {
         //////// iec60870_thread
         /////////////////////////////////////////////////////////////////////////////////////////////////        
 
-        iec60870_thread::iec60870_thread(const std::string& host, const std::string& port,
+        iec60870_factory::iec60870_factory(const std::string& host, const std::string& port,
                const iec_option& opt, iec60870_data_listener_ptr listr) : 
         pm_(new iec60870_104PM(host, port, opt, listr)) , cpm_(pm_){
             ioth = boost::shared_ptr<boost::thread>(new boost::thread(cpm_));
         }
         
-        iec60870_thread::iec60870_thread(IEC_PROTOCOL prot, chnlnumtype chnm, const metalink & lnk, 
+        iec60870_factory::iec60870_factory(IEC_PROTOCOL prot, chnlnumtype chnm, const metalink & lnk, 
                 const iec_option& opt, iec60870_data_listener_ptr listr) {
                 
         typedef iec60870_101PM<lasz_one, ctsz_one, select_double, ioa_double> iec60870_101PM_tst;
@@ -26,30 +26,30 @@ namespace dvnci {
             ioth = boost::shared_ptr<boost::thread>(new boost::thread(cpm_));
         }        
 
-         iec60870_thread::~iec60870_thread() {
+         iec60870_factory::~iec60870_factory() {
 
         }
 
-        iec60870_thread_ptr iec60870_thread::create(const std::string& host, const std::string& port,
+        iec60870_thread_ptr iec60870_factory::create(const std::string& host, const std::string& port,
                const iec_option& opt,  iec60870_data_listener_ptr listr) {
-            return iec60870_thread_ptr(new iec60870_thread(host, port, opt, listr));
+            return iec60870_thread_ptr(new iec60870_factory(host, port, opt, listr));
         }
         
-        iec60870_thread_ptr iec60870_thread::create(IEC_PROTOCOL prot, chnlnumtype chnm, const metalink & lnk, const iec_option& opt,
+        iec60870_thread_ptr iec60870_factory::create(IEC_PROTOCOL prot, chnlnumtype chnm, const metalink & lnk, const iec_option& opt,
                     iec60870_data_listener_ptr listr){
-            return iec60870_thread_ptr(new iec60870_thread(prot, chnm, lnk, opt, listr));            
+            return iec60870_thread_ptr(new iec60870_factory(prot, chnm, lnk, opt, listr));            
         }   
         
-        void iec60870_thread::join() {
+        void iec60870_factory::join() {
             if (ioth)
                 ioth->join();
         }       
 
-        iec60870_PM_ptr iec60870_thread::pm() const {
+        iec60870_PM_ptr iec60870_factory::pm() const {
             return pm_;
         }
 
-        iec60870_PM_ptr iec60870_thread::pm() {
+        iec60870_PM_ptr iec60870_factory::pm() {
             return pm_;
         }
 

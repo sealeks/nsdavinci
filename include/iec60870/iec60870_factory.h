@@ -19,22 +19,22 @@ namespace dvnci {
         //////// iec60870_thread
         /////////////////////////////////////////////////////////////////////////////////////////////////        
 
-        class iec60870_thread;
+        class iec60870_factory;
 
-        typedef boost::weak_ptr< iec60870_thread> iec60870_thread_wptr;
-        typedef boost::shared_ptr< iec60870_thread> iec60870_thread_ptr;
+        typedef boost::weak_ptr< iec60870_factory> iec60870_thread_wptr;
+        typedef boost::shared_ptr< iec60870_factory> iec60870_thread_ptr;
 
-        class iec60870_thread : public boost::enable_shared_from_this<iec60870_thread> {
+        class iec60870_factory : public boost::enable_shared_from_this<iec60870_factory> {
 
         public:
 
-            iec60870_thread(const std::string& host, const std::string& port, const iec_option& opt,
+            iec60870_factory(const std::string& host, const std::string& port, const iec_option& opt,
                     iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
             
-            iec60870_thread(IEC_PROTOCOL prot, chnlnumtype chnm, const metalink & lnk, const iec_option& opt,
+            iec60870_factory(IEC_PROTOCOL prot, chnlnumtype chnm, const metalink & lnk, const iec_option& opt,
                     iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());            
 
-            ~iec60870_thread();
+            ~iec60870_factory();
             
             void join();
 
