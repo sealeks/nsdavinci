@@ -505,11 +505,12 @@ namespace dvnci {
         void iec60870_device::state(iec60870_device::DeviceState vl) {
             if (vl != state_) {
                 state_ = vl;
-                currtrycount_ =trycount_;
+                fcb_ = 0;
+                currtrycount_ = trycount_;
                 for (id_selestor_map::iterator it = sectors().begin(); it != sectors().end(); ++it)
                     it->second->state(iec60870_sector::s_noaciveted);
             }
-        }        
+        }
 
         dataobject_ptr iec60870_device::operator()(selector_address sl, data_address id) const {
             id_selestor_map::const_iterator fit = sectors_.find(sl);
@@ -580,9 +581,9 @@ namespace dvnci {
         //////// iec60870_PM
         /////////////////////////////////////////////////////////////////////////////////////////////////         
 
-        iec60870_PM::iec60870_PM(const iec_option& opt,timeouttype tout,  iec60870_data_listener_ptr listr) : iec60870_datanotificator(listr),
-        io_service_(), tmout_timer(io_service_), short_timer(io_service_), trycount_(opt.trycount() ? ((opt.trycount()< 15) ? opt.trycount() : 15) : 3), terminate_(false),
-        state_(disconnected), pmstate_(noconnected), error_cod(), timout( tout<10 ? 10 : tout), need_disconnect_(false) {
+        iec60870_PM::iec60870_PM(const iec_option& opt, timeouttype tout, iec60870_data_listener_ptr listr) : iec60870_datanotificator(listr),
+        io_service_(), tmout_timer(io_service_), short_timer(io_service_), trycount_(opt.trycount() ? ((opt.trycount() < 15) ? opt.trycount() : 15) : 3), terminate_(false),
+        state_(disconnected), pmstate_(noconnected), error_cod(), timout(tout < 10 ? 10 : tout), need_disconnect_(false) {
         }
 
         iec60870_PM::~iec60870_PM() {
