@@ -176,9 +176,9 @@ namespace dvnci {
 
             virtual void terminate();
 
-            void send(const asdu_body104& asdu);
+            void send(const asdu_body104& asdu, bool wait = false);
 
-            void send(apdu_104_ptr msg);
+            void send(apdu_104_ptr msg, bool wait = false);
 
             virtual bool parse_data(apdu_104_ptr resp){
                 return true;

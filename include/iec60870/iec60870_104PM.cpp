@@ -283,14 +283,15 @@ namespace dvnci {
         }
         
         
-        void iec60870_104PMLink::send(const asdu_body104& asdu) {
-            send(apdu_104::create(inc_tx(), rx_, asdu));
+        void iec60870_104PMLink::send(const asdu_body104& asdu, bool wait) {
+            send(apdu_104::create(inc_tx(), rx_, asdu), wait);
         }
 
-        void iec60870_104PMLink::send(apdu_104_ptr msg) {
+        void iec60870_104PMLink::send(apdu_104_ptr msg, bool wait) {
             if (msg->type() == apdu_104::I_type)
                 sended_.push_back(msg);
-            reset_t1();
+            if (wait)
+                reset_t1();
             reset_t3();
             cancel_t2();
             async_request(
@@ -439,7 +440,7 @@ namespace dvnci {
         }
 
         bool iec60870_104PMLink::parse_response(apdu_104_ptr resp) {
-            if (resp) {
+            if (resp && (resp->valid())) {
                 cancel_t1();
                 reset_t3();
                 switch (resp->type()) {
