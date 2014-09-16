@@ -224,7 +224,6 @@ namespace dvnci {
             typedef apdu_870<LinkAddress, COT, Selector, IOA> self_type;
             typedef boost::shared_ptr<self_type> self_type_ptr;
 
-
             enum apcitype {
 
                 E5_type, A2_type, Fx_type, Vr_type, None_type
@@ -457,7 +456,9 @@ namespace dvnci {
 
 
 
-
+        const boost::system::error_code ERR_BADADDRESS = boost::system::error_code(boost::system::errc::bad_address, boost::system::system_category());
+        const boost::system::error_code ERR_TIMEOUT = boost::system::error_code(boost::system::errc::timed_out, boost::system::system_category());
+        const boost::system::error_code ERR_BEDSEQ = boost::system::error_code(boost::system::errc::illegal_byte_sequence, boost::system::system_category());
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// iec60870_101PM
@@ -468,6 +469,8 @@ namespace dvnci {
 
         public:
 
+
+
             typedef apdu_870<LinkAddress, COT, Selector, IOA> apdu_type;
             typedef boost::shared_ptr<apdu_type> apdu_ptr;
             typedef std::deque<apdu_ptr> apdu_deq;
@@ -475,7 +478,7 @@ namespace dvnci {
             iec60870_101PM(chnlnumtype chnm, const metalink & lnk, const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr()) :
             iec60870_PM(opt, listr),
             serialport_(io_service_), serialport_io_sevice(io_service_), req_timer(io_service_),
-            is_timout(false), is_error(false), error_cod(0), reqtmo_(1000), chnum_(chnm), comsetter_(lnk) {
+            is_timout(false), is_error(false), error_cod(), reqtmo_(1000), chnum_(chnm), comsetter_(lnk) {
             }
 
             virtual void disconnect() {
@@ -489,9 +492,10 @@ namespace dvnci {
                 DEBUG_STR_DVNCI(ioclient connect)
                 DEBUG_VAL_DVNCI(chnum_)
                 DEBUG_VAL_DVNCI(timout)
+                error_cod = boost::system::error_code();
                 if (!chnum_) {
                     state_ = disconnected;
-                    error_cod = ERROR_IO_CHANNOOPEN;
+                    error_cod = ERR_BADADDRESS;
                 }
 #if defined(_DVN_WIN_) 
                 std::string device = "\\\\.\\COM" + to_str(chnum_);
@@ -500,29 +504,27 @@ namespace dvnci {
 #endif                
 
                 try {
-                    serialport_.open(device);
-                    if (!serialport_.is_open()) {
+                    if ((serialport_.open(device, error_cod)) || (!serialport_.is_open())) {
                         state_ = disconnected;
-                        error_cod = ERROR_IO_CHANNOOPEN;
                         return;
                     }
                     try {
-                        if (!setoption(comsetter_)) {
+                        error_cod = setoption(comsetter_);
+                        if (error_cod) {
                             serialport_.close();
                             state_ = disconnected;
-                            error_cod = ERROR_IO_CHANNOOPEN;
                         }
                     } catch (boost::system::system_error err) {
                         serialport_.close();
                         state_ = disconnected;
-                        error_cod = ERROR_IO_CHANNOOPEN;
+                        error_cod = err.code();
                     }
                 } catch (boost::system::system_error err) {
                     state_ = disconnected;
-                    error_cod = ERROR_IO_CHANNOOPEN;
+                    error_cod = err.code();
+                    ;
                 } catch (...) {
                     state_ = disconnected;
-                    error_cod = ERROR_IO_CHANNOOPEN;
                 }
                 if (!error_cod) {
                     state_ = connected;
@@ -541,9 +543,9 @@ namespace dvnci {
             virtual void work() {
                 THD_EXCLUSIVE_LOCK(mtx)
                 if (!waitrequestdata_.empty()) {
-                    apdu_ptr resp = request(apdu_type::create(1, false, false, FNC_REQ_STATUS));
-                    resp = request(apdu_type::create(1, false, false, FNC_SET_CANAL));
-                    resp = request(apdu_type::create(dataobject::create_activation_1(0, 1), 1, true, true, FNC_TEST_CANAL));
+                    // apdu_ptr resp = request(apdu_type::create(1, false, false, FNC_REQ_STATUS));
+                    //resp = request(apdu_type::create(1, false, false, FNC_SET_CANAL));
+                    //resp = request(apdu_type::create(dataobject::create_activation_1(0, 1), 1, true, true, FNC_TEST_CANAL));
                     waitrequestdata_.pop_front();
                 }
             }
@@ -555,14 +557,14 @@ namespace dvnci {
                     req_timer.cancel();
                     data_ready_ = req;
                     is_timout = false;
-                    error_cod = err.value();
+                    error_cod = err;
                     is_error = false;
                     io_service_.stop();
                 } else {
                     req_timer.cancel();
                     is_timout = false;
                     data_ready_ = apdu_ptr();
-                    error_cod = err.value();
+                    error_cod = err;
                     is_error = true;
                     io_service_.stop();
                 }
@@ -573,27 +575,24 @@ namespace dvnci {
                     req_timer.cancel();
                     data_ready_ = resp;
                     is_timout = false;
-                    error_cod = err.value();
+                    error_cod = err;
                     is_error = false;
                     io_service_.stop();
                 } else {
                     req_timer.cancel();
                     is_timout = false;
                     data_ready_ = apdu_ptr();
-                    error_cod = err.value();
+                    error_cod = err;
                     is_error = true;
                     io_service_.stop();
                 }
             }
 
-            bool send_S1(apdu_ptr req) {
+            bool request(apdu_ptr req) {
 
                 io_service_.reset();
 
-                is_timout = false;
-                data_ready_ = apdu_ptr();
-                error_cod = 0;
-                is_error = false;
+                clear_var_req();
 
                 async_request(
                         boost::bind(&iec60870_101PM::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred),
@@ -609,13 +608,57 @@ namespace dvnci {
                 return true;
             }
 
-            apdu_ptr request(apdu_ptr req) {
+            apdu_ptr response(boost::system::error_code& err) {
+
                 io_service_.reset();
 
-                is_timout = false;
-                data_ready_ = apdu_ptr();
-                error_cod = 0;
-                is_error = true;
+                clear_var_req();
+
+                async_response(
+                        boost::bind(&iec60870_101PM::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+
+                set_t_req();
+
+                io_service_.run();
+
+                if (is_error || is_timout)
+                    return apdu_ptr();
+
+
+                return data_ready_;
+            }
+
+            bool send_S1(apdu_ptr req) {
+
+                return request(req);
+
+            }
+
+            bool send_S2(apdu_ptr req) {
+
+                request(req);
+
+                io_service_.reset();
+
+                clear_var_req();
+
+                async_response(
+                        boost::bind(&iec60870_101PM::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+
+                set_t_req();
+
+                io_service_.run();
+
+                if (is_error || is_timout)
+                    return false;
+
+                return data_ready_;
+            }
+
+            apdu_ptr request_S3(apdu_ptr req) {
+                io_service_.reset();
+
+                clear_var_req();
 
                 async_request(
                         boost::bind(&iec60870_101PM::handle_request, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred),
@@ -630,10 +673,7 @@ namespace dvnci {
 
                 io_service_.reset();
 
-                is_timout = false;
-                data_ready_ = apdu_ptr();
-                error_cod = 0;
-                is_error = false;
+                clear_var_req();
 
                 async_response(
                         boost::bind(&iec60870_101PM::handle_response, this, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
@@ -770,13 +810,14 @@ namespace dvnci {
                         boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
             }
 
-            bool setoption(const iec60870_com_option_setter& opt) {
+            boost::system::error_code setoption(const iec60870_com_option_setter& opt) {
                 try {
-                    serialport_.set_option<iec60870_com_option_setter > (opt);
-                    return true;
+                    boost::system::error_code err;
+                    serialport_.set_option<iec60870_com_option_setter > (opt, err);
+                    return err;
                 } catch (...) {
-                    return false;
                 }
+                return ERR_BADADDRESS;
             };
 
 
@@ -807,8 +848,14 @@ namespace dvnci {
                 return true;
             }
 
+            void clear_var_req() {
+                is_timout = false;
+                data_ready_ = apdu_ptr();
+                error_cod = 0;
+                is_error = true;
+            }
+
             void set_t_req() {
-                std::cout << "set t_req" << std::endl;
                 req_timer.cancel();
                 req_timer.expires_from_now(boost::posix_time::milliseconds(reqtmo_));
                 req_timer.async_wait(boost::bind(
@@ -821,7 +868,7 @@ namespace dvnci {
                     std::cout << "exp t req" << std::endl;
                     is_timout = true;
                     data_ready_ = apdu_ptr();
-                    error_cod = err.value();
+                    error_cod = ERR_TIMEOUT;
                     is_error = true;
                     io_service_.stop();
                 } else {
@@ -837,7 +884,7 @@ namespace dvnci {
             apdu_ptr data_ready_;
             volatile bool is_timout;
             volatile bool is_error;
-            volatile int error_cod;
+            boost::system::error_code error_cod;
             std::size_t reqtmo_;
             apdu_deq sended_;
 
