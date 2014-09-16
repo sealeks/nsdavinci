@@ -1,5 +1,4 @@
-/* 
- * File:   ns_ioclient.h
+/* File:   ns_ioclient.h
  * Author: Serg Alexeev sealeks@mail.ru
  *
  * Created on 17 ???? 2010 ?., 0:05
@@ -146,7 +145,7 @@ namespace dvnci {
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
-        //////// iec60870_104PM
+        //////// iec60870_104PMLnk
         /////////////////////////////////////////////////////////////////////////////////////////////////  
 
         const std::size_t PM_104_T0d = 30;
@@ -161,13 +160,12 @@ namespace dvnci {
         BOOST_STATIC_ASSERT(sizeof (tcpcounter_type) == 2);
         BOOST_STATIC_ASSERT(!std::numeric_limits<tcpcounter_type>::is_signed);
 
-        class iec60870_104PM : public iec60870_PM {
+        class iec60870_104PMLink : public iec60870_PM {
 
         public:
 
-            iec60870_104PM(const std::string& hst, const std::string& prt, const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
-            
-            
+            iec60870_104PMLink(const std::string& hst, const std::string& prt, const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
+                
             virtual void disconnect();
 
         protected:
@@ -178,6 +176,18 @@ namespace dvnci {
 
             virtual void terminate();
 
+            void send(const asdu_body104& asdu);
+
+            void send(apdu_104_ptr msg);
+
+            virtual bool parse_data(apdu_104_ptr resp){
+                return true;
+            }
+            
+           
+            apdu_104_deq sended_;              
+
+ 
         private:
 
             void handle_resolve(const boost::system::error_code& err,
@@ -190,37 +200,27 @@ namespace dvnci {
 
             void handle_response(const boost::system::error_code& error, apdu_104_ptr resp);
 
-            void handle_short_timout_expire(const boost::system::error_code& err);
-
-
-
-
-            void send(const asdu_body104& asdu);
-
-            void send(apdu_104_ptr msg);
-
+            void handle_short_timout_expire(const boost::system::error_code& err);   
+            
             void send(apdu_104::apcitypeU u);
 
-            void send(tcpcounter_type cnt);
-
-            void receive();
-
-            void short_wait();
-
-            void check_work_available();
-
-
+            void send(tcpcounter_type cnt);           
+            
+            void receive();            
+            
+            void check_work_available();     
+            
+            void short_wait();              
+            
+            bool parse_U(apdu_104_ptr resp);  
 
             void ack_tx(tcpcounter_type vl);
 
             void set_rx(tcpcounter_type vl);
 
-            bool parse_response(apdu_104_ptr resp);
-
-            bool parse_data(apdu_104_ptr resp);
-
-            bool parse_U(apdu_104_ptr resp);
-
+            bool parse_response(apdu_104_ptr resp);       
+            
+            bool parse_I(apdu_104_ptr resp);            
 
 
             //////// request_operation 
@@ -349,22 +349,8 @@ namespace dvnci {
                         boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
             }
             
-            
-            
-        protected:
-            
-            //virtual void insert_device_sevice(device_address dev){};             
-            
-            //virtual void remove_device_sevice(device_address dev){};            
-            
-            virtual void insert_sector_sevice(device_address dev, selector_address slct);             
-            
-            //virtual void remove_sector_sevice(device_address dev, selector_address slct){}; 
-            
-            //virtual void insert_data_sevice(dataobject_ptr vl){};             
-            
-            //virtual void remove_data_sevice(dataobject_ptr vl){};    
-                     
+
+         
 
         private:
 
@@ -421,17 +407,43 @@ namespace dvnci {
             tcpcounter_type w_;
             tcpcounter_type k_fct;
             tcpcounter_type w_fct;
-            apdu_104_deq sended_;
 
         };
 
 
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////
+        //////// iec60870_104PM
+        ///////////////////////////////////////////////////////////////////////////////////////////////// 
+
+        class iec60870_104PM : public iec60870_104PMLink {
+
+        public:
+
+            iec60870_104PM(const std::string& hst, const std::string& prt, const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
+
+        protected:
+
+            virtual bool parse_data(apdu_104_ptr resp);
+            
+            //virtual void insert_device_sevice(device_address dev){};             
+
+            //virtual void remove_device_sevice(device_address dev){};            
+
+            virtual void insert_sector_sevice(device_address dev, selector_address slct);
+
+            //virtual void remove_sector_sevice(device_address dev, selector_address slct){}; 
+
+            //virtual void insert_data_sevice(dataobject_ptr vl){};             
+
+            //virtual void remove_data_sevice(dataobject_ptr vl){};   
 
 
 
-
+        };
+        
     }
+    
 }
 
 
