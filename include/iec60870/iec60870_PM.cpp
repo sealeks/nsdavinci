@@ -1,7 +1,7 @@
 
 #include <deque>
 
-#include "iec60870_101PM.h"
+#include "iec60870_PM.h"
 
 
 namespace dvnci {
