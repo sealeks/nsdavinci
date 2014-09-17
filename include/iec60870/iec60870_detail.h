@@ -58,6 +58,9 @@ namespace dvnci {
         class iec_option {
 
         public:
+            
+            iec_option() {
+            };            
 
             iec_option(const std::string& vl) : opton_(vl) {
             };
