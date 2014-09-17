@@ -24,13 +24,15 @@ namespace dvnci {
     namespace external {
 
         using dvnci::prot80670::iec60870_data_listener;
+        using dvnci::prot80670::iec60870_data_listener_ptr;         
         using dvnci::prot80670::device_address;        
         using dvnci::prot80670::dataobject_ptr;
         using dvnci::prot80670::dataobject_vct;
         using dvnci::prot80670::iec60870_factory;
         using dvnci::prot80670::iec60870_thread_ptr;
         using dvnci::prot80670::iec_option;     
-        using dvnci::prot80670::iec60870_data_listener_ptr;        
+        using dvnci::prot80670::IEC_PROTOCOL;
+       
 
         class extiec60870intf : public extintf_wraper<dvnci::prot80670::dataobject_ptr>,
         public virtual iec60870_data_listener {
@@ -85,9 +87,18 @@ namespace dvnci {
             bool pm_connected() const;
 
             void kill_pm();
+            
+            std::size_t linkaddr() const;
+
+            void linkaddr(IEC_PROTOCOL proto, const iec_option& opotions);     
+            
+            dvnci::ns_error syncoption();            
+            
 
             iec60870_thread_ptr thread_io;
             dvnci::dvncierror fatal_;
+            std::size_t linkaddrsize;
+            dvnci::dvncierror sync_error_;
 
         };
     }
