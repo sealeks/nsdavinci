@@ -596,7 +596,7 @@ namespace dvnci {
             };
 
             virtual bool char_silence(double charcout) {
-                double silenseto_tmp = (boundrate_ * 1.0) / 8;
+                double silenseto_tmp = (boundrate_ * 1.0) / 11;
                 if (silenseto_tmp <= 10) return false;
                 silenseto_tmp = 1000.0 / silenseto_tmp * charcout;
                 timeouttype silenseto_msec = static_cast<timeouttype> (silenseto_tmp);
