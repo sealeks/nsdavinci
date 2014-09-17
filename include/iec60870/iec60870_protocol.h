@@ -357,10 +357,21 @@ namespace dvnci {
         float to_float_4(const octet_sequence& vl);
 
         dvnci::short_value to_short_value(dataobject_ptr v);
+        
+        
+        
 
-
-
-
+        template<typename T>
+        T octet_sequence_to(const octet_sequence& seq, std::size_t it, std::size_t cnt) {
+            if (cnt && (it<seq.size())) {
+                if ((it + sizeof (T)) <= seq.size())
+                    return ((*reinterpret_cast<const T*> (&(seq[it]))) & ~((~0) << (cnt * 8)));
+                octet_sequence tmp(seq.begin()+it,seq.end());
+                tmp.insert(tmp.end(), sizeof (T) - tmp.size(), 0);
+                return ((*reinterpret_cast<const data_address*> (&(tmp[0]))) & ~((~0) << (cnt * 8)));
+            }
+            return 0;
+        }
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// asdu_body
@@ -483,7 +494,7 @@ namespace dvnci {
                     if (szdata) {
                         if (sq()) {
                             if ((it + ioasz + szdata) <= body().size()) {
-                                data_address addr = *reinterpret_cast<const data_address*> (&(body()[it])) & 0xFFFFFF;
+                                data_address addr = octet_sequence_to<data_address>(body(), it,  ioasz);
                                 octet_sequence data(&body()[it + ioasz], &body()[it + ioasz] + szdata);
                                 rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, selctr, addr, cs, tst, neg, data)));
                                 it = it + ioasz + szdata;
@@ -497,7 +508,7 @@ namespace dvnci {
                             }
                         } else {
                             while ((datacnt--) && ((it + ioasz + szdata) <= body().size())) {
-                                data_address addr = (*reinterpret_cast<const data_address*> (&(body()[it]))) & 0xFFFFFF;
+                                data_address addr =octet_sequence_to<data_address>(body(), it,  ioasz);
                                 octet_sequence data(&body()[it + ioasz], &body()[it + ioasz] + szdata);
                                 rslt.push_back(dataobject_ptr(new dataobject(devaddr, tp, selctr, addr, cs, tst, neg, data)));
                                 it = it + ioasz + szdata;

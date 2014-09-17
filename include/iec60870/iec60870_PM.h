@@ -595,7 +595,7 @@ namespace dvnci {
 
 
 
-
+        const std::size_t SILENCE_CNT = 40;
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// iec60870_101PM
@@ -613,8 +613,9 @@ namespace dvnci {
 
             iec60870_101PM(chnlnumtype chnm, const metalink & lnk, const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr()) :
             iec60870_PM(opt, 5000, listr),
-            serialport_(io_service_), serialport_io_sevice(io_service_), req_timer(io_service_),
-            is_timout(false), is_error(false), reqtmo_(1000), chnum_(chnm), comsetter_(lnk) {
+            serialport_(io_service_), serialport_io_sevice(io_service_), req_timer(io_service_), silence_timer(io_service_),
+            is_timout(false), is_error(false), reqtmo_(5000), symboltmo_(1), chnum_(chnm), comsetter_(lnk) {
+                set_sympoltmo(lnk);
             }
 
             virtual void disconnect() {
@@ -905,6 +906,9 @@ namespace dvnci {
 
             bool request(apdu_ptr req) {
 
+                
+                silence();   
+
                 io_service_.reset();
 
                 clear_var_req();
@@ -916,10 +920,7 @@ namespace dvnci {
                 set_t_req();
 
                 io_service_.run();
-                
-                boost::xtime xt;
-                addmillisec_to_now(xt, 50);
-                boost::thread::sleep(xt);                
+            
 
                 if (is_error || is_timout)
                     return false;
@@ -948,6 +949,19 @@ namespace dvnci {
 
                 return data_ready_;
             }
+            
+ 
+            void silence(std::size_t cnt = SILENCE_CNT) {
+
+                io_service_.reset();
+
+                clear_var_req();
+
+                set_silence_req(cnt );
+
+                io_service_.run();
+
+            }            
 
 
 
@@ -1138,16 +1152,41 @@ namespace dvnci {
                     //t0_state = false;                
                 }
             }
+            
+           void set_sympoltmo(const metalink & lnk) {
+                double silenseto_tmp = (lnk.inf().cominf.boundrate * 1.0) / 11;
+                symboltmo_ = static_cast<std::size_t> (silenseto_tmp ? (1000000.0 / silenseto_tmp) : 1);
+            }            
+            
+           void set_silence_req(std::size_t cnt = 33) {
+                silence_timer.cancel();
+                silence_timer.expires_from_now(boost::posix_time::microsec(symboltmo_*cnt));
+                silence_timer.async_wait(boost::bind(
+                        &iec60870_101PM::handle_silence_req_expire, this,
+                        boost::asio::placeholders::error));
+            }
+
+            void handle_silence_req_expire(const boost::system::error_code& err) {
+                if (!err) {
+                    io_service_.stop();
+                } else {
+                    //io_service_.stop();              
+                }
+            }   
+            
+            
 
             boost::asio::serial_port serialport_;
             boost::asio::serial_port_service serialport_io_sevice;
             boost::asio::deadline_timer req_timer;
+            boost::asio::deadline_timer silence_timer;            
             chnlnumtype chnum_;
             iec60870_com_option_setter comsetter_;
             apdu_ptr data_ready_;
             volatile bool is_timout;
             volatile bool is_error;
             std::size_t reqtmo_;
+            std::size_t symboltmo_;  // microsec   
             apdu_deq sended_;
 
         };
