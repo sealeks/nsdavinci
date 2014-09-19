@@ -106,18 +106,27 @@ namespace dvnci {
         const propidtype PROPERTY_RS232_RTC = 0x048D;
         const propidtype PROPERTY_RS232_WTM = 0x048E;
         const propidtype PROPERTY_RS232_WTC = 0x048F;
-        
-        const propidtype PROPERTY_IEC60870_PROT = 0x032A;         
+
+        const propidtype PROPERTY_IEC60870_PROT = 0x032A;
         const propidtype PROPERTY_IEC60870_LINKADR = 0x0550;
         const propidtype PROPERTY_IEC60870_COT = 0x0551;
         const propidtype PROPERTY_IEC60870_SECT = 0x0552;
-        const propidtype PROPERTY_IEC60870_IOA = 0x0553;        
+        const propidtype PROPERTY_IEC60870_IOA = 0x0553;
         const propidtype PROPERTY_IEC60870_T0 = 0x0554;
         const propidtype PROPERTY_IEC60870_T1 = 0x0555;
-        const propidtype PROPERTY_IEC60870_T2 = 0x0556;     
-        const propidtype PROPERTY_IEC60870_T3 = 0x0557;        
-        const propidtype PROPERTY_IEC60870_K = 0x0558;     
-        const propidtype PROPERTY_IEC60870_W = 0x0559;           
+        const propidtype PROPERTY_IEC60870_T2 = 0x0556;
+        const propidtype PROPERTY_IEC60870_T3 = 0x0557;
+        const propidtype PROPERTY_IEC60870_K = 0x0558;
+        const propidtype PROPERTY_IEC60870_W = 0x0559;
+        const propidtype PROPERTY_IEC60870_PDULEN = 0x055A;
+        const propidtype PROPERTY_IEC60870_TSYNC = 0x055B;
+        const propidtype PROPERTY_IEC60870_SYNC = 0x055C;
+        const propidtype PROPERTY_IEC60870_TR = 0x055D;
+        const propidtype PROPERTY_IEC60870_TPOLL = 0x055E;
+        const propidtype PROPERTY_IEC60870_TREACT = 0x055F;
+        const propidtype PROPERTY_IEC60870_INIT = 0x0560;
+        const propidtype PROPERTY_IEC60870_POLL = 0x0561;
+
 
         const propidtype PROPERTY_GR_TO = 0x0563;
         const propidtype PROPERTY_GR_DB = 0x0565;
