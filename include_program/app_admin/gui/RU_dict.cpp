@@ -46,6 +46,7 @@ namespace dvnci {
             map_.insert(wstringtranslate_pair("properties.295", "Роль"));            
             map_.insert(wstringtranslate_pair("properties.512", "Коментарий"));
             map_.insert(wstringtranslate_pair("properties.592", "Сообщение"));
+            map_.insert(wstringtranslate_pair("properties.610", "Link"));                
             map_.insert(wstringtranslate_pair("properties.611", "Chanal"));                
             map_.insert(wstringtranslate_pair("properties.612", "Chanal"));                 
             map_.insert(wstringtranslate_pair("properties.4688", "Тип доступа"));
@@ -58,6 +59,7 @@ namespace dvnci {
             map_.insert(wstringtranslate_pair("properties.868", "IPv6"));
             map_.insert(wstringtranslate_pair("properties.869", "Номер com-порта"));
             map_.insert(wstringtranslate_pair("properties.897", "Протокол"));
+            map_.insert(wstringtranslate_pair("properties.898", "Protocol"));               
             map_.insert(wstringtranslate_pair("properties.899", "Protocol"));            
             map_.insert(wstringtranslate_pair("properties.1122", "Номер устойства"));
             map_.insert(wstringtranslate_pair("properties.1138", "Имя группы"));
@@ -93,7 +95,18 @@ namespace dvnci {
             map_.insert(wstringtranslate_pair("properties.1366", "t2"));       
             map_.insert(wstringtranslate_pair("properties.1367", "t3"));     
             map_.insert(wstringtranslate_pair("properties.1368", "k"));       
-            map_.insert(wstringtranslate_pair("properties.1369", "w"));                  
+            map_.insert(wstringtranslate_pair("properties.1369", "w"));             
+
+            map_.insert(wstringtranslate_pair("properties.1370", "PDUSIZE"));   
+            map_.insert(wstringtranslate_pair("properties.1371", "T sync"));       
+            map_.insert(wstringtranslate_pair("properties.1372", "sync"));            
+            map_.insert(wstringtranslate_pair("properties.1373", "To read"));       
+            map_.insert(wstringtranslate_pair("properties.1374", "To poll"));     
+            map_.insert(wstringtranslate_pair("properties.1375", "T react"));       
+            map_.insert(wstringtranslate_pair("properties.1376", "Inititalize"));   
+            map_.insert(wstringtranslate_pair("properties.1377", "Polling"));
+
+
             map_.insert(wstringtranslate_pair("properties.1379", "Таймаут"));            
             map_.insert(wstringtranslate_pair("properties.1381", "Мертвая зона группы%"));
             map_.insert(wstringtranslate_pair("properties.1383", "Период обновления "));
