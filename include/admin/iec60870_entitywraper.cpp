@@ -12,7 +12,16 @@ namespace dvnci {
     namespace admin {
 
 
-        const propidtype iec_propmainadd[] = { PROPERTY_IEC60870_PROT};
+        //const propidtype PROPERTY_IEC60870_PDULEN = 0x055A;
+        //const propidtype PROPERTY_IEC60870_TSYNC = 0x055B;
+        //const propidtype PROPERTY_IEC60870_SYNC = 0x055C;     
+        //const propidtype PROPERTY_IEC60870_TR = 0x055D;        
+        //const propidtype PROPERTY_IEC60870_TPOLL = 0x055E;     
+        //const propidtype PROPERTY_IEC60870_TREACT = 0x055F;            
+        //const propidtype PROPERTY_IEC60870_INIT = 0x0560;        
+        //const propidtype PROPERTY_IEC60870_POLL = 0x0561;
+
+        const propidtype iec_propmainadd[] = {PROPERTY_IEC60870_PROT};
 
         //PROPERTY_DEVNUM_GROUP
         //PROPERTY_GR_TCNT; 
@@ -21,14 +30,18 @@ namespace dvnci {
         //, PROPERTY_RSNUM_GROUP,
         //PROPERTY_CHANALHOST_ADDR_GROUP
         // PROPERTY_RS232_BOUNDRATE
-        
+
         const propidtype iec_propmain_101_add[] = {PROPERTY_DEVNUM_GROUP, PROPERTY_RSNUM_GROUP, PROPERTY_RS232_BOUNDRATE,
-            PROPERTY_GR_TCNT, 
+            PROPERTY_GR_TCNT,
             PROPERTY_IEC60870_LINKADR,
             PROPERTY_IEC60870_COT,
             PROPERTY_IEC60870_SECT,
-            PROPERTY_IEC60870_IOA};
-        
+            PROPERTY_IEC60870_IOA,
+            PROPERTY_IEC60870_PDULEN,
+            PROPERTY_IEC60870_TSYNC,
+            PROPERTY_IEC60870_SYNC,
+            PROPERTY_IEC60870_POLL};
+
 
         const propidtype iec_propmain_104_add[] = {PROPERTY_CHANALHOST_ADDR_GROUP,
             PROPERTY_IEC60870_T0,
@@ -36,7 +49,11 @@ namespace dvnci {
             PROPERTY_IEC60870_T2,
             PROPERTY_IEC60870_T3,
             PROPERTY_IEC60870_K,
-            PROPERTY_IEC60870_W};
+            PROPERTY_IEC60870_W,
+            PROPERTY_IEC60870_PDULEN,
+            PROPERTY_IEC60870_TSYNC,
+            PROPERTY_IEC60870_SYNC,
+            PROPERTY_IEC60870_POLL};
 
         iec60870Link::iec60870Link() : abstractpropertyeditor(TYPE_PE_LIST, "iec60870Link") {
             addpropertylist(static_cast<propidtype> (dvnci::prot80670::lasz_none));
@@ -83,6 +100,8 @@ namespace dvnci {
             mangr->registpropertyeditor(PROPERTY_IEC60870_SECT, &SelectorPrEdit);
             mangr->registpropertyeditor(PROPERTY_IEC60870_IOA, &IOAPrEdit);
             mangr->registpropertyeditor(PROPERTY_RS232_BOUNDRATE, &rs232brPrEdit);
+            mangr->registpropertyeditor(PROPERTY_IEC60870_SYNC, &boolPrEdit);
+            mangr->registpropertyeditor(PROPERTY_IEC60870_POLL, &boolPrEdit);
         }
 
         void iec60870groupwraper::setProperty(indx id, propidtype prop, std::string val) {
@@ -92,12 +111,14 @@ namespace dvnci {
                 case PROPERTY_IEC60870_PROT:
                 {
                     dvnci::prot80670::IEC_PROTOCOL prt = dvnci::prot80670::protocol_from(str_to<protocoltype>(val));
-                    switch(prt){
-                        case dvnci::prot80670::IEC_104:{
+                    switch (prt) {
+                        case dvnci::prot80670::IEC_104:
+                        {
                             _interface->group(id).chanaltype(NT_CHTP_TCP_IP);
                             break;
                         }
-                        default:{
+                        default:
+                        {
                             _interface->group(id).chanaltype(NT_CHTP_RS232_4XX);
                         }
                     }
@@ -137,7 +158,7 @@ namespace dvnci {
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         if (val_ < 3) {
-                            opt.sector(static_cast<dvnci::prot80670::SECTOR_sizetype> (val_ < 3 ? ( val_ ? val_ : 1) : 2));
+                            opt.sector(static_cast<dvnci::prot80670::SECTOR_sizetype> (val_ < 3 ? (val_ ? val_ : 1) : 2));
                             _interface->group(id).option(opt.to_value());
                         }
                     }
@@ -150,13 +171,13 @@ namespace dvnci {
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         if (val_ < 4) {
-                            opt.ioa(static_cast<dvnci::prot80670::IOA_sizetype> (val_ < 4 ? ( val_ ? val_ : 1)  : 3));
-                                    _interface->group(id).option(opt.to_value());
+                            opt.ioa(static_cast<dvnci::prot80670::IOA_sizetype> (val_ < 4 ? (val_ ? val_ : 1) : 3));
+                            _interface->group(id).option(opt.to_value());
                         }
                     }
                     break;
                 }
-                
+
                 case PROPERTY_GR_TCNT:
                 {
                     dvnci::prot80670::iec_option opt(_interface->group(id).option());
@@ -166,7 +187,7 @@ namespace dvnci {
                         _interface->group(id).option(opt.to_value());
                     }
                     break;
-                }                  
+                }
 
                 case PROPERTY_IEC60870_T0:
                 {
@@ -177,9 +198,9 @@ namespace dvnci {
                         _interface->group(id).option(opt.to_value());
                     }
                     break;
-                }     
-                
-               
+                }
+
+
                 case PROPERTY_IEC60870_T1:
                 {
                     dvnci::prot80670::iec_option opt(_interface->group(id).option());
@@ -189,8 +210,8 @@ namespace dvnci {
                         _interface->group(id).option(opt.to_value());
                     }
                     break;
-                }         
-                
+                }
+
                 case PROPERTY_IEC60870_T2:
                 {
                     dvnci::prot80670::iec_option opt(_interface->group(id).option());
@@ -200,8 +221,8 @@ namespace dvnci {
                         _interface->group().option(opt.to_value());
                     }
                     break;
-                }     
-                
+                }
+
                 case PROPERTY_IEC60870_T3:
                 {
                     dvnci::prot80670::iec_option opt(_interface->group(id).option());
@@ -211,7 +232,7 @@ namespace dvnci {
                         _interface->group(id).option(opt.to_value());
                     }
                     break;
-                }                    
+                }
 
                 case PROPERTY_IEC60870_K:
                 {
@@ -222,8 +243,8 @@ namespace dvnci {
                         _interface->group(id).option(opt.to_value());
                     }
                     break;
-                }        
-                
+                }
+
                 case PROPERTY_IEC60870_W:
                 {
                     dvnci::prot80670::iec_option opt(_interface->group(id).option());
@@ -233,8 +254,45 @@ namespace dvnci {
                         _interface->group(id).option(opt.to_value());
                     }
                     break;
-                }                        
-                
+                }
+
+                case PROPERTY_IEC60870_PDULEN:
+                {
+                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    unum16 val_ = 0;
+                    if (str_to<unum16>(val, val_)) {
+                        opt.pdu_len(val_);
+                        _interface->group(id).option(opt.to_value());
+                    }
+                    break;
+                }
+
+                case PROPERTY_IEC60870_TSYNC:
+                {
+                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    unum16 val_ = 0;
+                    if (str_to<unum16>(val, val_)) {
+                        opt.tymesync(val_);
+                        _interface->group(id).option(opt.to_value());
+                    }
+                    break;
+                }
+                case PROPERTY_IEC60870_SYNC:
+                {
+                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    opt.sync(val != "0");
+                    _interface->group(id).option(opt.to_value());
+                    break;
+                }
+
+                case PROPERTY_IEC60870_POLL:
+                {
+                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    opt.poll(val != "0");
+                    _interface->group(id).option(opt.to_value());
+                    break;
+                }
+
                 case PROPERTY_RS232_PARITY:
                 {
                     rsparitytype val_ = 0;
@@ -242,8 +300,8 @@ namespace dvnci {
                         val_ = (val_ > 2) ? 0 : val_;
 
                         if (_interface->group(id).config())
-                                static_cast<prs232_property> (const_cast<void*> (_interface->group(id).config()))->parity(val_);
-                        }
+                            static_cast<prs232_property> (const_cast<void*> (_interface->group(id).config()))->parity(val_);
+                    }
                     break;
                 }
                 default: linkgroupwraper::setProperty(id, prop, val);
@@ -304,55 +362,84 @@ namespace dvnci {
                     return to_str<unum16>(static_cast<unum16> (opt.ioa()));
                     break;
                 }
-                
-                case PROPERTY_GR_TCNT:{
+
+                case PROPERTY_GR_TCNT:
+                {
                     dvnci::prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.trycount()));
-                    break;                    
-                }                
-                
+                    break;
+                }
+
                 case PROPERTY_IEC60870_T0:
                 {
                     dvnci::prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.t0()));
                     break;
-                }        
-                
+                }
+
                 case PROPERTY_IEC60870_T1:
                 {
                     dvnci::prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.t1()));
                     break;
-                }                   
+                }
 
                 case PROPERTY_IEC60870_T2:
                 {
                     dvnci::prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.t2()));
                     break;
-                }        
-                
+                }
+
                 case PROPERTY_IEC60870_T3:
                 {
                     dvnci::prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.t3()));
                     break;
-                }            
-                
+                }
+
                 case PROPERTY_IEC60870_K:
                 {
                     dvnci::prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.k()));
                     break;
-                }        
-                
+                }
+
                 case PROPERTY_IEC60870_W:
                 {
                     dvnci::prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.w()));
                     break;
-                }                   
-                
+                }
+
+                case PROPERTY_IEC60870_PDULEN:
+                {
+                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    return to_str<unum16>(static_cast<unum16> (opt.pdu_len()));
+                    break;
+                }
+
+                case PROPERTY_IEC60870_TSYNC:
+                {
+                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    return to_str<unum16>(static_cast<unum16> (opt.tymesync()));
+                    break;
+                }
+
+                case PROPERTY_IEC60870_SYNC:
+                {
+                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    return to_str<unum16>(static_cast<unum16> (opt.sync() ? 1 : 0));
+                    break;
+                }
+
+                case PROPERTY_IEC60870_POLL:
+                {
+                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    return to_str<unum16>(static_cast<unum16> (opt.poll() ? 1 : 0));
+                    break;
+                }
+
                 case PROPERTY_RS232_PARITY:
                 {
                     rsparitytype val_ = (_interface->group(id).config()) ?
@@ -368,20 +455,23 @@ namespace dvnci {
         }
 
         void iec60870groupwraper::setchaneltp_and_prtcl(chnltype tp, num32 prtcl) {
-            dvnci::prot80670::IEC_PROTOCOL prt =dvnci::prot80670::protocol_from(prtcl);
+            dvnci::prot80670::IEC_PROTOCOL prt = dvnci::prot80670::protocol_from(prtcl);
             REMOVE_PROPERTYS(iec_propmain_101_add);
-            REMOVE_PROPERTYS(iec_propmain_104_add);  
-            switch(prt){
-                case dvnci::prot80670::IEC_101: {
+            REMOVE_PROPERTYS(iec_propmain_104_add);
+            switch (prt) {
+                case dvnci::prot80670::IEC_101:
+                {
                     ADD_PROPERTYS(iec_propmain_101_add);
                     break;
                 }
-                case dvnci::prot80670::IEC_104: {
+                case dvnci::prot80670::IEC_104:
+                {
                     ADD_PROPERTYS(iec_propmain_104_add);
                     break;
-                }    
-                default:{
-                    
+                }
+                default:
+                {
+
                 }
             }
         }
