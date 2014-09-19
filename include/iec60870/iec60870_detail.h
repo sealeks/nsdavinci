@@ -118,10 +118,10 @@ namespace dvnci {
 
         public:
 
-            iec_option() : baundrate_(0) {
+            iec_option(baudrate_type br=IEC870_BAUNDRATE_9600) : baundrate_(br) {
             };
 
-            iec_option(const std::string& vl) : opton_(vl), baundrate_(0) {
+            iec_option(const std::string& vl,baudrate_type br=IEC870_BAUNDRATE_9600) : opton_(vl), baundrate_br) {
             };
 
             iec_option(ADDRESS_sizetype adr, COT_sizetype ct, SECTOR_sizetype sct, IOA_sizetype ioa) : opton_("\x0") {
