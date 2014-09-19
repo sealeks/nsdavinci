@@ -8,13 +8,7 @@
 #ifndef IEC60870_PROTOCOL_H
 #define	 IEC60870_PROTOCOL_H
 
-#include <boost/asio/read_at.hpp>
 
-#include <kernel/utils.h>
-#include <kernel/systemutil.h>
-#include <kernel/error.h>
-#include <kernel/constdef.h>
-#include <kernel/short_value.h>
 
 #include <iec60870/iec60870_detail.h>
 
@@ -864,6 +858,14 @@ namespace dvnci {
 
             virtual void terminate() = 0;
 
+            bool interrupt() const;
+
+            void set_interrupt();   
+            
+            bool need_sync() const;      
+            
+            bool has_poll() const;              
+
             virtual void work() {
             }
 
@@ -888,7 +890,7 @@ namespace dvnci {
             std::size_t trycount() const {
                 return trycount_ ? trycount_ : 3;
             }
-
+         
             iec60870_device_ptr device(device_address dev) const;
 
             iec60870_device_ptr device(dataobject_ptr vl) const;
@@ -939,12 +941,18 @@ namespace dvnci {
             boost::asio::io_service io_service_;
             boost::asio::deadline_timer tmout_timer;
             boost::asio::deadline_timer short_timer;
+            boost::asio::deadline_timer sync_timer;            
+            volatile bool syncstate;            
             std::size_t trycount_;
-            volatile bool terminate_;
+            volatile bool sync;        
+            volatile bool poll_;            
+            volatile bool terminate_;     
+            mutable bool interrupt_;             
             volatile State state_;
             volatile PMState pmstate_;
             boost::system::error_code error_cod;
             timeouttype timout;
+            timeouttype synctimout;            
             bool need_disconnect_;
             id_device_map devices_;
 

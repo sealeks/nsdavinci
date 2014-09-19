@@ -8,7 +8,7 @@
 #include <cstddef>
 #include <set>
 
-#include "iec60870_protocol.h"
+#include <iec60870/iec60870_protocol.h>
 
 namespace dvnci {
     namespace prot80670 {
@@ -582,8 +582,9 @@ namespace dvnci {
         /////////////////////////////////////////////////////////////////////////////////////////////////         
 
         iec60870_PM::iec60870_PM(const iec_option& opt, timeouttype tout, iec60870_data_listener_ptr listr) : iec60870_datanotificator(listr),
-        io_service_(), tmout_timer(io_service_), short_timer(io_service_), trycount_(opt.trycount() ? ((opt.trycount() < 15) ? opt.trycount() : 15) : 3), terminate_(false),
-        state_(disconnected), pmstate_(noconnected), error_cod(), timout(tout < 10 ? 10 : tout), need_disconnect_(false) {
+        io_service_(), tmout_timer(io_service_), short_timer(io_service_), sync_timer(io_service_), syncstate(false), 
+                trycount_(opt.trycount() ? ((opt.trycount() < 15) ? opt.trycount() : 15) : 3), sync(opt.sync()), poll_(opt.poll()), terminate_(false), interrupt_(false) ,
+                state_(disconnected), pmstate_(noconnected), error_cod(), timout(tout < 10 ? 10 : tout), synctimout(opt.tymesync()), need_disconnect_(false) {
         }
 
         iec60870_PM::~iec60870_PM() {
@@ -625,6 +626,24 @@ namespace dvnci {
                     additems_.insert(it->second);
             return true;
         }
+
+        bool iec60870_PM::interrupt() const {
+            if (interrupt_) 
+                return interrupt_ = false;
+            return terminate_;
+        }
+
+        void iec60870_PM::set_interrupt() {
+            interrupt_ = true;
+        }
+
+        bool iec60870_PM::need_sync() const {
+            return sync && syncstate;
+        }     
+        
+        bool iec60870_PM::has_poll() const {
+            return poll_;
+        }          
 
         bool iec60870_PM::remove_items(const dataobject_set& cids) {
             THD_EXCLUSIVE_LOCK(mtx)

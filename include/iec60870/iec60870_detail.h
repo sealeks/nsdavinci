@@ -6,8 +6,20 @@
 #ifndef _DVNCI_KRNL_IEC60870_DETAIL_H
 #define	_DVNCI_KRNL_IEC60870_DETAIL_H
 
+#include <deque>
+#include <set>
+
+#include <kernel/utils.h>
+#include <kernel/systemutil.h>
+#include <kernel/error.h>
+#include <kernel/constdef.h>
+#include <kernel/short_value.h>
 #include <kernel/driver_proccesstmpl.h>
 #include <kernel/driver_blockmodel.h>
+
+#include <boost/asio/serial_port.hpp>
+#include <boost/asio/read_at.hpp>
+
 
 namespace dvnci {
     namespace prot80670 {
@@ -192,6 +204,78 @@ namespace dvnci {
             void w(std::size_t vl) {
                 return set<7, 1, 127>(vl);
             }
+            
+            std::size_t pdu_len() const {
+                std::size_t rslt = get<8, 20, 255, 255>();                
+                return rslt;
+            }
+
+            void pdu_len(std::size_t vl) {
+                return set<8, 20, 255>(vl);
+            }     
+            
+            std::size_t tymesync() const {
+                std::size_t rslt = get2<9, 10, 3600,3600>();                
+                return rslt;
+            }
+
+            void tymesync(std::size_t vl) {
+                return set2<9, 10, 3600>(vl);
+            }     
+            
+            bool sync() const {
+                std::size_t rslt = get<11, 0, 1 ,0>();                
+                return rslt;
+            }
+
+            void sync(bool vl) {
+                return set<11, 0, 1>(vl ? 1 : 0);
+            }         
+            
+            std::size_t read_tmo() const {
+                std::size_t rslt = get2<12, 10, 65000,1000>();                
+                return rslt;
+            }
+
+            void read_tmo(std::size_t vl) {
+                return set2<12, 10, 65000>(vl);
+            }       
+            
+            std::size_t poll_tmo() const {
+                std::size_t rslt = get2<14, 10, 65000,1000>();                
+                return rslt;
+            }
+
+            void poll_tmo(std::size_t vl) {
+                return set2<14, 10, 65000>(vl);
+            }          
+            
+            std::size_t R_tmo() const {
+                std::size_t rslt = get2<16, 10, 65000,1000>();                
+                return rslt;
+            }
+
+            void R_tmo(std::size_t vl) {
+                return set2<16, 10, 65000>(vl);
+            }                   
+            
+            bool init() const {
+                std::size_t rslt = get<18, 0, 1 ,0>();                
+                return rslt;
+            }
+
+            void init(bool vl) {
+                return set<18, 0, 1>(vl ? 1 : 0);
+            }              
+            
+            bool poll() const {
+                std::size_t rslt = get<19, 0, 1 ,0>();                
+                return rslt;
+            }
+
+            void poll(bool vl) {
+                return set<19, 0, 1>(vl ? 1 : 0);
+            }                
 
             std::string to_value() {
                 addr(addr());
@@ -205,6 +289,14 @@ namespace dvnci {
                 t3(t3());
                 k(k());
                 w(w());
+                pdu_len(pdu_len());       
+                tymesync(tymesync());
+                sync(sync());   
+                read_tmo(read_tmo());
+                poll_tmo(poll_tmo());    
+                R_tmo(R_tmo());    
+                init(init());     
+                poll(poll());               
                 return opton_;
             }
 
@@ -227,6 +319,25 @@ namespace dvnci {
                     opton_ += std::string(POS - opton_.size() + 1, '\x0');
                 opton_[POS] = static_cast<std::string::value_type> (vl < MIN ? MIN : (vl > MAX ? MAX : vl));
             }
+            
+            template<std::size_t POS, std::size_t MIN, std::size_t MAX, std::size_t DFLT>
+            std::size_t get2() const {
+                if (opton_.size() <= (POS+1))
+                    return DFLT;
+                std::size_t tmp = *reinterpret_cast<const boost::uint16_t*> (&opton_[POS]);
+                return (tmp < MIN) ? DFLT : ((tmp > MAX) ? MAX : tmp);
+            }
+
+            template<std::size_t POS, std::size_t MIN, std::size_t MAX>
+            void set2(std::size_t vl) {
+                if (opton_.empty())
+                    opton_ = std::string(POS + 2, '\x0');
+                if (opton_.size() <= (POS+1))
+                    opton_ += std::string(POS - opton_.size() + 2, '\x0');
+                std::size_t vln=vl < MIN ? MIN : (vl > MAX ? MAX : vl);
+                opton_[POS] = static_cast<boost::uint8_t> (vln & 0xFF);
+                opton_[POS+1] = static_cast<boost::uint8_t> ((vln >> 8) & 0xFF);
+            }            
 
             mutable std::string opton_;
 
