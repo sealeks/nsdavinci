@@ -24,6 +24,53 @@
 namespace dvnci {
     namespace prot80670 {
 
+
+
+        typedef boost::int32_t baudrate_type;
+        typedef boost::int32_t rsparity_type;
+        typedef boost::int32_t rsdatabit_type;
+        typedef boost::int32_t rsstopbit_type;
+        typedef boost::int32_t protocol_type;
+        typedef std::size_t timeout_type;
+        typedef std::size_t chanalnum_type;
+
+        const baudrate_type IEC870_BAUNDRATE_110 = 110;
+        const baudrate_type IEC870_BAUNDRATE_300 = 300;
+        const baudrate_type IEC870_BAUNDRATE_600 = 600;
+        const baudrate_type IEC870_BAUNDRATE_1200 = 1200;
+        const baudrate_type IEC870_BAUNDRATE_2400 = 2400;
+        const baudrate_type IEC870_BAUNDRATE_4800 = 4800;
+        const baudrate_type IEC870_BAUNDRATE_9600 = 9600;
+        const baudrate_type IEC870_BAUNDRATE_14400 = 14400;
+        const baudrate_type IEC870_BAUNDRATE_19200 = 19200;
+        const baudrate_type IEC870_BAUNDRATE_38400 = 38400;
+        const baudrate_type IEC870_BAUNDRATE_56000 = 56000;
+        const baudrate_type IEC870_BAUNDRATE_57600 = 57600;
+        const baudrate_type IEC870_BAUNDRATE_115200 = 115200;
+        const baudrate_type IEC870_BAUNDRATE_128000 = 128000;
+        const baudrate_type IEC870_BAUNDRATE_256000 = 256000;
+
+        const rsparity_type IEC870_NOPARITY = 0;
+        const rsparity_type IEC870_ODDPARITY = 1;
+        const rsparity_type IEC870_EVENPARITY = 2;
+        const rsparity_type IEC870_MARKPARITY = 3;
+        const rsparity_type IEC870_SPACEPARITY = 4;
+
+        const rsstopbit_type IEC870_ONESTOPBIT = 0;
+        const rsstopbit_type IEC870_ONE5STOPBITS = 1;
+        const rsstopbit_type IEC870_TWOSTOPBITS = 2;
+
+#if defined(_DVN_WIN_)        
+        typedef ::DCB com_port_option_type;
+#elif defined(_DVN_LIN_)
+        typedef ::termios com_port_option_type;
+#endif           
+
+        void set_com_cominill(com_port_option_type& opt);
+        void set_com_baudrate(com_port_option_type& opt, const baudrate_type& br);
+        void set_com_comoption(com_port_option_type& opt, size_t databit, const rsparity_type& prt, const rsstopbit_type& stpbt);
+        void set_com_flowcontrol(com_port_option_type& opt, bool vl);
+
         enum IEC_PROTOCOL {
 
             IEC_NULL = 0,
@@ -33,12 +80,12 @@ namespace dvnci {
             IEC_104 = 4,
         };
 
-        inline IEC_PROTOCOL protocol_from(protocoltype vl) {
+        inline IEC_PROTOCOL protocol_from(protocol_type vl) {
             return (vl > 4) ? IEC_NULL : static_cast<IEC_PROTOCOL> (vl);
         }
 
-        inline protocoltype protocol_to(IEC_PROTOCOL vl) {
-            return static_cast<protocoltype> (vl);
+        inline protocol_type protocol_to(IEC_PROTOCOL vl) {
+            return static_cast<protocol_type> (vl);
         }
 
         enum ADDRESS_sizetype {
@@ -70,11 +117,11 @@ namespace dvnci {
         class iec_option {
 
         public:
-            
-            iec_option() {
-            };            
 
-            iec_option(const std::string& vl) : opton_(vl) {
+            iec_option() : baundrate_(0) {
+            };
+
+            iec_option(const std::string& vl) : opton_(vl), baundrate_(0) {
             };
 
             iec_option(ADDRESS_sizetype adr, COT_sizetype ct, SECTOR_sizetype sct, IOA_sizetype ioa) : opton_("\x0") {
@@ -153,7 +200,7 @@ namespace dvnci {
 
             std::size_t t0() const {
                 std::size_t rslt = get<2, 1, 127, 30>();
-                return (rslt>2) ? rslt : 2;
+                return (rslt > 2) ? rslt : 2;
             }
 
             void t0(std::size_t vl) {
@@ -161,8 +208,8 @@ namespace dvnci {
             }
 
             std::size_t t1() const {
-                std::size_t rslt = get<3, 3, 127, 10>();                
-                return (rslt >t0()) ? (t0()-1) : rslt;
+                std::size_t rslt = get<3, 3, 127, 10>();
+                return (rslt > t0()) ? (t0() - 1) : rslt;
             }
 
             void t1(std::size_t vl) {
@@ -170,8 +217,8 @@ namespace dvnci {
             }
 
             std::size_t t2() const {
-                std::size_t rslt = get<4, 1, 127, 15>();                
-                return (rslt >t0()) ? (t0()-1) : rslt;
+                std::size_t rslt = get<4, 1, 127, 15>();
+                return (rslt > t0()) ? (t0() - 1) : rslt;
             }
 
             void t2(std::size_t vl) {
@@ -197,85 +244,85 @@ namespace dvnci {
             }
 
             std::size_t w() const {
-                std::size_t rslt = get<7, 1, 127, 8>();                
-                return (rslt>k()) ? k() : rslt;
+                std::size_t rslt = get<7, 1, 127, 8>();
+                return (rslt > k()) ? k() : rslt;
             }
 
             void w(std::size_t vl) {
                 return set<7, 1, 127>(vl);
             }
-            
+
             std::size_t pdu_len() const {
-                std::size_t rslt = get<8, 20, 255, 255>();                
+                std::size_t rslt = get<8, 20, 255, 255>();
                 return rslt;
             }
 
             void pdu_len(std::size_t vl) {
                 return set<8, 20, 255>(vl);
-            }     
-            
+            }
+
             std::size_t tymesync() const {
-                std::size_t rslt = get2<9, 10, 3600,3600>();                
+                std::size_t rslt = get2<9, 10, 3600, 3600>();
                 return rslt;
             }
 
             void tymesync(std::size_t vl) {
                 return set2<9, 10, 3600>(vl);
-            }     
-            
+            }
+
             bool sync() const {
-                std::size_t rslt = get<11, 0, 1 ,0>();                
+                std::size_t rslt = get<11, 0, 1, 0>();
                 return rslt;
             }
 
             void sync(bool vl) {
                 return set<11, 0, 1>(vl ? 1 : 0);
-            }         
-            
+            }
+
             std::size_t read_tmo() const {
-                std::size_t rslt = get2<12, 10, 65000,1000>();                
+                std::size_t rslt = get2<12, 10, 65000, 1000>();
                 return rslt;
             }
 
             void read_tmo(std::size_t vl) {
                 return set2<12, 10, 65000>(vl);
-            }       
-            
+            }
+
             std::size_t poll_tmo() const {
-                std::size_t rslt = get2<14, 10, 65000,1000>();                
+                std::size_t rslt = get2<14, 10, 65000, 1000>();
                 return rslt;
             }
 
             void poll_tmo(std::size_t vl) {
                 return set2<14, 10, 65000>(vl);
-            }          
-            
+            }
+
             std::size_t R_tmo() const {
-                std::size_t rslt = get2<16, 10, 65000,1000>();                
+                std::size_t rslt = get2<16, 10, 65000, 1000>();
                 return rslt;
             }
 
             void R_tmo(std::size_t vl) {
                 return set2<16, 10, 65000>(vl);
-            }                   
-            
+            }
+
             bool init() const {
-                std::size_t rslt = get<18, 0, 1 ,0>();                
+                std::size_t rslt = get<18, 0, 1, 0>();
                 return rslt;
             }
 
             void init(bool vl) {
                 return set<18, 0, 1>(vl ? 1 : 0);
-            }              
-            
+            }
+
             bool poll() const {
-                std::size_t rslt = get<19, 0, 1 ,0>();                
+                std::size_t rslt = get<19, 0, 1, 0>();
                 return rslt;
             }
 
             void poll(bool vl) {
                 return set<19, 0, 1>(vl ? 1 : 0);
-            }                
+            }
 
             std::string to_value() {
                 addr(addr());
@@ -289,17 +336,24 @@ namespace dvnci {
                 t3(t3());
                 k(k());
                 w(w());
-                pdu_len(pdu_len());       
+                pdu_len(pdu_len());
                 tymesync(tymesync());
-                sync(sync());   
+                sync(sync());
                 read_tmo(read_tmo());
-                poll_tmo(poll_tmo());    
-                R_tmo(R_tmo());    
-                init(init());     
-                poll(poll());               
+                poll_tmo(poll_tmo());
+                R_tmo(R_tmo());
+                init(init());
+                poll(poll());
                 return opton_;
             }
 
+            baudrate_type baundrate() const {
+                return baundrate_;
+            };
+
+            void baundrate(baudrate_type vl) {
+                baundrate_ = vl;
+            };
 
         private:
 
@@ -319,10 +373,10 @@ namespace dvnci {
                     opton_ += std::string(POS - opton_.size() + 1, '\x0');
                 opton_[POS] = static_cast<std::string::value_type> (vl < MIN ? MIN : (vl > MAX ? MAX : vl));
             }
-            
+
             template<std::size_t POS, std::size_t MIN, std::size_t MAX, std::size_t DFLT>
             std::size_t get2() const {
-                if (opton_.size() <= (POS+1))
+                if (opton_.size() <= (POS + 1))
                     return DFLT;
                 std::size_t tmp = *reinterpret_cast<const boost::uint16_t*> (&opton_[POS]);
                 return (tmp < MIN) ? DFLT : ((tmp > MAX) ? MAX : tmp);
@@ -332,14 +386,15 @@ namespace dvnci {
             void set2(std::size_t vl) {
                 if (opton_.empty())
                     opton_ = std::string(POS + 2, '\x0');
-                if (opton_.size() <= (POS+1))
+                if (opton_.size() <= (POS + 1))
                     opton_ += std::string(POS - opton_.size() + 2, '\x0');
-                std::size_t vln=vl < MIN ? MIN : (vl > MAX ? MAX : vl);
+                std::size_t vln = vl < MIN ? MIN : (vl > MAX ? MAX : vl);
                 opton_[POS] = static_cast<boost::uint8_t> (vln & 0xFF);
-                opton_[POS+1] = static_cast<boost::uint8_t> ((vln >> 8) & 0xFF);
-            }            
+                opton_[POS + 1] = static_cast<boost::uint8_t> ((vln >> 8) & 0xFF);
+            }
 
             mutable std::string opton_;
+            baudrate_type baundrate_;
 
         };
 
@@ -348,40 +403,37 @@ namespace dvnci {
 
 
 
-
-
-
-        using dvnci::driver::com_option_setter;
-        using dvnci::driver::com_port_option;
-
-
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*com_option_setter*/
+        /*com_option_type_setter*/
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        struct iec60870_com_option_setter : public com_option_setter {
+        struct iec60870_com_option_setter {
 
-            iec60870_com_option_setter(const metalink & lnk) : com_option_setter(lnk) {
+            iec60870_com_option_setter(const iec_option & opt) : option_(opt) {
             };
 
-            virtual boost::system::error_code store(com_port_option& opt, boost::system::error_code & ec) const;
+            virtual ~iec60870_com_option_setter() {
+            };
 
-            virtual boost::system::error_code load(com_port_option& opt, boost::system::error_code & ec) {
+            virtual boost::system::error_code store(com_port_option_type& opt, boost::system::error_code & ec) const;
+
+            virtual boost::system::error_code load(com_port_option_type& opt, boost::system::error_code & ec) {
                 return boost::system::error_code();
             }
-        };
 
-
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        /*iec60870_metalink_checker*/
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        struct iec60870_metalink_checker : public metalink_checker {
-
-            virtual ns_error compare(const metalink& rs, const metalink& ls) {
-                return ((ls.inf().cominf.boundrate != rs.inf().cominf.boundrate)) ? ERROR_IO_NOSYNC_LINK : 0;
+            virtual baudrate_type boundrate() const {
+                return option_.baundrate();
             }
+
+            void reset_default_nill(com_port_option_type & opt) const {
+                set_com_cominill(opt);
+            }
+
+        protected:
+            iec_option option_;
         };
+
+
 
 
 

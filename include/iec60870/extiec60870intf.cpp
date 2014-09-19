@@ -86,7 +86,8 @@ namespace dvnci {
                             }
                             default:
                             {
-                                thread_io = create_pm(proto, link().chanalnum(), link(), opt,
+                                opt.baundrate(link().inf().cominf.boundrate);
+                                thread_io = create_pm(proto, link().chanalnum() , opt,
                                         iec60870_data_listener::shared_from_this());
                             }
                         }
@@ -224,8 +225,8 @@ namespace dvnci {
         }
 
         iec60870_thread_ptr extiec60870intf::create_pm(dvnci::prot80670::IEC_PROTOCOL prot,
-                chnlnumtype chnm, const metalink & lnk, const iec_option& opt, iec60870_data_listener_ptr listr) {
-            return iec60870_factory::create(prot, chnm, lnk, opt, listr);
+                chnlnumtype chnm, const iec_option& opt, iec60870_data_listener_ptr listr) {
+            return iec60870_factory::create(prot, chnm,  opt, listr);
         }
 
         bool extiec60870intf::pm_connected() const {
