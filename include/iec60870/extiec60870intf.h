@@ -81,7 +81,7 @@ namespace dvnci {
             iec60870_thread_ptr create_pm(const std::string& host, const std::string& port, const iec_option& opt, 
                     iec60870_data_listener_ptr listr);
 
-            iec60870_thread_ptr create_pm(dvnci::prot80670::IEC_PROTOCOL prot, chnlnumtype chnm, const metalink & lnk, const iec_option& opt,
+            iec60870_thread_ptr create_pm(dvnci::prot80670::IEC_PROTOCOL prot, chnlnumtype chnm,  const iec_option& opt,
                     iec60870_data_listener_ptr listr);
             
             bool pm_connected() const;

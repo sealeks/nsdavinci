@@ -224,7 +224,7 @@ namespace dvnci {
         }
 
         void iec60870_104PMLink::connect() {
-            timout = in_bounded<timeouttype>(50, 600000, timout);
+            timout = in_bounded<timeout_type>(50, 600000, timout);
             DEBUG_STR_DVNCI(ioclient connect)
             DEBUG_VAL_DVNCI(host)
             DEBUG_VAL_DVNCI(port)

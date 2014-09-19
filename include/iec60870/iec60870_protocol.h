@@ -823,7 +823,7 @@ namespace dvnci {
                 noconnected, noaciveted, activated, todisconnect
             };
 
-            iec60870_PM(const iec_option& opt, timeouttype tout, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
+            iec60870_PM(const iec_option& opt, timeout_type tout, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
 
             virtual ~iec60870_PM();
 
@@ -888,7 +888,7 @@ namespace dvnci {
             }
 
             std::size_t trycount() const {
-                return trycount_ ? trycount_ : 3;
+                return trycount_ ? trycount_ : 1;
             }
          
             iec60870_device_ptr device(device_address dev) const;
@@ -951,8 +951,8 @@ namespace dvnci {
             volatile State state_;
             volatile PMState pmstate_;
             boost::system::error_code error_cod;
-            timeouttype timout;
-            timeouttype synctimout;            
+            timeout_type timout;
+            timeout_type synctimout;            
             bool need_disconnect_;
             id_device_map devices_;
 

@@ -9,7 +9,6 @@
 #define	_DVNCI_KRNL_NS_IEC60850_101PM_H
 
 #include <iec60870/iec60870_protocol.h>
-#include <boost/asio/serial_port.hpp>
 
 namespace dvnci {
     namespace prot80670 {
@@ -592,10 +591,22 @@ namespace dvnci {
 
         };
 
+        template<std::size_t OCTSIZE = 11 >
+        struct boundrate_traits {
+
+            //microsec
+
+            static std::size_t tmo(std::size_t BAUNDRATE, std::size_t cnt = 1) {
+                double tmp = (BAUNDRATE * 1.0) / OCTSIZE;
+                return static_cast<std::size_t> (tmp ? (1000000.0 / tmp) : 1) * cnt;
+            }
+
+        };
 
 
-
-        const std::size_t SILENCE_CNT = 40;
+        const std::size_t SILENCE_CNT = 4; //3;
+        const std::size_t Tlda = 100;        // ms
+        const std::size_t DEFREADTMO = 2000;        // ms        
 
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// iec60870_101PM
@@ -611,11 +622,12 @@ namespace dvnci {
             typedef boost::shared_ptr<apdu_type> apdu_ptr;
             typedef std::deque<apdu_ptr> apdu_deq;
 
-            iec60870_101PM(chnlnumtype chnm, const metalink & lnk, const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr()) :
-            iec60870_PM(opt, 5000, listr),
+            iec60870_101PM(chanalnum_type chnm,  const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr()) :
+            iec60870_PM(opt, DEFREADTMO, listr),
             serialport_(io_service_), serialport_io_sevice(io_service_), req_timer(io_service_), silence_timer(io_service_),
-            is_timout(false), is_error(false), reqtmo_(5000), symboltmo_(1), chnum_(chnm), comsetter_(lnk) {
-                set_sympoltmo(lnk);
+            is_timout(false), is_error(false), reqtmo_(DEFREADTMO), symboltmo_(1), chnum_(chnm), comsetter_(opt) {
+                set_symboltmo(opt);
+                set_readtmo(opt);
             }
 
             virtual void disconnect() {
@@ -628,7 +640,7 @@ namespace dvnci {
             virtual void connect() {
                 DEBUG_STR_DVNCI(ioclient connect)
                 DEBUG_VAL_DVNCI(chnum_)
-                DEBUG_VAL_DVNCI(timout)
+                //DEBUG_VAL_DVNCI(timout)
                 error_cod = boost::system::error_code();
                 if (!chnum_) {
                     state_ = disconnected;
@@ -1153,12 +1165,16 @@ namespace dvnci {
                 }
             }
             
-           void set_sympoltmo(const metalink & lnk) {
-                double silenseto_tmp = (lnk.inf().cominf.boundrate * 1.0) / 11;
-                symboltmo_ = static_cast<std::size_t> (silenseto_tmp ? (1000000.0 / silenseto_tmp) : 1);
+           void set_symboltmo(const iec_option & opt) {
+                symboltmo_ = boundrate_traits<11>::tmo(opt.baundrate());
             }            
+           
+           void set_readtmo(const iec_option & opt) {
+                 reqtmo_=(boundrate_traits<11>::tmo(opt.baundrate()) * opt.pdu_len()) / 1000 
+                         + Tlda + symboltmo_*SILENCE_CNT / 1000;
+            }                    
             
-           void set_silence_req(std::size_t cnt = 33) {
+           void set_silence_req(std::size_t cnt = SILENCE_CNT) {
                 silence_timer.cancel();
                 silence_timer.expires_from_now(boost::posix_time::microsec(symboltmo_*cnt));
                 silence_timer.async_wait(boost::bind(
@@ -1180,7 +1196,7 @@ namespace dvnci {
             boost::asio::serial_port_service serialport_io_sevice;
             boost::asio::deadline_timer req_timer;
             boost::asio::deadline_timer silence_timer;            
-            chnlnumtype chnum_;
+            chanalnum_type chnum_;
             iec60870_com_option_setter comsetter_;
             apdu_ptr data_ready_;
             volatile bool is_timout;
