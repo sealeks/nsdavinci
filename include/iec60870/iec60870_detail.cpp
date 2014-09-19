@@ -3,7 +3,7 @@
  * Author: Alexeev
  */
 
-#include "iec60870_detail.h"
+#include <iec60870/iec60870_detail.h>
 #include <kernel/basis_iostream.h>
 
 
