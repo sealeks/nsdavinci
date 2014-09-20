@@ -343,7 +343,7 @@ namespace prot80670 {
 
             apdu_104_ptr resp = apdu_104::create();
 
-            socket_.async_receive(boost::asio::buffer(resp->header().data(), resp->header().size()),
+            socket_.async_receive(boost::asio::buffer(&(resp->header()[0]), resp->header().size()),
                     boost::bind(&resp_operation_type::header, resp_operation_type(hnd, socket_, resp),
                     boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
         }
