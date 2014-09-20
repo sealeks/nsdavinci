@@ -4,7 +4,7 @@
 #include <kernel/service.h>
 #include <kernel/interface_proccesstmpl.h>
 
-#include <iec60870/extiec60870intf.h>
+#include "extiec60870intf.h"
 
 
 using namespace std;
