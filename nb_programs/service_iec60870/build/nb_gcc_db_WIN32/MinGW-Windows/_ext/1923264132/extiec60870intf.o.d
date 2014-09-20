@@ -1,5 +1,6 @@
-build/nb_gcc_db_WIN32/MinGW-Windows/_ext/1923264132/main.o: \
- ../../include_program/service_iec60870/main.cpp \
+build/nb_gcc_db_WIN32/MinGW-Windows/_ext/1923264132/extiec60870intf.o: \
+ ../../include_program/service_iec60870/extiec60870intf.cpp \
+ ../../include_program/service_iec60870/extiec60870intf.h \
  ../../include/kernel/constdef.h F:/Project/boost_1_54_0/boost/regex.hpp \
  F:/Project/boost_1_54_0/boost/regex/config.hpp \
  F:/Project/boost_1_54_0/boost/regex/user.hpp \
@@ -1455,30 +1456,30 @@ build/nb_gcc_db_WIN32/MinGW-Windows/_ext/1923264132/main.o: \
  F:/Project/boost_1_54_0/boost/format/free_funcs.hpp \
  F:/Project/boost_1_54_0/boost/format/detail/unset_macros.hpp \
  F:/Project/boost_1_54_0/boost/interprocess/windows_shared_memory.hpp \
- ../../include/kernel/systemutil.h ../../include/kernel/utils.h \
- ../../include/kernel/utf8.h ../../include/kernel/error.h \
- ../../include/kernel/templ.h ../../include/kernel/serviceapp.h \
- ../../include/kernel/memfile.h ../../include/kernel/mainstruct.h \
- ../../include/kernel/short_value.h \
- ../../include/kernel/cyclic_table_templ.h \
+ ../../include/kernel/error.h ../../include/kernel/memfile.h \
+ ../../include/kernel/mainstruct.h ../../include/kernel/short_value.h \
+ ../../include/kernel/utils.h ../../include/kernel/utf8.h \
+ ../../include/kernel/templ.h ../../include/kernel/cyclic_table_templ.h \
+ ../../include/kernel/systemutil.h \
  ../../include/kernel/static_table_templ.h \
  ../../include/kernel/index_base.h ../../include/kernel/string_base.h \
  ../../include/kernel/bufferbase_templ.h \
  ../../include/kernel/stringvalue_base.h \
- ../../include/kernel/filebase_templ.h ../../include/kernel/service.h \
- ../../include/kernel/proccesstmpl.h ../../include/kernel/factory.h \
- ../../include/kernel/interface_proccesstmpl.h \
- ../../include_program/service_iec60870/extiec60870intf.h \
+ ../../include/kernel/filebase_templ.h \
  ../../include/kernel/driver_proccesstmpl.h \
+ ../../include/kernel/proccesstmpl.h ../../include/kernel/factory.h \
  ../../include/kernel/driver_blockmodel.h \
  ../../include/kernel/driver_detail.h \
  ../../include/kernel/basis_iostream.h \
+ ../../include/kernel/interface_proccesstmpl.h \
  ../../include/kernel/extintf_wraper.h \
  ../../include/iec60870/iec60870_factory.h \
  ../../include/iec60870/iec60870_104PM.h \
  ../../include/iec60870/iec60870_protocol.h \
  ../../include/iec60870/iec60870_detail.h \
  ../../include/iec60870/iec60870_PM.h
+
+../../include_program/service_iec60870/extiec60870intf.h:
 
 ../../include/kernel/constdef.h:
 
@@ -4392,17 +4393,7 @@ F:/Project/boost_1_54_0/boost/format/detail/unset_macros.hpp:
 
 F:/Project/boost_1_54_0/boost/interprocess/windows_shared_memory.hpp:
 
-../../include/kernel/systemutil.h:
-
-../../include/kernel/utils.h:
-
-../../include/kernel/utf8.h:
-
 ../../include/kernel/error.h:
-
-../../include/kernel/templ.h:
-
-../../include/kernel/serviceapp.h:
 
 ../../include/kernel/memfile.h:
 
@@ -4410,7 +4401,15 @@ F:/Project/boost_1_54_0/boost/interprocess/windows_shared_memory.hpp:
 
 ../../include/kernel/short_value.h:
 
+../../include/kernel/utils.h:
+
+../../include/kernel/utf8.h:
+
+../../include/kernel/templ.h:
+
 ../../include/kernel/cyclic_table_templ.h:
+
+../../include/kernel/systemutil.h:
 
 ../../include/kernel/static_table_templ.h:
 
@@ -4424,23 +4423,19 @@ F:/Project/boost_1_54_0/boost/interprocess/windows_shared_memory.hpp:
 
 ../../include/kernel/filebase_templ.h:
 
-../../include/kernel/service.h:
+../../include/kernel/driver_proccesstmpl.h:
 
 ../../include/kernel/proccesstmpl.h:
 
 ../../include/kernel/factory.h:
-
-../../include/kernel/interface_proccesstmpl.h:
-
-../../include_program/service_iec60870/extiec60870intf.h:
-
-../../include/kernel/driver_proccesstmpl.h:
 
 ../../include/kernel/driver_blockmodel.h:
 
 ../../include/kernel/driver_detail.h:
 
 ../../include/kernel/basis_iostream.h:
+
+../../include/kernel/interface_proccesstmpl.h:
 
 ../../include/kernel/extintf_wraper.h:
 

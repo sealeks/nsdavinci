@@ -14,12 +14,6 @@
     </logicalFolder>
     <itemPath>../../include_program/service_iec60870/extiec60870intf.cpp</itemPath>
     <itemPath>../../include_program/service_iec60870/extiec60870intf.h</itemPath>
-    <itemPath>../../include_program/service_iec60870/iec60870_104PM.cpp</itemPath>
-    <itemPath>../../include_program/service_iec60870/iec60870_104PM.h</itemPath>
-    <itemPath>../../include_program/service_iec60870/iec60870_PM.cpp</itemPath>
-    <itemPath>../../include_program/service_iec60870/iec60870_PM.h</itemPath>
-    <itemPath>../../include_program/service_iec60870/iec60870_protocol.cpp</itemPath>
-    <itemPath>../../include_program/service_iec60870/iec60870_protocol.h</itemPath>
     <itemPath>../../include_program/service_iec60870/main.cpp</itemPath>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
@@ -36,6 +30,7 @@
           <stripSymbols>true</stripSymbols>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-mthreads -fno-strict-aliasing -static</commandLine>
           <preprocessorList>
@@ -55,6 +50,7 @@
             <linkerLibLibItem>nskernel</linkerLibLibItem>
             <linkerLibLibItem>wsock32</linkerLibLibItem>
             <linkerLibLibItem>ws2_32</linkerLibLibItem>
+            <linkerLibLibItem>iec60870</linkerLibLibItem>
             <linkerLibLibItem>ole32</linkerLibLibItem>
             <linkerLibLibItem>oleaut32</linkerLibLibItem>
             <linkerLibLibItem>boost_date_time</linkerLibLibItem>
@@ -84,36 +80,6 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="../../include_program/service_iec60870/iec60870_104PM.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_104PM.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_PM.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_PM.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_protocol.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_protocol.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="../../include_program/service_iec60870/main.cpp"
             ex="false"
             tool="1"
@@ -135,6 +101,7 @@
           <developmentMode>5</developmentMode>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <preprocessorList>
             <Elem>BOOST_ASIO_ENABLE_CANCELIO</Elem>
@@ -155,6 +122,7 @@
           </linkerAddLib>
           <linkerLibItems>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
+            <linkerLibLibItem>iec60870</linkerLibLibItem>
             <linkerLibLibItem>wsock32</linkerLibLibItem>
             <linkerLibLibItem>ws2_32</linkerLibLibItem>
             <linkerLibLibItem>ole32</linkerLibLibItem>
@@ -186,36 +154,6 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="../../include_program/service_iec60870/iec60870_104PM.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_104PM.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_PM.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_PM.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_protocol.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_protocol.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="../../include_program/service_iec60870/main.cpp"
             ex="false"
             tool="1"
@@ -236,6 +174,7 @@
           <commandlineTool>g++</commandlineTool>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-fno-strict-aliasing</commandLine>
           <preprocessorList>
@@ -251,6 +190,7 @@
           </linkerAddLib>
           <linkerLibItems>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
+            <linkerLibLibItem>iec60870</linkerLibLibItem>
             <linkerLibLibItem>boost_date_time</linkerLibLibItem>
             <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
             <linkerLibLibItem>boost_program_options</linkerLibLibItem>
@@ -263,6 +203,7 @@
             <linkerLibLibItem>boost_chrono</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
             <linkerLibLibItem>rt</linkerLibLibItem>
+            <linkerLibLibItem>pthread</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -272,36 +213,6 @@
             flavor2="0">
       </item>
       <item path="../../include_program/service_iec60870/extiec60870intf.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_104PM.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_104PM.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_PM.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_PM.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_protocol.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_protocol.h"
             ex="false"
             tool="3"
             flavor2="0">
@@ -327,6 +238,7 @@
           <commandlineTool>g++</commandlineTool>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-fno-strict-aliasing</commandLine>
           <useLinkerLibraries>false</useLinkerLibraries>
@@ -340,6 +252,7 @@
           </linkerAddLib>
           <linkerLibItems>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
+            <linkerLibLibItem>iec60870</linkerLibLibItem>
             <linkerLibLibItem>boost_date_time</linkerLibLibItem>
             <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
             <linkerLibLibItem>boost_program_options</linkerLibLibItem>
@@ -352,6 +265,7 @@
             <linkerLibLibItem>boost_chrono</linkerLibLibItem>
             <linkerLibLibItem>boost_wserialization</linkerLibLibItem>
             <linkerLibLibItem>rt</linkerLibLibItem>
+            <linkerLibLibItem>pthread</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -361,36 +275,6 @@
             flavor2="0">
       </item>
       <item path="../../include_program/service_iec60870/extiec60870intf.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_104PM.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_104PM.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_PM.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_PM.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_protocol.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_iec60870/iec60870_protocol.h"
             ex="false"
             tool="3"
             flavor2="0">

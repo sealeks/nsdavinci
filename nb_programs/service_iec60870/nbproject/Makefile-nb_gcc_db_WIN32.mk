@@ -36,9 +36,6 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/1923264132/extiec60870intf.o \
-	${OBJECTDIR}/_ext/1923264132/iec60870_104PM.o \
-	${OBJECTDIR}/_ext/1923264132/iec60870_PM.o \
-	${OBJECTDIR}/_ext/1923264132/iec60870_protocol.o \
 	${OBJECTDIR}/_ext/1923264132/main.o
 
 
@@ -56,7 +53,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -lwsock32 -lws2_32 -lole32 -loleaut32 -lboost_date_time -lboost_filesystem -lboost_iostreams -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_chrono -lboost_wserialization -lstdc++
+LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -lwsock32 -lws2_32 -liec60870 -lole32 -loleaut32 -lboost_date_time -lboost_filesystem -lboost_iostreams -lboost_program_options -lboost_random -lboost_regex -lboost_serialization -lboost_signals -lboost_system -lboost_thread -lboost_chrono -lboost_wserialization -lstdc++
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -69,27 +66,12 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 ${OBJECTDIR}/_ext/1923264132/extiec60870intf.o: ../../include_program/service_iec60870/extiec60870intf.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1923264132
 	${RM} $@.d
-	$(COMPILE.cc) -g -s -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1923264132/extiec60870intf.o ../../include_program/service_iec60870/extiec60870intf.cpp
-
-${OBJECTDIR}/_ext/1923264132/iec60870_104PM.o: ../../include_program/service_iec60870/iec60870_104PM.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1923264132
-	${RM} $@.d
-	$(COMPILE.cc) -g -s -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1923264132/iec60870_104PM.o ../../include_program/service_iec60870/iec60870_104PM.cpp
-
-${OBJECTDIR}/_ext/1923264132/iec60870_PM.o: ../../include_program/service_iec60870/iec60870_PM.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1923264132
-	${RM} $@.d
-	$(COMPILE.cc) -g -s -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1923264132/iec60870_PM.o ../../include_program/service_iec60870/iec60870_PM.cpp
-
-${OBJECTDIR}/_ext/1923264132/iec60870_protocol.o: ../../include_program/service_iec60870/iec60870_protocol.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/1923264132
-	${RM} $@.d
-	$(COMPILE.cc) -g -s -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1923264132/iec60870_protocol.o ../../include_program/service_iec60870/iec60870_protocol.cpp
+	$(COMPILE.cc) -g -s -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -I${BOOST_DIR} -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1923264132/extiec60870intf.o ../../include_program/service_iec60870/extiec60870intf.cpp
 
 ${OBJECTDIR}/_ext/1923264132/main.o: ../../include_program/service_iec60870/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1923264132
 	${RM} $@.d
-	$(COMPILE.cc) -g -s -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1923264132/main.o ../../include_program/service_iec60870/main.cpp
+	$(COMPILE.cc) -g -s -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -I${BOOST_DIR} -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1923264132/main.o ../../include_program/service_iec60870/main.cpp
 
 # Subprojects
 .build-subprojects:
