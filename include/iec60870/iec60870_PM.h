@@ -624,8 +624,8 @@ namespace prot80670 {
 
         iec60870_101PM(chanalnum_type chnm, const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr()) :
         iec60870_PM(opt, DEFREADTMO, listr),
-        serialport_(io_service_), serialport_io_sevice(io_service_), req_timer(io_service_), silence_timer(io_service_),
-        is_timout(false), is_error(false), reqtmo_(DEFREADTMO), symboltmo_(1), chnum_(chnm), comsetter_(opt) {
+        serialport_(io_service_), serialport_io_sevice(io_service_), req_timer(io_service_), silence_timer(io_service_),chnum_(chnm), comsetter_(opt),
+        is_timout(false), is_error(false), reqtmo_(DEFREADTMO), symboltmo_(1) {
             set_symboltmo(opt);
             set_readtmo(opt);
         }

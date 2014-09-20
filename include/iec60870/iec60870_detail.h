@@ -48,7 +48,7 @@
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
-#pragma warning(disable: 4101  4146 )
+#pragma warning(disable: 4101  4146 4800 )
 #endif
 
 #if defined(_IEC60870_WIN_) 
@@ -77,14 +77,7 @@
 #include <limits>
 #include <iterator>
 
-#if defined(_IEC60870_WIN_)
-#include <winbase.h>
-#elif defined(_IEC60870_LIN_)
-#include <termios.h>
-#include <unistd.h>
-#else
-#error Error define OS spec
-#endif
+
 
 
 #include <boost/asio/serial_port.hpp>
@@ -107,6 +100,15 @@
 #include <boost/asio/buffer.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/system/system_error.hpp>
+
+#if defined(_IEC60870_WIN_)
+#include <winbase.h>
+#elif defined(_IEC60870_LIN_)
+#include <termios.h>
+#include <unistd.h>
+#else
+#error Error define OS spec
+#endif
 
 
 namespace prot80670 {

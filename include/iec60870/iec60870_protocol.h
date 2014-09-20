@@ -321,9 +321,9 @@ namespace prot80670 {
     protected:
 
         device_address devnum_;
+        type_id type_;        
         selector_address selector_;
         data_address ioa_;
-        type_id type_;
         bit_number bit_;
         cause_type cause_;
         bool test_;
@@ -453,11 +453,12 @@ namespace prot80670 {
         }
 
         selector_address selector() const {
-            if (body().size() >= protocol_traits_type::stop_selector())
+            if (body().size() >= protocol_traits_type::stop_selector()) {
                 if (protocol_traits_type::selector_size() == 1)
                     return *reinterpret_cast<const boost::uint8_t*> (&(body()[protocol_traits_type::start_selector()]));
                 else
                     return *reinterpret_cast<const device_address*> (&(body()[protocol_traits_type::start_selector()]));
+            }
             return 0;
         }
 
