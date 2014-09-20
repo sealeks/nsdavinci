@@ -1085,7 +1085,7 @@ namespace prot80670 {
 
             apdu_ptr resp = apdu_type::create();
 
-            serialport_.async_read_some(boost::asio::buffer(resp->header().data(), resp->header().size()),
+            serialport_.async_read_some(boost::asio::buffer(&(resp->header()[0]), resp->header().size()),
                     boost::bind(&resp_operation_type::header, resp_operation_type(hnd, serialport_, resp),
                     boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
         }
