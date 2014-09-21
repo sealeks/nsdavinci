@@ -24,7 +24,7 @@
 #include <wtf/UnusedParam.h>
 #include <wtf/Threading.h>
 
-
+#undef pow
 
 #include <winsock2.h>
 #include <custom/gui_executor.h>
