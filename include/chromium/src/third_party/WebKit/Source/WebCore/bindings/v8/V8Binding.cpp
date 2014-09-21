@@ -34,6 +34,7 @@
 #include "DOMStringList.h"
 #include "Element.h"
 #include "MathExtras.h"
+#undef pow
 #include "PlatformString.h"
 #include "QualifiedName.h"
 #include "StdLibExtras.h"
@@ -46,6 +47,8 @@
 #include <wtf/text/StringHash.h>
 
 #include "dvnci/ScriptBinding.h"
+
+
 
 
 namespace WebCore {

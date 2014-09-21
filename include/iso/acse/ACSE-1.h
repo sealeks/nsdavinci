@@ -200,29 +200,11 @@ namespace ACSE_1  {
 
  	//  type is  INTEGER
 	typedef  int   Release_response_reason;
+        
+ 	//  ref is  Transfer-syntax-name
+	typedef Transfer_syntax_name Concrete_syntax_name;        
 
- 	//   SEQUENCE_OF is ASOI-tag 
-	//start==============================================================
-	//It is  INTERNAL SEQUENCE  
 
-		struct  ASOI_tag_sequence_of{
-
-			ASO_qualifier  qualifier;
-			boost::shared_ptr<ASOI_identifier > identifier;   //  OPTIONAL
-			BOOST_ASN_VALUE_FUNC_DECLARATE(ASOI_identifier ,  identifier)
-
- 
-			ASOI_tag_sequence_of()  : qualifier()  {}
-
-			 template<typename Archive> void serialize(Archive& arch){
-
-				BOOST_ASN_CHOICE(qualifier);
-				BOOST_ASN_EXPLICIT_TAG(identifier ,1);
-			}
-		};
-
-	//end==============================================================
-	typedef std::vector<ASOI_tag_sequence_of >   ASOI_tag;
 
 	//   SEQUENCE_OF is ASO-context-name-list 
 	typedef std::vector<ASO_context_name >   ASO_context_name_list;
@@ -319,14 +301,13 @@ namespace ACSE_1  {
  	//  ref is  ASO-qualifier
 	typedef ASO_qualifier AE_qualifier;
 
- 	//  ref is  Transfer-syntax-name
-	typedef Transfer_syntax_name Concrete_syntax_name;
+
 
  	//  ref is  Association-data
 	typedef Association_data User_information;
 
  	//  ref is  TYPE-IDENTIFIER
-	//typedef TYPE_IDENTIFIER MECHANISM_NAME;
+	typedef octetstring_type MECHANISM_NAME;
 
  
 	const int Release_response_reason_normal = 0;
@@ -795,6 +776,25 @@ namespace ACSE_1  {
 					default:{}}}
 		}
 	};
+        
+		struct  ASOI_tag_sequence_of{
+
+			ASO_qualifier  qualifier;
+			boost::shared_ptr<ASOI_identifier > identifier;   //  OPTIONAL
+			BOOST_ASN_VALUE_FUNC_DECLARATE(ASOI_identifier ,  identifier)
+
+ 
+			ASOI_tag_sequence_of()  : qualifier()  {}
+
+			 template<typename Archive> void serialize(Archive& arch){
+
+				BOOST_ASN_CHOICE(qualifier);
+				BOOST_ASN_EXPLICIT_TAG(identifier ,1);
+			}
+		};
+
+	//end==============================================================
+	typedef std::vector<ASOI_tag_sequence_of >   ASOI_tag;        
 
 //start==============================================================
 //It is   CHOICE
@@ -1041,7 +1041,7 @@ namespace ACSE_1  {
 	struct  AARE_apdu__impl{
 
 
-		static const bitstring_type protocol_version_version1= bitstring_type(true, 0);
+		//static const bitstring_type protocol_version_version1= bitstring_type(true, 0);
 
 
 		boost::shared_ptr<bitstring_type > protocol_version;   //  DEFAULT  {version1} 
@@ -1115,7 +1115,7 @@ namespace ACSE_1  {
 	struct  AARQ_apdu__impl{
 
 
-		static const bitstring_type protocol_version_version1= bitstring_type(true, 0);
+		//static const bitstring_type protocol_version_version1= bitstring_type(true, 0);
 
 
 		boost::shared_ptr<bitstring_type > protocol_version;   //  DEFAULT  {version1} 
