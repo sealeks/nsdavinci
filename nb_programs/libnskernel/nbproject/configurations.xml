@@ -84,7 +84,7 @@
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
           <preprocessorList>
             <Elem>DVNCI_DEDUG</Elem>
-            <Elem>_WIN32_WINNT=0x601</Elem>
+            <Elem>_WIN32_WINNT=0x501</Elem>
           </preprocessorList>
         </ccTool>
         <archiverTool>
@@ -320,7 +320,7 @@
           </incDir>
           <commandLine>-mthreads</commandLine>
           <preprocessorList>
-            <Elem>_WIN32_WINNT=0x0601</Elem>
+            <Elem>_WIN32_WINNT=0x0501</Elem>
           </preprocessorList>
           <warningLevel>2</warningLevel>
         </ccTool>
