@@ -14,8 +14,10 @@
                 <make-dep-project>../service_dvnciadmin</make-dep-project>
                 <make-dep-project>../libdbaccess</make-dep-project>
                 <make-dep-project>../libsoci</make-dep-project>
+                <make-dep-project>../../../itu-t/programs/nb_programs/libmms</make-dep-project>
                 <make-dep-project>../service_dvncisys</make-dep-project>
                 <make-dep-project>../consol_admin</make-dep-project>
+                <make-dep-project>../../../itu-t/programs/nb_programs/libboost_itu_t</make-dep-project>
                 <make-dep-project>../service_dvncinet</make-dep-project>
                 <make-dep-project>../libcustom</make-dep-project>
                 <make-dep-project>../test_poligon</make-dep-project>
