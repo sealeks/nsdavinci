@@ -59,7 +59,7 @@
     <itemPath>../../include/kernel/utils.h</itemPath>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../include</Elem>
+    <Elem>../../include/kernel</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
