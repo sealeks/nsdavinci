@@ -12,6 +12,7 @@
             <make-dep-projects/>
             <sourceRootList>
                 <sourceRootElem>../../include_program/service_dvncikoyo</sourceRootElem>
+                <sourceRootElem>../../include/driverspec</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>
