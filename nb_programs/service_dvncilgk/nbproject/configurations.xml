@@ -20,6 +20,10 @@
     <itemPath>../../include/driverspec/spbmg_protocol.cpp</itemPath>
     <itemPath>../../include/driverspec/spbmg_protocol.h</itemPath>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>../../include_program/service_dvncilgk</Elem>
+    <Elem>../../include/driverspec</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="nb_gcc_db_WIN32" type="1">
@@ -41,6 +45,7 @@
           <developmentMode>5</developmentMode>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <preprocessorList>
             <Elem>BOOST_ASIO_ENABLE_CANCELIO</Elem>
@@ -131,6 +136,7 @@
           <developmentMode>5</developmentMode>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <preprocessorList>
             <Elem>BOOST_ASIO_ENABLE_CANCELIO</Elem>
@@ -227,6 +233,7 @@
           <architecture>2</architecture>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <preprocessorList>
             <Elem>DVNCI_DEDUG</Elem>
@@ -311,6 +318,7 @@
           <architecture>2</architecture>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <warningLevel>2</warningLevel>
         </ccTool>
