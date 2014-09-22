@@ -20,5 +20,5 @@ UI_DIR =
 QMAKE_CC = gcc
 QMAKE_CXX = i686-w64-mingw32-gcc-4.8.0
 DEFINES += 
-INCLUDEPATH += ../../include 
+INCLUDEPATH += ../../include ${BOOST_DIR} 
 LIBS += ../../lib/nb_gcc_db_LIN64/libnsadmin.a ../../lib/nb_gcc_db_LIN64/libnskernel.a ../../lib/nb_gcc_db_LIN64/libmeta.a ../../lib/boost/nb_gcc_db_LIN64/libboost_date_time.a ../../lib/boost/nb_gcc_db_LIN64/libboost_filesystem.a ../../lib/boost/nb_gcc_db_LIN64/libboost_prg_exec_monitor.a ../../lib/boost/nb_gcc_db_LIN64/libboost_program_options.a ../../lib/boost/nb_gcc_db_LIN64/libboost_random.a ../../lib/boost/nb_gcc_db_LIN64/libboost_regex.a ../../lib/boost/nb_gcc_db_LIN64/libboost_serialization.a ../../lib/boost/nb_gcc_db_LIN64/libboost_signals.a ../../lib/boost/nb_gcc_db_LIN64/libboost_system.a ../../lib/boost/nb_gcc_db_LIN64/libboost_test_exec_monitor.a ../../lib/boost/nb_gcc_db_LIN64/libboost_thread.a ../../lib/boost/nb_gcc_db_LIN64/libboost_chrono.a ../../lib/boost/nb_gcc_db_LIN64/libboost_unit_test_framework.a ../../lib/boost/nb_gcc_db_LIN64/libboost_wserialization.a -lrt  

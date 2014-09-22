@@ -11,7 +11,8 @@
             <sourceEncoding>UTF-8</sourceEncoding>
             <make-dep-projects/>
             <sourceRootList>
-                <sourceRootElem>gui</sourceRootElem>
+                <sourceRootElem>../../include</sourceRootElem>
+                <sourceRootElem>../../include_program/app_admin</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

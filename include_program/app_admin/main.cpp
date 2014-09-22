@@ -5,7 +5,7 @@
  * Created on 29 Декабрь 2009 г., 15:18
  */
 
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 #include "gui/form_admin.h"
 #include <kernel/constdef.h>
 #include <kernel/serviceapp.h>
