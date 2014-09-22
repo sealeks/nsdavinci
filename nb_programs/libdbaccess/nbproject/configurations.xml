@@ -16,7 +16,7 @@
     <itemPath>../../include/dbaccess/dbpsgrdriver.h</itemPath>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../include</Elem>
+    <Elem>../../include/dbaccess</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
