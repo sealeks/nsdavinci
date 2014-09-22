@@ -13,7 +13,6 @@
                 <make-dep-project>../libnskernel</make-dep-project>
             </make-dep-projects>
             <sourceRootList>
-                <sourceRootElem>../../include</sourceRootElem>
                 <sourceRootElem>../../include_program/app_test</sourceRootElem>
             </sourceRootList>
             <confList>
