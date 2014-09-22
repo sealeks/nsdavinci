@@ -32,6 +32,7 @@
           <stripSymbols>true</stripSymbols>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-mthreads -fno-strict-aliasing -static</commandLine>
           <preprocessorList>
@@ -111,6 +112,7 @@
           <developmentMode>5</developmentMode>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <preprocessorList>
             <Elem>BOOST_ASIO_ENABLE_CANCELIO</Elem>
@@ -192,6 +194,7 @@
           <commandlineTool>g++</commandlineTool>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-fno-strict-aliasing</commandLine>
           <preprocessorList>
@@ -263,6 +266,7 @@
           <commandlineTool>g++</commandlineTool>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-fno-strict-aliasing</commandLine>
           <useLinkerLibraries>false</useLinkerLibraries>

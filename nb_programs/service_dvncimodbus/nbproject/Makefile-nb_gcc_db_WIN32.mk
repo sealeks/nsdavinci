@@ -67,17 +67,17 @@ LDLIBSOPTIONS=-L../../lib/boost/${CND_CONF} -L../../lib/${CND_CONF} -lnskernel -
 ${OBJECTDIR}/_ext/1232915786/modbus_protocol.o: ../../include/driverspec/modbus_protocol.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/1232915786
 	${RM} $@.d
-	$(COMPILE.cc) -g -s -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1232915786/modbus_protocol.o ../../include/driverspec/modbus_protocol.cpp
+	$(COMPILE.cc) -g -s -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -I${BOOST_DIR} -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1232915786/modbus_protocol.o ../../include/driverspec/modbus_protocol.cpp
 
 ${OBJECTDIR}/_ext/715232524/main.o: ../../include_program/service_dvncimodbus/main.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/715232524
 	${RM} $@.d
-	$(COMPILE.cc) -g -s -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/715232524/main.o ../../include_program/service_dvncimodbus/main.cpp
+	$(COMPILE.cc) -g -s -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -I${BOOST_DIR} -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/715232524/main.o ../../include_program/service_dvncimodbus/main.cpp
 
 ${OBJECTDIR}/_ext/715232524/modbus_detail.o: ../../include_program/service_dvncimodbus/modbus_detail.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/715232524
 	${RM} $@.d
-	$(COMPILE.cc) -g -s -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/715232524/modbus_detail.o ../../include_program/service_dvncimodbus/modbus_detail.cpp
+	$(COMPILE.cc) -g -s -DBOOST_ASIO_ENABLE_CANCELIO -DDVNCI_DEDUG -D_WIN32_WINNT=0x0501 -I../../include -I${BOOST_DIR} -mthreads -fno-strict-aliasing -static -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/715232524/modbus_detail.o ../../include_program/service_dvncimodbus/modbus_detail.cpp
 
 # Subprojects
 .build-subprojects:
