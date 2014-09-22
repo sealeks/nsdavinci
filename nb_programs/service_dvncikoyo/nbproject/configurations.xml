@@ -20,6 +20,9 @@
     <itemPath>../../include/driverspec/modbus_protocol.cpp</itemPath>
     <itemPath>../../include/driverspec/modbus_protocol.h</itemPath>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>../../include_program/service_dvncikoyo</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="nb_gcc_db_WIN32" type="1">
@@ -34,6 +37,7 @@
           <developmentMode>5</developmentMode>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
           <preprocessorList>
@@ -66,6 +70,7 @@
             <linkerLibLibItem>uuid</linkerLibLibItem>
             <linkerLibLibItem>ws2_32</linkerLibLibItem>
             <linkerLibLibItem>wsock32</linkerLibLibItem>
+            <linkerLibLibItem>stdc++</linkerLibLibItem>
           </linkerLibItems>
           <commandLine>-mthreads</commandLine>
         </linkerTool>
@@ -118,6 +123,7 @@
           <developmentMode>5</developmentMode>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
           <preprocessorList>
@@ -202,6 +208,7 @@
           <architecture>2</architecture>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-fno-strict-aliasing</commandLine>
           <preprocessorList>
@@ -280,6 +287,7 @@
           <architecture>2</architecture>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-fno-strict-aliasing</commandLine>
           <warningLevel>2</warningLevel>
