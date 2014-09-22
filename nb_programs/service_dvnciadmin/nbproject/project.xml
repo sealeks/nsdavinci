@@ -10,7 +10,9 @@
             <header-extensions/>
             <sourceEncoding>UTF-8</sourceEncoding>
             <make-dep-projects/>
-            <sourceRootList/>
+            <sourceRootList>
+                <sourceRootElem>../../include_program/service_dvnciadmin</sourceRootElem>
+            </sourceRootList>
             <confList>
                 <confElem>
                     <name>nb_gcc_db_WIN32</name>
