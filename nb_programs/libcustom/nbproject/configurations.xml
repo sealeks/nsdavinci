@@ -27,6 +27,9 @@
     <itemPath>../../include/custom/remotenetintf.cpp</itemPath>
     <itemPath>../../include/custom/remotenetintf.h</itemPath>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>../../include</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="nb_gcc_db_WIN32" type="3">
@@ -223,6 +226,7 @@
         <ccTool>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <preprocessorList>
             <Elem>DVNCI_DEDUG</Elem>
@@ -309,6 +313,7 @@
         <ccTool>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <preprocessorList>
             <Elem>_WIN32_WINNT=0x0501</Elem>
