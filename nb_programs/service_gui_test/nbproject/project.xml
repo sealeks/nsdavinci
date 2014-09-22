@@ -10,7 +10,9 @@
             <header-extensions/>
             <sourceEncoding>UTF-8</sourceEncoding>
             <make-dep-projects/>
-            <sourceRootList/>
+            <sourceRootList>
+                <sourceRootElem>../../include_program/service_gui_test</sourceRootElem>
+            </sourceRootList>
             <confList>
                 <confElem>
                     <name>nb_gcc_rl_WIN32</name>
