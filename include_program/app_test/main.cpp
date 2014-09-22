@@ -20,6 +20,15 @@ dvnci::appidtype          dvnci::DVNCI_SERVICE_APPID= NS_TEST_SERVICE;
 
 fspath                    basepath;
 
+double randomgenerator(){
+    return (1.0 * rand()) / RAND_MAX;
+}
+
+double normalgenerator(double d){
+    return d * ( randomgenerator() /** randomgenerator()* randomgenerator() * randomgenerator() * randomgenerator()*/ -0.5) * 2;
+}
+
+
 double timeval() {
     dvnci::datetime tm = dvnci::now();
     dvnci::normalizeperiod(tm, DAY_TM);
@@ -32,7 +41,7 @@ struct thread_rep {
     void operator()() {
         while (true) {
             boost::xtime xt;
-            boost::xtime_get(&xt, boost::TIME_UTC);
+            boost::xtime_get(&xt, boost::TIME_UTC_);
             xt.nsec += 300000;
             if (intf->exists(id)) {
                 switch (intf->valid(id)) {
@@ -85,7 +94,7 @@ public:
         cout << "in operator ()" << endl;
         while (terminate_) {
             boost::xtime xt;
-            boost::xtime_get(&xt, boost::TIME_UTC);
+            boost::xtime_get(&xt, boost::TIME_UTC_);
             if (init()) {{
                     THD_EXCLUSIVE_LOCK(intf);
                     for (indx i = 0; i < intf->count(); i++)
@@ -98,8 +107,12 @@ public:
                                         if (intf->type(i) <= 0xF) {
                                             double tmpMaxEu = str_to<double>(intf->maxeu(i));
                                             double tmpMinEu = str_to<double>(intf->mineu(i));
+                                            double tmpBnd = (tmpMaxEu-tmpMinEu);
+                                            double tmpDif = (tmpMaxEu-tmpMinEu) * 0.005;
                                             double tmpEu = timeval() / ((i %  5) *20 + 4);
-                                            tmpEu = tmpMinEu + (sin(tmpEu) + 1) / 2 * (tmpMaxEu - tmpMinEu);
+                                            double tmpcur = (!intf->valid(i)) ? ((tmpMaxEu-tmpMinEu) / 2) : intf->value<double>(i);
+                                            //std::cout << tmpDif << "  "  <<  normalgenerator(tmpDif) << std::endl;    
+                                            tmpEu = tmpcur + normalgenerator(tmpDif);/*tmpMinEu + (sin(tmpEu) + 1) / 2 * (tmpMaxEu - tmpMinEu)*/;
                                             intf->write_val(i, tmpEu, 100);}}
                                     else {
                                         if (intf->alarmed(i)) {
@@ -125,6 +138,7 @@ public:
                                             if (!tmpmap.empty())
                                                 intf->write_vals_report(i, tmpmap);
                                             break;}}}}}}}
+            addmillisec_to_now(xt, 600);
             boost::thread::sleep(xt);}}} ;
 
 class testbaseservice : public basisservice {

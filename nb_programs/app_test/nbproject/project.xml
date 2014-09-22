@@ -12,7 +12,10 @@
             <make-dep-projects>
                 <make-dep-project>../libnskernel</make-dep-project>
             </make-dep-projects>
-            <sourceRootList/>
+            <sourceRootList>
+                <sourceRootElem>../../include</sourceRootElem>
+                <sourceRootElem>../../include_program/app_test</sourceRootElem>
+            </sourceRootList>
             <confList>
                 <confElem>
                     <name>nb_gcc_db_WIN32</name>
