@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="79">
+<configurationDescriptor version="88">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="chromium" displayName="chromium" projectFiles="true">
       <logicalFolder name="src" displayName="src" projectFiles="true">
@@ -247,14 +247,543 @@
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
       </compileType>
+      <item path="../../include/chromium/src/base/command_line.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/base/command_line.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/app/chrome_main.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/browser_main.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/extentions/extension_host.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/extentions/extension_host.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/notifications/balloon_host.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/notifications/balloon_host.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/tab_contents/background_contents.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/tab_contents/background_contents.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/tab_contents/render_view_host_delegate_helper.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/tab_contents/render_view_host_delegate_helper.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/browser.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/browser.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/browser_init.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/browser_init.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/browser_window.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/views/frame/browser_frame_win.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/views/frame/browser_view.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/views/frame/browser_view.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/views/tab_contents/tab_contents_view_views.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/views/tab_contents/tab_contents_view_views.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/views/tabs/dragged_tab_controller.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/views/tabs/dragged_tab_controller.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/common/chrome_switches.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/common/chrome_switches.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/nacl/nacl_main.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/browser/renderer_host/render_view_host.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/browser/renderer_host/render_view_host.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/browser/renderer_host/render_view_host_delegate.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/browser/tab_contents/interstitial_page.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/browser/tab_contents/tab_contents.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/browser/tab_contents/tab_contents.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/browser/tab_contents/tab_contents_delegate.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/browser/tab_contents/tab_contents_delegate.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/browser/utility_process_host.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/common/content_switches.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/common/content_switches.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/common/sandbox_init_wrapper_win.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/common/sandbox_policy.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/common/view_messages.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/plugin/plugin_main.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/renderer/render_view.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/renderer/render_widget.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/renderer/render_widget.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/renderer/renderer_main.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/renderer/renderer_main_platform_delegate_win.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/utility/utility_main.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/JavaScriptCore/wtf/MainThread.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/JavaScriptCore/wtf/chromium/ChromiumThreading.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/JavaScriptCore/wtf/chromium/MainThreadChromium.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/bindings/generic/BindingSecurity.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/bindings/v8/V8Binding.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/bindings/v8/custom/V8EventCustom.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Attribute.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Attribute.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Element.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Event.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Event.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/EventNames.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/EventTarget.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/EventTarget.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/StyledElement.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Text.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Text.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/Binding.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/Binding.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/SCDBConnection.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/ScriptBinding.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/TableObserver.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/TableObserver.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/ValueObserver.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/ValueObserver.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/html/HTMLElement.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/loader/cache/CachedResource.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/loader/cache/CachedResource.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/loader/cache/CachedResourceLoader.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/loader/cache/CachedResourceLoader.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/loader/cache/CachedResourceRequest.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/page/Chrome.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/page/Chrome.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/page/ChromeClient.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/page/DOMWindow.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/page/FrameView.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/page/SecurityOrigin.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/page/WindowFeatures.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/page/WindowFeatures.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/rendering/svg/RenderSVGForeignObject.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/rendering/svg/RenderSVGResourceFilter.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/svg/SVGURIReference.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/svg/SVGURIReference.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/svg/SVGUseElement.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebKit/chromium/public/WebKitClient.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebKit/chromium/public/WebWidgetClient.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebKit/chromium/src/ChromeClientImpl.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebKit/chromium/src/ChromeClientImpl.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebKit/chromium/src/ChromiumThreading.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/views/widget/native_widget_private.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/views/widget/native_widget_win.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/views/widget/native_widget_win.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/views/widget/widget.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/views/widget/widget.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/webkit/glue/webkitclient_impl.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/webkit/glue/webkitclient_impl.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/webkit/tools/test_shell/test_shell_main.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
     </conf>
     <conf name="Release" type="1">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <cTool>
@@ -270,6 +799,531 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="../../include/chromium/src/base/command_line.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/base/command_line.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/app/chrome_main.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/browser_main.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/extentions/extension_host.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/extentions/extension_host.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/notifications/balloon_host.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/notifications/balloon_host.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/tab_contents/background_contents.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/tab_contents/background_contents.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/tab_contents/render_view_host_delegate_helper.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/tab_contents/render_view_host_delegate_helper.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/browser.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/browser.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/browser_init.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/browser_init.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/browser_window.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/views/frame/browser_frame_win.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/views/frame/browser_view.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/views/frame/browser_view.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/views/tab_contents/tab_contents_view_views.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/views/tab_contents/tab_contents_view_views.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/views/tabs/dragged_tab_controller.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/browser/ui/views/tabs/dragged_tab_controller.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/common/chrome_switches.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/common/chrome_switches.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/chrome/nacl/nacl_main.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/browser/renderer_host/render_view_host.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/browser/renderer_host/render_view_host.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/browser/renderer_host/render_view_host_delegate.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/browser/tab_contents/interstitial_page.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/browser/tab_contents/tab_contents.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/browser/tab_contents/tab_contents.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/browser/tab_contents/tab_contents_delegate.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/browser/tab_contents/tab_contents_delegate.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/browser/utility_process_host.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/common/content_switches.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/common/content_switches.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/common/sandbox_init_wrapper_win.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/common/sandbox_policy.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/common/view_messages.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/plugin/plugin_main.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/renderer/render_view.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/renderer/render_widget.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/renderer/render_widget.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/renderer/renderer_main.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/renderer/renderer_main_platform_delegate_win.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/content/utility/utility_main.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/JavaScriptCore/wtf/MainThread.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/JavaScriptCore/wtf/chromium/ChromiumThreading.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/JavaScriptCore/wtf/chromium/MainThreadChromium.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/bindings/generic/BindingSecurity.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/bindings/v8/V8Binding.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/bindings/v8/custom/V8EventCustom.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Attribute.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Attribute.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Element.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Event.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Event.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/EventNames.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/EventTarget.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/EventTarget.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/StyledElement.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Text.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dom/Text.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/Binding.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/Binding.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/SCDBConnection.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/ScriptBinding.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/TableObserver.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/TableObserver.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/ValueObserver.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/dvnci/ValueObserver.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/html/HTMLElement.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/loader/cache/CachedResource.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/loader/cache/CachedResource.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/loader/cache/CachedResourceLoader.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/loader/cache/CachedResourceLoader.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/loader/cache/CachedResourceRequest.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/page/Chrome.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/page/Chrome.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/page/ChromeClient.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/page/DOMWindow.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/page/FrameView.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/page/SecurityOrigin.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/page/WindowFeatures.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/page/WindowFeatures.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/rendering/svg/RenderSVGForeignObject.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/rendering/svg/RenderSVGResourceFilter.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/svg/SVGURIReference.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/svg/SVGURIReference.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebCore/svg/SVGUseElement.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebKit/chromium/public/WebKitClient.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebKit/chromium/public/WebWidgetClient.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebKit/chromium/src/ChromeClientImpl.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebKit/chromium/src/ChromeClientImpl.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/third_party/WebKit/Source/WebKit/chromium/src/ChromiumThreading.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/views/widget/native_widget_private.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/views/widget/native_widget_win.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/views/widget/native_widget_win.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/views/widget/widget.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/views/widget/widget.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/webkit/glue/webkitclient_impl.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/webkit/glue/webkitclient_impl.h"
+            ex="false"
+            tool="3"
+            flavor2="0">
+      </item>
+      <item path="../../include/chromium/src/webkit/tools/test_shell/test_shell_main.cc"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
     </conf>
   </confs>
 </configurationDescriptor>
