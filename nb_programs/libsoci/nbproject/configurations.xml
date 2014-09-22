@@ -61,12 +61,17 @@
     <itemPath>../../include/soci/values.cpp</itemPath>
     <itemPath>../../include/soci/values.h</itemPath>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>../../include/soci</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="nb_gcc_db_WIN32" type="3">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>MinGW|MinGW</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <ccTool>
@@ -76,6 +81,7 @@
           <incDir>
             <pElem>../../include/soci</pElem>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
         </ccTool>
@@ -253,6 +259,8 @@
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>MinGW|MinGW</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <ccTool>
@@ -261,6 +269,7 @@
           <incDir>
             <pElem>../../include/soci</pElem>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-mthreads</commandLine>
           <warningLevel>2</warningLevel>
@@ -439,6 +448,8 @@
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <ccTool>
@@ -446,6 +457,7 @@
           <incDir>
             <pElem>../../include/soci</pElem>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-fno-strict-aliasing -fPIC</commandLine>
         </ccTool>
@@ -623,6 +635,8 @@
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <ccTool>
@@ -631,6 +645,7 @@
           <incDir>
             <pElem>../../include/soci</pElem>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-fno-strict-aliasing -fPIC</commandLine>
           <warningLevel>2</warningLevel>
