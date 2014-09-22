@@ -25,11 +25,11 @@ namespace dvnci {
         class connect_db_task_test : public connect_db_task {
         public:
 
-            connect_db_task_test(num32 provider,const std::string& connectstring) : connect_db_task(provider,connectstring) {
+            connect_db_task_test(num32 provider,const std::string& connectstring) : connect_db_task(provider,connectstring,true,15) {
             };
             
-            virtual void event(const str_trenddef_map& val, dvnci::ns_error error) {
-                std::cout  << " error = " << error << std::endl;
+            virtual void event(const str_trenddef_map& val, const dvnci::dvncierror& error) {
+                std::cout <<  " error.cod = " << error.code() << " error.what = " << error.str() << std::endl;
                       for (str_trenddef_map::const_iterator itval = val.begin(); itval != val.end(); ++itval) {                
                             std::cout  <<  itval->first << " - " << itval->second.cod << std::endl;}                
             }
@@ -44,8 +44,9 @@ namespace dvnci {
                     dvnci::datetime stop) : trend_db_task(tag,start,stop){
             };
             
-            virtual void event(const result_trend_pair_map& val, dvnci::ns_error error) {
-                std::cout  << " error = " << error << std::endl;
+            virtual void event(const result_trend_pair_map& val, const dvnci::dvncierror& error) {
+                std::cout <<  " error.cod = " << error.code() << " error.what = " << error.str() << std::endl;
+				return;
                      for (result_trend_pair_map::const_iterator it = val.begin(); it != val.end(); ++it) {  
                      std::cout  << " ------------------------------------------------------------------------------- " << std::endl;    
                      std::cout  << " tag = " << it->first.name << " min = " << it->first.mineu << " nax = " << it->first.maxeu << std::endl;    
@@ -63,8 +64,8 @@ namespace dvnci {
             select_db_task_test(const std::string& req) : select_db_task(req){
             };
             
-            virtual void event(const sql_result_ptr& val, dvnci::ns_error error) {
-                     std::cout  << " error = " << error << std::endl; 
+            virtual void event(const sql_result_ptr& val, const dvnci::dvncierror& error) {
+                     std::cout <<  " error.cod = " << error.code() << " error.what = " << error.str() << std::endl;
                      std::cout  << "  " << "  " << std::endl;
                      std::cout  << " ------------------------------------------------------------------------------- " << std::endl;
                      for (sql_header_vect::const_iterator it = val->first.begin(); it != val->first.end(); ++it)
@@ -86,8 +87,8 @@ namespace dvnci {
                     dvnci::datetime stop, const std::string& filter="") : select_db_journal_task(start,stop,filter){
             };
             
-            virtual void event(const vect_journal_row_ptr& val, dvnci::ns_error error) {
-                std::cout  << " error = " << error << std::endl;
+            virtual void event(const vect_journal_row_ptr& val, const dvnci::dvncierror& error) {
+                std::cout <<  " error.cod = " << error.code() << " error.what = " << error.str() << std::endl;
                      for (vect_journal_row::const_iterator it = val->begin(); it != val->end(); ++it) {  
                      std::cout  << " ------------------------------------------------------------------------------- " << std::endl;    
                      std::cout  << " cod = " << it->index<< " tag = " << it->tag << " text = " << it->text << std::endl;}            
@@ -106,11 +107,15 @@ struct caller{
       ~caller(){
 	     std::cout << "caller destructor" << std::endl;};
       bool operator()(){
+		  		  try{
           while(terminate_){
           boost::xtime xt_loop;
           ex->call();
           addmillisec_to_now(xt_loop, 1000);
-          boost::thread::sleep(xt_loop);}
+		  boost::thread::sleep(xt_loop);}}
+		  catch(...){
+		      bool ggg=1;
+		  }
 		  return true;
       }
 	  void terminate(){
@@ -128,8 +133,10 @@ struct caller{
 	  dbchrome_terminated_thread(db_task_executor_ptr inf_): inf(inf_),th(inf_) {}
 
 	  ~dbchrome_terminated_thread(){
+
 	     inf->terminate();
          th.join();}
+   
 
   private:
 	  db_task_executor_ptr inf;
@@ -154,8 +161,8 @@ int main(int argc, char** argv)
        cout << "is connected" << endl;
 
 
-
-       //std::cout << testdrv->insert_trendef<dvnci::tagsbase_ptr>(intf) << std::endl;
+       con_str="host=ALEXEEV;database=test_1;user=postgres;password=1324";
+       std::cout << testdrv->insert_trendef<dvnci::tagsbase_ptr>(intf) << std::endl;
        /*datetime tm = now();
        tm=incmonth(tm,-2);
        datetime tmr = now();
@@ -173,7 +180,7 @@ int main(int argc, char** argv)
 
    }}
    
-   std::string quit_in;
+   /*std::string quit_in;
    connect_db_task_ptr  connlist = connect_db_task_ptr( new connect_db_task_test(dvnci::PROPERTY_DB_PROVIDER_POSTGRESS,con_str));
    db_task_executor_ptr func = db_task_executor_ptr(new db_task_executor(connlist));
    dbchrome_terminated_thread termth(func);
@@ -182,18 +189,18 @@ int main(int argc, char** argv)
    
    	   while ((std::cin >> quit_in)  && ((quit_in!="q") && (quit_in!="Q"))){
                if (quit_in!=""){
-                   /*str_set keys;
+                   str_set keys;
                    keys.insert("sys::p6");
                    keys.insert("sys::p5");
-                   trend_db_task_ptr tst = trend_db_task_ptr( new trend_db_task_test(keys, incday(now(), -4), now()));*/
-                   /*select_db_task_ptr tst = select_db_task_ptr( new select_db_task_test("select * from trenddef"));
-                   func->insert_select_task(tst);*/
-                   select_db_journal_task_ptr tst = select_db_journal_task_ptr( new select_db_journal_task_test(incday(now(), -4), now()));
-                   func->insert_journal_task(tst);
+                   trend_db_task_ptr tst = trend_db_task_ptr( new trend_db_task_test(keys, incday(now(), -1), now()));
+                   //select_db_task_ptr tst = select_db_task_ptr( new select_db_task_test("select * from trend"));
+                   func->insert_trend_task(tst);
+                   //select_db_journal_task_ptr tst = select_db_journal_task_ptr( new select_db_journal_task_test(incday(now(), -4), now()));
+                   //func->insert_journal_task(tst);
                }
            }
 	   clr.terminate();
-	   th2.join();
+	   th2.join();*/
 
    return EXIT_FAILURE;
 }
