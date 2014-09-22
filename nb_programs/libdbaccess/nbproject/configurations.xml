@@ -15,6 +15,9 @@
     <itemPath>../../include/dbaccess/dbpsgrdriver.cpp</itemPath>
     <itemPath>../../include/dbaccess/dbpsgrdriver.h</itemPath>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>../../include</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="nb_gcc_db_WIN32" type="3">
@@ -35,7 +38,7 @@
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
           <preprocessorList>
             <Elem>DVNCI_DEDUG</Elem>
-            <Elem>_WIN32_WINNT=0x0501</Elem>
+            <Elem>_WIN32_WINNT=0x0601</Elem>
           </preprocessorList>
         </ccTool>
         <archiverTool>
@@ -155,6 +158,7 @@
           <architecture>2</architecture>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
             <pElem>../../include/soci</pElem>
           </incDir>
           <commandLine>-fno-strict-aliasing</commandLine>
@@ -217,6 +221,7 @@
           <architecture>2</architecture>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
             <pElem>../../include/soci</pElem>
           </incDir>
           <commandLine>-fno-strict-aliasing</commandLine>
