@@ -18,6 +18,10 @@
     <itemPath>../../include/driverspec/modbus_protocol.cpp</itemPath>
     <itemPath>../../include/driverspec/modbus_protocol.h</itemPath>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>../../include_program/service_dvncimodbus</Elem>
+    <Elem>../../include/driverspec</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="nb_gcc_db_WIN32" type="1">
