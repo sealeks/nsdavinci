@@ -6,6 +6,7 @@
 #include <iec60870/iec60870_detail.h>
 
 
+
 namespace prot80670 {
 
     void millisec_to_now(boost::xtime& xt, std::size_t milsec) {
