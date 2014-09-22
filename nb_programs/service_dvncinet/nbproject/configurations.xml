@@ -10,6 +10,9 @@
     <itemPath>../../include_program/service_dvncinet/netserver.cpp</itemPath>
     <itemPath>../../include_program/service_dvncinet/netserver.h</itemPath>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>../../include/custom</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="nb_gcc_rl_WIN32" type="1">
@@ -30,6 +33,7 @@
           <developmentMode>5</developmentMode>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
           <preprocessorList>
@@ -113,6 +117,7 @@
           <developmentMode>5</developmentMode>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
           <preprocessorList>
@@ -198,6 +203,7 @@
           <architecture>2</architecture>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-fno-strict-aliasing</commandLine>
           <preprocessorList>
@@ -277,6 +283,7 @@
           <architecture>2</architecture>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-fno-strict-aliasing</commandLine>
         </ccTool>
