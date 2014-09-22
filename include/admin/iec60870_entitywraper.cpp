@@ -56,25 +56,25 @@ namespace dvnci {
             PROPERTY_IEC60870_POLL};
 
         iec60870Link::iec60870Link() : abstractpropertyeditor(TYPE_PE_LIST, "iec60870Link") {
-            addpropertylist(static_cast<propidtype> (dvnci::prot80670::lasz_none));
-            addpropertylist(static_cast<propidtype> (dvnci::prot80670::lasz_one));
-            addpropertylist(static_cast<propidtype> (dvnci::prot80670::lasz_double));
+            addpropertylist(static_cast<propidtype> (prot80670::lasz_none));
+            addpropertylist(static_cast<propidtype> (prot80670::lasz_one));
+            addpropertylist(static_cast<propidtype> (prot80670::lasz_double));
         }
 
         iec60870COT::iec60870COT() : abstractpropertyeditor(TYPE_PE_LIST, "iec60870COT") {
-            addpropertylist(static_cast<propidtype> (dvnci::prot80670::ctsz_one));
-            addpropertylist(static_cast<propidtype> (dvnci::prot80670::ctsz_double));
+            addpropertylist(static_cast<propidtype> (prot80670::ctsz_one));
+            addpropertylist(static_cast<propidtype> (prot80670::ctsz_double));
         }
 
         iec60870Selector::iec60870Selector() : abstractpropertyeditor(TYPE_PE_LIST, "iec60870Selector") {
-            addpropertylist(static_cast<propidtype> (dvnci::prot80670::select_one));
-            addpropertylist(static_cast<propidtype> (dvnci::prot80670::select_double));
+            addpropertylist(static_cast<propidtype> (prot80670::select_one));
+            addpropertylist(static_cast<propidtype> (prot80670::select_double));
         }
 
         iec60870IOA::iec60870IOA() : abstractpropertyeditor(TYPE_PE_LIST, "iec60870IOA") {
-            addpropertylist(static_cast<propidtype> (dvnci::prot80670::ioa_one));
-            addpropertylist(static_cast<propidtype> (dvnci::prot80670::ioa_double));
-            addpropertylist(static_cast<propidtype> (dvnci::prot80670::ioa_three));
+            addpropertylist(static_cast<propidtype> (prot80670::ioa_one));
+            addpropertylist(static_cast<propidtype> (prot80670::ioa_double));
+            addpropertylist(static_cast<propidtype> (prot80670::ioa_three));
         }
 
         iec60870Protocol::iec60870Protocol() : abstractpropertyeditor(TYPE_PE_LIST, "iec60870Protocol") {
@@ -110,9 +110,9 @@ namespace dvnci {
 
                 case PROPERTY_IEC60870_PROT:
                 {
-                    dvnci::prot80670::IEC_PROTOCOL prt = dvnci::prot80670::protocol_from(str_to<protocoltype>(val));
+                    prot80670::IEC_PROTOCOL prt = prot80670::protocol_from(str_to<protocoltype>(val));
                     switch (prt) {
-                        case dvnci::prot80670::IEC_104:
+                        case prot80670::IEC_104:
                         {
                             _interface->group(id).chanaltype(NT_CHTP_TCP_IP);
                             break;
@@ -122,17 +122,17 @@ namespace dvnci {
                             _interface->group(id).chanaltype(NT_CHTP_RS232_4XX);
                         }
                     }
-                    _interface->group(id).protocol(static_cast<protocoltype> (dvnci::prot80670::protocol_from(str_to<protocoltype>(val))));
+                    _interface->group(id).protocol(static_cast<protocoltype> (prot80670::protocol_from(str_to<protocoltype>(val))));
                     break;
                 }
 
                 case PROPERTY_IEC60870_LINKADR:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         if (val_ < 3) {
-                            opt.addr(static_cast<dvnci::prot80670::ADDRESS_sizetype> (val_ < 3 ? val_ : 0));
+                            opt.addr(static_cast<prot80670::ADDRESS_sizetype> (val_ < 3 ? val_ : 0));
                             _interface->group(id).option(opt.to_value());
                         }
                     }
@@ -141,11 +141,11 @@ namespace dvnci {
 
                 case PROPERTY_IEC60870_COT:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         if (val_ < 3) {
-                            opt.cot(static_cast<dvnci::prot80670::COT_sizetype> (((val_) &&(val_ < 3)) ? val_ : 1));
+                            opt.cot(static_cast<prot80670::COT_sizetype> (((val_) &&(val_ < 3)) ? val_ : 1));
                             _interface->group(id).option(opt.to_value());
                         }
                     }
@@ -154,11 +154,11 @@ namespace dvnci {
 
                 case PROPERTY_IEC60870_SECT:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         if (val_ < 3) {
-                            opt.sector(static_cast<dvnci::prot80670::SECTOR_sizetype> (val_ < 3 ? (val_ ? val_ : 1) : 2));
+                            opt.sector(static_cast<prot80670::SECTOR_sizetype> (val_ < 3 ? (val_ ? val_ : 1) : 2));
                             _interface->group(id).option(opt.to_value());
                         }
                     }
@@ -167,11 +167,11 @@ namespace dvnci {
 
                 case PROPERTY_IEC60870_IOA:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         if (val_ < 4) {
-                            opt.ioa(static_cast<dvnci::prot80670::IOA_sizetype> (val_ < 4 ? (val_ ? val_ : 1) : 3));
+                            opt.ioa(static_cast<prot80670::IOA_sizetype> (val_ < 4 ? (val_ ? val_ : 1) : 3));
                             _interface->group(id).option(opt.to_value());
                         }
                     }
@@ -180,7 +180,7 @@ namespace dvnci {
 
                 case PROPERTY_GR_TCNT:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         opt.trycount(val_);
@@ -191,7 +191,7 @@ namespace dvnci {
 
                 case PROPERTY_IEC60870_T0:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         opt.t0(val_);
@@ -203,7 +203,7 @@ namespace dvnci {
 
                 case PROPERTY_IEC60870_T1:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         opt.t1(val_);
@@ -214,7 +214,7 @@ namespace dvnci {
 
                 case PROPERTY_IEC60870_T2:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         opt.t2(val_);
@@ -225,7 +225,7 @@ namespace dvnci {
 
                 case PROPERTY_IEC60870_T3:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         opt.t3(val_);
@@ -236,7 +236,7 @@ namespace dvnci {
 
                 case PROPERTY_IEC60870_K:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         opt.k(val_);
@@ -247,7 +247,7 @@ namespace dvnci {
 
                 case PROPERTY_IEC60870_W:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         opt.w(val_);
@@ -258,7 +258,7 @@ namespace dvnci {
 
                 case PROPERTY_IEC60870_PDULEN:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         opt.pdu_len(val_);
@@ -269,7 +269,7 @@ namespace dvnci {
 
                 case PROPERTY_IEC60870_TSYNC:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     unum16 val_ = 0;
                     if (str_to<unum16>(val, val_)) {
                         opt.tymesync(val_);
@@ -279,7 +279,7 @@ namespace dvnci {
                 }
                 case PROPERTY_IEC60870_SYNC:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     opt.sync(val != "0");
                     _interface->group(id).option(opt.to_value());
                     break;
@@ -287,7 +287,7 @@ namespace dvnci {
 
                 case PROPERTY_IEC60870_POLL:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     opt.poll(val != "0");
                     _interface->group(id).option(opt.to_value());
                     break;
@@ -314,10 +314,10 @@ namespace dvnci {
 
                 case PROPERTY_IEC60870_PROT:
                 {
-                    protocoltype val_ = static_cast<protocoltype> (dvnci::prot80670::protocol_from(_interface->group(id).protocol()));
-                    dvnci::prot80670::IEC_PROTOCOL prt = dvnci::prot80670::protocol_from(_interface->group(id).protocol());
+                    protocoltype val_ = static_cast<protocoltype> (prot80670::protocol_from(_interface->group(id).protocol()));
+                    prot80670::IEC_PROTOCOL prt = prot80670::protocol_from(_interface->group(id).protocol());
                     switch (prt) {
-                        case dvnci::prot80670::IEC_104:
+                        case prot80670::IEC_104:
                         {
                             if (_interface->group(id).chanaltype() == NT_CHTP_TCP_IP) {
                                 return to_str<protocoltype>(val_);
@@ -337,105 +337,105 @@ namespace dvnci {
 
                 case PROPERTY_IEC60870_LINKADR:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.addr()));
                     break;
                 }
 
                 case PROPERTY_IEC60870_COT:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.cot()));
                     break;
                 }
 
                 case PROPERTY_IEC60870_SECT:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.sector()));
                     break;
                 }
 
                 case PROPERTY_IEC60870_IOA:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.ioa()));
                     break;
                 }
 
                 case PROPERTY_GR_TCNT:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.trycount()));
                     break;
                 }
 
                 case PROPERTY_IEC60870_T0:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.t0()));
                     break;
                 }
 
                 case PROPERTY_IEC60870_T1:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.t1()));
                     break;
                 }
 
                 case PROPERTY_IEC60870_T2:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.t2()));
                     break;
                 }
 
                 case PROPERTY_IEC60870_T3:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.t3()));
                     break;
                 }
 
                 case PROPERTY_IEC60870_K:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.k()));
                     break;
                 }
 
                 case PROPERTY_IEC60870_W:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.w()));
                     break;
                 }
 
                 case PROPERTY_IEC60870_PDULEN:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.pdu_len()));
                     break;
                 }
 
                 case PROPERTY_IEC60870_TSYNC:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.tymesync()));
                     break;
                 }
 
                 case PROPERTY_IEC60870_SYNC:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.sync() ? 1 : 0));
                     break;
                 }
 
                 case PROPERTY_IEC60870_POLL:
                 {
-                    dvnci::prot80670::iec_option opt(_interface->group(id).option());
+                    prot80670::iec_option opt(_interface->group(id).option());
                     return to_str<unum16>(static_cast<unum16> (opt.poll() ? 1 : 0));
                     break;
                 }
@@ -455,16 +455,16 @@ namespace dvnci {
         }
 
         void iec60870groupwraper::setchaneltp_and_prtcl(chnltype tp, num32 prtcl) {
-            dvnci::prot80670::IEC_PROTOCOL prt = dvnci::prot80670::protocol_from(prtcl);
+            prot80670::IEC_PROTOCOL prt = prot80670::protocol_from(prtcl);
             REMOVE_PROPERTYS(iec_propmain_101_add);
             REMOVE_PROPERTYS(iec_propmain_104_add);
             switch (prt) {
-                case dvnci::prot80670::IEC_101:
+                case prot80670::IEC_101:
                 {
                     ADD_PROPERTYS(iec_propmain_101_add);
                     break;
                 }
-                case dvnci::prot80670::IEC_104:
+                case prot80670::IEC_104:
                 {
                     ADD_PROPERTYS(iec_propmain_104_add);
                     break;
@@ -482,7 +482,7 @@ namespace dvnci {
             prtcl_settmp tmpprtcl;
             num32 prtclval_ = 0;
             for (entity_map::const_iterator it = vl.begin(); it != vl.end(); ++it) {
-                prtclval_ = static_cast<protocoltype> (dvnci::prot80670::protocol_from(_interface->group(it->first).protocol()));
+                prtclval_ = static_cast<protocoltype> (prot80670::protocol_from(_interface->group(it->first).protocol()));
                 tmpprtcl.insert(prtclval_);
             }
             setchaneltp_and_prtcl(0, prtclval_);
