@@ -9,7 +9,6 @@
     <itemPath>../../include_program/app_test/main.cpp</itemPath>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../include</Elem>
     <Elem>../../include_program/app_test</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
