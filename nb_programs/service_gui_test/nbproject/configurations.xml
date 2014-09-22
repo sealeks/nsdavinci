@@ -31,6 +31,7 @@
           <developmentMode>5</developmentMode>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
           <preprocessorList>
@@ -64,6 +65,7 @@
             <linkerLibLibItem>uuid</linkerLibLibItem>
             <linkerLibLibItem>wsock32</linkerLibLibItem>
             <linkerLibLibItem>ws2_32</linkerLibLibItem>
+            <linkerLibLibItem>stdc++</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -103,6 +105,7 @@
           <developmentMode>5</developmentMode>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
           <preprocessorList>
@@ -137,6 +140,7 @@
             <linkerLibLibItem>uuid</linkerLibLibItem>
             <linkerLibLibItem>wsock32</linkerLibLibItem>
             <linkerLibLibItem>ws2_32</linkerLibLibItem>
+            <linkerLibLibItem>stdc++</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -177,6 +181,7 @@
           <architecture>2</architecture>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-fno-strict-aliasing</commandLine>
           <preprocessorList>
@@ -246,6 +251,7 @@
           <architecture>2</architecture>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
           </incDir>
           <commandLine>-fno-strict-aliasing</commandLine>
         </ccTool>
