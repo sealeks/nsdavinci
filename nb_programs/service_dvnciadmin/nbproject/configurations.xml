@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="79">
+<configurationDescriptor version="88">
   <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -8,18 +8,24 @@
     </logicalFolder>
     <itemPath>../../include_program/service_dvnciadmin/main.cpp</itemPath>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>../../include_program/service_dvnciadmin</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="nb_gcc_db_WIN32" type="1">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>MinGW|MinGW</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <cTool>
           <developmentMode>5</developmentMode>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
             <pElem>../../include/pugixml</pElem>
           </incDir>
         </cTool>
@@ -27,12 +33,13 @@
           <commandlineTool>g++</commandlineTool>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
             <pElem>../../include/pugixml</pElem>
           </incDir>
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
           <preprocessorList>
-            <Elem>_WIN32_WINNT=0x0501</Elem>
             <Elem>DVNCI_DEDUG</Elem>
+            <Elem>_WIN32_WINNT=0x0601</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
@@ -77,17 +84,25 @@
                             group="bin"/>
         </packFileList>
       </packaging>
+      <item path="../../include_program/service_dvnciadmin/main.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
     </conf>
     <conf name="nb_gcc_rl_WIN32" type="1">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>MinGW|MinGW</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <cTool>
           <developmentMode>5</developmentMode>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
             <pElem>../../include/pugixml</pElem>
           </incDir>
         </cTool>
@@ -95,11 +110,12 @@
           <commandlineTool>g++</commandlineTool>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
             <pElem>../../include/pugixml</pElem>
           </incDir>
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
           <preprocessorList>
-            <Elem>_WIN32_WINNT=0x0501</Elem>
+            <Elem>_WIN32_WINNT=0x0601</Elem>
           </preprocessorList>
           <warningLevel>2</warningLevel>
         </ccTool>
@@ -145,11 +161,18 @@
                             group="bin"/>
         </packFileList>
       </packaging>
+      <item path="../../include_program/service_dvnciadmin/main.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
     </conf>
     <conf name="nb_gcc_db_LIN64" type="1">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <cTool>
@@ -163,6 +186,7 @@
           <architecture>2</architecture>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
             <pElem>../../include/pugixml</pElem>
           </incDir>
           <commandLine>-fno-strict-aliasing</commandLine>
@@ -208,11 +232,18 @@
                             group="bin"/>
         </packFileList>
       </packaging>
+      <item path="../../include_program/service_dvnciadmin/main.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
     </conf>
     <conf name="nb_gcc_rl_LIN64" type="1">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <cTool>
@@ -225,6 +256,7 @@
           <architecture>2</architecture>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
             <pElem>../../include/pugixml</pElem>
           </incDir>
           <commandLine>-fno-strict-aliasing</commandLine>
@@ -270,6 +302,11 @@
                             group="bin"/>
         </packFileList>
       </packaging>
+      <item path="../../include_program/service_dvnciadmin/main.cpp"
+            ex="false"
+            tool="1"
+            flavor2="0">
+      </item>
     </conf>
   </confs>
 </configurationDescriptor>
