@@ -90,19 +90,19 @@ namespace dvnci {
             map_.insert(wstringtranslate_pair("properties.1361", "COT size"));            
             map_.insert(wstringtranslate_pair("properties.1362", "Sector size"));       
             map_.insert(wstringtranslate_pair("properties.1363", "IOA size"));   
-            map_.insert(wstringtranslate_pair("properties.1364", "t0"));       
-            map_.insert(wstringtranslate_pair("properties.1365", "t1"));            
-            map_.insert(wstringtranslate_pair("properties.1366", "t2"));       
-            map_.insert(wstringtranslate_pair("properties.1367", "t3"));     
+            map_.insert(wstringtranslate_pair("properties.1364", "t0 (sec)"));       
+            map_.insert(wstringtranslate_pair("properties.1365", "t1 (sec)"));            
+            map_.insert(wstringtranslate_pair("properties.1366", "t2 (sec)"));       
+            map_.insert(wstringtranslate_pair("properties.1367", "t3 (sec)"));     
             map_.insert(wstringtranslate_pair("properties.1368", "k"));       
             map_.insert(wstringtranslate_pair("properties.1369", "w"));             
 
             map_.insert(wstringtranslate_pair("properties.1370", "PDUSIZE"));   
-            map_.insert(wstringtranslate_pair("properties.1371", "T sync"));       
+            map_.insert(wstringtranslate_pair("properties.1371", "T sync(sec)"));       
             map_.insert(wstringtranslate_pair("properties.1372", "sync"));            
-            map_.insert(wstringtranslate_pair("properties.1373", "To read"));       
-            map_.insert(wstringtranslate_pair("properties.1374", "To poll"));     
-            map_.insert(wstringtranslate_pair("properties.1375", "T react"));       
+            map_.insert(wstringtranslate_pair("properties.1373", "To read(msec)"));       
+            map_.insert(wstringtranslate_pair("properties.1374", "To poll(msec)"));     
+            map_.insert(wstringtranslate_pair("properties.1375", "T react(msec)"));       
             map_.insert(wstringtranslate_pair("properties.1376", "Inititalize"));   
             map_.insert(wstringtranslate_pair("properties.1377", "Polling"));
 

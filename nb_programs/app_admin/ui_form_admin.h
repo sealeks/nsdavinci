@@ -166,8 +166,8 @@ public:
         treeframe0->setMaximumSize(QSize(300, 16777215));
         treeframe0->setAutoFillBackground(true);
         verticalLayout = new QVBoxLayout(treeframe0);
-        verticalLayout->setContentsMargins(1, 1, 1, 1);
         verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        verticalLayout->setContentsMargins(1, 1, 1, 1);
         horizontalLayout_6 = new QHBoxLayout();
         horizontalLayout_6->setObjectName(QStringLiteral("horizontalLayout_6"));
         btnkindview = new QToolButton(treeframe0);
@@ -401,8 +401,8 @@ public:
         treeframe1->setSizePolicy(sizePolicy2);
         treeframe1->setMinimumSize(QSize(200, 0));
         verticalLayout_6 = new QVBoxLayout(treeframe1);
-        verticalLayout_6->setContentsMargins(1, 1, 1, 1);
         verticalLayout_6->setObjectName(QStringLiteral("verticalLayout_6"));
+        verticalLayout_6->setContentsMargins(1, 1, 1, 1);
         horizontalLayout_4 = new QHBoxLayout();
         horizontalLayout_4->setSpacing(1);
         horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
@@ -530,8 +530,8 @@ public:
         treeframe2->setMinimumSize(QSize(200, 0));
         treeframe2->setProperty("flat", QVariant(true));
         verticalLayout_7 = new QVBoxLayout(treeframe2);
-        verticalLayout_7->setContentsMargins(1, 1, 1, 1);
         verticalLayout_7->setObjectName(QStringLiteral("verticalLayout_7"));
+        verticalLayout_7->setContentsMargins(1, 1, 1, 1);
         horizontalLayout_3 = new QHBoxLayout();
         horizontalLayout_3->setSpacing(1);
         horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
@@ -664,8 +664,8 @@ public:
         propertyframe->setSizePolicy(sizePolicy1);
         propertyframe->setMinimumSize(QSize(340, 0));
         verticalLayout_2 = new QVBoxLayout(propertyframe);
-        verticalLayout_2->setContentsMargins(1, 1, 1, 1);
         verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
+        verticalLayout_2->setContentsMargins(1, 1, 1, 1);
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setSpacing(1);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
@@ -752,8 +752,8 @@ public:
         viewframe->setSizePolicy(sizePolicy3);
         viewframe->setMinimumSize(QSize(340, 0));
         verticalLayout_3 = new QVBoxLayout(viewframe);
-        verticalLayout_3->setContentsMargins(1, 1, 1, 1);
         verticalLayout_3->setObjectName(QStringLiteral("verticalLayout_3"));
+        verticalLayout_3->setContentsMargins(1, 1, 1, 1);
         horizontalLayout_2 = new QHBoxLayout();
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
         btnsetfilterview = new QToolButton(viewframe);
@@ -856,6 +856,9 @@ public:
         palette1.setBrush(QPalette::Disabled, QPalette::Base, brush3);
         palette1.setBrush(QPalette::Disabled, QPalette::AlternateBase, brush5);
         tableview->setPalette(palette1);
+        QFont font;
+        font.setPointSize(7);
+        tableview->setFont(font);
         tableview->setEditTriggers(QAbstractItemView::SelectedClicked);
         tableview->setAlternatingRowColors(false);
         tableview->setSelectionMode(QAbstractItemView::SingleSelection);
@@ -948,7 +951,7 @@ public:
         form_admin->setCentralWidget(centralwidget);
         menubar = new QMenuBar(form_admin);
         menubar->setObjectName(QStringLiteral("menubar"));
-        menubar->setGeometry(QRect(0, 0, 1098, 20));
+        menubar->setGeometry(QRect(0, 0, 1098, 21));
         form_admin->setMenuBar(menubar);
         statusbar = new QStatusBar(form_admin);
         statusbar->setObjectName(QStringLiteral("statusbar"));
