@@ -28,7 +28,7 @@
     <itemPath>../../include/custom/remotenetintf.h</itemPath>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../include</Elem>
+    <Elem>../../include/custom</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
