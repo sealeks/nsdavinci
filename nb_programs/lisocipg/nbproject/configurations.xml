@@ -25,19 +25,26 @@
     <itemPath>../../include/soci/backends/postgresql/vector-into-type.cpp</itemPath>
     <itemPath>../../include/soci/backends/postgresql/vector-use-type.cpp</itemPath>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>../../include/soci</Elem>
+    <Elem>../../include/${POSTGRES_INCLUDE}</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="nb_gcc_db_WIN32" type="2">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>MinGW|MinGW</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <ccTool>
           <developmentMode>5</developmentMode>
           <commandlineTool>g++</commandlineTool>
           <incDir>
-            <pElem>C:/Program Files (x86)/PostgreSQL/8.3/include</pElem>
+            <pElem>${POSTGRES_INCLUDE}</pElem>
+            <pElem>${BOOST_DIR}</pElem>
             <pElem>../../include</pElem>
             <pElem>../../include/soci</pElem>
           </incDir>
@@ -125,14 +132,17 @@
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>MinGW|MinGW</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <ccTool>
           <developmentMode>5</developmentMode>
           <commandlineTool>g++</commandlineTool>
           <incDir>
-            <pElem>C:/Program Files (x86)/PostgreSQL/8.3/include</pElem>
+            <pElem>${POSTGRES_INCLUDE}</pElem>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
             <pElem>../../include/soci</pElem>
           </incDir>
           <commandLine>-mthreads</commandLine>
@@ -216,6 +226,8 @@
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <cTool>
@@ -229,6 +241,7 @@
           <architecture>2</architecture>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
             <pElem>../../include/soci</pElem>
             <pElem>/usr/include/postgresql</pElem>
           </incDir>
@@ -312,6 +325,8 @@
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <compileType>
         <cTool>
@@ -326,6 +341,7 @@
           <architecture>2</architecture>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
             <pElem>../../include/soci</pElem>
             <pElem>/usr/include/postgresql</pElem>
           </incDir>
