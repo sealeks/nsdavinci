@@ -15,7 +15,6 @@
     <itemPath>../../include_program/app_writetrenddef/writebase.cpp</itemPath>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../include</Elem>
     <Elem>../../include_program/app_writetrenddef</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
