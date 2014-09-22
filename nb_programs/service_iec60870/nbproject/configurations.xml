@@ -16,6 +16,9 @@
     <itemPath>../../include_program/service_iec60870/extiec60870intf.h</itemPath>
     <itemPath>../../include_program/service_iec60870/main.cpp</itemPath>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>../../include_program/service_iec60870</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="nb_gcc_db_WIN32" type="1">
