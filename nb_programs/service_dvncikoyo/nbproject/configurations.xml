@@ -22,6 +22,7 @@
   </logicalFolder>
   <sourceRootList>
     <Elem>../../include_program/service_dvncikoyo</Elem>
+    <Elem>../../include/driverspec</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
