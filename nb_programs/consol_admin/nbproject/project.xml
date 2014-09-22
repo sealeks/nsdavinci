@@ -10,7 +10,6 @@
             <sourceEncoding>UTF-8</sourceEncoding>
             <make-dep-projects/>
             <sourceRootList>
-                <sourceRootElem>../../include</sourceRootElem>
                 <sourceRootElem>../../include_program/consol_admin</sourceRootElem>
             </sourceRootList>
             <confList>
