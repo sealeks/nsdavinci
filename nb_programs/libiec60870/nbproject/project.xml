@@ -12,7 +12,6 @@
             <make-dep-projects/>
             <sourceRootList>
                 <sourceRootElem>../../include</sourceRootElem>
-                <sourceRootElem>../../include_program/service_iec60870</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

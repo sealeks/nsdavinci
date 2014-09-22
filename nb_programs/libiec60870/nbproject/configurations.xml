@@ -25,7 +25,6 @@
   </logicalFolder>
   <sourceRootList>
     <Elem>../../include</Elem>
-    <Elem>../../include_program/service_iec60870</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
