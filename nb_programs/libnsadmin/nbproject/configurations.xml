@@ -38,7 +38,7 @@
     <itemPath>../../include/admin/remoteadminintf.h</itemPath>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../include</Elem>
+    <Elem>../../include/admin</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
