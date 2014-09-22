@@ -11,11 +11,12 @@
     <itemPath>../../include_program/service_mms/main.cpp</itemPath>
     <itemPath>../../include_program/service_mms/mmsintf.cpp</itemPath>
     <itemPath>../../include_program/service_mms/mmsintf.h</itemPath>
-    <itemPath>../../include_program/service_mms/mmsioclient.cpp</itemPath>
-    <itemPath>../../include_program/service_mms/mmsioclient.h</itemPath>
     <itemPath>../../include_program/service_mms/mmsserver.cpp</itemPath>
     <itemPath>../../include_program/service_mms/mmsserver.h</itemPath>
   </logicalFolder>
+  <sourceRootList>
+    <Elem>../../include_program/service_mms</Elem>
+  </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
     <conf name="nb_gcc_rl_WIN32" type="1">
@@ -36,6 +37,7 @@
           <developmentMode>5</developmentMode>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
             <pElem>../../../itu-t/include</pElem>
           </incDir>
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
@@ -116,16 +118,6 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="../../include_program/service_mms/mmsioclient.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_mms/mmsioclient.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="../../include_program/service_mms/mmsserver.cpp"
             ex="false"
             tool="1"
@@ -155,12 +147,13 @@
           <developmentMode>5</developmentMode>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
             <pElem>../../../itu-t/include</pElem>
           </incDir>
           <commandLine>-mthreads -fno-strict-aliasing</commandLine>
           <preprocessorList>
             <Elem>DVNCI_DEDUG</Elem>
-            <Elem>_WIN32_WINNT=0x0601</Elem>
+            <Elem>_WIN32_WINNT=0x0501</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
@@ -235,16 +228,6 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="../../include_program/service_mms/mmsioclient.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_mms/mmsioclient.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="../../include_program/service_mms/mmsserver.cpp"
             ex="false"
             tool="1"
@@ -275,6 +258,8 @@
           <architecture>2</architecture>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
+            <pElem>../../../itu-t/include</pElem>
           </incDir>
           <commandLine>-fno-strict-aliasing</commandLine>
           <preprocessorList>
@@ -345,16 +330,6 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="../../include_program/service_mms/mmsioclient.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_mms/mmsioclient.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
       <item path="../../include_program/service_mms/mmsserver.cpp"
             ex="false"
             tool="1"
@@ -384,6 +359,8 @@
           <architecture>2</architecture>
           <incDir>
             <pElem>../../include</pElem>
+            <pElem>${BOOST_DIR}</pElem>
+            <pElem>../../../itu-t/include</pElem>
           </incDir>
           <commandLine>-fno-strict-aliasing</commandLine>
         </ccTool>
@@ -446,16 +423,6 @@
             flavor2="0">
       </item>
       <item path="../../include_program/service_mms/mmsintf.h"
-            ex="false"
-            tool="3"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_mms/mmsioclient.cpp"
-            ex="false"
-            tool="1"
-            flavor2="0">
-      </item>
-      <item path="../../include_program/service_mms/mmsioclient.h"
             ex="false"
             tool="3"
             flavor2="0">
