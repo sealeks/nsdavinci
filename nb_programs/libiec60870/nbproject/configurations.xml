@@ -24,7 +24,7 @@
     <itemPath>../../include/iec60870/iec60870_protocol.h</itemPath>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../include</Elem>
+    <Elem>../../include/iec60870</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
