@@ -43,10 +43,12 @@ namespace dvnci {
         }
 
         void extiec60870intf::execute60870(device_address dev, const boost::system::error_code& err) {
+            set_device_state(dev, FULL_VALID  ,err !=prot80670::ERROR_NULL ? ERROR_NONET_CONNECTED : 0);
             error(ERROR_NONET_CONNECTED);
         };
 
         void extiec60870intf::execute60870(const boost::system::error_code& err) {
+            set_device_state(FULL_VALID  ,err !=prot80670::ERROR_NULL ? ERROR_NONET_CONNECTED : 0);
             error(ERROR_NONET_CONNECTED);
         }
 
@@ -66,10 +68,14 @@ namespace dvnci {
 
         ns_error extiec60870intf::connect_impl() {
             try {
+                iec_option opt(intf->groups()->option(groups().empty() ? group() : (*groups().begin())));
+                indx_set tmpset;
+                tmpset.insert(group());
+                init_device(groups().empty() ? tmpset : groups());                
                 if (!syncoption()) {
+                    set_devices(false,FULL_VALID);
                     if (!thread_io) {
                         IEC_PROTOCOL proto = prot80670::protocol_from(intf->groups()->link(groups().empty() ? group() : (*groups().begin())).protocol());
-                        iec_option opt(intf->groups()->option(groups().empty() ? group() : (*groups().begin())));
                         switch (proto) {
                             case prot80670::IEC_104:
                             {
@@ -89,7 +95,7 @@ namespace dvnci {
                     state_ = connected;
                     return error(pm_connected() ? 0 : ERROR_IO_LINK_NOT_CONNECTION);
                 } else
-                    error(ERROR_IO_NOSYNC_LINK);
+                    set_devices_state(FULL_VALID ,ERROR_IO_NOSYNC_LINK);
             } catch (...) {
             }
             state_ = disconnected;
@@ -222,6 +228,54 @@ namespace dvnci {
                 chnlnumtype chnm, const iec_option& opt, iec60870_data_listener_ptr listr) {
             return iec60870_factory::create(prot, chnm, opt, listr);
         }
+
+        void extiec60870intf::init_device(const indx_set& vl) {
+            devices_.clear();
+            for (indx_set::const_iterator it = vl.begin(); it != vl.end(); ++it)
+                devices_.insert(device_pair((linkaddr() ? intf->groups()->devnum(*it) : 0), *it));
+        }
+
+        void extiec60870intf::set_device_state(devnumtype dev, vlvtype valid, dvnci::dvncierror err) {
+            device_map::const_iterator fit = devices_.find(dev);
+            if (fit != devices_.end()) {
+                intf->groups()->error(fit->second, err);
+                intf->groups()->active(fit->second, (!valid || err) ? false : true);
+                intf->groups()->valid(fit->second, (valid == 1) ? FULL_VALID : valid);
+                if (!valid || err)
+                    intf->offgroup(fit->second);
+            }
+        }
+
+        void extiec60870intf::set_devices_state(vlvtype valid, dvnci::dvncierror err) {
+            for (device_map::const_iterator fit = devices_.begin(); fit != devices_.end(); ++fit) {
+                intf->groups()->error(fit->second, err);
+                intf->groups()->active(fit->second, (!valid || err) ? false : true);
+                intf->groups()->valid(fit->second, (valid == 1) ? FULL_VALID : valid);
+                if (!valid || err)
+                    intf->offgroup(fit->second);
+            }
+        }          
+        
+        void extiec60870intf::set_device(devnumtype dev, bool state, vlvtype valid) {
+            device_map::const_iterator fit= devices_.find(dev);
+            if (fit != devices_.end()) {            
+                intf->groups()->active(fit->second, state);
+                intf->groups()->valid(fit->second, valid ? FULL_VALID : NULL_VALID);
+                intf->groups()->error(fit->second, 0);
+                if (!state)
+                    intf->offgroup(fit->second);
+            }               
+        }   
+        
+        void extiec60870intf::set_devices(bool state, vlvtype valid) {            
+            for (device_map::const_iterator fit= devices_.begin(); fit != devices_.end(); ++fit){
+                intf->groups()->active(fit->second, state);
+                intf->groups()->valid(fit->second, valid ? FULL_VALID : NULL_VALID);
+                intf->groups()->error(fit->second, 0);
+                if (!state)
+                    intf->offgroup(fit->second);
+            }               
+        }           
 
         bool extiec60870intf::pm_connected() const {
             return ((thread_io) && (thread_io->pm()->state() == prot80670::iec60870_PM::connected));
