@@ -811,11 +811,6 @@ namespace prot80670 {
             connected, disconnected
         };
 
-        enum PMState {
-
-            noconnected, noaciveted, activated, todisconnect
-        };
-
         iec60870_PM(const iec_option& opt, timeout_type tout, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr());
 
         virtual ~iec60870_PM();
@@ -824,15 +819,10 @@ namespace prot80670 {
             return state_;
         }
 
-        PMState pmstate() const {
-            return pmstate_;
-        }
 
         boost::system::error_code error() const {
             return error_cod;
         }
-
-        void pmstate(PMState vl);
 
         virtual bool operator()();
 
@@ -942,7 +932,6 @@ namespace prot80670 {
         volatile bool terminate_;
         mutable bool interrupt_;
         volatile State state_;
-        volatile PMState pmstate_;
         boost::system::error_code error_cod;
         timeout_type timout;
         timeout_type synctimout;

@@ -669,7 +669,6 @@ namespace prot80670 {
             }
             if (!error_cod) {
                 state_ = connected;
-                pmstate_ = activated;
             } else {
             }
 

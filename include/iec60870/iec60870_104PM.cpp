@@ -219,7 +219,7 @@ namespace prot80670 {
     iec60870_PM(opt, opt.t0()*1000, listr),
     socket_(io_service_), t1_timer(io_service_), PM_104_T1(opt.t1()), t2_timer(io_service_), PM_104_T2(opt.t2()), t3_timer(io_service_), PM_104_T3(opt.t3()),
     t0_state(false), t1_state(false), t1_progress(false), t2_state(false), t2_progress(false), t3_state(false),
-    host(hst), port(prt), tx_(0), rx_(0), w_(0), k_fct(opt.k()), w_fct(opt.w()) {
+    host(hst), port(prt), tx_(0), rx_(0), w_(0), k_fct(opt.k()), w_fct(opt.w()), to_disconnect_(false) {
     }
 
     void iec60870_104PMLink::connect() {
@@ -313,7 +313,6 @@ namespace prot80670 {
 
         if (!err) {
             tmout_timer.cancel();
-            pmstate(noaciveted);
             send(apdu_104::STARTDTact);
         } else
             if (endpoint_iterator != boost::asio::ip::tcp::resolver::iterator()) {
@@ -378,8 +377,8 @@ namespace prot80670 {
 
     void iec60870_104PMLink::check_work_available() {
         if (need_disconnect_) {
-            if (pmstate() != todisconnect) {
-                pmstate(todisconnect);
+            if (!to_disconnect_) {
+                to_disconnect_ = true;
                 send(apdu_104::STOPDTact);
                 receive();
             }
@@ -480,13 +479,11 @@ namespace prot80670 {
             case apdu_104::STARTDTact:
             {
                 send(apdu_104::STARTDTcon);
-                pmstate(noaciveted);
                 return true;
             }
             case apdu_104::STARTDTcon:
             {
                 state_ = connected;
-                pmstate(activated);
                 return false;
             }
             case apdu_104::STOPDTact:

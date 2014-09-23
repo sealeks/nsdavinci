@@ -489,16 +489,13 @@ namespace prot80670 {
     iec60870_PM::iec60870_PM(const iec_option& opt, timeout_type tout, iec60870_data_listener_ptr listr) : iec60870_datanotificator(listr),
     io_service_(), tmout_timer(io_service_), short_timer(io_service_), sync_timer(io_service_), syncstate(false),
     trycount_(opt.trycount() ? ((opt.trycount() < 15) ? opt.trycount() : 15) : 3), sync(opt.sync()), poll_(opt.poll()), terminate_(false), interrupt_(false),
-    state_(disconnected), pmstate_(noconnected), error_cod(), timout(tout < 10 ? 10 : tout), synctimout(opt.tymesync()), need_disconnect_(false) {
+    state_(disconnected), error_cod(), timout(tout < 10 ? 10 : tout), synctimout(opt.tymesync()), need_disconnect_(false) {
     }
 
     iec60870_PM::~iec60870_PM() {
         //if (state_ == connected) disconnect();
     }
 
-    void iec60870_PM::pmstate(iec60870_PM::PMState vl) {
-        pmstate_ = vl;
-    }
 
     bool iec60870_PM::operator()() {
         boost::xtime xt;
