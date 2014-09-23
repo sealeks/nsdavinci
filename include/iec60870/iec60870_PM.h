@@ -624,7 +624,7 @@ namespace prot80670 {
 
         iec60870_101PM(chanalnum_type chnm, const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr()) :
         iec60870_PM(opt, DEFREADTMO, listr),
-        serialport_(io_service_), serialport_io_sevice(io_service_), req_timer(io_service_), silence_timer(io_service_),chnum_(chnm), comsetter_(opt),
+        serialport_(io_service_), serialport_io_sevice(io_service_), req_timer(io_service_), silence_timer(io_service_), chnum_(chnm), comsetter_(opt),
         is_timout(false), is_error(false), reqtmo_(DEFREADTMO), symboltmo_(1) {
             set_symboltmo(opt);
             set_readtmo(opt);
@@ -681,15 +681,9 @@ namespace prot80670 {
             io_service_.stop();
         }
 
-        virtual void work() {
-            update_model();
-            for (id_device_map::iterator dit = devices().begin(); dit != devices().end(); ++dit) {
-                if (work_device(dit->second))
-                    break;
-            }
-        }
 
-        bool work_device(iec60870_device_ptr dev) {
+
+        virtual bool work_device(iec60870_device_ptr dev) {
             if (dev) {
                 if (dev->state() == iec60870_device::d_disconnect) {
                     if (open_device(dev->address(), dev->trycount())) {
@@ -711,7 +705,7 @@ namespace prot80670 {
             return false;
         }
 
-        bool work_sector(iec60870_device_ptr dev, iec60870_sector_ptr sect) {
+        virtual bool work_sector(iec60870_device_ptr dev, iec60870_sector_ptr sect) {
             if (sect) {
                 if (sect->state() == iec60870_sector::s_noaciveted) {
                     if (init_selector(dev->address(), sect->selector(), dev->fcb(), dev->trycount())) {
@@ -727,7 +721,7 @@ namespace prot80670 {
             return false;
         }
 
-        bool work_devdata(iec60870_device_ptr dev) {
+        virtual bool work_devdata(iec60870_device_ptr dev) {
             if (dev) {
                 bool acd = true;
                 bool dfc = false;
@@ -1107,9 +1101,9 @@ namespace prot80670 {
 
         //virtual void remove_device_sevice(device_address dev){};            
 
-        virtual void insert_sector_sevice(device_address dev, selector_address slct) {
-            waitrequestdata_.push_back(dataobject::create_activation_1(0, slct));
-        }
+        //virtual void insert_sector_sevice(device_address dev, selector_address slct) {
+        //    waitrequestdata_.push_back(dataobject::create_activation_1(0, slct));
+        // }
 
         //virtual void remove_sector_sevice(device_address dev, selector_address slct){}; 
 

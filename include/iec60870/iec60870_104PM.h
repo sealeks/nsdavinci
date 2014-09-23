@@ -430,7 +430,7 @@ namespace prot80670 {
 
         //virtual void remove_device_sevice(device_address dev){};            
 
-        virtual void insert_sector_sevice(device_address dev, selector_address slct);
+        //virtual void insert_sector_sevice(device_address dev, selector_address slct);
 
         //virtual void remove_sector_sevice(device_address dev, selector_address slct){}; 
 
