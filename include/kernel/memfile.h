@@ -2667,6 +2667,10 @@ namespace dvnci {
         std::string user() const;
 
         acclevtype accesslevel() const;
+        
+        void offgroup(size_type group, ns_error error = 0);
+
+        void offtag(size_type id, ns_error error = 0);        
 
     protected:
 
@@ -3174,10 +3178,6 @@ namespace dvnci {
         }
 
 
-
-        void offgroup(size_type group, ns_error error = 0);
-
-        void offtag(size_type id, ns_error error = 0);
 
 
         virtual void inputsysvargroups(size_type group, bool include);
