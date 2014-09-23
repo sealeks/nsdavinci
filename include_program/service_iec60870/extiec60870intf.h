@@ -38,11 +38,14 @@ namespace dvnci {
         using prot80670::iec_option;
         using prot80670::IEC_PROTOCOL;
         using prot80670::octet_sequence;
-
+        
         class extiec60870intf : public extintf_wraper<prot80670::dataobject_ptr>,
         public virtual iec60870_data_listener {
-
+  
         public:
+            
+             typedef std::pair<devnumtype, indx> device_pair;            
+             typedef std::map<devnumtype, indx> device_map;
 
             extiec60870intf(tagsbase_ptr intf_, executor* exctr, indx grp);
             extiec60870intf(tagsbase_ptr intf_, executor* exctr, const indx_set& grps, const metalink& lnk);
@@ -88,6 +91,16 @@ namespace dvnci {
 
             iec60870_thread_ptr create_pm(prot80670::IEC_PROTOCOL prot, chnlnumtype chnm, const iec_option& opt,
                     iec60870_data_listener_ptr listr);
+            
+            void init_device(const indx_set& vl);
+            
+            void set_device_state(devnumtype dev,  vlvtype valid = 1, dvnci::dvncierror err = 0);  
+            
+            void set_devices_state(vlvtype valid = 1, dvnci::dvncierror err = 0);            
+            
+            void set_device(devnumtype dev,  bool state, vlvtype valid);     
+            
+            void set_devices(bool state, vlvtype valid);            
 
             bool pm_connected() const;
 
@@ -104,6 +117,7 @@ namespace dvnci {
             dvnci::dvncierror fatal_;
             std::size_t linkaddrsize;
             dvnci::dvncierror sync_error_;
+            device_map devices_;
 
         };
 
