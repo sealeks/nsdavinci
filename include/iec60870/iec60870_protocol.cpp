@@ -566,6 +566,14 @@ namespace prot80670 {
         return true;
     }
 
+    void iec60870_PM::work() {
+        update_model();
+        for (id_device_map::iterator dit = devices().begin(); dit != devices().end(); ++dit) {
+            if (work_device(dit->second))
+                break;
+        }
+    }    
+
     void iec60870_PM::update_model() {
         update_model_insert();
         update_model_read();

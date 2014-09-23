@@ -819,7 +819,6 @@ namespace prot80670 {
             return state_;
         }
 
-
         boost::system::error_code error() const {
             return error_cod;
         }
@@ -848,10 +847,17 @@ namespace prot80670 {
         bool need_sync() const;
 
         bool has_poll() const;
+        
 
-        virtual void work() {
-        }
-
+        virtual void work();
+        
+        virtual bool work_device(iec60870_device_ptr dev){};
+        
+        virtual bool work_sector(iec60870_device_ptr dev, iec60870_sector_ptr sect){};
+        
+        virtual bool work_devdata(iec60870_device_ptr dev) {};
+        
+        
         virtual void update_model();
 
         virtual void update_model_insert();

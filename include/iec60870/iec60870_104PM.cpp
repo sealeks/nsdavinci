@@ -223,7 +223,7 @@ namespace prot80670 {
     }
 
     void iec60870_104PMLink::connect() {
-        timout = timout < 50 ? 50 : (timout>600000 ? 600000 : timout);
+        timout = timout < 50 ? 50 : (timout > 600000 ? 600000 : timout);
         //DEBUG_STR_DVNCI(ioclient connect)
         //DEBUG_VAL_DVNCI(host)
         //DEBUG_VAL_DVNCI(port)
@@ -648,9 +648,9 @@ namespace prot80670 {
     iec60870_104PMLink(hst, prt, opt, listr) {
     }
 
-    void iec60870_104PM::insert_sector_sevice(device_address dev, selector_address slct) {
-        waitrequestdata_.push_back(dataobject::create_activation_1(0, slct));
-    }
+    //void iec60870_104PM::insert_sector_sevice(device_address dev, selector_address slct) {
+    //    waitrequestdata_.push_back(dataobject::create_activation_1(0, slct));
+    //}
 
     bool iec60870_104PM::parse_data(apdu_104_ptr resp) {
         dataobject_vct rslt;
