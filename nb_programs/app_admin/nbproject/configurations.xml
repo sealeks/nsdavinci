@@ -54,7 +54,6 @@
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
-    <Elem>../../include</Elem>
     <Elem>../../include_program/app_admin</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
