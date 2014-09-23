@@ -406,6 +406,7 @@ namespace prot80670 {
         tcpcounter_type w_;
         tcpcounter_type k_fct;
         tcpcounter_type w_fct;
+        bool to_disconnect_;
 
     };
 
