@@ -285,22 +285,22 @@ namespace prot80670 {
     iec60870_datanotificator::iec60870_datanotificator(iec60870_data_listener_ptr listr) : listener_(listr) {
     }
 
-    void iec60870_datanotificator::execute60870(dataobject_ptr vl, const boost::system::error_code& error) {
+    void iec60870_datanotificator::execute(dataobject_ptr vl, const boost::system::error_code& error) {
         iec60870_data_listener_ptr lstnr = listener();
         if (lstnr)
-            lstnr->execute60870(vl, error);
+            lstnr->execute(vl, error);
     }
 
-    void iec60870_datanotificator::execute60870(const dataobject_vct& vl, const boost::system::error_code& error) {
+    void iec60870_datanotificator::execute(const dataobject_vct& vl, const boost::system::error_code& error) {
         iec60870_data_listener_ptr lstnr = listener();
         if (lstnr)
-            lstnr->execute60870(vl, error);
+            lstnr->execute(vl, error);
     }
 
-    void iec60870_datanotificator::execute60870(device_address dev, const boost::system::error_code& error) {
+    void iec60870_datanotificator::execute(device_address dev, const boost::system::error_code& error) {
         iec60870_data_listener_ptr lstnr = listener();
         if (lstnr)
-            lstnr->execute60870(dev, error);
+            lstnr->execute(dev, error);
     }
 
     iec60870_data_listener_ptr iec60870_datanotificator::listener() {
@@ -365,7 +365,7 @@ namespace prot80670 {
             } else {
                 ioa_dataobject_map::iterator fit = line_.find(vl->ioa());
                 if ((fit != line_.end())) {
-                    execute60870(vl);
+                    execute(vl);
                     fit->second.swap(vl);
                     return true;
                 }
@@ -624,7 +624,7 @@ namespace prot80670 {
         error_cod = err;
         iec60870_data_listener_ptr lstnr = listener();
         if (lstnr)
-            lstnr->execute60870(err);
+            lstnr->execute(err);
         return error_cod;
     }
 
@@ -709,7 +709,7 @@ namespace prot80670 {
     void iec60870_PM::execute_error(device_address dev, const boost::system::error_code& error) {
         iec60870_device_ptr devfnd = device(dev);
         if (devfnd) {
-            execute60870(dev, error);
+            execute(dev, error);
         }
     }
 

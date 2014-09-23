@@ -264,7 +264,7 @@ namespace prot80670 {
         io_service_.stop();
         iec60870_data_listener_ptr lstnr = listener();
         if (lstnr)
-            lstnr->execute60870(err);
+            lstnr->execute(err);
 
     }
 

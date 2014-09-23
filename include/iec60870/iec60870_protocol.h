@@ -575,10 +575,10 @@ namespace prot80670 {
 
     public:
 
-        virtual void execute60870(dataobject_ptr vl, const boost::system::error_code& error = ERROR_NULL) = 0;
-        virtual void execute60870(const dataobject_vct& vl, const boost::system::error_code& error = ERROR_NULL) = 0;
-        virtual void execute60870(device_address dev, const boost::system::error_code& error = ERROR_NULL) = 0;
-        virtual void execute60870(const boost::system::error_code& err) = 0;
+        virtual void execute(dataobject_ptr vl, const boost::system::error_code& error = ERROR_NULL) = 0;
+        virtual void execute(const dataobject_vct& vl, const boost::system::error_code& error = ERROR_NULL) = 0;
+        virtual void execute(device_address dev, const boost::system::error_code& error = ERROR_NULL) = 0;
+        virtual void execute(const boost::system::error_code& err) = 0;
         virtual void terminate60870() = 0;
 
     };
@@ -601,9 +601,9 @@ namespace prot80670 {
         ~iec60870_datanotificator() {
         };
 
-        void execute60870(dataobject_ptr vl, const boost::system::error_code& error = prot80670::ERROR_NULL);
-        void execute60870(const dataobject_vct& vl, const boost::system::error_code& error = prot80670::ERROR_NULL);
-        void execute60870(device_address dev, const boost::system::error_code& error = prot80670::ERROR_NULL);
+        void execute(dataobject_ptr vl, const boost::system::error_code& error = prot80670::ERROR_NULL);
+        void execute(const dataobject_vct& vl, const boost::system::error_code& error = prot80670::ERROR_NULL);
+        void execute(device_address dev, const boost::system::error_code& error = prot80670::ERROR_NULL);
 
     protected:
 
