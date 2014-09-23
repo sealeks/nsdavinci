@@ -33,21 +33,21 @@ namespace dvnci {
             disconnect();
         }
 
-        void extiec60870intf::execute60870(dataobject_ptr vl, const boost::system::error_code& err) {
+        void extiec60870intf::execute(dataobject_ptr vl, const boost::system::error_code& err) {
             write_val_sid(vl, to_short_value(vl));
         };
 
-        void extiec60870intf::execute60870(const dataobject_vct& vl, const boost::system::error_code& err) {
+        void extiec60870intf::execute(const dataobject_vct& vl, const boost::system::error_code& err) {
             for (dataobject_vct::const_iterator it = vl.begin(); it != vl.end(); ++it)
-                execute60870(*it);
+                execute(*it);
         }
 
-        void extiec60870intf::execute60870(device_address dev, const boost::system::error_code& err) {
+        void extiec60870intf::execute(device_address dev, const boost::system::error_code& err) {
             set_device_state(dev, FULL_VALID  ,err !=prot80670::ERROR_NULL ? ERROR_NONET_CONNECTED : 0);
             error(ERROR_NONET_CONNECTED);
         };
 
-        void extiec60870intf::execute60870(const boost::system::error_code& err) {
+        void extiec60870intf::execute(const boost::system::error_code& err) {
             set_device_state(FULL_VALID  ,err !=prot80670::ERROR_NULL ? ERROR_NONET_CONNECTED : 0);
             error(ERROR_NONET_CONNECTED);
         }
