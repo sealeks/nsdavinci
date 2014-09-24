@@ -291,7 +291,7 @@ namespace dvnci {
                 case PROPERTY_OFFMSG_TAG:
                 {
                     int val_ = 0;
-                    bool old_offmsged = _interface->tag(id).offmsged();
+                    //bool old_offmsged = _interface->tag(id).offmsged();
                     if (str_to(val, val_)) _interface->tag(id).offmsged(val_);
                     /*if (old_offmsged!=_interface->tag(id).offmsged()){
                         if (old_offmsged) {
@@ -310,7 +310,7 @@ namespace dvnci {
                 case PROPERTY_ONMSG_TAG:
                 {
                     int val_ = 0;
-                    bool old_onmsged = _interface->tag(id).onmsged();
+                    //bool old_onmsged = _interface->tag(id).onmsged();
                     if (str_to(val, val_))_interface->tag(id).onmsged(val_);
                     /*if (old_onmsged!=_interface->tag(id).onmsged()){
                     if (old_onmsged) {
