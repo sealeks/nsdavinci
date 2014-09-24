@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'form_import.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.1.1)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.3.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -12,7 +12,7 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'form_import.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.1.1. It"
+#error "This file was generated using the moc from 5.3.1. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -20,18 +20,18 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_dvnci__admin__importtagmodel_t {
     QByteArrayData data[1];
-    char stringdata[30];
+    char stringdata[29];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_dvnci__admin__importtagmodel_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_dvnci__admin__importtagmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_dvnci__admin__importtagmodel_t qt_meta_stringdata_dvnci__admin__importtagmodel = {
     {
 QT_MOC_LITERAL(0, 0, 28)
     },
-    "dvnci::admin::importtagmodel\0"
+    "dvnci::admin::importtagmodel"
 };
 #undef QT_MOC_LITERAL
 
@@ -87,18 +87,18 @@ int dvnci::admin::importtagmodel::qt_metacall(QMetaObject::Call _c, int _id, voi
 }
 struct qt_meta_stringdata_dvnci__admin__importgroupmodel_t {
     QByteArrayData data[1];
-    char stringdata[32];
+    char stringdata[31];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_dvnci__admin__importgroupmodel_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_dvnci__admin__importgroupmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_dvnci__admin__importgroupmodel_t qt_meta_stringdata_dvnci__admin__importgroupmodel = {
     {
 QT_MOC_LITERAL(0, 0, 30)
     },
-    "dvnci::admin::importgroupmodel\0"
+    "dvnci::admin::importgroupmodel"
 };
 #undef QT_MOC_LITERAL
 
@@ -154,18 +154,18 @@ int dvnci::admin::importgroupmodel::qt_metacall(QMetaObject::Call _c, int _id, v
 }
 struct qt_meta_stringdata_dvnci__admin__importagroupmodel_t {
     QByteArrayData data[1];
-    char stringdata[33];
+    char stringdata[32];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_dvnci__admin__importagroupmodel_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_dvnci__admin__importagroupmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_dvnci__admin__importagroupmodel_t qt_meta_stringdata_dvnci__admin__importagroupmodel = {
     {
 QT_MOC_LITERAL(0, 0, 31)
     },
-    "dvnci::admin::importagroupmodel\0"
+    "dvnci::admin::importagroupmodel"
 };
 #undef QT_MOC_LITERAL
 
@@ -221,18 +221,18 @@ int dvnci::admin::importagroupmodel::qt_metacall(QMetaObject::Call _c, int _id, 
 }
 struct qt_meta_stringdata_dvnci__admin__importusermodel_t {
     QByteArrayData data[1];
-    char stringdata[31];
+    char stringdata[30];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_dvnci__admin__importusermodel_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_dvnci__admin__importusermodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_dvnci__admin__importusermodel_t qt_meta_stringdata_dvnci__admin__importusermodel = {
     {
 QT_MOC_LITERAL(0, 0, 29)
     },
-    "dvnci::admin::importusermodel\0"
+    "dvnci::admin::importusermodel"
 };
 #undef QT_MOC_LITERAL
 
@@ -288,12 +288,12 @@ int dvnci::admin::importusermodel::qt_metacall(QMetaObject::Call _c, int _id, vo
 }
 struct qt_meta_stringdata_dvnci__admin__form_import_t {
     QByteArrayData data[12];
-    char stringdata[198];
+    char stringdata[197];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_dvnci__admin__form_import_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_dvnci__admin__form_import_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_dvnci__admin__form_import_t qt_meta_stringdata_dvnci__admin__form_import = {
     {
@@ -314,7 +314,7 @@ QT_MOC_LITERAL(11, 179, 17)
     "\0ind\0grouptableChanged\0agrouptableChanged\0"
     "usertableChanged\0btndeletetagClick\0"
     "btndeletegroupClick\0btndeleteagroupClick\0"
-    "btndeleteuserClick\0btnprefixtagClick\0"
+    "btndeleteuserClick\0btnprefixtagClick"
 };
 #undef QT_MOC_LITERAL
 
@@ -332,15 +332,15 @@ static const uint qt_meta_data_dvnci__admin__form_import[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    1,   59,    2, 0x0a,
-       4,    1,   62,    2, 0x0a,
-       5,    1,   65,    2, 0x0a,
-       6,    1,   68,    2, 0x0a,
-       7,    0,   71,    2, 0x0a,
-       8,    0,   72,    2, 0x0a,
-       9,    0,   73,    2, 0x0a,
-      10,    0,   74,    2, 0x0a,
-      11,    0,   75,    2, 0x0a,
+       1,    1,   59,    2, 0x0a /* Public */,
+       4,    1,   62,    2, 0x0a /* Public */,
+       5,    1,   65,    2, 0x0a /* Public */,
+       6,    1,   68,    2, 0x0a /* Public */,
+       7,    0,   71,    2, 0x0a /* Public */,
+       8,    0,   72,    2, 0x0a /* Public */,
+       9,    0,   73,    2, 0x0a /* Public */,
+      10,    0,   74,    2, 0x0a /* Public */,
+      11,    0,   75,    2, 0x0a /* Public */,
 
  // slots: parameters
     QMetaType::Void, QMetaType::QModelIndex,    3,

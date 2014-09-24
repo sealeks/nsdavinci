@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'form_filter.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.1.1)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.3.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -12,7 +12,7 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'form_filter.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.1.1. It"
+#error "This file was generated using the moc from 5.3.1. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -20,12 +20,12 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_dvnci__admin__form_filter_t {
     QByteArrayData data[16];
-    char stringdata[265];
+    char stringdata[264];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_dvnci__admin__form_filter_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_dvnci__admin__form_filter_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_dvnci__admin__form_filter_t qt_meta_stringdata_dvnci__admin__form_filter = {
     {
@@ -52,7 +52,7 @@ QT_MOC_LITERAL(15, 241, 22)
     "index\0proc_btnOkclick\0proc_btnCancelclick\0"
     "proc_btnClearclick\0proc_itemGroupChanged\0"
     "QListWidgetItem*\0item\0proc_itemGroupTypeChanged\0"
-    "proc_itemRtTypeChanged\0"
+    "proc_itemRtTypeChanged"
 };
 #undef QT_MOC_LITERAL
 
@@ -70,16 +70,16 @@ static const uint qt_meta_data_dvnci__admin__form_filter[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    1,   64,    2, 0x0a,
-       4,    1,   67,    2, 0x0a,
-       5,    1,   70,    2, 0x0a,
-       6,    1,   73,    2, 0x0a,
-       8,    0,   76,    2, 0x0a,
-       9,    0,   77,    2, 0x0a,
-      10,    0,   78,    2, 0x0a,
-      11,    1,   79,    2, 0x0a,
-      14,    1,   82,    2, 0x0a,
-      15,    1,   85,    2, 0x0a,
+       1,    1,   64,    2, 0x0a /* Public */,
+       4,    1,   67,    2, 0x0a /* Public */,
+       5,    1,   70,    2, 0x0a /* Public */,
+       6,    1,   73,    2, 0x0a /* Public */,
+       8,    0,   76,    2, 0x0a /* Public */,
+       9,    0,   77,    2, 0x0a /* Public */,
+      10,    0,   78,    2, 0x0a /* Public */,
+      11,    1,   79,    2, 0x0a /* Public */,
+      14,    1,   82,    2, 0x0a /* Public */,
+      15,    1,   85,    2, 0x0a /* Public */,
 
  // slots: parameters
     QMetaType::Void, QMetaType::QString,    3,

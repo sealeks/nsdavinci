@@ -63,8 +63,6 @@
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>MinGW|Unknown</compilerSet>
         <cRequired>true</cRequired>
-        <dependencyChecking>true</dependencyChecking>
-        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <qt>
         <destdir>../../bin/${CND_CONF}</destdir>
@@ -298,8 +296,6 @@
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>MinGW|MinGW</compilerSet>
         <cRequired>true</cRequired>
-        <dependencyChecking>true</dependencyChecking>
-        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <qt>
         <destdir>../../bin/${CND_CONF}</destdir>
@@ -572,8 +568,6 @@
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
         <cRequired>true</cRequired>
-        <dependencyChecking>true</dependencyChecking>
-        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <qt>
         <destdir>../../bin/${CND_CONF}</destdir>
@@ -797,15 +791,13 @@
     <conf name="nb_gcc_rl_LIN64" type="4">
       <toolsSet>
         <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
-        <compilerSet>MinGW|MinGW</compilerSet>
+        <compilerSet>GNU|GNU</compilerSet>
         <cRequired>true</cRequired>
-        <dependencyChecking>true</dependencyChecking>
-        <rebuildPropChanged>false</rebuildPropChanged>
       </toolsSet>
       <qt>
         <destdir>../../bin/${CND_CONF}</destdir>
         <buildMode>1</buildMode>
-        <modules>core gui xml</modules>
+        <modules>core gui opengl xml</modules>
       </qt>
       <compileType>
         <ccTool>
