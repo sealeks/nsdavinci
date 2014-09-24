@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'form_setvalue.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.1.1)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.3.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -12,7 +12,7 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'form_setvalue.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.1.1. It"
+#error "This file was generated using the moc from 5.3.1. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -20,12 +20,12 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_dvnci__admin__form_setvalue_t {
     QByteArrayData data[10];
-    char stringdata[183];
+    char stringdata[182];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_dvnci__admin__form_setvalue_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_dvnci__admin__form_setvalue_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_dvnci__admin__form_setvalue_t qt_meta_stringdata_dvnci__admin__form_setvalue = {
     {
@@ -44,7 +44,7 @@ QT_MOC_LITERAL(9, 162, 19)
     "\0proc_btnCancelclick\0proc_rbsetvalueclick\0"
     "proc_rbcommandclick\0proc_rbincvntclick\0"
     "proc_rbdeccntclick\0proc_rbvalidclick\0"
-    "proc_rbinvalidclick\0"
+    "proc_rbinvalidclick"
 };
 #undef QT_MOC_LITERAL
 
@@ -62,14 +62,14 @@ static const uint qt_meta_data_dvnci__admin__form_setvalue[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,   54,    2, 0x0a,
-       3,    0,   55,    2, 0x0a,
-       4,    0,   56,    2, 0x0a,
-       5,    0,   57,    2, 0x0a,
-       6,    0,   58,    2, 0x0a,
-       7,    0,   59,    2, 0x0a,
-       8,    0,   60,    2, 0x0a,
-       9,    0,   61,    2, 0x0a,
+       1,    0,   54,    2, 0x0a /* Public */,
+       3,    0,   55,    2, 0x0a /* Public */,
+       4,    0,   56,    2, 0x0a /* Public */,
+       5,    0,   57,    2, 0x0a /* Public */,
+       6,    0,   58,    2, 0x0a /* Public */,
+       7,    0,   59,    2, 0x0a /* Public */,
+       8,    0,   60,    2, 0x0a /* Public */,
+       9,    0,   61,    2, 0x0a /* Public */,
 
  // slots: parameters
     QMetaType::Void,

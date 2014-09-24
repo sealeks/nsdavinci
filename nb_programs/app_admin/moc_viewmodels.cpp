@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'viewmodels.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.1.1)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.3.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -12,7 +12,7 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'viewmodels.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.1.1. It"
+#error "This file was generated using the moc from 5.3.1. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -20,18 +20,18 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_dvnci__admin__basetable_t {
     QByteArrayData data[1];
-    char stringdata[25];
+    char stringdata[24];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_dvnci__admin__basetable_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_dvnci__admin__basetable_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_dvnci__admin__basetable_t qt_meta_stringdata_dvnci__admin__basetable = {
     {
 QT_MOC_LITERAL(0, 0, 23)
     },
-    "dvnci::admin::basetable\0"
+    "dvnci::admin::basetable"
 };
 #undef QT_MOC_LITERAL
 
@@ -87,18 +87,18 @@ int dvnci::admin::basetable::qt_metacall(QMetaObject::Call _c, int _id, void **_
 }
 struct qt_meta_stringdata_dvnci__admin__tagsviewmodel_t {
     QByteArrayData data[1];
-    char stringdata[29];
+    char stringdata[28];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_dvnci__admin__tagsviewmodel_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_dvnci__admin__tagsviewmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_dvnci__admin__tagsviewmodel_t qt_meta_stringdata_dvnci__admin__tagsviewmodel = {
     {
 QT_MOC_LITERAL(0, 0, 27)
     },
-    "dvnci::admin::tagsviewmodel\0"
+    "dvnci::admin::tagsviewmodel"
 };
 #undef QT_MOC_LITERAL
 
@@ -154,18 +154,18 @@ int dvnci::admin::tagsviewmodel::qt_metacall(QMetaObject::Call _c, int _id, void
 }
 struct qt_meta_stringdata_dvnci__admin__groupsviewmodel_t {
     QByteArrayData data[1];
-    char stringdata[31];
+    char stringdata[30];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_dvnci__admin__groupsviewmodel_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_dvnci__admin__groupsviewmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_dvnci__admin__groupsviewmodel_t qt_meta_stringdata_dvnci__admin__groupsviewmodel = {
     {
 QT_MOC_LITERAL(0, 0, 29)
     },
-    "dvnci::admin::groupsviewmodel\0"
+    "dvnci::admin::groupsviewmodel"
 };
 #undef QT_MOC_LITERAL
 
@@ -221,18 +221,18 @@ int dvnci::admin::groupsviewmodel::qt_metacall(QMetaObject::Call _c, int _id, vo
 }
 struct qt_meta_stringdata_dvnci__admin__accessrulesviewmodel_t {
     QByteArrayData data[1];
-    char stringdata[36];
+    char stringdata[35];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_dvnci__admin__accessrulesviewmodel_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_dvnci__admin__accessrulesviewmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_dvnci__admin__accessrulesviewmodel_t qt_meta_stringdata_dvnci__admin__accessrulesviewmodel = {
     {
 QT_MOC_LITERAL(0, 0, 34)
     },
-    "dvnci::admin::accessrulesviewmodel\0"
+    "dvnci::admin::accessrulesviewmodel"
 };
 #undef QT_MOC_LITERAL
 
@@ -288,18 +288,18 @@ int dvnci::admin::accessrulesviewmodel::qt_metacall(QMetaObject::Call _c, int _i
 }
 struct qt_meta_stringdata_dvnci__admin__livetableview_t {
     QByteArrayData data[1];
-    char stringdata[29];
+    char stringdata[28];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_dvnci__admin__livetableview_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_dvnci__admin__livetableview_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_dvnci__admin__livetableview_t qt_meta_stringdata_dvnci__admin__livetableview = {
     {
 QT_MOC_LITERAL(0, 0, 27)
     },
-    "dvnci::admin::livetableview\0"
+    "dvnci::admin::livetableview"
 };
 #undef QT_MOC_LITERAL
 
@@ -355,18 +355,18 @@ int dvnci::admin::livetableview::qt_metacall(QMetaObject::Call _c, int _id, void
 }
 struct qt_meta_stringdata_dvnci__admin__debug_viewmodel_t {
     QByteArrayData data[1];
-    char stringdata[31];
+    char stringdata[30];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_dvnci__admin__debug_viewmodel_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_dvnci__admin__debug_viewmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_dvnci__admin__debug_viewmodel_t qt_meta_stringdata_dvnci__admin__debug_viewmodel = {
     {
 QT_MOC_LITERAL(0, 0, 29)
     },
-    "dvnci::admin::debug_viewmodel\0"
+    "dvnci::admin::debug_viewmodel"
 };
 #undef QT_MOC_LITERAL
 
@@ -422,18 +422,18 @@ int dvnci::admin::debug_viewmodel::qt_metacall(QMetaObject::Call _c, int _id, vo
 }
 struct qt_meta_stringdata_dvnci__admin__journal_viewmodel_t {
     QByteArrayData data[1];
-    char stringdata[33];
+    char stringdata[32];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_dvnci__admin__journal_viewmodel_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_dvnci__admin__journal_viewmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_dvnci__admin__journal_viewmodel_t qt_meta_stringdata_dvnci__admin__journal_viewmodel = {
     {
 QT_MOC_LITERAL(0, 0, 31)
     },
-    "dvnci::admin::journal_viewmodel\0"
+    "dvnci::admin::journal_viewmodel"
 };
 #undef QT_MOC_LITERAL
 
@@ -489,18 +489,18 @@ int dvnci::admin::journal_viewmodel::qt_metacall(QMetaObject::Call _c, int _id, 
 }
 struct qt_meta_stringdata_dvnci__admin__command_viewmodel_t {
     QByteArrayData data[1];
-    char stringdata[33];
+    char stringdata[32];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_dvnci__admin__command_viewmodel_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_dvnci__admin__command_viewmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_dvnci__admin__command_viewmodel_t qt_meta_stringdata_dvnci__admin__command_viewmodel = {
     {
 QT_MOC_LITERAL(0, 0, 31)
     },
-    "dvnci::admin::command_viewmodel\0"
+    "dvnci::admin::command_viewmodel"
 };
 #undef QT_MOC_LITERAL
 
@@ -556,18 +556,18 @@ int dvnci::admin::command_viewmodel::qt_metacall(QMetaObject::Call _c, int _id, 
 }
 struct qt_meta_stringdata_dvnci__admin__alarm_viewmodel_t {
     QByteArrayData data[1];
-    char stringdata[31];
+    char stringdata[30];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_dvnci__admin__alarm_viewmodel_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_dvnci__admin__alarm_viewmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_dvnci__admin__alarm_viewmodel_t qt_meta_stringdata_dvnci__admin__alarm_viewmodel = {
     {
 QT_MOC_LITERAL(0, 0, 29)
     },
-    "dvnci::admin::alarm_viewmodel\0"
+    "dvnci::admin::alarm_viewmodel"
 };
 #undef QT_MOC_LITERAL
 
@@ -623,18 +623,18 @@ int dvnci::admin::alarm_viewmodel::qt_metacall(QMetaObject::Call _c, int _id, vo
 }
 struct qt_meta_stringdata_dvnci__admin__regystry_viewmodel_t {
     QByteArrayData data[1];
-    char stringdata[34];
+    char stringdata[33];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_dvnci__admin__regystry_viewmodel_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_dvnci__admin__regystry_viewmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_dvnci__admin__regystry_viewmodel_t qt_meta_stringdata_dvnci__admin__regystry_viewmodel = {
     {
 QT_MOC_LITERAL(0, 0, 32)
     },
-    "dvnci::admin::regystry_viewmodel\0"
+    "dvnci::admin::regystry_viewmodel"
 };
 #undef QT_MOC_LITERAL
 
@@ -690,18 +690,18 @@ int dvnci::admin::regystry_viewmodel::qt_metacall(QMetaObject::Call _c, int _id,
 }
 struct qt_meta_stringdata_dvnci__admin__client_viewmodel_t {
     QByteArrayData data[1];
-    char stringdata[32];
+    char stringdata[31];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_dvnci__admin__client_viewmodel_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_dvnci__admin__client_viewmodel_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_dvnci__admin__client_viewmodel_t qt_meta_stringdata_dvnci__admin__client_viewmodel = {
     {
 QT_MOC_LITERAL(0, 0, 30)
     },
-    "dvnci::admin::client_viewmodel\0"
+    "dvnci::admin::client_viewmodel"
 };
 #undef QT_MOC_LITERAL
 

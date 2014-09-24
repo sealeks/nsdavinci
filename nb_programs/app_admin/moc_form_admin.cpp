@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'form_admin.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.1.1)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.3.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -12,7 +12,7 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'form_admin.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.1.1. It"
+#error "This file was generated using the moc from 5.3.1. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -20,12 +20,12 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_dvnci__admin__form_admin_t {
     QByteArrayData data[48];
-    char stringdata[687];
+    char stringdata[686];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    offsetof(qt_meta_stringdata_dvnci__admin__form_admin_t, stringdata) + ofs \
-        - idx * sizeof(QByteArrayData) \
+    qptrdiff(offsetof(qt_meta_stringdata_dvnci__admin__form_admin_t, stringdata) + ofs \
+        - idx * sizeof(QByteArrayData)) \
     )
 static const qt_meta_stringdata_dvnci__admin__form_admin_t qt_meta_stringdata_dvnci__admin__form_admin = {
     {
@@ -96,7 +96,7 @@ QT_MOC_LITERAL(47, 671, 14)
     "proc_setallinvalid\0proc_kvit\0"
     "proc_startservice\0proc_stopservice\0"
     "proc_groupkvit\0proc_agroupkvit\0"
-    "proc_viewdouble\0index\0proc_duplicate\0"
+    "proc_viewdouble\0index\0proc_duplicate"
 };
 #undef QT_MOC_LITERAL
 
@@ -114,41 +114,41 @@ static const uint qt_meta_data_dvnci__admin__form_admin[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    2,  189,    2, 0x0a,
-       6,    0,  194,    2, 0x0a,
-       7,    0,  195,    2, 0x0a,
-       8,    1,  196,    2, 0x0a,
-      11,    2,  199,    2, 0x0a,
-      14,    1,  204,    2, 0x0a,
-      16,    1,  207,    2, 0x0a,
-      17,    0,  210,    2, 0x0a,
-      18,    0,  211,    2, 0x0a,
-      19,    0,  212,    2, 0x0a,
-      20,    0,  213,    2, 0x0a,
-      21,    0,  214,    2, 0x0a,
-      22,    0,  215,    2, 0x0a,
-      23,    0,  216,    2, 0x0a,
-      24,    0,  217,    2, 0x0a,
-      25,    0,  218,    2, 0x0a,
-      26,    0,  219,    2, 0x0a,
-      27,    0,  220,    2, 0x0a,
-      28,    0,  221,    2, 0x0a,
-      29,    0,  222,    2, 0x0a,
-      30,    1,  223,    2, 0x0a,
-      33,    1,  226,    2, 0x0a,
-      34,    0,  229,    2, 0x0a,
-      35,    0,  230,    2, 0x0a,
-      36,    0,  231,    2, 0x0a,
-      37,    0,  232,    2, 0x0a,
-      38,    0,  233,    2, 0x0a,
-      39,    0,  234,    2, 0x0a,
-      40,    0,  235,    2, 0x0a,
-      41,    0,  236,    2, 0x0a,
-      42,    0,  237,    2, 0x0a,
-      43,    0,  238,    2, 0x0a,
-      44,    0,  239,    2, 0x0a,
-      45,    1,  240,    2, 0x0a,
-      47,    0,  243,    2, 0x0a,
+       1,    2,  189,    2, 0x0a /* Public */,
+       6,    0,  194,    2, 0x0a /* Public */,
+       7,    0,  195,    2, 0x0a /* Public */,
+       8,    1,  196,    2, 0x0a /* Public */,
+      11,    2,  199,    2, 0x0a /* Public */,
+      14,    1,  204,    2, 0x0a /* Public */,
+      16,    1,  207,    2, 0x0a /* Public */,
+      17,    0,  210,    2, 0x0a /* Public */,
+      18,    0,  211,    2, 0x0a /* Public */,
+      19,    0,  212,    2, 0x0a /* Public */,
+      20,    0,  213,    2, 0x0a /* Public */,
+      21,    0,  214,    2, 0x0a /* Public */,
+      22,    0,  215,    2, 0x0a /* Public */,
+      23,    0,  216,    2, 0x0a /* Public */,
+      24,    0,  217,    2, 0x0a /* Public */,
+      25,    0,  218,    2, 0x0a /* Public */,
+      26,    0,  219,    2, 0x0a /* Public */,
+      27,    0,  220,    2, 0x0a /* Public */,
+      28,    0,  221,    2, 0x0a /* Public */,
+      29,    0,  222,    2, 0x0a /* Public */,
+      30,    1,  223,    2, 0x0a /* Public */,
+      33,    1,  226,    2, 0x0a /* Public */,
+      34,    0,  229,    2, 0x0a /* Public */,
+      35,    0,  230,    2, 0x0a /* Public */,
+      36,    0,  231,    2, 0x0a /* Public */,
+      37,    0,  232,    2, 0x0a /* Public */,
+      38,    0,  233,    2, 0x0a /* Public */,
+      39,    0,  234,    2, 0x0a /* Public */,
+      40,    0,  235,    2, 0x0a /* Public */,
+      41,    0,  236,    2, 0x0a /* Public */,
+      42,    0,  237,    2, 0x0a /* Public */,
+      43,    0,  238,    2, 0x0a /* Public */,
+      44,    0,  239,    2, 0x0a /* Public */,
+      45,    1,  240,    2, 0x0a /* Public */,
+      47,    0,  243,    2, 0x0a /* Public */,
 
  // slots: parameters
     QMetaType::Void, 0x80000000 | 3, QMetaType::Int,    4,    5,
