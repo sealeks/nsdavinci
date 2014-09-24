@@ -267,7 +267,7 @@ namespace dvnci {
         }
 
         void writeheader() {
-            headerstruct tmp = *((headerstruct*) data());
+            //headerstruct tmp = *((headerstruct*) data());
             utilptr->writetofile(0, sizeof (headerstruct));
         }
 
