@@ -207,7 +207,7 @@ namespace dvnci {
         }
 
         bool insert(const dt_val_map& values) {
-            datetime dtm = (count()) ? time(0) : nill_time;
+            //datetime dtm = (count()) ? time(0) : nill_time;
             for (dt_val_map::const_iterator it = values.begin(); it != values.end(); ++it)
                 insert(it->first, it->second);
             return true;

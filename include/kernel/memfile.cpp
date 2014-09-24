@@ -1005,7 +1005,7 @@ namespace dvnci {
     }
 
     tagsbase::tagsbase(const fspath& basepatht, appidtype app, eventtypeset evnts/* , lock_nameexclusive ontimeinit*/) :
-    templatebase<tagsstruct>(basepatht / MAIN_FILE_NAME, MAIN_MAP_NAME, EXTEND_MEMSHARE_TAG_SIZE), fpath(basepatht), globalmemsize_(0), appid_(app), clientid_(npos) {
+    templatebase<tagsstruct>(basepatht / MAIN_FILE_NAME, MAIN_MAP_NAME, EXTEND_MEMSHARE_TAG_SIZE), fpath(basepatht), clientid_(npos), globalmemsize_(0), appid_(app) {
 
         stringbs_ = stringbase_ptr(new stringbase(basepatht / STRING_FILE_NAME, STRING_MAP_NAME, EXTEND_MEMSHARE_STR_SIZE));
         valstrb_ = stringvalue_base_ptr(new stringvalue_base(basepatht / VALSTRING_FILE_NAME, VALSTRING_MAP_NAME, texttagcnt(), EXTEND_MEMSHARE_STRSTATIC_SIZE));
@@ -1081,14 +1081,14 @@ namespace dvnci {
     }
 
     void tagsbase::writezero(const fspath& basepatht, lcltype loc) {
-        num64 str_head = 1;
-        char* str_ptr = (char*) &str_head;
+        //num64 str_head = 1;
+        //char* str_ptr = (char*) &str_head;
         stringbase::writezero(basepatht / STRING_FILE_NAME);
         stringvalue_base::writezero(basepatht / VALSTRING_FILE_NAME);
         tagsstruct_hdr ang_head(loc);
         filestream::write(basepatht / MAIN_FILE_NAME, (char*) &ang_head, 0, ang_head.datasize());
-        str_head = 0;
-        str_ptr = (char*) &str_head;
+        //str_head = 0;
+        //str_ptr = (char*) &str_head;
         groupsbase::writezero(basepatht);
         agroupsbase::writezero(basepatht);
         accessrulesbase::writezero(basepatht);

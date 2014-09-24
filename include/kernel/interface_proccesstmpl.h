@@ -17,26 +17,24 @@ namespace dvnci {
         const blksizetype DEFAULT_ARCHIVEBS = 15;
 
         class externalintf {
-
             typedef boost::shared_ptr<boost::mutex> mutex_ptr;
 
         public:
 
             enum intfstate {
-
                 disconnected, connected
             };
 
             explicit externalintf(tagsbase_ptr inf, executor* exctr, indx grp, tagtype provide_man, subcripttype subsrcr = CONTYPE_SYNC) :
-            state_(disconnected), intf(inf), exectr(exctr), group_(grp),groups_(), lnk_(),
+            state_(disconnected), intf(inf), exectr(exctr), group_(grp), groups_(), lnk_(),
             provide_(provide_man), subsrcript_(subsrcr), error_(0), mtx(new boost::mutex()) {
                 groups_.insert(grp);
             };
-            
+
             explicit externalintf(tagsbase_ptr inf, executor* exctr, const indx_set& grps, const metalink& lnk, tagtype provide_man, subcripttype subsrcr = CONTYPE_SYNC) :
             state_(disconnected), intf(inf), exectr(exctr), group_(dvnci::npos), groups_(grps), lnk_(lnk),
             provide_(provide_man), subsrcript_(subsrcr), error_(0), mtx(new boost::mutex()) {
-            };            
+            };
 
             virtual ~externalintf() {
             };
@@ -52,18 +50,18 @@ namespace dvnci {
             indx group() const {
                 return group_;
             }
-            
+
             const indx_set& groups() const {
                 return groups_;
-            }  
-            
+            }
+
             const metalink& link() const {
                 return lnk_;
-            }              
-            
-            bool  multigroup() const {
-                return groups_.size()>1;
-            }            
+            }
+
+            bool multigroup() const {
+                return groups_.size() > 1;
+            }
 
             tagtype provide() const {
                 return provide_;
@@ -121,13 +119,12 @@ namespace dvnci {
 
         template < typename EXTERNALINTF>
         class externalintf_executor : public executor {
-
             typedef boost::shared_ptr<EXTERNALINTF> externintf_ptr;
 
         public:
 
             externalintf_executor(tagsbase_ptr inf, indx groupind, const metalink& lnk, tagtype provide_man = TYPE_SIMPL) :
-            executor(inf, provide_man), lnk_(lnk)  {
+            executor(inf, provide_man), lnk_(lnk) {
             };
 
             virtual bool operator()() {
@@ -137,12 +134,12 @@ namespace dvnci {
                             externmanager->operator()();
                             set_group_state(npos, externmanager->error(), FULL_VALID);
                             return true;
-                        }                        catch (dvncierror& errd) {
+                        } catch (dvncierror& errd) {
                             error(errd.code());
                             intf->debugerror("externalintf_executor mainloop dvnci_error");
                             set_group_state(npos, externmanager->error(), FULL_VALID);
                             return false;
-                        }                        catch (...) {
+                        } catch (...) {
                             if (intf)
                                 intf->debugerror("externalintf_executor mainloop undef error");
                             set_group_state(npos, externmanager->error(), FULL_VALID);
@@ -170,11 +167,13 @@ namespace dvnci {
             }
 
             virtual bool initialize() {
-                if (!externmanager)
-                    if (strategy()!=group_proccessor::STRATEGY_TYPE_LINK)
+                if (!externmanager) {
+                    if (strategy() != group_proccessor::STRATEGY_TYPE_LINK) {
                         externmanager = externintf_ptr(new EXTERNALINTF(intf, (executor*)this, group()));
-                    else
+                    } else {
                         externmanager = externintf_ptr(new EXTERNALINTF(intf, (executor*)this, groupset(), lnk_));
+                    }
+                }
                 return externmanager;
             }
 
