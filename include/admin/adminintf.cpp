@@ -439,7 +439,7 @@ namespace dvnci {
             grp_map.clear();
             out_map.clear();
             clearerrors();
-            num64 rewritetmp = base.options;
+            //num64 rewritetmp = base.options;
 
             ent_set.clear();
             newit_map.clear();
