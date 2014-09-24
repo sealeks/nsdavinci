@@ -19,7 +19,7 @@ namespace dvnci {
 
         void set_rs232_comoption(com_port_option& opt, size_t databit, const rsparitytype& prt, const rsstopbittype& stpbt) {
             opt.ByteSize = static_cast<BYTE> (databit);
-            opt.Parity = static_cast<DWORD> (prt);
+            opt.Parity = static_cast<BYTE> (prt);
             opt.StopBits = static_cast<BYTE> (stpbt);
         }
 
