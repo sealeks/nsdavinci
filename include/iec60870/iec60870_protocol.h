@@ -794,6 +794,7 @@ namespace prot80670 {
     const boost::system::error_code ERR_BADADDRESS = boost::system::error_code(boost::system::errc::bad_address, boost::system::system_category());
     const boost::system::error_code ERR_TIMEOUT = boost::system::error_code(boost::system::errc::timed_out, boost::system::system_category());
     const boost::system::error_code ERR_BEDSEQ = boost::system::error_code(boost::system::errc::illegal_byte_sequence, boost::system::system_category());
+    const boost::system::error_code ERR_NOLINK = boost::system::error_code(boost::system::errc::no_link, boost::system::system_category());
 
 
     const std::size_t PM_SHORT_TIMER = 10;
