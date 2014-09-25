@@ -98,7 +98,8 @@
 #include <math.h>
 #include <stdio.h>
 
-
+#include <boost/config.hpp>
+#include <boost/cstdint.hpp>
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/tokenizer.hpp>
