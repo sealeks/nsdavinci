@@ -39,6 +39,8 @@ namespace dvnci {
         using prot80670::IEC_PROTOCOL;
         using prot80670::octet_sequence;
         
+        dvnci::ns_error nserror_cast(const boost::system::error_code& vl);
+        
         class extiec60870intf : public extintf_wraper<prot80670::dataobject_ptr>,
         public virtual iec60870_data_listener {
   
