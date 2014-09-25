@@ -902,6 +902,12 @@ namespace prot80670 {
         }
 
         bool request(apdu_ptr req) {
+            boost::system::error_code err;
+            return request(req, err);
+
+        }
+
+        bool request(apdu_ptr req, boost::system::error_code& err) {
 
 
             silence();
@@ -919,8 +925,12 @@ namespace prot80670 {
             io_service_.run();
 
 
-            if (is_error || is_timout)
-                return false;
+            if (is_error || is_timout){
+                err = error_cod; 
+                return apdu_ptr();
+            }
+
+            err = boost::system::error_code();
 
             return true;
         }
@@ -938,10 +948,12 @@ namespace prot80670 {
 
             io_service_.run();
 
-            if (is_error || is_timout)
+            if (is_error || is_timout){
+                err = error_cod; 
                 return apdu_ptr();
+            }
 
-
+            err = boost::system::error_code();
 
 
             return data_ready_;
