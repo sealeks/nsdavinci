@@ -334,8 +334,8 @@ namespace prot80670 {
                 case Fx_type: return 2; // CRC(1) + 0x16(1) 
                 case Vr_type:
                 {
-                    if ((header_->size() > 3) && (header_->operator [](1) == header_->operator [](2))) {
-                        std::size_t sz = static_cast<std::size_t> (header_->operator [](1));
+                    if ((header_->size() > 3) && (header_->operator[](1) == header_->operator[](2))) {
+                        std::size_t sz = static_cast<std::size_t> (header_->operator[](1));
                         if (sz > (lnk_traints::link_size() + 1))
                             return (sz - lnk_traints::link_size() + 1); // -2 + 1= +1
                     }
@@ -622,6 +622,37 @@ namespace prot80670 {
         typedef boost::shared_ptr<apdu_type> apdu_ptr;
         typedef std::deque<apdu_ptr> apdu_deq;
 
+        struct result_operation {
+
+            result_operation(apdu_ptr dt) : data(dt), error() {
+            }
+
+            result_operation(const boost::system::error_code& err) : data(), error(err) {
+            }
+
+            result_operation(apdu_ptr dt, const boost::system::error_code& err) : data(dt), error(err) {
+            }
+
+            bool is_error() const {
+                return error;
+            }
+
+            bool is_data() const {
+                return data;
+            }
+
+            bool is_timeout() const {
+                return error == ERR_TIMEOUT;
+            }
+
+            operator bool() const {
+                return (data && (!error));
+            }
+
+            apdu_ptr data;
+            boost::system::error_code error;
+        };
+
         iec60870_101PM(chanalnum_type chnm, const iec_option& opt, iec60870_data_listener_ptr listr = iec60870_data_listener_ptr()) :
         iec60870_PM(opt, DEFREADTMO, listr),
         serialport_(io_service_), serialport_io_sevice(io_service_), req_timer(io_service_), silence_timer(io_service_), chnum_(chnm), comsetter_(opt),
@@ -681,26 +712,31 @@ namespace prot80670 {
             io_service_.stop();
         }
 
-
-
         virtual bool work_device(iec60870_device_ptr dev) {
             if (dev) {
-                if (dev->state() == iec60870_device::d_disconnect) {
-                    if (open_device(dev->address(), dev->trycount())) {
-                        dev->state(iec60870_device::d_connected);
+                try {
+                    if (dev->state() == iec60870_device::d_disconnect) {
+                        if (open_device(dev->address(), dev->trycount())) {
+                            dev->state(iec60870_device::d_connected);
+                        } else
+                            dev->dec_trycount();
+                        if (interrupt())
+                            return true;
+                        if (dev->state() == iec60870_device::d_disconnect)
+                            return false;
+                    }
+                    for (id_selestor_map::iterator sit = dev->sectors().begin(); sit != dev->sectors().end(); ++sit) {
+                        if (work_sector(dev, sit->second))
+                            return true;
+                    }
+                    if (work_devdata(dev))
+                        return true;
+                }                catch (const boost::system::error_code& err) {
+                    if (err == ERR_TIMEOUT) {
+                        dev->state(iec60870_device::d_disconnect);
                     } else
-                        dev->dec_trycount();
-                    if (interrupt())
-                        return true;
-                    if (dev->state() == iec60870_device::d_disconnect)
-                        return false;
+                        throw err;
                 }
-                for (id_selestor_map::iterator sit = dev->sectors().begin(); sit != dev->sectors().end(); ++sit) {
-                    if (work_sector(dev, sit->second))
-                        return true;
-                }
-                if (work_devdata(dev))
-                    return true;
             }
             return false;
         }
@@ -767,18 +803,18 @@ namespace prot80670 {
             return false;
         }
 
-        bool send_S1(octet_sequence::value_type fc, device_address dev, std::size_t ret = 1, bool prm_ = true, bool res_ = false) {
+        boost::system::error_code send_S1(octet_sequence::value_type fc, device_address dev, std::size_t ret = 1, bool prm_ = true, bool res_ = false) {
             return send_S1(apdu_type::create(dev, false, false, fc, prm_, res_), ret);
         }
 
-        bool send_S1(apdu_ptr req, std::size_t ret = 1) {
-            ret &= 0xF;
-            ret = ret ? ret : 1;
+        boost::system::error_code send_S1(apdu_ptr req, std::size_t ret = 1) {
+            ret = ret ? (ret < 0xF ? ret : 0xF) : 1;
+            boost::system::error_code err;
             while (ret--) {
-                if (request(req))
-                    return true;
-                return false;
+                if (request(req, err))
+                    return err;
             }
+            return err;
         }
 
         bool send_S2_ack(octet_sequence::value_type fc, device_address dev, std::size_t ret = 1, bool fcb_ = false, bool fcv_ = false, bool prm_ = true, bool res_ = false) {
@@ -786,8 +822,7 @@ namespace prot80670 {
         }
 
         bool send_S2_ack(apdu_ptr req, std::size_t ret = 1) {
-            ret &= 0xF;
-            ret = ret ? ret : 1;
+            ret = ret ? (ret < 0xF ? ret : 0xF) : 1;
             while (ret--) {
                 if (request(req)) {
                     boost::system::error_code err;
@@ -800,69 +835,82 @@ namespace prot80670 {
             return false;
         }
 
-        apdu_ptr send_S2(octet_sequence::value_type fc, device_address dev, std::size_t ret = 1, bool fcb_ = false, bool fcv_ = false, bool prm_ = true, bool res_ = false) {
+        result_operation send_S2(octet_sequence::value_type fc, device_address dev, std::size_t ret = 1, bool fcb_ = false, bool fcv_ = false, bool prm_ = true, bool res_ = false) {
             return send_S2(apdu_type::create(dev, fcb_, fcv_, fc, prm_, res_), ret);
         }
 
-        apdu_ptr send_S2(apdu_ptr req, std::size_t ret = 1) {
-            ret &= 0xF;
-            ret = ret ? ret : 1;
+        result_operation send_S2(apdu_ptr req, std::size_t ret = 1) {
+            ret = ret ? (ret < 0xF ? ret : 0xF) : 1;
+            boost::system::error_code err;
             while (ret--) {
-                if (request(req)) {
-                    boost::system::error_code err;
+                if (request(req, err)) {
                     apdu_ptr resp = response(err);
-                    if (!err && resp && (resp->valid())) {
-                        return resp;
+                    if (!err && resp) {
+                        return resp->valid() ? result_operation(data_ready_) : result_operation(ERR_BEDSEQ);
                     }
                 }
             }
-            return apdu_ptr();
+            return result_operation(err);
         }
 
-        apdu_ptr request_S3(octet_sequence::value_type fc, device_address dev, std::size_t ret = 1, bool fcb_ = false, bool fcv_ = false, bool prm_ = true, bool res_ = false) {
+        result_operation request_S3(octet_sequence::value_type fc, device_address dev, std::size_t ret = 1, bool fcb_ = false, bool fcv_ = false, bool prm_ = true, bool res_ = false) {
             return request_S3(apdu_type::create(dev, fcb_, fcv_, fc, prm_, res_), ret);
         }
 
-        apdu_ptr request_S3(apdu_ptr req, std::size_t ret = 1) {
-            ret &= 0xF;
-            ret = ret ? ret : 1;
+        result_operation request_S3(apdu_ptr req, std::size_t ret = 1) {
+            ret = ret ? (ret < 0xF ? ret : 0xF) : 1;
+            boost::system::error_code err;
             while (ret--) {
-                if (request(req)) {
-                    boost::system::error_code err;
+                if (request(req, err)) {
                     apdu_ptr resp = response(err);
-                    if (!err && resp && (resp->valid())) {
-                        return data_ready_;
+                    if (!err && resp) {
+                        return resp->valid() ? result_operation(data_ready_) : result_operation(ERR_BEDSEQ);
                     }
                 }
             }
-            return apdu_ptr();
+            return result_operation(err);
         }
 
     private:
 
         bool open_device(device_address dev, std::size_t ret = 1) {
 
-            apdu_ptr rslt = request_S3(FNC_REQ_STATUS, dev, ret);
-            if (rslt && (rslt->status()) && (!rslt->dfc())) {
-                if (send_S2_ack(FNC_SET_CANAL, dev, ret))
-                    //if (send_S2(apdu_type::create(dataobject::create_activation_1(dev, 1), dev, true, true, FNC_SEND)))
+            result_operation rslt = request_S3(FNC_REQ_STATUS, dev, ret);
+            if ((rslt.data) && (rslt.data->status()) && (!rslt.data->dfc())) {
+                rslt = send_S2(FNC_SET_CANAL, dev, ret);
+                if ((rslt.data) && (rslt.data->ack()))
                     return true;
             }
+            //if (rslt.is_timeout())
+                //throw rslt.error;
             return false;
         }
 
         bool init_selector(device_address dev, selector_address sel, bool fcb, std::size_t ret = 1) {
-            if (send_S2_ack(apdu_type::create(dataobject::create_activation_1(dev, sel), dev, fcb, true, FNC_SEND)))
+            result_operation rslt = send_S2(apdu_type::create(dataobject::create_activation_1(dev, sel), dev, fcb, true, FNC_SEND));
+            if ((rslt.data) && (rslt.data->ack()))
                 return true;
+            if (rslt.is_timeout())
+                throw rslt.error;
             return false;
         }
 
         apdu_ptr req_devCLS1(device_address dev, bool fcb, std::size_t ret = 1) {
-            return request_S3(FNC_REQ_CLS1, dev, ret, fcb, true);
+            result_operation rslt = request_S3(FNC_REQ_CLS1, dev, ret, fcb, true);
+            if ((rslt.data) && (rslt.data->valid()))
+                return rslt.data;
+            if (rslt.is_timeout())
+                throw rslt.error;
+            return rslt.data;
         }
 
         apdu_ptr req_devCLS2(device_address dev, bool fcb, std::size_t ret = 1) {
-            return request_S3(FNC_REQ_CLS2, dev, ret, fcb, true);
+            result_operation rslt = request_S3(FNC_REQ_CLS2, dev, ret, fcb, true);
+            if ((rslt.data) && (rslt.data->valid()))
+                return rslt.data;
+            if (rslt.is_timeout())
+                throw rslt.error;
+            return rslt.data;
         }
 
         void handle_request(const boost::system::error_code& err, apdu_ptr req) {
@@ -925,8 +973,8 @@ namespace prot80670 {
             io_service_.run();
 
 
-            if (is_error || is_timout){
-                err = error_cod; 
+            if (is_error || is_timout) {
+                err = error_cod;
                 return apdu_ptr();
             }
 
@@ -948,8 +996,8 @@ namespace prot80670 {
 
             io_service_.run();
 
-            if (is_error || is_timout){
-                err = error_cod; 
+            if (is_error || is_timout) {
+                err = error_cod;
                 return apdu_ptr();
             }
 

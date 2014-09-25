@@ -79,7 +79,8 @@
 
 
 
-
+#include <boost/config.hpp>
+#include <boost/cstdint.hpp>
 #include <boost/asio/serial_port.hpp>
 #include <boost/asio/read_at.hpp>
 #include <boost/bind.hpp>
