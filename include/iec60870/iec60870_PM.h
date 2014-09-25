@@ -690,7 +690,7 @@ namespace prot80670 {
                         dev->state(iec60870_device::d_connected);
                     } else
                         dev->dec_trycount();
-                    if (terminate_)
+                    if (interrupt())
                         return true;
                     if (dev->state() == iec60870_device::d_disconnect)
                         return false;
@@ -714,7 +714,7 @@ namespace prot80670 {
                             return true;
                     } else
                         return false;
-                    if (terminate_)
+                    if (interrupt())
                         return true;
                 }
             }
@@ -740,7 +740,7 @@ namespace prot80670 {
                     } else
                         return false;
                 }
-                if (terminate_)
+                if (interrupt())
                     return true;
             }
             return false;
@@ -760,7 +760,7 @@ namespace prot80670 {
                             return false;
                     } else
                         return false;
-                    if (terminate_)
+                    if (interrupt())
                         return true;
                 }
             }

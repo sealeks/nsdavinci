@@ -851,11 +851,11 @@ namespace prot80670 {
 
         virtual void work();
         
-        virtual bool work_device(iec60870_device_ptr dev){};
+        virtual bool work_device(iec60870_device_ptr dev){ return false;};
         
-        virtual bool work_sector(iec60870_device_ptr dev, iec60870_sector_ptr sect){};
+        virtual bool work_sector(iec60870_device_ptr dev, iec60870_sector_ptr sect){ return false;};
         
-        virtual bool work_devdata(iec60870_device_ptr dev) {};
+        virtual bool work_devdata(iec60870_device_ptr dev) { return false;};
         
         
         virtual void update_model();

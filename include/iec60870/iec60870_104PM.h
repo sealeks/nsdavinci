@@ -424,7 +424,11 @@ namespace prot80670 {
 
     protected:
 
-        virtual bool parse_data(apdu_104_ptr resp);
+        virtual bool work_device(iec60870_device_ptr dev);
+
+        virtual bool work_sector(iec60870_device_ptr dev, iec60870_sector_ptr sect);
+
+        bool parse_data(apdu_104_ptr resp);
 
         //virtual void insert_device_sevice(device_address dev){};             
 
