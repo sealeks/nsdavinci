@@ -271,10 +271,9 @@
             <pElem>../../lib/${CND_CONF}</pElem>
           </linkerAddLib>
           <linkerLibItems>
-            <linkerLibLibItem>custom</linkerLibLibItem>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
-            <linkerLibLibItem>dbaccess</linkerLibLibItem>
-            <linkerLibLibItem>soci</linkerLibLibItem>
+            <linkerLibLibItem>boost_itu_t</linkerLibLibItem>
+            <linkerLibLibItem>mms</linkerLibLibItem>
             <linkerLibLibItem>boost_date_time</linkerLibLibItem>
             <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
             <linkerLibLibItem>boost_program_options</linkerLibLibItem>
@@ -367,10 +366,9 @@
             <pElem>../../lib/${CND_CONF}</pElem>
           </linkerAddLib>
           <linkerLibItems>
-            <linkerLibLibItem>custom</linkerLibLibItem>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
-            <linkerLibLibItem>dbaccess</linkerLibLibItem>
-            <linkerLibLibItem>soci</linkerLibLibItem>
+            <linkerLibLibItem>boost_itu_t</linkerLibLibItem>
+            <linkerLibLibItem>mms</linkerLibLibItem>
             <linkerLibLibItem>boost_date_time</linkerLibLibItem>
             <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
             <linkerLibLibItem>boost_program_options</linkerLibLibItem>
