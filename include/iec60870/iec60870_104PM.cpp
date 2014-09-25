@@ -404,7 +404,7 @@ namespace prot80670 {
             send(apdu_104::TESTFRact);
             return;
         }
-        update_model();
+        work();
         {
             if (!k_expire()) {
                 if (!waitrequestdata_.empty()) {
@@ -651,6 +651,29 @@ namespace prot80670 {
     //void iec60870_104PM::insert_sector_sevice(device_address dev, selector_address slct) {
     //    waitrequestdata_.push_back(dataobject::create_activation_1(0, slct));
     //}
+
+    bool iec60870_104PM::work_device(iec60870_device_ptr dev) {
+        if (dev) {
+            if (dev->state() == iec60870_device::d_disconnect) {
+                dev->state(iec60870_device::d_connected);
+                for (id_selestor_map::iterator sit = dev->sectors().begin(); sit != dev->sectors().end(); ++sit) {
+                    if (work_sector(dev, sit->second))
+                        return true;
+                }
+            }
+        }
+        return interrupt();
+    }
+
+    bool iec60870_104PM::work_sector(iec60870_device_ptr dev, iec60870_sector_ptr sect) {
+        if (sect) {
+            if (sect->state() == iec60870_sector::s_noaciveted) {
+                waitrequestdata_.push_back(dataobject::create_activation_1(0, sect->selector()));
+                sect->state(iec60870_sector::s_activate);
+            }
+        }
+        return interrupt();
+    }
 
     bool iec60870_104PM::parse_data(apdu_104_ptr resp) {
         dataobject_vct rslt;
