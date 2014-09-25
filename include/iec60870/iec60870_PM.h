@@ -718,12 +718,14 @@ namespace prot80670 {
                     if (dev->state() == iec60870_device::d_disconnect) {
                         if (open_device(dev->address(), dev->trycount())) {
                             dev->state(iec60870_device::d_connected);
+                            execute(dev->address());
                         } else
                             dev->dec_trycount();
                         if (interrupt())
                             return true;
-                        if (dev->state() == iec60870_device::d_disconnect)
-                            return false;
+                        if (dev->state() == iec60870_device::d_disconnect){
+                            execute(dev->address(),ERR_NOLINK);
+                            return false;}
                     }
                     for (id_selestor_map::iterator sit = dev->sectors().begin(); sit != dev->sectors().end(); ++sit) {
                         if (work_sector(dev, sit->second))
@@ -734,6 +736,7 @@ namespace prot80670 {
                 }                catch (const boost::system::error_code& err) {
                     if (err == ERR_TIMEOUT) {
                         dev->state(iec60870_device::d_disconnect);
+                        execute(dev->address(),ERR_NOLINK);
                     } else
                         throw err;
                 }
