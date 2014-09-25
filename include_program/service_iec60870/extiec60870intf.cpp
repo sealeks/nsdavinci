@@ -20,7 +20,7 @@ namespace dvnci {
             else
                 return ERROR_NONET_CONNECTED;
         }
-        
+
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// external::exiec870intf
         /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,12 +49,12 @@ namespace dvnci {
         }
 
         void extiec60870intf::execute(device_address dev, const boost::system::error_code& err) {
-            set_device_state(dev, FULL_VALID  ,nserror_cast(err));
-            error(ERROR_NONET_CONNECTED);
+            set_device_state(dev, FULL_VALID, nserror_cast(err));
+            //error(ERROR_NONET_CONNECTED);
         };
 
         void extiec60870intf::execute(const boost::system::error_code& err) {
-            set_device_state(FULL_VALID  ,nserror_cast(err));
+            set_device_state(FULL_VALID, nserror_cast(err));
             error(ERROR_NONET_CONNECTED);
         }
 
@@ -75,11 +75,8 @@ namespace dvnci {
         ns_error extiec60870intf::connect_impl() {
             try {
                 iec_option opt(intf->groups()->option(groups().empty() ? group() : (*groups().begin())));
-                indx_set tmpset;
-                tmpset.insert(group());
-                init_device(groups().empty() ? tmpset : groups());                
                 if (!syncoption()) {
-                    set_devices(false,FULL_VALID);
+                    set_devices(false, FULL_VALID);
                     if (!thread_io) {
                         IEC_PROTOCOL proto = prot80670::protocol_from(intf->groups()->link(groups().empty() ? group() : (*groups().begin())).protocol());
                         switch (proto) {
@@ -100,8 +97,10 @@ namespace dvnci {
                     }
                     state_ = connected;
                     return error(pm_connected() ? 0 : ERROR_IO_LINK_NOT_CONNECTION);
-                } else
-                    set_devices_state(FULL_VALID ,ERROR_IO_NOSYNC_LINK);
+                } else {
+                    linkaddr(opt);
+                    set_devices_state(FULL_VALID, ERROR_IO_NOSYNC_LINK);
+                }
             } catch (...) {
             }
             state_ = disconnected;
@@ -241,61 +240,60 @@ namespace dvnci {
                 devices_.insert(device_pair((linkaddr() ? intf->groups()->devnum(*it) : 0), *it));
         }
 
-        void extiec60870intf::set_device_state(devnumtype dev, vlvtype valid, dvnci::dvncierror err) {
+        void extiec60870intf::set_device_state(devnumtype dev, vlvtype valid, dvnci::ns_error err) {
             device_map::const_iterator fit = devices_.find(dev);
             if (fit != devices_.end()) {
                 intf->groups()->active(fit->second, (!valid || err) ? false : true);
-                bool offneed = false;
-                if ((err && (err != intf->groups()->error(fit->second)))) {
-                    offneed = true;
+                bool changed = false;
+                if (err != intf->groups()->error(fit->second)) {
+                    changed = true;
                     intf->groups()->error(fit->second, err);
                 }
-                if (!valid && (intf->groups()->valid(fit->second))) {
-                    offneed = true;
-                    intf->groups()->error(fit->second, err);
+                if (valid != intf->groups()->valid(fit->second)) {
+                    changed = true;
+                    intf->groups()->valid(fit->second, valid);
                 }
-                if (offneed)
+                if (changed && (err || !valid))
                     intf->offgroup(fit->second);
             }
         }
 
-        void extiec60870intf::set_devices_state(vlvtype valid, dvnci::dvncierror err) {
-            for (device_map::const_iterator fit = devices_.begin(); fit != devices_.end(); ++fit) {          
-                intf->groups()->active(fit->second, (!valid || err) ? false : true);
-                bool offneed=false;
-                if ((err && (err != intf->groups()->error(fit->second)))) {
-                    offneed=true;
+        void extiec60870intf::set_devices_state(vlvtype valid, dvnci::ns_error err) {
+            for (device_map::const_iterator fit = devices_.begin(); fit != devices_.end(); ++fit) {
+                bool changed = false;
+                if (err != intf->groups()->error(fit->second)) {
+                    changed = true;
                     intf->groups()->error(fit->second, err);
                 }
-                 if (!valid && (intf->groups()->valid(fit->second))) {
-                    offneed=true;                                      
-                    intf->groups()->error(fit->second, err);
+                if (valid != intf->groups()->valid(fit->second)) {
+                    changed = true;
+                    intf->groups()->valid(fit->second, valid);
                 }
-                if (offneed)
+                if (changed && (err || !valid))
                     intf->offgroup(fit->second);
             }
-        }          
-        
+        }
+
         void extiec60870intf::set_device(devnumtype dev, bool state, vlvtype valid) {
-            device_map::const_iterator fit= devices_.find(dev);
-            if (fit != devices_.end()) {            
+            device_map::const_iterator fit = devices_.find(dev);
+            if (fit != devices_.end()) {
                 intf->groups()->active(fit->second, state);
                 intf->groups()->valid(fit->second, valid ? FULL_VALID : NULL_VALID);
                 intf->groups()->error(fit->second, 0);
                 if (!state)
                     intf->offgroup(fit->second);
-            }               
-        }   
-        
-        void extiec60870intf::set_devices(bool state, vlvtype valid) {            
-            for (device_map::const_iterator fit= devices_.begin(); fit != devices_.end(); ++fit){
+            }
+        }
+
+        void extiec60870intf::set_devices(bool state, vlvtype valid) {
+            for (device_map::const_iterator fit = devices_.begin(); fit != devices_.end(); ++fit) {
                 intf->groups()->active(fit->second, state);
                 intf->groups()->valid(fit->second, valid ? FULL_VALID : NULL_VALID);
                 intf->groups()->error(fit->second, 0);
                 if (!state)
                     intf->offgroup(fit->second);
-            }               
-        }           
+            }
+        }
 
         bool extiec60870intf::pm_connected() const {
             return ((thread_io) && (thread_io->pm()->state() == prot80670::iec60870_PM::connected));
@@ -312,7 +310,8 @@ namespace dvnci {
             return linkaddrsize;
         }
 
-        void extiec60870intf::linkaddr(IEC_PROTOCOL proto, const iec_option& opotions) {
+        void extiec60870intf::linkaddr(const iec_option& opotions) {
+            IEC_PROTOCOL proto = prot80670::protocol_from(intf->groups()->link(groups().empty() ? group() : (*groups().begin())).protocol());
             if ((proto != prot80670::IEC_104) && (proto != prot80670::IEC_NULL))
                 linkaddrsize = static_cast<std::size_t> (opotions.addr());
             else
@@ -326,6 +325,10 @@ namespace dvnci {
                     metalink lnk1 = intf->groups()->link(*groups().begin());
                     proto1 = prot80670::protocol_from(lnk1.protocol());
                     iec_option opt1(intf->groups()->option(*groups().begin()));
+                    linkaddr(opt1);
+                    indx_set tmpset;
+                    tmpset.insert(group());
+                    init_device(groups().empty() ? tmpset : groups());
                     indx_set::const_iterator it = groups().begin();
                     it++;
                     while (it != groups().end()) {
@@ -344,22 +347,24 @@ namespace dvnci {
                     }
                     if (proto1 == prot80670::IEC_NULL)
                         return sync_error_ = ERROR_IO_NOSYNC_LINK;
-                    linkaddr(proto1, opt1);
                     return sync_error_ = 0;
                 } else {
                     proto1 = prot80670::protocol_from(intf->groups()->link(group()));
                 }
-                if (proto1 == prot80670::IEC_NULL)
-                    return sync_error_ = ERROR_IO_NOSYNC_LINK;
                 iec_option opt1(intf->groups()->option(group()));
-                linkaddr(proto1, opt1);
+                linkaddr(opt1);
+                indx_set tmpset;
+                tmpset.insert(group());
+                init_device(groups().empty() ? tmpset : groups());
+                if (proto1 == prot80670::IEC_NULL)
+                    return sync_error_ = ERROR_IO_NOSYNC_LINK;             
             }
             return sync_error_;
         }
 
         void error_and_valid_QDS(boost::uint8_t vl, vlvtype& vld, ns_error& err) {
             vld = FULL_VALID;
-            err = (vl & 1) ? ERROR_DATA_OUT_OF_RANGE : 0;            
+            err = (vl & 1) ? ERROR_DATA_OUT_OF_RANGE : 0;
         }
 
         datetime to_datetime_7(const octet_sequence& vl) {
