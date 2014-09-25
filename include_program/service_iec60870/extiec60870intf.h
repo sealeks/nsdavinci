@@ -96,9 +96,9 @@ namespace dvnci {
             
             void init_device(const indx_set& vl);
             
-            void set_device_state(devnumtype dev,  vlvtype valid = 1, dvnci::dvncierror err = 0);  
+            void set_device_state(devnumtype dev,  vlvtype valid = 1, dvnci::ns_error err = 0);  
             
-            void set_devices_state(vlvtype valid = 1, dvnci::dvncierror err = 0);            
+            void set_devices_state(vlvtype valid = 1, dvnci::ns_error err = 0);            
             
             void set_device(devnumtype dev,  bool state, vlvtype valid);     
             
@@ -110,15 +110,15 @@ namespace dvnci {
 
             std::size_t linkaddr() const;
 
-            void linkaddr(IEC_PROTOCOL proto, const iec_option& opotions);
+            void linkaddr(const iec_option& opotions);
 
             dvnci::ns_error syncoption();
 
 
             iec60870_thread_ptr thread_io;
-            dvnci::dvncierror fatal_;
+            dvnci::ns_error fatal_;
             std::size_t linkaddrsize;
-            dvnci::dvncierror sync_error_;
+            dvnci::ns_error sync_error_;
             device_map devices_;
 
         };
