@@ -51,6 +51,7 @@
           </linkerAddLib>
           <linkerLibItems>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
+            <linkerLibLibItem>iec60870</linkerLibLibItem>
             <linkerLibLibItem>wsock32</linkerLibLibItem>
             <linkerLibLibItem>ws2_32</linkerLibLibItem>
             <linkerLibLibItem>iec60870</linkerLibLibItem>
