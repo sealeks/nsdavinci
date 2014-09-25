@@ -14,7 +14,13 @@ namespace dvnci {
 
         using namespace prot80670;
 
-
+        dvnci::ns_error nserror_cast(const boost::system::error_code& vl) {
+            if (vl == prot80670::ERROR_NULL)
+                return 0;
+            else
+                return ERROR_NONET_CONNECTED;
+        }
+        
         /////////////////////////////////////////////////////////////////////////////////////////////////
         //////// external::exiec870intf
         /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -43,12 +49,12 @@ namespace dvnci {
         }
 
         void extiec60870intf::execute(device_address dev, const boost::system::error_code& err) {
-            set_device_state(dev, FULL_VALID  ,err !=prot80670::ERROR_NULL ? ERROR_NONET_CONNECTED : 0);
+            set_device_state(dev, FULL_VALID  ,nserror_cast(err));
             error(ERROR_NONET_CONNECTED);
         };
 
         void extiec60870intf::execute(const boost::system::error_code& err) {
-            set_device_state(FULL_VALID  ,err !=prot80670::ERROR_NULL ? ERROR_NONET_CONNECTED : 0);
+            set_device_state(FULL_VALID  ,nserror_cast(err));
             error(ERROR_NONET_CONNECTED);
         }
 
@@ -238,20 +244,34 @@ namespace dvnci {
         void extiec60870intf::set_device_state(devnumtype dev, vlvtype valid, dvnci::dvncierror err) {
             device_map::const_iterator fit = devices_.find(dev);
             if (fit != devices_.end()) {
-                intf->groups()->error(fit->second, err);
                 intf->groups()->active(fit->second, (!valid || err) ? false : true);
-                intf->groups()->valid(fit->second, (valid == 1) ? FULL_VALID : valid);
-                if (!valid || err)
+                bool offneed = false;
+                if ((err && (err != intf->groups()->error(fit->second)))) {
+                    offneed = true;
+                    intf->groups()->error(fit->second, err);
+                }
+                if (!valid && (intf->groups()->valid(fit->second))) {
+                    offneed = true;
+                    intf->groups()->error(fit->second, err);
+                }
+                if (offneed)
                     intf->offgroup(fit->second);
             }
         }
 
         void extiec60870intf::set_devices_state(vlvtype valid, dvnci::dvncierror err) {
-            for (device_map::const_iterator fit = devices_.begin(); fit != devices_.end(); ++fit) {
-                intf->groups()->error(fit->second, err);
+            for (device_map::const_iterator fit = devices_.begin(); fit != devices_.end(); ++fit) {          
                 intf->groups()->active(fit->second, (!valid || err) ? false : true);
-                intf->groups()->valid(fit->second, (valid == 1) ? FULL_VALID : valid);
-                if (!valid || err)
+                bool offneed=false;
+                if ((err && (err != intf->groups()->error(fit->second)))) {
+                    offneed=true;
+                    intf->groups()->error(fit->second, err);
+                }
+                 if (!valid && (intf->groups()->valid(fit->second))) {
+                    offneed=true;                                      
+                    intf->groups()->error(fit->second, err);
+                }
+                if (offneed)
                     intf->offgroup(fit->second);
             }
         }          
