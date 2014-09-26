@@ -32,13 +32,13 @@ namespace dvnci {
                         const MMS::bitstring_type& tmp = val->success()->type() == MMS::Data_bit_string ?
                                 (*(val->success()->bit_string())) : (*(val->success()->booleanArray()));
                         if (tmp.sizebits() <= 8)
-                            return short_value(tmp. operator uint8_t());
+                            return short_value(tmp. operator boost::uint8_t());
                         else if (tmp.sizebits() <= 16)
-                            return short_value(tmp. operator uint16_t());
+                            return short_value(tmp. operator boost::uint16_t());
                         else if (tmp.sizebits() <= 32)
-                            return short_value(tmp. operator uint32_t());
+                            return short_value(tmp. operator boost::uint32_t());
                         else
-                            return short_value(tmp. operator uint64_t());
+                            return short_value(tmp. operator boost::uint64_t());
                         break;
                     }
                     case MMS::Data_integer:
