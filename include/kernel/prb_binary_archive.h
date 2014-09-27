@@ -123,9 +123,7 @@ namespace dvnci {
     prb_binary_iarchive,
     std::istream::char_type,
     std::istream::traits_type>,
-    public boost::archive::detail::common_iarchive<prb_binary_iarchive>
-    ,
-    public boost::archive::detail::shared_ptr_helper {
+    public boost::archive::detail::common_iarchive<prb_binary_iarchive>{
 
         typedef boost::archive::basic_binary_iprimitive<
         prb_binary_iarchive,
