@@ -52,6 +52,11 @@
                    projectFiles="false">
       <itemPath>Makefile</itemPath>
     </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
   </logicalFolder>
   <sourceRootList>
     <Elem>../../include_program/app_admin</Elem>
@@ -78,12 +83,14 @@
           </incDir>
           <preprocessorList>
             <Elem>DVNCI_DEDUG</Elem>
-            <Elem>_WIN32_WINNT=0x0601</Elem>
+            <Elem>_WIN32_WINNT=0x0501</Elem>
             <Elem>fno-strict-aliasing</Elem>
           </preprocessorList>
         </ccTool>
         <linkerTool>
           <linkerLibItems>
+            <linkerLibFileItem>-LF:/Project/davinci/lib/nb_gcc_db_WIN32</linkerLibFileItem>
+            <linkerLibFileItem>-LF:/Project/davinci/lib/boost/nb_gcc_db_WIN32</linkerLibFileItem>
             <linkerLibLibItem>stdc++</linkerLibLibItem>
             <linkerLibLibItem>nsadmin</linkerLibLibItem>
             <linkerLibLibItem>nskernel</linkerLibLibItem>
@@ -95,7 +102,6 @@
             <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
             <linkerLibLibItem>boost_iostreams</linkerLibLibItem>
             <linkerLibLibItem>boost_log_setup</linkerLibLibItem>
-            <linkerLibLibItem>boost_prg_exec_monitor</linkerLibLibItem>
             <linkerLibLibItem>boost_random</linkerLibLibItem>
             <linkerLibLibItem>boost_regex</linkerLibLibItem>
             <linkerLibLibItem>boost_serialization</linkerLibLibItem>
@@ -103,7 +109,6 @@
             <linkerLibLibItem>boost_system</linkerLibLibItem>
             <linkerLibLibItem>boost_thread</linkerLibLibItem>
             <linkerLibLibItem>boost_timer</linkerLibLibItem>
-            <linkerLibLibItem>boost_unit_test_framework</linkerLibLibItem>
             <linkerLibLibItem>oleaut32</linkerLibLibItem>
             <linkerLibLibItem>ws2_32</linkerLibLibItem>
             <linkerLibLibItem>wsock32</linkerLibLibItem>
@@ -355,32 +360,32 @@
                             OP="../../lib/${CND_CONF}/libmeta.a">
               </makeArtifact>
             </linkerLibProjectItem>
-            <linkerLibLibItem>ole32</linkerLibLibItem>
-            <linkerLibLibItem>wsock32</linkerLibLibItem>
+            <linkerLibFileItem>-LF:/Project/davinci/lib/nb_gcc_rl_WIN32</linkerLibFileItem>
+            <linkerLibFileItem>-LF:/Project/davinci/lib/boost/nb_rl_db_WIN32</linkerLibFileItem>
+            <linkerLibLibItem>stdc++</linkerLibLibItem>
+            <linkerLibLibItem>nsadmin</linkerLibLibItem>
+            <linkerLibLibItem>nskernel</linkerLibLibItem>
+            <linkerLibLibItem>meta</linkerLibLibItem>
+            <linkerLibLibItem>boost_chrono</linkerLibLibItem>
+            <linkerLibLibItem>boost_coroutine</linkerLibLibItem>
+            <linkerLibLibItem>boost_date_time</linkerLibLibItem>
+            <linkerLibLibItem>boost_exception</linkerLibLibItem>
+            <linkerLibLibItem>boost_filesystem</linkerLibLibItem>
+            <linkerLibLibItem>boost_iostreams</linkerLibLibItem>
+            <linkerLibLibItem>boost_log_setup</linkerLibLibItem>
+            <linkerLibLibItem>boost_prg_exec_monitor</linkerLibLibItem>
+            <linkerLibLibItem>boost_random</linkerLibLibItem>
+            <linkerLibLibItem>boost_regex</linkerLibLibItem>
+            <linkerLibLibItem>boost_serialization</linkerLibLibItem>
+            <linkerLibLibItem>boost_signals</linkerLibLibItem>
+            <linkerLibLibItem>boost_system</linkerLibLibItem>
+            <linkerLibLibItem>boost_thread</linkerLibLibItem>
+            <linkerLibLibItem>boost_timer</linkerLibLibItem>
+            <linkerLibLibItem>boost_unit_test_framework</linkerLibLibItem>
             <linkerLibLibItem>oleaut32</linkerLibLibItem>
             <linkerLibLibItem>ws2_32</linkerLibLibItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_atomic.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_chrono.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_coroutine.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_date_time.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_exception.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_filesystem.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_iostreams.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_locale.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_log.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_log_setup.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_prg_exec_monitor.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_program_options.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_random.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_regex.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_serialization.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_signals.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_system.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_test_exec_monitor.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_thread.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_timer.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_unit_test_framework.a</linkerLibFileItem>
-            <linkerLibFileItem>F:/Project/davinci/lib/boost/nb_gcc_rl_WIN32/libboost_wserialization.a</linkerLibFileItem>
+            <linkerLibLibItem>wsock32</linkerLibLibItem>
+            <linkerLibLibItem>ole32</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
