@@ -64,6 +64,8 @@
 #endif
 #endif
 
+#define BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS
+
 // set python styling
 // set formating Netbeans
 // except Otherparenthesis = true;
