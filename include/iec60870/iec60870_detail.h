@@ -77,7 +77,7 @@
 #include <limits>
 #include <iterator>
 
-
+#define BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS
 
 #include <boost/config.hpp>
 #include <boost/cstdint.hpp>
