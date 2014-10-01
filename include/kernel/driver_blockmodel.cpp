@@ -191,7 +191,7 @@ namespace dvnci {
                     }
                     case TYPE_TEXT:
                     {
-                        value_cast<std::string > (val);
+                        value_cast<std::string > (val, tm, valid);
                         return;
                     }
                     default:
