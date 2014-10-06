@@ -66,7 +66,7 @@ namespace dvnci {
                     {
                         std::string tmpvl = "";
                         if (!parse_val(val, tmpvl))
-                            blk.begin()->first->value_cast(tmpvl);
+                            blk.begin()->first->value_cast(tmpvl, datetime());
                         return error();
                     }
                     case LGKA_TYPEITEM_ARCHIVE:
