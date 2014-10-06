@@ -51,6 +51,14 @@
 #pragma warning(disable: 4101  4146 4800 )
 #endif
 
+#ifdef _MSC_VER
+#if _MSC_VER >= 1800
+#ifndef UNICODE
+#define UNICODE
+#endif
+#endif
+#endif
+
 #if defined(_IEC60870_WIN_) 
 #if defined(__GNUC__) && (__GNUC__ >= 4)
 #define BOOST_USE_WINDOWS_H
@@ -77,7 +85,6 @@
 #include <limits>
 #include <iterator>
 
-#define BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS
 
 #include <boost/config.hpp>
 #include <boost/cstdint.hpp>
