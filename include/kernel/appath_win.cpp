@@ -10,9 +10,9 @@ namespace dvnci {
         HKEY avp_out = 0;
         char value[1024];
         LONG len = 1024;
-        if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\DVNCI", 0, KEY_ALL_ACCESS, &avp_out) == ERROR_SUCCESS) {
+        if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\DVNCI", 0, KEY_ALL_ACCESS, &avp_out) == ERROR_SUCCESS) {
             DEBUG_STR_DVNCI(SUCCESSFULLOPENKEY)
-            if (RegQueryValue(avp_out, "path", value, &len) != ERROR_SUCCESS) {
+            if (RegQueryValueA(avp_out, "path", value, &len) != ERROR_SUCCESS) {
                 DEBUG_STR_DVNCI(ERROROPENKEY)
                 DEBUG_VAL_DVNCI(GetLastError());
             }
@@ -27,13 +27,13 @@ namespace dvnci {
     fspath setlocalbasepath(const fspath& path) {
 
         HKEY avp_out;
-        if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE\\DVNCI", 0, KEY_ALL_ACCESS, &avp_out) == ERROR_SUCCESS) {
-            RegDeleteKey(HKEY_LOCAL_MACHINE, "SOFTWARE\\DVNCI");
+        if (RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\DVNCI", 0, KEY_ALL_ACCESS, &avp_out) == ERROR_SUCCESS) {
+            RegDeleteKeyA(HKEY_LOCAL_MACHINE, "SOFTWARE\\DVNCI");
             RegCloseKey(avp_out);
         }
-        if (RegCreateKey(HKEY_LOCAL_MACHINE, "SOFTWARE\\DVNCI", &avp_out) == ERROR_SUCCESS) {
+        if (RegCreateKeyA(HKEY_LOCAL_MACHINE, "SOFTWARE\\DVNCI", &avp_out) == ERROR_SUCCESS) {
             std::string tmp = path.string();
-            RegSetValue(avp_out, "path", REG_SZ, (LPCSTR) tmp.c_str(), tmp.size());
+            RegSetValueA(avp_out, "path", REG_SZ, (LPCSTR) tmp.c_str(), tmp.size());
             RegCloseKey(avp_out);
         }
         return getlocalbasepath();

@@ -256,13 +256,13 @@ namespace dvnci {
 
     int startmain(int argc, char** argv) {
 
-        SERVICE_TABLE_ENTRY DispatcherTable[] = {
+        SERVICE_TABLE_ENTRYA DispatcherTable[] = {
             { (CHAR*) DVNCI_SERVICE_NAME.c_str(),
-                (LPSERVICE_MAIN_FUNCTION) servicemain},
+                (LPSERVICE_MAIN_FUNCTIONA) servicemain},
             { NULL, NULL}};
 
-        if (!StartServiceCtrlDispatcher(DispatcherTable)) {
-            OUTSTRVAL_DVNCI(StartServiceCtrlDispatcher, DVNCI_SERVICE_NAME)
+        if (!StartServiceCtrlDispatcherA(DispatcherTable)) {
+            OUTSTRVAL_DVNCI(StartServiceCtrlDispatcherA, DVNCI_SERVICE_NAME)
             _getch();
             return (EXIT_SUCCESS);
         }
@@ -271,7 +271,7 @@ namespace dvnci {
 
     void WINAPI servicemain(DWORD dwArgc, LPTSTR *lpszArgv) {
 
-        ssHandle = RegisterServiceCtrlHandler(DVNCI_SERVICE_NAME.c_str(), servicecontrol);
+        ssHandle = RegisterServiceCtrlHandlerA(DVNCI_SERVICE_NAME.c_str(), servicecontrol);
         if (!ssHandle) {
             OUTSTRVAL_DVNCI(Error registering ServiceControl, DVNCI_SERVICE_NAME)
             _getch();
@@ -316,7 +316,7 @@ namespace dvnci {
             return false;
         }
 
-        hService = CreateService(hSCManager, nameservice.c_str(),
+        hService = CreateServiceA(hSCManager, nameservice.c_str(),
                 nameservice.c_str(), SERVICE_ALL_ACCESS,
                 SERVICE_WIN32_OWN_PROCESS, SERVICE_DEMAND_START,
                 SERVICE_ERROR_NORMAL,
@@ -357,13 +357,13 @@ namespace dvnci {
         SC_HANDLE hService;
         SC_HANDLE hSCManager;
 
-        hSCManager = OpenSCManager(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
+        hSCManager = OpenSCManagerA(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
         if (!hSCManager) {
             DEBUG_STR_DVNCI(Cant open Service Control Manager);
             return false;
         }
 
-        hService = OpenService(hSCManager, DVNCI_SERVICE_NAME.c_str(), SERVICE_STOP | DELETE);
+        hService = OpenServiceA(hSCManager, DVNCI_SERVICE_NAME.c_str(), SERVICE_STOP | DELETE);
         if (!hService) {
             DEBUG_STR_VAL_DVNCI(Cant open service fo uninstall, DVNCI_SERVICE_NAME)
             CloseServiceHandle(hSCManager);
@@ -389,20 +389,20 @@ namespace dvnci {
         SC_HANDLE hService;
         SC_HANDLE hSCManager;
 
-        hSCManager = OpenSCManager(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
+        hSCManager = OpenSCManagerA(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
         if (!hSCManager) {
             DEBUG_STR_DVNCI(Cant open Service Control Manager);
             return false;
         }
 
-        hService = OpenService(hSCManager, nameservice.c_str(), SERVICE_START);
+        hService = OpenServiceA(hSCManager, nameservice.c_str(), SERVICE_START);
         if (!hService) {
             DEBUG_STR_VAL_DVNCI(Cant open service fo start, nameservice)
             CloseServiceHandle(hSCManager);
             return false;
         }
 
-        if (!StartService(hService, 0, NULL)) {
+        if (!StartServiceA(hService, 0, NULL)) {
             DEBUG_STR_VAL_DVNCI(Cant start service, nameservice)
             CloseServiceHandle(hService);
             CloseServiceHandle(hSCManager);
@@ -420,13 +420,13 @@ namespace dvnci {
 
 
 
-        hSCManager = OpenSCManager(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
+        hSCManager = OpenSCManagerA(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
         if (!hSCManager) {
             DEBUG_STR_DVNCI(Cant open Service Control Manager);
             return false;
         }
 
-        hService = OpenService(hSCManager, nameservice.c_str(), SERVICE_STOP);
+        hService = OpenServiceA(hSCManager, nameservice.c_str(), SERVICE_STOP);
         if (!hService) {
             DEBUG_STR_VAL_DVNCI(Cant open service fo stop, nameservice)
             CloseServiceHandle(hSCManager);
@@ -449,16 +449,16 @@ namespace dvnci {
 
         SC_HANDLE hService;
         SC_HANDLE hSCManager;
-        LPQUERY_SERVICE_CONFIG lpBufConfig;
+        LPQUERY_SERVICE_CONFIGA lpBufConfig;
         DWORD dwBytesNeeded;
 
-        hSCManager = OpenSCManager(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
+        hSCManager = OpenSCManagerA(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
         if (!hSCManager) {
             DEBUG_STR_DVNCI(Cant open Service Control Manager);
             return false;
         }
 
-        hService = OpenService(hSCManager, nameservice.c_str(), SERVICE_QUERY_CONFIG);
+        hService = OpenServiceA(hSCManager, nameservice.c_str(), SERVICE_QUERY_CONFIG);
         if (!hService) {
             DEBUG_STR_VAL_DVNCI(Cant open service fo read config, nameservice)
             CloseServiceHandle(hSCManager);
@@ -466,10 +466,10 @@ namespace dvnci {
         }
 
 
-        lpBufConfig = (LPQUERY_SERVICE_CONFIG) malloc(4096);
+        lpBufConfig = (LPQUERY_SERVICE_CONFIGA) malloc(4096);
 
 
-        if ((lpBufConfig != NULL) && (QueryServiceConfig(hService, lpBufConfig, 4096, &dwBytesNeeded))) {
+        if ((lpBufConfig != NULL) && (QueryServiceConfigA(hService, lpBufConfig, 4096, &dwBytesNeeded))) {
 
 
             switch (lpBufConfig->dwStartType) {
@@ -520,25 +520,25 @@ namespace dvnci {
 
         SC_HANDLE hService;
         SC_HANDLE hSCManager;
-        LPQUERY_SERVICE_CONFIG lpBufConfig;
+        LPQUERY_SERVICE_CONFIGA lpBufConfig;
         DWORD dwBytesNeeded;
         DEBUG_STR_DVNCI(set_property(num64 id, sevicestatus & val))
-        hSCManager = OpenSCManager(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
+        hSCManager = OpenSCManagerA(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
         if (!hSCManager) {
             DEBUG_STR_DVNCI(Cant open Service Control Manager);
             return false;
         }
 
-        hService = OpenService(hSCManager, nameservice.c_str(), SERVICE_QUERY_CONFIG | SERVICE_CHANGE_CONFIG);
+        hService = OpenServiceA(hSCManager, nameservice.c_str(), SERVICE_QUERY_CONFIG | SERVICE_CHANGE_CONFIG);
         if (!hService) {
             DEBUG_STR_VAL_DVNCI(Cant open service fo read config, nameservice)
             CloseServiceHandle(hSCManager);
             return false;
         }
 
-        lpBufConfig = (LPQUERY_SERVICE_CONFIG) malloc(4096);
+        lpBufConfig = (LPQUERY_SERVICE_CONFIGA) malloc(4096);
 
-        if ((lpBufConfig) && (QueryServiceConfig(hService, lpBufConfig, 4096, &dwBytesNeeded))) {
+        if ((lpBufConfig) && (QueryServiceConfigA(hService, lpBufConfig, 4096, &dwBytesNeeded))) {
             bool tmp_isch = false;
             DWORD tmpsttp = lpBufConfig->dwStartType;
             switch (config.runstate) {
@@ -605,13 +605,13 @@ namespace dvnci {
         SC_HANDLE hSCManager;
         SERVICE_STATUS ServiceStatus;
         int reslt = SERVICE_STATUS_NODEF;
-        hSCManager = OpenSCManager(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
+        hSCManager = OpenSCManagerA(NULL, NULL, SC_MANAGER_CREATE_SERVICE);
         if (!hSCManager) {
             DEBUG_STR_DVNCI(Cant open Service Control Manager);
             return SERVICE_STATUS_NODEF;
         }
 
-        hService = OpenService(hSCManager, nameservice.c_str(), SERVICE_QUERY_STATUS);
+        hService = OpenServiceA(hSCManager, nameservice.c_str(), SERVICE_QUERY_STATUS);
         if (!hService) {
             DEBUG_STR_VAL_DVNCI(Cant open service fo read status, nameservice)
             CloseServiceHandle(hSCManager);

@@ -59,7 +59,7 @@ public:
     }
 
     operator bool() {
-        return sh_ptr;
+        return static_cast<bool>(sh_ptr);
     }
 
     operator mutex_ref() {
@@ -134,7 +134,7 @@ public:
     }
 
     operator bool() {
-        return sh_ptr;
+        return static_cast<bool>(sh_ptr);
     }
 
     operator mutex_ref() {
@@ -208,7 +208,7 @@ namespace dvnci {
         }
 
         bool operator[] (const std::string& vl) const {
-            return ((sh_ptr) && (sh_ptr->operator[](vl)));
+            return ((static_cast<bool>(sh_ptr)) && (sh_ptr->operator[](vl)));
         }
 
         indx operator()(const std::string& vl) const {
@@ -228,7 +228,7 @@ namespace dvnci {
         }
 
         operator bool() const {
-            return sh_ptr;
+            return static_cast<bool>(sh_ptr);
         }
 
         operator mutex_ref() {
@@ -312,7 +312,7 @@ namespace dvnci {
         }
 
         operator bool() {
-            return sh_ptr;
+            return static_cast<bool>(sh_ptr);
         }
 
         void reset() {
@@ -385,7 +385,7 @@ public:
     }
 
     operator bool() {
-        return sh_ptr;
+        return static_cast<bool>(sh_ptr);
     }
 
     void reset() {
@@ -463,7 +463,7 @@ public:
     }
 
     operator bool() {
-        return sh_ptr;
+        return static_cast<bool>(sh_ptr);
     }
 
     void reset() {

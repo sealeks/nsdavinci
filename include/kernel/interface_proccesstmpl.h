@@ -174,7 +174,7 @@ namespace dvnci {
                         externmanager = externintf_ptr(new EXTERNALINTF(intf, (executor*)this, groupset(), lnk_));
                     }
                 }
-                return externmanager;
+                return static_cast<bool>(externmanager);
             }
 
             virtual bool uninitialize() {
