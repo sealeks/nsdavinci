@@ -144,7 +144,7 @@ namespace dvnci {
             std::string tmp;
             if (preapare_cmd_request_impl(tmp, prcl->chanel(), prcl->addr(),
                     ((prcl->kind() == LGKA_TYPEITEM_SMPL) ? -1 : prcl->indx()))) {
-                prcl->value_cast(tmp);
+                prcl->value_cast(tmp, datetime());
             }
         }
 
