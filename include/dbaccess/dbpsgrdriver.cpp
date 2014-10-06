@@ -269,7 +269,7 @@ namespace dvnci {
                     agroup = it->agroup;
                     type = static_cast<num32> (it->type);
                     val = it->value;
-                    alevel = it->level;
+                    alevel = static_cast<num32>(it->level);
                     user = it->user;
                     host = "";
                     stmnt.execute(true);
