@@ -978,7 +978,7 @@ namespace prot80670 {
 
             if (is_error || is_timout) {
                 err = error_cod;
-                return apdu_ptr();
+                return false;
             }
 
             err = boost::system::error_code();
