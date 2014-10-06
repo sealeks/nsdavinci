@@ -161,7 +161,7 @@ namespace dvnci {
             datetime_pair report_range() const;
 
             bool is_report_range() const {
-                return reportrange_;
+                return static_cast<bool>(reportrange_);
             }
 
             friend std::ostream & operator<<(std::ostream& os, const basis_req_parcel & ns) {

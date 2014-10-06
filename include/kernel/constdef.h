@@ -57,6 +57,14 @@
 #pragma warning(disable: 4101  4146 )
 #endif
 
+#ifdef _MSC_VER
+#if _MSC_VER >= 1800
+#ifndef UNICODE
+#define UNICODE
+#endif
+#endif
+#endif
+
 #if defined(_DVN_WIN_) 
 #if defined(__GNUC__) && (__GNUC__ >= 4)
 #define BOOST_USE_WINDOWS_H
@@ -64,7 +72,7 @@
 #endif
 #endif
 
-#define BOOST_NO_CXX11_EXPLICIT_CONVERSION_OPERATORS
+
 
 // set python styling
 // set formating Netbeans

@@ -3319,8 +3319,8 @@ namespace dvnci {
                         val = min_raw;
                     if (val > max_raw)
                         val = max_raw;
-                    val = (min_eu + ((1.0 * length_eu)
-                            / (1.0 * length_raw))* (val - min_raw));
+                    val = static_cast<T>((min_eu + ((1.0 * length_eu)
+                            / (1.0 * length_raw))* (val - min_raw)));
                 }
             } else {
                 if (length_eu) {
@@ -3354,8 +3354,8 @@ namespace dvnci {
                         val = min_eu;
                     if (val > max_eu)
                         val = max_eu;
-                    val = (min_raw + ((1.0 * length_raw)
-                            / (1.0 * length_eu))* (val - min_eu));
+                    val = static_cast<T>((min_raw + ((1.0 * length_raw)
+                            / (1.0 * length_eu))* (val - min_eu)));
                 }
             } else {
                 if (length_eu) {
@@ -3375,7 +3375,7 @@ namespace dvnci {
 
         T max_raw = maxraw_prtd<T > (id);
         T min_raw = minraw_prtd<T > (id);
-        T logdbtmp = (max_raw > min_raw ? max_raw - min_raw : min_raw - max_raw) * logdb(id);
+        T logdbtmp = static_cast<T>((max_raw > min_raw ? max_raw - min_raw : min_raw - max_raw) * logdb(id));
         return (value_log<T > (id) > val) ?
                 ((value_log<T > (id) - val) >= logdbtmp) : (val - (value_log<T > (id)) >= logdbtmp);
     }
