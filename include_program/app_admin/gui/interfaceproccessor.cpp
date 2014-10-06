@@ -214,7 +214,7 @@ namespace dvnci {
             if (it == transactions.end()) return false;
             transact = *it;
             transactions.erase(it);
-            return transact;}
+            return static_cast<bool>(transact);}
 
         bool transactionview_proccess::operator()() {
 
@@ -301,6 +301,7 @@ namespace dvnci {
             if (it == transactions.end()) return false;
             transact = *it;
             transactions.erase(it);
-            return transact;}
+            return static_cast<bool>(transact);
+        }
 
 }}
