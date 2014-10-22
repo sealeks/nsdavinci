@@ -1,0 +1,21 @@
+<?xml-stylesheet href="../util/lib.xsl" type="text/xsl"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" width="100%" height="100%" style="background-color: #bbb;" fillcolor1="#0e0" color1="#333" fillcolor2="#0a0" fillenvironment="" color2="#111" y="0" x="0" oncaption="#0F0" oncolor1="#0A0">  
+    
+    
+    <mlib:sensor x="5" y="2" height="26" width="240" stroke="#ccc" stroke-width="1" r="4" id="sensor1" color1="#333" color2="#666" caption="Воздушный шибер" alighn="center" fontcolor="#eee" fontstyle="font-size: 12"/>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <mlib:sensor x="5" y="30" height="22" width="156" stroke="yellow" stroke-width="1" r="4" id="sensor5" color1="#333" color2="#666" caption="level_p.tag" alighn="left" fontcolor="#eee" fontstyle="font-size: 11" param=""/>
+    <mlib:sensor x="162" y="30" height="22" width="82" stroke="yellow" stroke-width="1" r="4" id="sensor0" color1="#333" color2="#666" caption="" alighn="right" fontcolor="#0e0" fontstyle="font-size: 11" param="level_p" sensorevent="valueedit"/>
+</svg>

@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="../util/css/libs.css"?>
+<svg:svg xmlns="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" width="100%" height="100%" style="background-image: url('../util/css/res/bgrd2.png');" onload="libutil.startup.init()" version="1.1">
+	<script xmlns:html="http://www.w3.org/TR/xhtml1" type="text/javascript" xlink:href="../util/js/libutil.js"/>
+	<script xmlns:html="http://www.w3.org/TR/xhtml1" type="text/javascript" xlink:href="../util/js/designer.js"/>
+	<script xmlns:html="http://www.w3.org/TR/xhtml1" type="text/javascript" xlink:href="../libs/main/js/mainlib.js"/>
+	<defs xmlns:html="http://www.w3.org/TR/xhtml1">
+		<filter id="filter_lib_armat1000" x="-20%" y="-20%" width="140%" height="140%">
+			<feGaussianBlur in="SourceAlpha" stdDeviation="40" result="blur"/>
+			<feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
+				<fePointLight x="50000" y="50000" z="200000"/>
+			</feSpecularLighting>
+			<feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+			<feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+			<feMerge>
+				<feMergeNode in="litPaint"/>
+			</feMerge>
+		</filter>
+		<filter id="filter_lib1" x="0%" y="0%" width="100%" height="100%">
+			<feGaussianBlur in="SourceAlpha" stdDeviation="40" result="blur"/>
+			<feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
+				<fePointLight x="50000" y="100000" z="200000"/>
+			</feSpecularLighting>
+			<feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+			<feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+			<feMerge>
+				<feMergeNode in="litPaint"/>
+			</feMerge>
+		</filter>
+		<filter id="filter_lib2" x="-10%" y="-10%" width="120%" height="120%">
+			<feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+			<feSpecularLighting in="blur" surfaceScale="6" specularConstant=".6" specularExponent="5" lighting-color="#bbbbbb" result="specOut">
+				<fePointLight x="0" y="0" z="20000"/>
+			</feSpecularLighting>
+			<feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+			<feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+			<feMerge>
+				<feMergeNode in="litPaint"/>
+			</feMerge>
+		</filter>
+		<filter id="filter_lib3" filterUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+			<feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+			<feSpecularLighting in="blur" surfaceScale="10" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
+				<fePointLight x="0" y="0" z="20000"/>
+			</feSpecularLighting>
+			<feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+			<feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+			<feMerge>
+				<feMergeNode in="litPaint"/>
+			</feMerge>
+		</filter>
+		<filter id="filter_lib4" filterUnits="userSpaceOnUse">
+			<feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+			<feSpecularLighting in="blur" surfaceScale="10" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
+				<fePointLight x="0" y="0" z="20000"/>
+			</feSpecularLighting>
+			<feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+			<feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+			<feMerge>
+				<feMergeNode in="litPaint"/>
+			</feMerge>
+		</filter>
+		<linearGradient id="gradientnone_h" x1="100%" y1="0%" x2="100%" y2="100%">
+			<stop offset="0" style="stop-color:#F7F7F7"/>
+			<stop offset="0.5" style="stop-color:#D1D1D1"/>
+			<stop offset="1" style="stop-color:#ECECEC"/>
+		</linearGradient>
+		<linearGradient id="gradientnone_v" x1="0%" y1="100%" x2="100%" y2="100%">
+			<stop offset="0" style="stop-color:#F7F7F7"/>
+			<stop offset="0.5" style="stop-color:#D1D1D1"/>
+			<stop offset="1" style="stop-color:#ECECEC"/>
+		</linearGradient>
+		<radialGradient id="gradientnone_c">
+			<stop offset="0" style="stop-color:#F7F7F7"/>
+			<stop offset="1" style="stop-color:#D1D1D1"/>
+		</radialGradient>
+		<linearGradient id="gradientblack_h" x1="100%" y1="0%" x2="100%" y2="100%">
+			<stop offset="0" style="stop-color:#333"/>
+			<stop offset="0.5" style="stop-color:#000"/>
+			<stop offset="1" style="stop-color:#333"/>
+		</linearGradient>
+		<linearGradient id="gradienblack_v" x1="0%" y1="100%" x2="100%" y2="100%">
+			<stop offset="0" style="stop-color:#000"/>
+			<stop offset="0.5" style="stop-color:#333"/>
+			<stop offset="1" style="stop-color:#000"/>
+		</linearGradient>
+		<radialGradient id="gradientblack_c">
+			<stop offset="0" style="stop-color:#333"/>
+			<stop offset="1" style="stop-color:#000"/>
+		</radialGradient>
+		<linearGradient id="gradientalarm_h" x1="100%" y1="0%" x2="100%" y2="100%">
+			<stop offset="0" style="stop-color:#a92"/>
+			<stop offset="0.5" style="stop-color:#f92"/>
+			<stop offset="1" style="stop-color:#f92"/>
+		</linearGradient>
+		<linearGradient id="gradientalarm_v" x1="0%" y1="100%" x2="100%" y2="100%">
+			<stop offset="0" style="stop-color:#a92"/>
+			<stop offset="0.5" style="stop-color:#f92"/>
+			<stop offset="1" style="stop-color:#f92"/>
+		</linearGradient>
+		<radialGradient id="gradientalarm_c">
+			<stop offset="0" style="stop-color:#a92"/>
+			<stop offset="0.5" style="stop-color:#f92"/>
+		</radialGradient>
+		<linearGradient id="gradientaccident_h" x1="100%" y1="0%" x2="100%" y2="100%">
+			<stop offset="0" style="stop-color:#AA0000"/>
+			<stop offset="0.5" style="stop-color:#FF0000"/>
+			<stop offset="1" style="stop-color:#AA0000"/>
+		</linearGradient>
+		<linearGradient id="gradientaccident_v" x1="0%" y1="100%" x2="100%" y2="100%">
+			<stop offset="0" style="stop-color:#AA0000"/>
+			<stop offset="0.5" style="stop-color:#FF0000"/>
+			<stop offset="1" style="stop-color:#AA0000"/>
+		</linearGradient>
+		<radialGradient id="gradientaccident_c">
+			<stop offset="0" style="stop-color:#AA0000"/>
+			<stop offset="1" style="stop-color:#FF0000"/>
+		</radialGradient>
+		<linearGradient id="gradientnotice_h" x1="100%" y1="0%" x2="100%" y2="100%">
+			<stop offset="0" style="stop-color:#AAAA00"/>
+			<stop offset="0.5" style="stop-color:#FFFF00"/>
+			<stop offset="1" style="stop-color:#AAAA00"/>
+		</linearGradient>
+		<linearGradient id="gradientnotice_v" x1="0%" y1="100%" x2="100%" y2="100%">
+			<stop offset="0" style="stop-color:#AAAA00"/>
+			<stop offset="0.5" style="stop-color:#FFFF00"/>
+			<stop offset="1" style="stop-color:#AAAA00"/>
+		</linearGradient>
+		<radialGradient id="gradientnotice_c">
+			<stop offset="0" style="stop-color:#AAAA00"/>
+			<stop offset="1" style="stop-color:#FFFF00"/>
+		</radialGradient>
+		<linearGradient id="gradientgaz_h" x1="100%" y1="0%" x2="100%" y2="100%">
+			<stop offset="0" style="stop-color:#FFFF44"/>
+			<stop offset="0.5" style="stop-color:#DDDD22"/>
+			<stop offset="1" style="stop-color:#FFFF44"/>
+		</linearGradient>
+		<linearGradient id="gradientgaz_v" x1="0%" y1="100%" x2="100%" y2="100%">
+			<stop offset="0" style="stop-color:#FFFF44"/>
+			<stop offset="0.5" style="stop-color:#DDDD22"/>
+			<stop offset="1" style="stop-color:#FFFF44"/>
+		</linearGradient>
+		<radialGradient id="gradientgaz_c">
+			<stop offset="0" style="stop-color:#FFFF44"/>
+			<stop offset="1" style="stop-color:#DDDD22"/>
+		</radialGradient>
+		<linearGradient id="gradientwater_h" x1="100%" y1="0%" x2="100%" y2="100%">
+			<stop offset="0" style="stop-color:#55FFAA"/>
+			<stop offset="0.5" style="stop-color:#33CC99"/>
+			<stop offset="1" style="stop-color:#55FFAA"/>
+		</linearGradient>
+		<linearGradient id="gradientwater_v" x1="0%" y1="100%" x2="100%" y2="100%">
+			<stop offset="0" style="stop-color:#55FFAA"/>
+			<stop offset="0.5" style="stop-color:#33CC99"/>
+			<stop offset="1" style="stop-color:#55FFAA"/>
+		</linearGradient>
+		<radialGradient id="gradientwater_c">
+			<stop offset="0" style="stop-color:#55FFAA"/>
+			<stop offset="1" style="stop-color:#33CC99"/>
+		</radialGradient>
+		<linearGradient id="gradientair_h" x1="100%" y1="0%" x2="100%" y2="100%">
+			<stop offset="0" style="stop-color:#55BBFF"/>
+			<stop offset="0.5" style="stop-color:#3399FF"/>
+			<stop offset="1" style="stop-color:#55BBFF"/>
+		</linearGradient>
+		<linearGradient id="gradientair_v" x1="0%" y1="100%" x2="100%" y2="100%">
+			<stop offset="0" style="stop-color:#55BBFF"/>
+			<stop offset="0.5" style="stop-color:#3399FF"/>
+			<stop offset="1" style="stop-color:#55BBFF"/>
+		</linearGradient>
+		<radialGradient id="gradientair_c">
+			<stop offset="0" style="stop-color:#55BBFF"/>
+			<stop offset="1" style="stop-color:#3399FF"/>
+		</radialGradient>
+		<linearGradient id="gradientoil_h" x1="100%" y1="0%" x2="100%" y2="100%">
+			<stop offset="0" style="stop-color:#FF8855"/>
+			<stop offset="0.5" style="stop-color:#CC6633"/>
+			<stop offset="1" style="stop-color:#FF8855"/>
+		</linearGradient>
+		<linearGradient id="gradientoil_v" x1="0%" y1="100%" x2="100%" y2="100%">
+			<stop offset="0" style="stop-color:#FF8855"/>
+			<stop offset="0.5" style="stop-color:#CC6633"/>
+			<stop offset="1" style="stop-color:#FF8855"/>
+		</linearGradient>
+		<radialGradient id="gradientoil_c">
+			<stop offset="0" style="stop-color:#FF8855"/>
+			<stop offset="1" style="stop-color:#CC6633"/>
+		</radialGradient>
+		<linearGradient id="gradientstream_h" x1="100%" y1="0%" x2="100%" y2="100%">
+			<stop offset="0" style="stop-color:#CC33CC"/>
+			<stop offset="0.5" style="stop-color:#FF00FF"/>
+			<stop offset="1" style="stop-color:#CC33CC"/>
+		</linearGradient>
+		<linearGradient id="gradientstrem_v" x1="0%" y1="100%" x2="100%" y2="100%">
+			<stop offset="0" style="stop-color:#CC33CC"/>
+			<stop offset="0.5" style="stop-color:#FF00FF"/>
+			<stop offset="1" style="stop-color:#CC33CC"/>
+		</linearGradient>
+		<radialGradient id="gradientstrem_c">
+			<stop offset="0" style="stop-color:#CC33CC"/>
+			<stop offset="1" style="stop-color:#FF00FF"/>
+		</radialGradient>
+	</defs>
+	<g xmlns:html="http://www.w3.org/TR/xhtml1" desc="m1::c1" header="" id="name10" isdesined="isdesined" x="274" y="233" height="60" width="60" cursor="#{ (!(m1::c1).valid) ? 'none' :  (  'pointer'   ) :default none} " onclick="if (this.getAttribute('cursor')=='pointer') {mainlib.armatura_popup(this, '','valve','m1::c1','');};">
+		<defs>
+			<style type="text/css">  
+            
+                  g#name10[cursor="pointer"] {
+                outline: 1px solid transparent;
+                cursor: pointer;}
+                  g#name10[cursor="pointer"]:hover {
+                outline: 1px solid #40FF00;
+                cursor: pointer;}
+                 
+                
+                  g#name10 { 
+              
+               cursor: none;}
+                  g#name10:hover { 
+               
+               cursor: none;}
+                 
+                </style>
+		</defs>
+		<defs>
+			<svg id="name10_poupup">
+				<?xml-stylesheet href="../util/css/libs.css"?>
+				<mlib:button id="pp" onload="libutil.startup.init()" version="1.1">
+					<script type="text/javascript" xlink:href="../util/js/libutil.js"/>
+					<script type="text/javascript" xlink:href="../util/js/designer.js"/>
+					<script type="text/javascript" xlink:href="../libs/main/js/mainlib.js"/>
+					<defs>
+						<filter id="filter_lib_armat1000" x="-20%" y="-20%" width="140%" height="140%">
+							<feGaussianBlur in="SourceAlpha" stdDeviation="40" result="blur"/>
+							<feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
+								<fePointLight x="50000" y="50000" z="200000"/>
+							</feSpecularLighting>
+							<feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+							<feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+							<feMerge>
+								<feMergeNode in="litPaint"/>
+							</feMerge>
+						</filter>
+						<filter id="filter_lib1" x="0%" y="0%" width="100%" height="100%">
+							<feGaussianBlur in="SourceAlpha" stdDeviation="40" result="blur"/>
+							<feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
+								<fePointLight x="50000" y="100000" z="200000"/>
+							</feSpecularLighting>
+							<feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+							<feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+							<feMerge>
+								<feMergeNode in="litPaint"/>
+							</feMerge>
+						</filter>
+						<filter id="filter_lib2" x="-10%" y="-10%" width="120%" height="120%">
+							<feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+							<feSpecularLighting in="blur" surfaceScale="6" specularConstant=".6" specularExponent="5" lighting-color="#bbbbbb" result="specOut">
+								<fePointLight x="0" y="0" z="20000"/>
+							</feSpecularLighting>
+							<feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+							<feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+							<feMerge>
+								<feMergeNode in="litPaint"/>
+							</feMerge>
+						</filter>
+						<filter id="filter_lib3" filterUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%">
+							<feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+							<feSpecularLighting in="blur" surfaceScale="10" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
+								<fePointLight x="0" y="0" z="20000"/>
+							</feSpecularLighting>
+							<feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+							<feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+							<feMerge>
+								<feMergeNode in="litPaint"/>
+							</feMerge>
+						</filter>
+						<filter id="filter_lib4" filterUnits="userSpaceOnUse">
+							<feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
+							<feSpecularLighting in="blur" surfaceScale="10" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut">
+								<fePointLight x="0" y="0" z="20000"/>
+							</feSpecularLighting>
+							<feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+							<feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/>
+							<feMerge>
+								<feMergeNode in="litPaint"/>
+							</feMerge>
+						</filter>
+						<linearGradient id="gradientnone_h" x1="100%" y1="0%" x2="100%" y2="100%">
+							<stop offset="0" style="stop-color:#F7F7F7"/>
+							<stop offset="0.5" style="stop-color:#D1D1D1"/>
+							<stop offset="1" style="stop-color:#ECECEC"/>
+						</linearGradient>
+						<linearGradient id="gradientnone_v" x1="0%" y1="100%" x2="100%" y2="100%">
+							<stop offset="0" style="stop-color:#F7F7F7"/>
+							<stop offset="0.5" style="stop-color:#D1D1D1"/>
+							<stop offset="1" style="stop-color:#ECECEC"/>
+						</linearGradient>
+						<radialGradient id="gradientnone_c">
+							<stop offset="0" style="stop-color:#F7F7F7"/>
+							<stop offset="1" style="stop-color:#D1D1D1"/>
+						</radialGradient>
+						<linearGradient id="gradientblack_h" x1="100%" y1="0%" x2="100%" y2="100%">
+							<stop offset="0" style="stop-color:#333"/>
+							<stop offset="0.5" style="stop-color:#000"/>
+							<stop offset="1" style="stop-color:#333"/>
+						</linearGradient>
+						<linearGradient id="gradienblack_v" x1="0%" y1="100%" x2="100%" y2="100%">
+							<stop offset="0" style="stop-color:#000"/>
+							<stop offset="0.5" style="stop-color:#333"/>
+							<stop offset="1" style="stop-color:#000"/>
+						</linearGradient>
+						<radialGradient id="gradientblack_c">
+							<stop offset="0" style="stop-color:#333"/>
+							<stop offset="1" style="stop-color:#000"/>
+						</radialGradient>
+						<linearGradient id="gradientalarm_h" x1="100%" y1="0%" x2="100%" y2="100%">
+							<stop offset="0" style="stop-color:#a92"/>
+							<stop offset="0.5" style="stop-color:#f92"/>
+							<stop offset="1" style="stop-color:#f92"/>
+						</linearGradient>
+						<linearGradient id="gradientalarm_v" x1="0%" y1="100%" x2="100%" y2="100%">
+							<stop offset="0" style="stop-color:#a92"/>
+							<stop offset="0.5" style="stop-color:#f92"/>
+							<stop offset="1" style="stop-color:#f92"/>
+						</linearGradient>
+						<radialGradient id="gradientalarm_c">
+							<stop offset="0" style="stop-color:#a92"/>
+							<stop offset="0.5" style="stop-color:#f92"/>
+						</radialGradient>
+						<linearGradient id="gradientaccident_h" x1="100%" y1="0%" x2="100%" y2="100%">
+							<stop offset="0" style="stop-color:#AA0000"/>
+							<stop offset="0.5" style="stop-color:#FF0000"/>
+							<stop offset="1" style="stop-color:#AA0000"/>
+						</linearGradient>
+						<linearGradient id="gradientaccident_v" x1="0%" y1="100%" x2="100%" y2="100%">
+							<stop offset="0" style="stop-color:#AA0000"/>
+							<stop offset="0.5" style="stop-color:#FF0000"/>
+							<stop offset="1" style="stop-color:#AA0000"/>
+						</linearGradient>
+						<radialGradient id="gradientaccident_c">
+							<stop offset="0" style="stop-color:#AA0000"/>
+							<stop offset="1" style="stop-color:#FF0000"/>
+						</radialGradient>
+						<linearGradient id="gradientnotice_h" x1="100%" y1="0%" x2="100%" y2="100%">
+							<stop offset="0" style="stop-color:#AAAA00"/>
+							<stop offset="0.5" style="stop-color:#FFFF00"/>
+							<stop offset="1" style="stop-color:#AAAA00"/>
+						</linearGradient>
+						<linearGradient id="gradientnotice_v" x1="0%" y1="100%" x2="100%" y2="100%">
+							<stop offset="0" style="stop-color:#AAAA00"/>
+							<stop offset="0.5" style="stop-color:#FFFF00"/>
+							<stop offset="1" style="stop-color:#AAAA00"/>
+						</linearGradient>
+						<radialGradient id="gradientnotice_c">
+							<stop offset="0" style="stop-color:#AAAA00"/>
+							<stop offset="1" style="stop-color:#FFFF00"/>
+						</radialGradient>
+						<linearGradient id="gradientgaz_h" x1="100%" y1="0%" x2="100%" y2="100%">
+							<stop offset="0" style="stop-color:#FFFF44"/>
+							<stop offset="0.5" style="stop-color:#DDDD22"/>
+							<stop offset="1" style="stop-color:#FFFF44"/>
+						</linearGradient>
+						<linearGradient id="gradientgaz_v" x1="0%" y1="100%" x2="100%" y2="100%">
+							<stop offset="0" style="stop-color:#FFFF44"/>
+							<stop offset="0.5" style="stop-color:#DDDD22"/>
+							<stop offset="1" style="stop-color:#FFFF44"/>
+						</linearGradient>
+						<radialGradient id="gradientgaz_c">
+							<stop offset="0" style="stop-color:#FFFF44"/>
+							<stop offset="1" style="stop-color:#DDDD22"/>
+						</radialGradient>
+						<linearGradient id="gradientwater_h" x1="100%" y1="0%" x2="100%" y2="100%">
+							<stop offset="0" style="stop-color:#55FFAA"/>
+							<stop offset="0.5" style="stop-color:#33CC99"/>
+							<stop offset="1" style="stop-color:#55FFAA"/>
+						</linearGradient>
+						<linearGradient id="gradientwater_v" x1="0%" y1="100%" x2="100%" y2="100%">
+							<stop offset="0" style="stop-color:#55FFAA"/>
+							<stop offset="0.5" style="stop-color:#33CC99"/>
+							<stop offset="1" style="stop-color:#55FFAA"/>
+						</linearGradient>
+						<radialGradient id="gradientwater_c">
+							<stop offset="0" style="stop-color:#55FFAA"/>
+							<stop offset="1" style="stop-color:#33CC99"/>
+						</radialGradient>
+						<linearGradient id="gradientair_h" x1="100%" y1="0%" x2="100%" y2="100%">
+							<stop offset="0" style="stop-color:#55BBFF"/>
+							<stop offset="0.5" style="stop-color:#3399FF"/>
+							<stop offset="1" style="stop-color:#55BBFF"/>
+						</linearGradient>
+						<linearGradient id="gradientair_v" x1="0%" y1="100%" x2="100%" y2="100%">
+							<stop offset="0" style="stop-color:#55BBFF"/>
+							<stop offset="0.5" style="stop-color:#3399FF"/>
+							<stop offset="1" style="stop-color:#55BBFF"/>
+						</linearGradient>
+						<radialGradient id="gradientair_c">
+							<stop offset="0" style="stop-color:#55BBFF"/>
+							<stop offset="1" style="stop-color:#3399FF"/>
+						</radialGradient>
+						<linearGradient id="gradientoil_h" x1="100%" y1="0%" x2="100%" y2="100%">
+							<stop offset="0" style="stop-color:#FF8855"/>
+							<stop offset="0.5" style="stop-color:#CC6633"/>
+							<stop offset="1" style="stop-color:#FF8855"/>
+						</linearGradient>
+						<linearGradient id="gradientoil_v" x1="0%" y1="100%" x2="100%" y2="100%">
+							<stop offset="0" style="stop-color:#FF8855"/>
+							<stop offset="0.5" style="stop-color:#CC6633"/>
+							<stop offset="1" style="stop-color:#FF8855"/>
+						</linearGradient>
+						<radialGradient id="gradientoil_c">
+							<stop offset="0" style="stop-color:#FF8855"/>
+							<stop offset="1" style="stop-color:#CC6633"/>
+						</radialGradient>
+						<linearGradient id="gradientstream_h" x1="100%" y1="0%" x2="100%" y2="100%">
+							<stop offset="0" style="stop-color:#CC33CC"/>
+							<stop offset="0.5" style="stop-color:#FF00FF"/>
+							<stop offset="1" style="stop-color:#CC33CC"/>
+						</linearGradient>
+						<linearGradient id="gradientstrem_v" x1="0%" y1="100%" x2="100%" y2="100%">
+							<stop offset="0" style="stop-color:#CC33CC"/>
+							<stop offset="0.5" style="stop-color:#FF00FF"/>
+							<stop offset="1" style="stop-color:#CC33CC"/>
+						</linearGradient>
+						<radialGradient id="gradientstrem_c">
+							<stop offset="0" style="stop-color:#CC33CC"/>
+							<stop offset="1" style="stop-color:#FF00FF"/>
+						</radialGradient>
+					</defs>
+				</mlib:button>
+			</svg>
+		</defs>
+		<rect fill="white" stroke="white" opacity="0" x="274" y="233" height="60" width="60"/>
+		<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" x="274" y="233" height="60" width="60">
+			<g opacity="0.0" class="#{ (alarmlevel(m1::c2)==3) ? 'accident' :  ((alarmlevel(m1::c2)==2) ? 'alarm' : 'notice')  :default accident}">
+				<circle cx="500" cy="500" r="500"/>
+				<animate attributeType="XML" attributeName="opacity" calcMode="linear" dur="500ms" repeatCount="indefinite" values="#{ ack(m1::c2) ? '1;1' : ( nack(m1::c2) ? '0;1' :   '0;0')  :default 0;0}"/>
+			</g>
+			<g filter="url(#filter_lib_armat1000)" class="#{ !(m1::c1).valid  ? 'non'  : ((m1::c1)  ? 'ongaz':  'offgaz') :default non}">
+				<path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/>
+				<path d="M 500,650 L 500, 380" fill="none" stroke-width="20"/>
+				<circle cx="500" cy="320" r="120" stroke-width="20"/>
+				<path d="M 450 370 L 450 270 L 500 320 L 550 270 L 550 370" stroke-width="20" fill="none"/>
+			</g>
+		</svg>
+	</g>
+</svg:svg>
