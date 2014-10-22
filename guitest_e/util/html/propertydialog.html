@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../js/libutil.js"></script>
+        <style type="text/css">
+            body { 
+                padding: 0px 0px;
+                margin: 0px 0px;
+            }
+            textarea { 
+                padding: 0px 0px;
+                margin: 0px 0px;
+                width: 100%;
+                height: 100%;
+            }
+            .nullblock{
+                padding: 0px 0px;
+                margin: 0px 0px; 
+                width: 100%;
+                height: 100%;
+            }
+            button{
+                pading: 0px 0px;
+                margin: 0px 0px; 
+                width: 100px;
+                
+            }
+        </style>
+
+    </head>
+
+    <body onload="var val =libutil.global.getGlobalPropertyEditor().value;document.getElementById('text').innerHTML=val; " >
+        <table class="nullblock">
+            <tr>  
+                <td class="nullblock">    
+                    <textarea id="text">
+                    </textarea>
+                </td>
+            </tr>
+            <tr>  
+                <td class="nullblock" style="text-align: right;">
+                    <button onclick="libutil.global.setGlobalPropertyEditor(null);window.close();"> Cancel </button>
+                    <button onclick="libutil.global.setGlobalPropertyEditor({ 'value' : document.getElementById('text').value});window.close();"> OK </button>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
