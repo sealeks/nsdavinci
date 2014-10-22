@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns="http://www.w3.org/2001/XMLSchema" 
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+            xmlns:mlib="http://dvnci/mlib" 
+            xmlns:lib="http://dvnci/lib" 
+            targetNamespace="http://dvnci/mlib">
+    
+<!--xsd:import namespace="http://dvnci/lib" schemaLocation="file:///F:/Project/davinci/guitests/util/lib.xsd"/-->
+        
+<xsd:simpleType name="direction">
+    <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="lr"/>
+        <xsd:enumeration value="rl"/>
+        <xsd:enumeration value="tb"/>
+        <xsd:enumeration value="bt"/>
+        <xsd:enumeration value=""/>
+    </xsd:restriction>
+</xsd:simpleType>
+        
+<xsd:simpleType name="alighn">
+    <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="left"/>
+        <xsd:enumeration value="center"/>
+        <xsd:enumeration value="right"/>
+        <xsd:enumeration value=""/>
+    </xsd:restriction>
+</xsd:simpleType>
+        
+<xsd:simpleType name="gradienttype">
+    <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="lr"/>
+        <xsd:enumeration value="tb"/>
+        <xsd:enumeration value="c"/>
+        <xsd:enumeration value=""/>
+    </xsd:restriction>
+</xsd:simpleType>
+        
+<xsd:simpleType name="environment">
+    <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="light_gray"/>
+        <xsd:enumeration value="midle_gray"/>
+        <xsd:enumeration value="dark_gray"/>
+        <xsd:enumeration value="light_blue"/>
+        <xsd:enumeration value="midle_blue"/>
+        <xsd:enumeration value="dark_blue"/> 
+        <xsd:enumeration value="light_green"/>
+        <xsd:enumeration value="midle_green"/>
+        <xsd:enumeration value="dark_green"/>          
+        <xsd:enumeration value="light_red"/>
+        <xsd:enumeration value="midle_red"/>
+        <xsd:enumeration value="dark_red"/>  
+        <xsd:enumeration value="gaz"/>
+        <xsd:enumeration value="water"/>
+        <xsd:enumeration value="air"/>
+        <xsd:enumeration value="vapor"/>
+        <xsd:enumeration value="oil"/>
+        <xsd:enumeration value="stream"/>
+        <xsd:enumeration value="smoke"/>
+        <xsd:enumeration value="notice"/>
+        <xsd:enumeration value="alarm"/>
+        <xsd:enumeration value="accident"/>   
+        <xsd:enumeration value="dark_fill"/>
+        <xsd:enumeration value="dark_button"/>  
+        <xsd:enumeration value=""/>
+    </xsd:restriction>
+</xsd:simpleType>
+        
+<xsd:simpleType name="armaturatype">
+    <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="motor"/>
+        <xsd:enumeration value="motorD"/>
+        <xsd:enumeration value="cvalve"/>
+        <xsd:enumeration value="ovalve"/>
+        <xsd:enumeration value="rvalve"/>
+        <xsd:enumeration value="bolt"/>
+        <xsd:enumeration value="simple"/>
+        <xsd:enumeration value="regul"/>
+        <xsd:enumeration value=""/>
+    </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="sliderlive">
+    <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="live"/>
+        <xsd:enumeration value="set"/>
+        <xsd:enumeration value=""/>
+    </xsd:restriction>
+</xsd:simpleType>
+        
+<xsd:simpleType name="buttontype">
+    <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="tumbler"/>
+        <xsd:enumeration value="impulse"/>
+        <xsd:enumeration value="unimpulse"/>
+        <xsd:enumeration value="button"/>
+        <xsd:enumeration value=""/>
+    </xsd:restriction>
+</xsd:simpleType>
+
+<xsd:simpleType name="buttonkind">
+    <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="red"/>
+        <xsd:enumeration value="green"/>
+        <xsd:enumeration value="rg"/>
+        <xsd:enumeration value="gr"/>
+        <xsd:enumeration value="custom"/>
+        <xsd:enumeration value=""/>
+    </xsd:restriction>
+</xsd:simpleType>
+        
+<xsd:simpleType name="filtertype">
+    <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="filter1"/>
+        <xsd:enumeration value="filter2"/>
+        <xsd:enumeration value="filter3"/>
+        <xsd:enumeration value=""/>
+    </xsd:restriction>
+</xsd:simpleType>
+        
+        
+<xsd:simpleType name="armatfiltertype">
+    <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="filter"/>
+        <xsd:enumeration value=""/>
+    </xsd:restriction>
+</xsd:simpleType>
+        
+<xsd:simpleType name="sensorevent">
+    <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="graph"/>
+        <xsd:enumeration value="valueset"/>
+        <xsd:enumeration value="valueedit"/>
+        <xsd:enumeration value="non"/>
+        <xsd:enumeration value=""/>
+    </xsd:restriction>
+</xsd:simpleType>
+     
+    
+
+        
+<xsd:element name="armatura">
+    <xsd:annotation>
+        <xsd:appinfo>
+            <lib:creator name="mlib:armatura" hint="armatura">
+                <mlib:armatura x="" y="" height="50" width="50"/>
+            </lib:creator>
+        </xsd:appinfo>
+    </xsd:annotation>        
+    <xsd:complexType>
+        <xsd:attribute name="id" type="xsd:ID" use="required"/>
+        <xsd:attribute name="type" type="mlib:armaturatype"/>
+        <xsd:attribute name="x" type="xsd:string" default="0"/>
+        <xsd:attribute name="y" type="xsd:string" default="0"/>
+        <xsd:attribute name="width" type="xsd:string" default="100"/>
+        <xsd:attribute name="height" type="xsd:string" default="100"/>
+        <xsd:attribute name="header" type="xsd:string"/>
+        <xsd:attribute name="environment" type="mlib:environment"/>
+        <xsd:attribute name="oncolor" type="xsd:string"/>
+        <xsd:attribute name="offcolor" type="xsd:string"/>
+        <xsd:attribute name="on" type="lib:expression"/>
+        <xsd:attribute name="position" type="lib:tag"/>
+        <xsd:attribute name="off" type="lib:expression"/>
+        <xsd:attribute name="local" type="lib:expression"/>
+        <xsd:attribute name="auto" type="lib:expression"/>
+        <xsd:attribute name="ron" type="lib:tag"/>
+        <xsd:attribute name="roff" type="lib:tag"/>
+        <xsd:attribute name="rauto" type="lib:tag"/>
+        <xsd:attribute name="don" type="lib:expression"/>
+        <xsd:attribute name="doff" type="lib:expression"/>
+        <xsd:attribute name="control" type="lib:expression"/>
+        <xsd:attribute name="alarms" type="lib:taglist"/>
+        <xsd:attribute name="visible" type="lib:expression"/>
+        <xsd:attribute name="rotate" type="xsd:string"/>
+        <xsd:attribute name="debugfunc" type="xsd:string"/>
+        <xsd:attribute name="filter" type="mlib:armatfiltertype"/>
+    </xsd:complexType>
+</xsd:element>
+        
+        
+<xsd:element name="rect">
+    <xsd:annotation>
+        <xsd:appinfo>
+            <lib:creator name="mlib:rect" hint="rect">
+                <mlib:rect x="" y="" height="50" width="200" stroke="#ddd" r="4" stroke-width="1"/>
+            </lib:creator>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:complexType>
+        <xsd:attribute name="id" type="xsd:ID" use="required"/>
+        <xsd:attribute name="x" type="xsd:string" default="0"/>
+        <xsd:attribute name="y" type="xsd:string" default="0"/>
+        <xsd:attribute name="width" type="xsd:string" default="100"/>
+        <xsd:attribute name="height" type="xsd:string" default="100"/>
+        <xsd:attribute name="direction" type="mlib:direction"/>
+        <xsd:attribute name="param" type="lib:expression"/>
+        <xsd:attribute name="alarms" type="lib:taglist"/>
+        <xsd:attribute name="gradient-type" type="mlib:gradienttype"/>
+        <xsd:attribute name="environment" type="mlib:environment"/>
+        <xsd:attribute name="color1" type="xsd:string"/>
+        <xsd:attribute name="color2" type="xsd:string"/>
+        <xsd:attribute name="fillenvironment" type="mlib:environment"/>
+        <xsd:attribute name="fillcolor1" type="xsd:string"/>
+        <xsd:attribute name="fillcolor2" type="xsd:string"/>
+        <xsd:attribute name="stroke" type="xsd:string"/>
+        <xsd:attribute name="stroke-width" type="xsd:string"/>
+        <xsd:attribute name="r" type="xsd:string"/>
+        <xsd:attribute name="visible" type="lib:expression"/>
+        <xsd:attribute name="rotate" type="xsd:string"/>
+    </xsd:complexType>
+</xsd:element>
+        
+        
+<xsd:element name="sensor">
+    <xsd:annotation>
+        <xsd:appinfo>
+            <lib:creator name="mlib:sensor" hint="sensor">
+                <mlib:sensor x="" y="" height="30" width="150" stroke="white" stroke-width="1" r="4"/>
+            </lib:creator>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:complexType>
+        <xsd:attribute name="id" type="xsd:ID" use="required"/>
+        <xsd:attribute name="x" type="xsd:string" default="0"/>
+        <xsd:attribute name="y" type="xsd:string" default="0"/>
+        <xsd:attribute name="width" type="xsd:string" default="100"/>
+        <xsd:attribute name="height" type="xsd:string" default="100"/>
+        <xsd:attribute name="r" type="xsd:string"/>
+        <xsd:attribute name="alighn" type="mlib:alighn"/>
+        <xsd:attribute name="stroke" type="xsd:string"/>
+        <xsd:attribute name="stroke-width" type="xsd:string"/>
+        <xsd:attribute name="gradient-type" type="mlib:gradienttype"/>
+        <xsd:attribute name="environment" type="mlib:environment"/>
+        <xsd:attribute name="color1" type="xsd:string"/>
+        <xsd:attribute name="color2" type="xsd:string"/>
+        <xsd:attribute name="sensorevent" type="mlib:sensorevent"/>
+        <xsd:attribute name="caption" type="xsd:string"/>
+        <xsd:attribute name="format" type="xsd:string"/>
+        <xsd:attribute name="param" type="lib:expression"/>
+        <xsd:attribute name="control" type="lib:expression"/>
+        <xsd:attribute name="disable" type="lib:expression"/>
+        <xsd:attribute name="visible" type="lib:expression"/>
+        <xsd:attribute name="alarms" type="lib:taglist"/>
+        <xsd:attribute name="alarms-low" type="lib:taglist"/>
+        <xsd:attribute name="alarms-high" type="lib:taglist"/>
+        <xsd:attribute name="fontcolor" type="xsd:string"/>
+        <xsd:attribute name="fontstyle" type="xsd:string"/>
+        <xsd:attribute name="rotate" type="xsd:string"/>
+        <xsd:attribute name="config" type="lib:taglist"/> 
+        <xsd:attribute name="config-header" type="xsd:string"/>
+        <xsd:attribute name="config-headers" type="xsd:string"/>        
+        <xsd:attribute name="config-formats" type="xsd:string"/>
+        <xsd:attribute name="period" type="xsd:string"/>
+    </xsd:complexType>
+</xsd:element>
+        
+        
+<xsd:element name="button">
+    <xsd:annotation>
+        <xsd:appinfo>
+            <lib:creator name="mlib:button" hint="button">
+                <mlib:button x="" y="" height="40" width="200" caption="caption"/>
+            </lib:creator>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:complexType>
+        <xsd:attribute name="id" type="xsd:ID" use="required"/>
+        <xsd:attribute name="x" type="xsd:string" default="0"/>
+        <xsd:attribute name="y" type="xsd:string" default="0"/>
+        <xsd:attribute name="width" type="xsd:string" default="100"/>
+        <xsd:attribute name="height" type="xsd:string" default="100"/>
+        <xsd:attribute name="r" type="xsd:string"/>
+        <xsd:attribute name="alighn" type="mlib:alighn"/>
+        <xsd:attribute name="type" type="mlib:buttontype"/>
+        <xsd:attribute name="kind" type="mlib:buttonkind"/>
+        <xsd:attribute name="caption" type="xsd:string"/>
+        <xsd:attribute name="color1" type="xsd:string"/>
+        <xsd:attribute name="color2" type="xsd:string"/>
+        <xsd:attribute name="fontstyle" type="xsd:string"/>
+        <xsd:attribute name="oncaption" type="xsd:string"/>
+        <xsd:attribute name="oncolor1" type="xsd:string"/>
+        <xsd:attribute name="oncolor2" type="xsd:string"/>
+        <xsd:attribute name="offfontstyle" type="xsd:string"/>
+        <xsd:attribute name="dsblcaption" type="xsd:string"/>
+        <xsd:attribute name="dsblcolor1" type="xsd:string"/>
+        <xsd:attribute name="dsblcolor2" type="xsd:string"/>
+        <xsd:attribute name="dsblfontstyle" type="xsd:string"/>
+        <xsd:attribute name="state" type="lib:expression"/>
+        <xsd:attribute name="param" type="lib:expression"/>
+        <xsd:attribute name="disable" type="lib:expression"/>
+        <xsd:attribute name="visible" type="lib:expression"/>
+        <xsd:attribute name="onclick" type="lib:event"/>
+        <xsd:attribute name="ondblclick" type="lib:event"/>
+        <xsd:attribute name="onmouseup" type="lib:event"/>
+        <xsd:attribute name="onmousedown" type="lib:event"/>
+    </xsd:complexType>
+</xsd:element>
+        
+        
+<xsd:element name="path">
+    <xsd:annotation>
+        <xsd:appinfo>
+            <lib:creator name="mlib:path" hint="path">
+                <mlib:path stroke-width="5" d=" M0,0 l 100,100" stroke="#bbb"/>
+            </lib:creator>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:complexType>
+        <xsd:attribute name="id" type="xsd:ID" use="required"/>
+        <xsd:attribute name="d" type="xsd:string"/>
+        <xsd:attribute name="on" type="lib:expression"/>
+        <xsd:attribute name="fill" type="xsd:string"/>
+        <xsd:attribute name="stroke" type="xsd:string"/>
+        <xsd:attribute name="off-stroke" type="xsd:string"/>
+        <xsd:attribute name="stroke-width" type="xsd:string"/>
+        <xsd:attribute name="visible" type="xsd:string"/>
+        <xsd:attribute name="filter" type="mlib:filtertype"/>
+    </xsd:complexType>
+</xsd:element>
+        
+        
+<xsd:element name="alarmtable">
+    <xsd:annotation>
+        <xsd:appinfo>
+            <lib:creator name="mlib:alarmtable" hint="alarmtable">
+                <mlib:alarmtable x="" y="" height="100" width="400"/>
+            </lib:creator>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:complexType>
+        <xsd:attribute name="id" type="xsd:ID" use="required"/>
+        <xsd:attribute name="x" type="xsd:string" default="0"/>
+        <xsd:attribute name="y" type="xsd:string" default="0"/>
+        <xsd:attribute name="width" type="xsd:string" default="100"/>
+        <xsd:attribute name="height" type="xsd:string" default="100"/>
+        <xsd:attribute name="fontstyle" type="xsd:string"/>
+    </xsd:complexType>
+</xsd:element>
+        
+        
+<xsd:element name="group">
+    <xsd:annotation>
+        <xsd:appinfo>
+            <lib:creator name="mlib:group" hint="group">
+                <mlib:group x="" y="" height="400" width="400"/>
+            </lib:creator>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:complexType>
+        <xsd:sequence>
+                <xsd:any namespace="##any" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="xsd:ID" use="required"/>
+        <xsd:attribute name="x" type="xsd:string" default="0"/>
+        <xsd:attribute name="y" type="xsd:string" default="0"/>
+        <xsd:attribute name="width" type="xsd:string" default="100"/>
+        <xsd:attribute name="height" type="xsd:string" default="100"/>
+        <xsd:attribute name="translate-x" type="xsd:string"/>
+        <xsd:attribute name="translate-y" type="xsd:string"/>
+        <xsd:attribute name="rotate-angle" type="xsd:string"/>
+        <xsd:attribute name="rotate-angle-binding" type="lib:expression"/>
+        <xsd:attribute name="scale" type="xsd:string"/>
+        <xsd:attribute name="scale-binding" type="lib:expression"/>
+        <xsd:attribute name="visible-binding" type="lib:expression"/>
+        <xsd:attribute name="onclick" type="lib:event"/>
+        <xsd:attribute name="ondblclick" type="lib:event"/>
+        <xsd:attribute name="onmouseup" type="lib:event"/>
+        <xsd:attribute name="onmousedown" type="lib:event"/>
+        <xsd:attribute name="onmousemove" type="lib:event"/>
+        <xsd:attribute name="onmouseout" type="lib:event"/>
+        <xsd:attribute name="onmouseover" type="lib:event"/>
+        <xsd:attribute name="onmousewheel" type="lib:event"/>
+    </xsd:complexType>
+</xsd:element>
+
+
+
+<xsd:element name="slider">
+    <xsd:annotation>
+        <xsd:appinfo>
+            <lib:creator name="mlib:slider" hint="slider">
+                <mlib:slider x="" y="" height="30" width="400"/>
+            </lib:creator>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:complexType>
+        <xsd:attribute name="id" type="xsd:ID" use="required"/>
+        <xsd:attribute name="x" type="xsd:string" default="0"/>
+        <xsd:attribute name="y" type="xsd:string" default="0"/>
+        <xsd:attribute name="width" type="xsd:string" default="100"/>
+        <xsd:attribute name="height" type="xsd:string" default="100"/>
+        <xsd:attribute name="r" type="xsd:string"/>
+        <xsd:attribute name="stroke" type="xsd:string"/>
+        <xsd:attribute name="stroke-width" type="xsd:string"/>
+        
+        <xsd:attribute name="direction" type="mlib:direction"/>
+        <xsd:attribute name="gradient-type" type="mlib:gradienttype"/>
+        <xsd:attribute name="wait-timeout" type="xsd:string"/>
+        <xsd:attribute name="live-command" type="mlib:sliderlive"/>
+        <xsd:attribute name="environment" type="mlib:environment"/>
+        <xsd:attribute name="color1" type="xsd:string"/>
+        <xsd:attribute name="color2" type="xsd:string"/>
+        <xsd:attribute name="fillenvironment" type="mlib:environment"/>
+        <xsd:attribute name="fillcolor1" type="xsd:string"/>
+        <xsd:attribute name="fillcolor2" type="xsd:string"/>
+        <xsd:attribute name="slidercolor1" type="xsd:string"/>
+        <xsd:attribute name="slidercolor2" type="xsd:string"/>
+        
+        <xsd:attribute name="param" type="lib:expression"/>
+        <xsd:attribute name="visible-binding" type="lib:expression"/>       
+    </xsd:complexType>
+</xsd:element>
+
+
+<xsd:element name="chart">
+    <xsd:annotation>
+        <xsd:appinfo>
+            <lib:creator name="mlib:chart" hint="chart">
+                <mlib:chart x="" y="" height="200" width="400"/>
+            </lib:creator>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:complexType>
+        <xsd:attribute name="id" type="xsd:ID" use="required"/>
+        <xsd:attribute name="x" type="xsd:string" default="0"/>
+        <xsd:attribute name="y" type="xsd:string" default="0"/>
+        <xsd:attribute name="width" type="xsd:string" default="200"/>
+        <xsd:attribute name="height" type="xsd:string" default="400"/> 
+        <xsd:attribute name="r" type="xsd:string" default="5"/>
+        <xsd:attribute name="params" type="xsd:string"/>
+        <xsd:attribute name="colors" type="xsd:string"/> 
+        <xsd:attribute name="period" type="xsd:string"/>
+        <xsd:attribute name="option" type="xsd:string"/>
+        <xsd:attribute name="layer-style" type="xsd:string"/>
+    </xsd:complexType>
+</xsd:element>
+
+
+<xsd:element name="regulator">
+    <xsd:annotation>
+        <xsd:appinfo>
+            <lib:creator name="mlib:regulator" hint="regulator">
+                <mlib:regulator x="" y="" height="50" width="50"/>
+            </lib:creator>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:complexType>
+        <xsd:attribute name="id" type="xsd:ID" use="required"/>
+        <xsd:attribute name="x" type="xsd:string" default="0"/>
+        <xsd:attribute name="y" type="xsd:string" default="0"/>
+        <xsd:attribute name="width" type="xsd:string" default="200"/>
+        <xsd:attribute name="height" type="xsd:string" default="400"/>
+            <xsd:attribute name="header" type="xsd:string" default=""/>    
+        <xsd:attribute name="period" type="lib:string"/>
+        <xsd:attribute name="param" type="lib:expression"/>
+        <xsd:attribute name="param-flysp" type="lib:expression"/>     
+        <xsd:attribute name="param-sp" type="lib:tag"/>
+        <xsd:attribute name="param-color" type="xsd:string"/>
+        <xsd:attribute name="param-color2" type="xsd:string"/>
+        <xsd:attribute name="param-environment" type="mlib:environment"/>        
+        <xsd:attribute name="param-format" type="xsd:string"/> 
+        <xsd:attribute name="auto" type="lib:tag"/>           
+        <xsd:attribute name="actuator" type="lib:expression"/>
+        <xsd:attribute name="actuator-sp" type="lib:tag"/>
+        <xsd:attribute name="actuator-color" type="xsd:string"/>
+        <xsd:attribute name="actuator-color" type="xsd:string"/>
+        <xsd:attribute name="actuator-environment" type="mlib:environment"/>
+        <xsd:attribute name="actuator-format" type="xsd:string"/>    
+        <xsd:attribute name="config" type="lib:taglist"/> 
+        <xsd:attribute name="config-header" type="xsd:string"/>
+        <xsd:attribute name="config-headers" type="xsd:string"/>        
+        <xsd:attribute name="config-formats" type="xsd:string"/>
+        <xsd:attribute name="visible-binding" type="lib:expression"/>
+        <xsd:attribute name="period" type="xsd:string"/>
+    </xsd:complexType>
+</xsd:element>
+
+
+</xsd:schema>
