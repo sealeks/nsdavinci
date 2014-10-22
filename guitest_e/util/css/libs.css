@@ -1,0 +1,282 @@
+ 
+/* Armat style*/
+
+.ongaz
+{
+  stroke: black;
+  fill: #EEEE33;
+}
+
+.onwater
+{
+  stroke: black;
+  fill: #33CC99;
+}
+
+.onair
+{
+  stroke: black;
+  fill: #3399FF;
+}
+
+
+.onstream
+{
+  stroke: black;
+  fill: #FF00FF;
+}
+
+.onoil
+{
+  stroke: black;
+  fill: #C63;
+}
+
+.onsmoke
+{
+  stroke: black;
+  fill: #CCC;
+}
+
+.onvapor
+{
+  stroke: black;
+  fill: #d55;
+}
+
+
+
+.on
+{
+  stroke: black;
+  fill: #33CC33;
+  
+}
+
+ .offgaz
+{
+  fill: #383838;
+  stroke: #EEEE33;
+}
+
+.offwater
+{
+  fill: #383838;
+  stroke: #33CC99;
+}
+
+.offair
+{
+  fill: #383838;
+  stroke: #3399FF;
+}
+
+
+.offstream
+{
+  fill: #383838;
+  stroke: #FF00FF;
+}
+
+.offoil
+{
+  fill: #383838;
+  stroke: #CC6633;
+}
+
+.offsmoke
+{
+  fill: black;
+  stroke: #CCC;
+}
+
+.offvapor
+{
+  fill: black;
+  stroke: #d55;
+}
+
+.off
+{
+  fill: #383838;
+  stroke: #33CC33;
+}
+
+.notice
+{
+  stroke-width: 0 !important;
+  fill: #FF0 !important;
+
+  
+}
+
+.alarm
+{
+  stroke-width: 0 !important;
+  fill: #EEAD0E !important;
+
+  
+}
+
+.accident
+{
+  stroke-width: 0 !important;
+  fill: red !important;
+  
+}
+
+.notice_stroke
+{
+  stroke: #FF0 !important;
+
+  
+}
+
+.alarm_stroke
+{
+  stroke: #EEAD0E !important;
+
+}
+
+.accident_stroke
+{
+  stroke: #F00 !important;
+}
+
+.local
+{
+  stroke: black;
+  fill: red;
+
+  
+}
+
+.autocontrol
+{
+  stroke: black;
+  fill: #00CD00;
+
+}
+
+.offcheckcontrol
+{
+  fill: #B5B5B5;
+}
+
+.oncheckcontrol
+{
+  fill: #00EE00;
+}
+
+
+.transparent
+{
+  stroke: transparent;
+  fill: transparent;
+
+  
+}
+
+.off
+{
+  stroke: black;
+  fill: gray;
+}
+
+.non
+{
+  stroke: black;
+  fill: white;
+}
+
+
+/* fill style */
+
+
+.nongradh{
+    fill: url(#gradientnone_h)
+}
+
+.nongradv{
+    fill: url(#gradientnone_v)
+}
+
+
+.redgradh{
+    fill: url(#gradientaccident_h)
+}
+
+.redgradv{
+    fill: url(#gradientaccident_v)
+}
+
+
+.gazgradh{
+    fill: url(#gradientgaz_h)
+}
+
+.gazgradv{
+    fill: url(#gradientgaz_v)
+}
+
+.watergradh{
+    fill: url(#gradientwater_h)
+}
+
+.watergradv{
+    fill: url(#gradientwater_v)
+}
+
+.airgradh{
+    fill: url(#gradientair_h)
+}
+
+.airgradv{
+    fill: url(#gradientair_v)
+}
+
+
+.oilgradh{
+    fill: url(#gradientoil_h)
+}
+
+.oilgradv{
+    fill: url(#gradientoil_v)
+}
+
+.streamgradh{
+    fill: url(#gradientstream_h)
+}
+
+.streamgradv{
+    fill: url(#gradientstream_v)
+}
+
+
+
+.central_svgnatext{
+text-anchor: middle; 
+dominant-baseline: central; 
+-webkit-user-select: none;}
+
+.left_svgnatext{
+text-anchor: start; 
+dominant-baseline: central; 
+-webkit-user-select: none;}
+
+.right_svgnatext{
+text-anchor: end; 
+dominant-baseline: central; 
+-webkit-user-select: none;}
+
+*{
+ -webkit-user-select: none;
+}
+
+
+
+
+
+
+
+

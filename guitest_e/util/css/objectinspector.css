@@ -1,0 +1,128 @@
+body { 
+    margin: 0 0; 
+    padding: 0 0; 
+    -webkit-user-select: none;
+}
+
+div.scrollHeader{
+    margin: 0 0; 
+    padding: 0 0; 
+    border-top-right-radius: 6px; 
+    border-top-left-radius: 6px;
+    border:  1px solid #000022; 
+    background: #000044; 
+    color: yellow; 
+    padding: 4px; 
+    -webkit-user-select: none;
+}
+
+div.scrollWrapper{
+    overflow:scroll; margin: 0 0; 
+    padding: 0 0;
+    border:  1px solid grey; 
+    height:99%;
+}
+
+table.scrollable{
+    border-collapse:collapse;
+    text-align: left;
+    font-size: 12px;
+    background:#f0f0f0; 
+    width: 100%;
+}
+
+table.scrollable th{
+    border: 1px solid #666;
+    background:-webkit-gradient(linear, left top, left bottom, from(#555), to(#333)); 
+    color: #eee;
+    font-weight: bold;
+    position: relative;
+    padding-left: 6px;
+    background-position: 100% 100%;
+}
+
+table.scrollable tbody{
+    overflow:auto;border-spacing: 0px
+}
+
+table.scrollable td.static{ 
+    background: -webkit-gradient(linear, left top, left bottom, from(#333), to(#111));
+    color: #ddd; 
+    border: 1px solid gray; 
+    padding: 0px 0px;
+}
+
+
+table.scrollable td.staticexpr{ 
+    background: -webkit-gradient(linear, left top, left bottom, from(#333), to(#111));   
+    color: #27cd7a; 
+    /*font-weight: bold;*/
+    border: 1px solid gray;   
+    padding: 0px 0px;
+}
+
+table.scrollable td.statictaglist{ 
+    background: -webkit-gradient(linear, left top, left bottom, from(#333), to(#111));   
+    color: #2E9AFE; 
+    font-weight: bold;
+    border: 1px solid gray;   
+    padding: 0px 0px;
+}
+
+table.scrollable td.statictag{ 
+    background: -webkit-gradient(linear, left top, left bottom, from(#333), to(#111));   
+    color: #9E9AFE; 
+    font-weight: bold;
+    border: 1px solid gray;   
+    padding: 0px 0px;
+}
+
+table.scrollable td.staticevent{ 
+    background: -webkit-gradient(linear, left top, left bottom, from(#333), to(#111));   
+    color: #f4c430; 
+    /*font-weight: bold;*/
+    border: 1px solid gray;   
+    padding: 0px 0px;
+}
+
+table.scrollable td{
+    border: 1px solid gray; 
+    padding: 0px 0px;
+}
+
+.error{
+    color: red !important;
+    font-weight: bold;
+}
+
+.ok{
+    color: green !important;
+    font-weight: bold;
+}
+
+.nodef{
+    color: gray !important;
+    font-weight: bold;
+}
+
+table.scrollable td input{
+    display: block; 
+    width: 100%; 
+    border: 0px; 
+    color: black;
+    padding: 0px 0px; 
+    font-size: 12px; 
+}
+
+table.scrollable td select{
+    display: block; 
+    width: 100%; 
+    border: 0px; 
+    color: black;
+    padding: 0px 0px; 
+    font-size: 12px;
+}
+
+.diffvalue{
+    background: #808080;
+}
