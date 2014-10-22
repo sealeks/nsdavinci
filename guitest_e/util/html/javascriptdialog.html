@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type="text/javascript" src="../js/libutil.js"></script>
+        <script type="text/javascript" src="../js_ext/codemirror/lib/codemirror.js"></script>
+        <link rel="stylesheet" href="../js_ext/codemirror/lib/codemirror.css">
+        <script type="text/javascript" src="../js_ext/codemirror/mode/javascript/javascript.js"></script>
+        <style type="text/css">
+            body { 
+                padding: 0px 0px;
+                margin: 0px 0px;
+                
+            }
+            textarea { 
+                padding: 0px 0px;
+                margin: 0px 0px;
+                width: 100%;
+                height: 100%;
+            }
+            .nullblock{
+                padding: 0px 0px;
+                margin: 0px 0px; 
+                width: 100%;
+                height: 100%;
+            }
+            button{
+                pading: 0px 0px;
+                margin: 0px 0px; 
+                width: 100px;
+                
+            }
+            .CodeMirror{
+                height: 100%;
+                font-size: 13px !important;
+                font-family: serif !important;
+            }
+            
+            .CodeMirror-scroll{
+                height: 100%;
+            }
+            
+            
+        </style>
+
+    </head>
+
+    <body onload="var val =libutil.global.getGlobalPropertyEditor().value; var el = document.getElementById('text');  el.innerHTML=val;  varCodeMirror = CodeMirror(function(elt) {el.parentNode.replaceChild(elt, el);} , {value: val} );" >
+        <table class="nullblock">
+            <tr>  
+                <td class="nullblock" > 
+   
+                    <textarea id="text">
+                    </textarea>
+                </td>
+            </tr>
+            <tr>  
+                <td class="nullblock" style="text-align: right;">
+                    <button onclick="libutil.global.setGlobalPropertyEditor(null);window.close();"> Cancel </button>
+                    <button onclick="libutil.global.setGlobalPropertyEditor({ 'value' : varCodeMirror.getValue()}); window.close();"> OK </button>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
