@@ -1,0 +1,833 @@
+<?xml-stylesheet href="../util/css/libs.css"?><svg:svg xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:mlib="http://dvnci/mlib" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="root" width="100%" height="100%" style="" onload="libutil.startup.init()" version="1.1"><script type="text/javascript" xlink:href="../util/js/libutil.js"/><script type="text/javascript" xlink:href="../util/js/designer.js"/><script type="text/javascript" xlink:href="simulator.js"/><script xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" type="text/javascript" xlink:href="../libs/main/js/mainlib.js"/><script xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" type="text/javascript" xlink:href="../util/js_ext/hightchart/jquery.min.js"/><script xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" type="text/javascript" xlink:href="../util/js_ext/hightchart/highcharts.js"/><defs xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace"><svg width="100%" height="100%" viewBox="0 0 128 250" id="calcpopup___popup"><g id="calcpopup___popup_sensorcalc" isdesined="isdesined" x="5" y="7" height="36" width="118" cursor="none"><defs><linearGradient id="calcpopup___popup_sensorcalc_sensor_gradient" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#333"/><stop offset="0.5" stop-color="#555"/><stop offset="1" stop-color="#333"/></linearGradient><style type="text/css">rect.calcpopup___popup_sensorcalc_sensor_gradient_classon {
+                        fill : url(#calcpopup___popup_sensorcalc_sensor_gradient);}
+                                
+                        rect.calcpopup___popup_sensorcalc_sensor_gradient_classnone {
+                        fill : url(#gradientnone_h);}
+                        
+                        </style></defs><rect id="calcpopup___popup_sensorcalc_sensor_rect" x="5" y="7" height="36" width="118" stroke-width="1" stroke="#eee" rx="5" ry="5" class="calcpopup___popup_sensorcalc_sensor_gradient_classon"/><svg x="5" y="7" height="36" width="118"><text id="calcpopup___popup_sensorcalc_sensor_text" x="106.2" y="18" style="text-anchor: end; dominant-baseline: central;  -webkit-user-select: none;fill :  yellow;font-size: 18;;"/></svg></g><g id="calcpopup___popup_button1" isdesined="isdesined" x="5" y="50" height="38" width="38" onclick=" if ((!this.getAttribute) || (this.getAttribute('state')!='disable')) {var txtel= document.getElementById('calcpopup___popup_sensorcalc_sensor_text'); if (txtel) { var newtxt= txtel.textContent+'1'; var fltnew = parseFloat(newtxt); if (fltnew==fltnew || newtxt=='-') {txtel.textContent = newtxt;}}; };"><svg class="__mlib_button_default" x="5" y="50" height="38" width="38" state=""><rect role="button" aria-pressed="true" x="2" y="2" height="34" width="34" class="__mlib__button_custom" rx="5" ry="5"/><svg x="4" y="4" height="30" width="30"><text x="15" y="15" class="__mlib_button_default" style="fill: yellow; font-size: 18;">1</text></svg><g><rect class="__mlib_button_default" x="4" y="4" height="30" width="30" rx="5" ry="5"/></g></svg></g><g id="calcpopup___popup_button2" isdesined="isdesined" x="45" y="50" height="38" width="38" onclick=" if ((!this.getAttribute) || (this.getAttribute('state')!='disable')) {var txtel= document.getElementById('calcpopup___popup_sensorcalc_sensor_text'); if (txtel) { var newtxt= txtel.textContent+'2'; var fltnew = parseFloat(newtxt); if (fltnew==fltnew || newtxt=='-') {txtel.textContent = newtxt;}}; };"><svg class="__mlib_button_default" x="45" y="50" height="38" width="38" state=""><rect role="button" aria-pressed="true" x="2" y="2" height="34" width="34" class="__mlib__button_custom" rx="5" ry="5"/><svg x="4" y="4" height="30" width="30"><text x="15" y="15" class="__mlib_button_default" style="fill: yellow; font-size: 18;">2</text></svg><g><rect class="__mlib_button_default" x="4" y="4" height="30" width="30" rx="5" ry="5"/></g></svg></g><g id="calcpopup___popup_button3" isdesined="isdesined" x="85" y="50" height="38" width="38" onclick=" if ((!this.getAttribute) || (this.getAttribute('state')!='disable')) {var txtel= document.getElementById('calcpopup___popup_sensorcalc_sensor_text'); if (txtel) { var newtxt= txtel.textContent+'3'; var fltnew = parseFloat(newtxt); if (fltnew==fltnew || newtxt=='-') {txtel.textContent = newtxt;}}; };"><svg class="__mlib_button_default" x="85" y="50" height="38" width="38" state=""><rect role="button" aria-pressed="true" x="2" y="2" height="34" width="34" class="__mlib__button_custom" rx="5" ry="5"/><svg x="4" y="4" height="30" width="30"><text x="15" y="15" class="__mlib_button_default" style="fill: yellow; font-size: 18;">3</text></svg><g><rect class="__mlib_button_default" x="4" y="4" height="30" width="30" rx="5" ry="5"/></g></svg></g><g id="calcpopup___popup_button4" isdesined="isdesined" x="5" y="90" height="38" width="38" onclick=" if ((!this.getAttribute) || (this.getAttribute('state')!='disable')) {var txtel= document.getElementById('calcpopup___popup_sensorcalc_sensor_text'); if (txtel) { var newtxt= txtel.textContent+'4'; var fltnew = parseFloat(newtxt); if (fltnew==fltnew || newtxt=='-') {txtel.textContent = newtxt;}}; };"><svg class="__mlib_button_default" x="5" y="90" height="38" width="38" state=""><rect role="button" aria-pressed="true" x="2" y="2" height="34" width="34" class="__mlib__button_custom" rx="5" ry="5"/><svg x="4" y="4" height="30" width="30"><text x="15" y="15" class="__mlib_button_default" style="fill: yellow; font-size: 18;">4</text></svg><g><rect class="__mlib_button_default" x="4" y="4" height="30" width="30" rx="5" ry="5"/></g></svg></g><g id="calcpopup___popup_button5" isdesined="isdesined" x="45" y="90" height="38" width="38" onclick=" if ((!this.getAttribute) || (this.getAttribute('state')!='disable')) {var txtel= document.getElementById('calcpopup___popup_sensorcalc_sensor_text'); if (txtel) { var newtxt= txtel.textContent+'5'; var fltnew = parseFloat(newtxt); if (fltnew==fltnew || newtxt=='-') {txtel.textContent = newtxt;}}; };"><svg class="__mlib_button_default" x="45" y="90" height="38" width="38" state=""><rect role="button" aria-pressed="true" x="2" y="2" height="34" width="34" class="__mlib__button_custom" rx="5" ry="5"/><svg x="4" y="4" height="30" width="30"><text x="15" y="15" class="__mlib_button_default" style="fill: yellow; font-size: 18;">5</text></svg><g><rect class="__mlib_button_default" x="4" y="4" height="30" width="30" rx="5" ry="5"/></g></svg></g><g id="calcpopup___popup_button6" isdesined="isdesined" x="85" y="90" height="38" width="38" onclick=" if ((!this.getAttribute) || (this.getAttribute('state')!='disable')) {var txtel= document.getElementById('calcpopup___popup_sensorcalc_sensor_text'); if (txtel) { var newtxt= txtel.textContent+'6'; var fltnew = parseFloat(newtxt); if (fltnew==fltnew || newtxt=='-') {txtel.textContent = newtxt;}}; };"><svg class="__mlib_button_default" x="85" y="90" height="38" width="38" state=""><rect role="button" aria-pressed="true" x="2" y="2" height="34" width="34" class="__mlib__button_custom" rx="5" ry="5"/><svg x="4" y="4" height="30" width="30"><text x="15" y="15" class="__mlib_button_default" style="fill: yellow; font-size: 18;">6</text></svg><g><rect class="__mlib_button_default" x="4" y="4" height="30" width="30" rx="5" ry="5"/></g></svg></g><g id="calcpopup___popup_button7" isdesined="isdesined" x="5" y="130" height="38" width="38" onclick=" if ((!this.getAttribute) || (this.getAttribute('state')!='disable')) {var txtel= document.getElementById('calcpopup___popup_sensorcalc_sensor_text'); if (txtel) { var newtxt= txtel.textContent+'7'; var fltnew = parseFloat(newtxt); if (fltnew==fltnew || newtxt=='-') {txtel.textContent = newtxt;}}; };"><svg class="__mlib_button_default" x="5" y="130" height="38" width="38" state=""><rect role="button" aria-pressed="true" x="2" y="2" height="34" width="34" class="__mlib__button_custom" rx="5" ry="5"/><svg x="4" y="4" height="30" width="30"><text x="15" y="15" class="__mlib_button_default" style="fill: yellow; font-size: 18;">7</text></svg><g><rect class="__mlib_button_default" x="4" y="4" height="30" width="30" rx="5" ry="5"/></g></svg></g><g id="calcpopup___popup_button8" isdesined="isdesined" x="45" y="130" height="38" width="38" onclick=" if ((!this.getAttribute) || (this.getAttribute('state')!='disable')) {var txtel= document.getElementById('calcpopup___popup_sensorcalc_sensor_text'); if (txtel) { var newtxt= txtel.textContent+'8'; var fltnew = parseFloat(newtxt); if (fltnew==fltnew || newtxt=='-') {txtel.textContent = newtxt;}}; };"><svg class="__mlib_button_default" x="45" y="130" height="38" width="38" state=""><rect role="button" aria-pressed="true" x="2" y="2" height="34" width="34" class="__mlib__button_custom" rx="5" ry="5"/><svg x="4" y="4" height="30" width="30"><text x="15" y="15" class="__mlib_button_default" style="fill: yellow; font-size: 18;">8</text></svg><g><rect class="__mlib_button_default" x="4" y="4" height="30" width="30" rx="5" ry="5"/></g></svg></g><g id="calcpopup___popup_button9" isdesined="isdesined" x="85" y="130" height="38" width="38" onclick=" if ((!this.getAttribute) || (this.getAttribute('state')!='disable')) {var txtel= document.getElementById('calcpopup___popup_sensorcalc_sensor_text'); if (txtel) { var newtxt= txtel.textContent+'9'; var fltnew = parseFloat(newtxt); if (fltnew==fltnew || newtxt=='-') {txtel.textContent = newtxt;}}; };"><svg class="__mlib_button_default" x="85" y="130" height="38" width="38" state=""><rect role="button" aria-pressed="true" x="2" y="2" height="34" width="34" class="__mlib__button_custom" rx="5" ry="5"/><svg x="4" y="4" height="30" width="30"><text x="15" y="15" class="__mlib_button_default" style="fill: yellow; font-size: 18;">9</text></svg><g><rect class="__mlib_button_default" x="4" y="4" height="30" width="30" rx="5" ry="5"/></g></svg></g><g id="calcpopup___popup_buttondot" isdesined="isdesined" x="5" y="170" height="38" width="38" onclick=" if ((!this.getAttribute) || (this.getAttribute('state')!='disable')) {var txtel= document.getElementById('calcpopup___popup_sensorcalc_sensor_text'); if (txtel) { var newtxt= txtel.textContent+'.'; var fltnew = parseFloat(newtxt); if (fltnew==fltnew || newtxt=='-') {txtel.textContent = newtxt;}}; };"><svg class="__mlib_button_default" x="5" y="170" height="38" width="38" state=""><rect role="button" aria-pressed="true" x="2" y="2" height="34" width="34" class="__mlib__button_custom" rx="5" ry="5"/><svg x="4" y="4" height="30" width="30"><text x="15" y="15" class="__mlib_button_default" style="fill: yellow; font-size: 18;">.</text></svg><g><rect class="__mlib_button_default" x="4" y="4" height="30" width="30" rx="5" ry="5"/></g></svg></g><g id="calcpopup___popup_buttonn" isdesined="isdesined" x="45" y="170" height="38" width="38" onclick=" if ((!this.getAttribute) || (this.getAttribute('state')!='disable')) {var txtel= document.getElementById('calcpopup___popup_sensorcalc_sensor_text'); if (txtel) { var newtxt= txtel.textContent+'0'; var fltnew = parseFloat(newtxt); if (fltnew==fltnew || newtxt=='-') {txtel.textContent = newtxt;}}; };"><svg class="__mlib_button_default" x="45" y="170" height="38" width="38" state=""><rect role="button" aria-pressed="true" x="2" y="2" height="34" width="34" class="__mlib__button_custom" rx="5" ry="5"/><svg x="4" y="4" height="30" width="30"><text x="15" y="15" class="__mlib_button_default" style="fill: yellow; font-size: 18;">0</text></svg><g><rect class="__mlib_button_default" x="4" y="4" height="30" width="30" rx="5" ry="5"/></g></svg></g><g id="calcpopup___popup_buttonc" isdesined="isdesined" x="85" y="170" height="38" width="38" onclick=" if ((!this.getAttribute) || (this.getAttribute('state')!='disable')) {var txtel= document.getElementById('calcpopup___popup_sensorcalc_sensor_text'); if (txtel) {if (txtel.textContent.length&gt;0) {txtel.textContent=txtel.textContent.substring(0, txtel.textContent.length-1);}}; };"><svg class="__mlib_button_default" x="85" y="170" height="38" width="38" state=""><rect role="button" aria-pressed="true" x="2" y="2" height="34" width="34" class="__mlib__button_custom" rx="5" ry="5"/><svg x="4" y="4" height="30" width="30"><text x="15" y="15" class="__mlib_button_default" style="fill: yellow; font-size: 18;">C</text></svg><g><rect class="__mlib_button_default" x="4" y="4" height="30" width="30" rx="5" ry="5"/></g></svg></g><g id="calcpopup___popup_buttonnegativ" isdesined="isdesined" x="5" y="210" height="38" width="38" onclick=" if ((!this.getAttribute) || (this.getAttribute('state')!='disable')) {var txtel= document.getElementById('calcpopup___popup_sensorcalc_sensor_text'); if (txtel) { var newtxt= txtel.textContent+'-'; var fltnew = parseFloat(newtxt); if (fltnew==fltnew || newtxt=='-') {txtel.textContent = newtxt;}}; };"><svg class="__mlib_button_default" x="5" y="210" height="38" width="38" state=""><rect role="button" aria-pressed="true" x="2" y="2" height="34" width="34" class="__mlib__button_custom" rx="5" ry="5"/><svg x="4" y="4" height="30" width="30"><text x="15" y="15" class="__mlib_button_default" style="fill: yellow; font-size: 18;">-</text></svg><g><rect class="__mlib_button_default" x="4" y="4" height="30" width="30" rx="5" ry="5"/></g></svg></g><g id="calcpopup___popup_buttond" isdesined="isdesined" x="45" y="210" height="38" width="38" onclick=" if ((!this.getAttribute) || (this.getAttribute('state')!='disable')) {var popuptmp= document.getElementById('calcpopup___popup_body');  if (popuptmp) {if (popuptmp.clearpopup) {popuptmp.clearpopup();}}; };"><svg class="__mlib_button_default" x="45" y="210" height="38" width="38" state=""><rect role="button" aria-pressed="true" x="2" y="2" height="34" width="34" class="__mlib__button_red" rx="5" ry="5"/><svg x="4" y="4" height="30" width="30"><text x="15" y="15" class="__mlib_button_default" style="fill: yellow; font-size: 18;">x</text></svg><g><rect class="__mlib_button_default" x="4" y="4" height="30" width="30" rx="5" ry="5"/></g></svg></g><g id="calcpopup___popup_buttonok" isdesined="isdesined" x="85" y="210" height="38" width="38"><svg class="__mlib_button_default" x="85" y="210" height="38" width="38" state=""><rect role="button" aria-pressed="true" x="2" y="2" height="34" width="34" class="__mlib__button_green" rx="5" ry="5"/><svg x="4" y="4" height="30" width="30"><text x="15" y="15" class="__mlib_button_default" style="fill: yellow; font-size: 18;">ok</text></svg><g><rect class="__mlib_button_default" x="4" y="4" height="30" width="30" rx="5" ry="5"/></g></svg></g></svg></defs><defs xmlns:html="http://www.w3.org/TR/xhtml1"><filter id="filter_lib_armat1000" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur in="SourceAlpha" stdDeviation="40" result="blur"/><feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut"><fePointLight x="50000" y="50000" z="200000"/></feSpecularLighting><feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/><feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/><feMerge><feMergeNode in="litPaint"/></feMerge></filter><filter id="filter_lib1" x="0%" y="0%" width="100%" height="100%"><feGaussianBlur in="SourceAlpha" stdDeviation="40" result="blur"/><feSpecularLighting in="blur" surfaceScale="5" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut"><fePointLight x="50000" y="100000" z="200000"/></feSpecularLighting><feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/><feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/><feMerge><feMergeNode in="litPaint"/></feMerge></filter><filter id="filter_lib2" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/><feSpecularLighting in="blur" surfaceScale="6" specularConstant=".6" specularExponent="5" lighting-color="#bbbbbb" result="specOut"><fePointLight x="0" y="0" z="20000"/></feSpecularLighting><feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/><feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/><feMerge><feMergeNode in="litPaint"/></feMerge></filter><filter id="filter_lib3" filterUnits="userSpaceOnUse" x="0%" y="0%" width="100%" height="100%"><feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/><feSpecularLighting in="blur" surfaceScale="10" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut"><fePointLight x="0" y="0" z="20000"/></feSpecularLighting><feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/><feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/><feMerge><feMergeNode in="litPaint"/></feMerge></filter><filter id="filter_lib4" filterUnits="userSpaceOnUse"><feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/><feSpecularLighting in="blur" surfaceScale="10" specularConstant=".75" specularExponent="20" lighting-color="#bbbbbb" result="specOut"><fePointLight x="0" y="0" z="20000"/></feSpecularLighting><feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/><feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litPaint"/><feMerge><feMergeNode in="litPaint"/></feMerge></filter><filter id="filter_null"/><linearGradient id="__gradient_mlib_light_gray_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#aaa"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#aaa"/></linearGradient><linearGradient id="__gradient_mlib_dark_buttond" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#aaa"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#aaa"/></linearGradient><linearGradient id="__gradient_mlib_light_gray_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#aaa"/><stop offset="0.5" stop-color="#fff"/><stop offset="1" stop-color="#aaa"/></linearGradient><radialGradient id="__gradient_mlib_light_gray_c"><stop offset="0" style="stop-color:#aaa"/><stop offset="1" style="stop-color:#fff"/></radialGradient><linearGradient id="__gradient_mlib_midle_gray_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#666"/><stop offset="0.5" stop-color="#999"/><stop offset="1" stop-color="#666"/></linearGradient><linearGradient id="__gradient_mlib_midle_gray_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#999"/><stop offset="0.5" stop-color="#666"/><stop offset="1" stop-color="#999"/></linearGradient><linearGradient id="__gradient_mlib_midle_gray_ho" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#666"/><stop offset="0.5" stop-color="#999"/><stop offset="1" stop-color="#666"/></linearGradient><radialGradient id="__gradient_mlib_midle_gray_c"><stop offset="0" style="stop-color:#666"/><stop offset="1" style="stop-color:#999"/></radialGradient><linearGradient id="__gradient_mlib_dark_gray_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#111"/><stop offset="0.5" stop-color="#333"/><stop offset="1" stop-color="#111"/></linearGradient><linearGradient id="__gradient_mlib_dark_fill" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#111"/><stop offset="0.5" stop-color="#333"/><stop offset="1" stop-color="#111"/></linearGradient><linearGradient id="__gradient_mlib_dark_button" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#111"/><stop offset="0.5" stop-color="#333"/><stop offset="1" stop-color="#111"/></linearGradient><linearGradient id="__gradient_mlib_dark_buttono" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#333"/><stop offset="0.5" stop-color="#111"/><stop offset="1" stop-color="#333"/></linearGradient><linearGradient id="__gradient_mlib_dark_gray_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#111"/><stop offset="0.5" stop-color="#333"/><stop offset="1" stop-color="#111"/></linearGradient><linearGradient id="__gradient_mlib_dark_gray_ho" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#333"/><stop offset="0.5" stop-color="#111"/><stop offset="1" stop-color="#333"/></linearGradient><radialGradient id="__gradient_mlib_dark_gray_c"><stop offset="0" style="stop-color:#111"/><stop offset="1" style="stop-color:#333"/></radialGradient><linearGradient id="__gradient_mlib_light_blue_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#00a"/><stop offset="0.5" stop-color="#00f"/><stop offset="1" stop-color="#00a"/></linearGradient><linearGradient id="__gradient_mlib_light_blue_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#00a"/><stop offset="0.5" stop-color="#00f"/><stop offset="1" stop-color="#00a"/></linearGradient><radialGradient id="__gradient_mlib_light_blue_c"><stop offset="0" style="stop-color:#00a"/><stop offset="1" style="stop-color:#00f"/></radialGradient><linearGradient id="__gradient_mlib_midle_blue_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#008"/><stop offset="0.5" stop-color="#00a"/><stop offset="1" stop-color="#008"/></linearGradient><linearGradient id="__gradient_mlib_midle_blue_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#008"/><stop offset="0.5" stop-color="#00a"/><stop offset="1" stop-color="#008"/></linearGradient><radialGradient id="__gradient_mlib_midle_blue_c"><stop offset="0" style="stop-color:#008"/><stop offset="1" style="stop-color:#00a"/></radialGradient><linearGradient id="__gradient_mlib_dark_blue_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#001"/><stop offset="0.5" stop-color="#003"/><stop offset="1" stop-color="#001"/></linearGradient><linearGradient id="__gradient_mlib_dark_blue_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#001"/><stop offset="0.5" stop-color="#003"/><stop offset="1" stop-color="#001"/></linearGradient><radialGradient id="__gradient_mlib_dark_blue_c"><stop offset="0" style="stop-color:#001"/><stop offset="1" style="stop-color:#003"/></radialGradient><linearGradient id="__gradient_mlib_light_green_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#0a0"/><stop offset="0.5" stop-color="#0f0"/><stop offset="1" stop-color="#0a0"/></linearGradient><linearGradient id="__gradient_mlib_light_green_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#0a0"/><stop offset="0.5" stop-color="#0f0"/><stop offset="1" stop-color="#0a0"/></linearGradient><radialGradient id="__gradient_mlib_light_green_c"><stop offset="0" style="stop-color:#0a0"/><stop offset="1" style="stop-color:#0f0"/></radialGradient><linearGradient id="__gradient_mlib_midle_green_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#080"/><stop offset="0.5" stop-color="#0a0"/><stop offset="1" stop-color="#080"/></linearGradient><linearGradient id="__gradient_mlib_midle_green_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#080"/><stop offset="0.5" stop-color="#0a0"/><stop offset="1" stop-color="#080"/></linearGradient><linearGradient id="__gradient_mlib_midle_green_ho" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#0a0"/><stop offset="0.5" stop-color="#080"/><stop offset="1" stop-color="#0a0"/></linearGradient><radialGradient id="__gradient_mlib_midle_green_c"><stop offset="0" style="stop-color:#080"/><stop offset="1" style="stop-color:#0a0"/></radialGradient><linearGradient id="__gradient_mlib_dark_green_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#010"/><stop offset="0.5" stop-color="#030"/><stop offset="1" stop-color="#010"/></linearGradient><linearGradient id="__gradient_mlib_dark_green_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#010"/><stop offset="0.5" stop-color="#030"/><stop offset="1" stop-color="#010"/></linearGradient><radialGradient id="__gradient_mlib_dark_green_c"><stop offset="0" style="stop-color:#010"/><stop offset="1" style="stop-color:#030"/></radialGradient><linearGradient id="__gradient_mlib_light_red_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#a00"/><stop offset="0.5" stop-color="#f00"/><stop offset="1" stop-color="#a00"/></linearGradient><linearGradient id="__gradient_mlib_light_red_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#a00"/><stop offset="0.5" stop-color="#f00"/><stop offset="1" stop-color="#a00"/></linearGradient><radialGradient id="__gradient_mlib_light_red_c"><stop offset="0" style="stop-color:#a00"/><stop offset="1" style="stop-color:#f00"/></radialGradient><linearGradient id="__gradient_mlib_midle_red_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#800"/><stop offset="0.5" stop-color="#a00"/><stop offset="1" stop-color="#800"/></linearGradient><linearGradient id="__gradient_mlib_midle_red_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#800"/><stop offset="0.5" stop-color="#a00"/><stop offset="1" stop-color="#800"/></linearGradient><linearGradient id="__gradient_mlib_midle_red_ho" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#a00"/><stop offset="0.5" stop-color="#800"/><stop offset="1" stop-color="#a00"/></linearGradient><radialGradient id="__gradient_mlib_midle_red_c"><stop offset="0" style="stop-color:#800"/><stop offset="1" style="stop-color:#a00"/></radialGradient><linearGradient id="__gradient_mlib_dark_red_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#100"/><stop offset="0.5" stop-color="#300"/><stop offset="1" stop-color="#100"/></linearGradient><linearGradient id="__gradient_mlib_dark_red_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#100"/><stop offset="0.5" stop-color="#300"/><stop offset="1" stop-color="#100"/></linearGradient><radialGradient id="__gradient_mlib_dark_red_c"><stop offset="0" style="stop-color:#100"/><stop offset="1" style="stop-color:#300"/></radialGradient><linearGradient id="__gradient_mlib_gaz_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#880"/><stop offset="0.5" stop-color="#dd0"/><stop offset="1" stop-color="#880"/></linearGradient><linearGradient id="__gradient_mlib_gaz_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#dd0"/><stop offset="0.5" stop-color="#880"/><stop offset="1" stop-color="#dd0"/></linearGradient><radialGradient id="__gradient_mlib_gaz_c"><stop offset="0" style="stop-color:#880"/><stop offset="1" style="stop-color:#dd0"/></radialGradient><linearGradient id="__gradient_mlib_air_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#028"/><stop offset="0.5" stop-color="#04b"/><stop offset="1" stop-color="#028"/></linearGradient><linearGradient id="__gradient_mlib_air_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#04b"/><stop offset="0.5" stop-color="#028"/><stop offset="1" stop-color="#04b"/></linearGradient><radialGradient id="__gradient_mlib_air_c"><stop offset="0" style="stop-color:#028"/><stop offset="1" style="stop-color:#04b"/></radialGradient><linearGradient id="__gradient_mlib_water_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#093"/><stop offset="0.5" stop-color="#0c5"/><stop offset="1" stop-color="#093"/></linearGradient><linearGradient id="__gradient_mlib_water_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#0c5"/><stop offset="0.5" stop-color="#093"/><stop offset="1" stop-color="#0c5"/></linearGradient><radialGradient id="__gradient_mlib_water_c"><stop offset="0" style="stop-color:#093"/><stop offset="1" style="stop-color:#0c5"/></radialGradient><linearGradient id="__gradient_mlib_smoke_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#999"/><stop offset="0.5" stop-color="#ccc"/><stop offset="1" stop-color="#999"/></linearGradient><linearGradient id="__gradient_mlib_smoke_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#ccc"/><stop offset="0.5" stop-color="#999"/><stop offset="1" stop-color="#ccc"/></linearGradient><radialGradient id="__gradient_mlib_smoke_c"><stop offset="0" style="stop-color:#999"/><stop offset="1" style="stop-color:#ccc"/></radialGradient><linearGradient id="__gradient_mlib_vapor_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#a33"/><stop offset="0.5" stop-color="#d55"/><stop offset="1" stop-color="#a33"/></linearGradient><linearGradient id="__gradient_mlib_vapor_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#d55"/><stop offset="0.5" stop-color="#a33"/><stop offset="1" stop-color="#d55"/></linearGradient><radialGradient id="__gradient_mlib_vapor_c"><stop offset="0" style="stop-color:#a33"/><stop offset="1" style="stop-color:#d55"/></radialGradient><linearGradient id="__gradient_mlib_stream_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#c3c"/><stop offset="0.5" stop-color="#f0f"/><stop offset="1" stop-color="#c3c"/></linearGradient><linearGradient id="__gradient_mlib_stream_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#f0f"/><stop offset="0.5" stop-color="#c3c"/><stop offset="1" stop-color="#f0f"/></linearGradient><radialGradient id="__gradient_mlib_stream_c"><stop offset="0" style="stop-color:#c3c"/><stop offset="1" style="stop-color:#f0f"/></radialGradient><linearGradient id="__gradient_mlib_oil_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#c63"/><stop offset="0.5" stop-color="#f85"/><stop offset="1" stop-color="#c63"/></linearGradient><linearGradient id="__gradient_mlib_oil_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#f85"/><stop offset="0.5" stop-color="#c63"/><stop offset="1" stop-color="#f85"/></linearGradient><radialGradient id="__gradient_mlib_oil_c"><stop offset="0" style="stop-color:#c63"/><stop offset="1" style="stop-color:#f85"/></radialGradient><linearGradient id="__gradient_mlib_notice_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#aa0"/><stop offset="0.5" stop-color="#ff0"/><stop offset="1" stop-color="#aa0"/></linearGradient><linearGradient id="__gradient_mlib_notice_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#ff0"/><stop offset="0.5" stop-color="#aa0"/><stop offset="1" stop-color="#ff0"/></linearGradient><radialGradient id="__gradient_mlib_notice_c"><stop offset="0" style="stop-color:#aa0"/><stop offset="1" style="stop-color:#ff0"/></radialGradient><linearGradient id="__gradient_mlib_alarm_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#a92"/><stop offset="0.5" stop-color="#f92"/><stop offset="1" stop-color="#a92"/></linearGradient><linearGradient id="__gradient_mlib_alarm_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#f92"/><stop offset="0.5" stop-color="#a92"/><stop offset="1" stop-color="#f92"/></linearGradient><radialGradient id="__gradient_mlib_alarm_c"><stop offset="0" style="stop-color:#a92"/><stop offset="1" style="stop-color:#f92"/></radialGradient><linearGradient id="__gradient_mlib_accident_v" y2="100%" x1="0%" y1="100%" x2="100%"><stop offset="0" stop-color="#a00"/><stop offset="0.5" stop-color="#f00"/><stop offset="1" stop-color="#a00"/></linearGradient><linearGradient id="__gradient_mlib_accident_h" x2="100%" y2="100%" x1="100%" y1="0%"><stop offset="0" stop-color="#f00"/><stop offset="0.5" stop-color="#a00"/><stop offset="1" stop-color="#f00"/></linearGradient><radialGradient id="__gradient_mlib_accident_c"><stop offset="0" style="stop-color:#a00"/><stop offset="1" style="stop-color:#f00"/></radialGradient><style type="text/css">
+        .__fill_mlib_class_light_gray_v {
+                fill : url(#__gradient_mlib_light_gray_v);}
+        .__fill_mlib_class_light_gray_h {
+                fill : url(#__gradient_mlib_light_gray_h);}  
+        .__fill_mlib_class_light_gray_c {
+                fill : url(#__gradient_mlib_light_gray_c);}  
+                
+                
+                        
+        .__fill_mlib_class_midle_gray_v {
+                fill : url(#__gradient_mlib_midle_gray_v);}
+        .__fill_mlib_class_midle_gray_h {
+                fill : url(#__gradient_mlib_midle_gray_h);}  
+        .__fill_mlib_class_midle_gray_c {
+                fill : url(#__gradient_mlib_midle_gray_c);}
+                
+                
+                          
+        .__fill_mlib_class_dark_gray_v {
+                fill : url(#__gradient_mlib_dark_gray_v);}
+        .__fill_mlib_class_dark_fill {
+                fill : url(#__gradient_mlib_dark_fill);}    
+        .__fill_mlib_class_dark_button {
+                fill : url(#__gradient_mlib_dark_button);}                   
+        .__fill_mlib_class_dark_gray_h {
+                fill : url(#__gradient_mlib_dark_gray_h);}  
+        .__fill_mlib_class_dark_gray_c {
+                fill : url(#__gradient_mlib_dark_gray_c);}         
+                
+                
+        
+        .__fill_mlib_class_light_blue_v {
+                fill : url(#__gradient_mlib_light_blue_v);}
+        .__fill_mlib_class_light_blue_h {
+                fill : url(#__gradient_mlib_light_blue_h);}  
+        .__fill_mlib_class_light_blue_c {
+                fill : url(#__gradient_mlib_light_blue_c);}  
+                
+                
+                        
+        .__fill_mlib_class_midle_blue_v {
+                fill : url(#__gradient_mlib_midle_blue_v);}
+        .__fill_mlib_class_midle_blue_h {
+                fill : url(#__gradient_mlib_midle_blue_h);}  
+        .__fill_mlib_class_midle_blue_c {
+                fill : url(#__gradient_mlib_midle_blue_c);}
+                
+                
+                          
+        .__fill_mlib_class_dark_blue_v {
+                fill : url(#__gradient_mlib_dark_blue_v);}
+        .__fill_mlib_class_dark_blue_h {
+                fill : url(#__gradient_mlib_dark_blue_h);}  
+        .__fill_mlib_class_dark_blue_c {
+                fill : url(#__gradient_mlib_dark_blue_c);}
+                
+        
+        .__fill_mlib_class_light_green_v {
+                fill : url(#__gradient_mlib_light_green_v);}
+        .__fill_mlib_class_light_green_h {
+                fill : url(#__gradient_mlib_light_green_h);}  
+        .__fill_mlib_class_light_green_c {
+                fill : url(#__gradient_mlib_light_green_c);}  
+                
+                
+                        
+        .__fill_mlib_class_midle_green_v {
+                fill : url(#__gradient_mlib_midle_green_v);}
+        .__fill_mlib_class_midle_green_h {
+                fill : url(#__gradient_mlib_midle_green_h);}  
+        .__fill_mlib_class_midle_green_c {
+                fill : url(#__gradient_mlib_midle_green_c);}
+                
+                
+                          
+        .__fill_mlib_class_dark_green_v {
+                fill : url(#__gradient_mlib_dark_green_v);}
+        .__fill_mlib_class_dark_green_h {
+                fill : url(#__gradient_mlib_dark_green_h);}  
+        .__fill_mlib_class_dark_green_c {
+                fill : url(#__gradient_mlib_dark_green_c);}   
+                
+        
+        .__fill_mlib_class_light_red_v {
+                fill : url(#__gradient_mlib_light_red_v);}
+        .__fill_mlib_class_light_red_h {
+                fill : url(#__gradient_mlib_light_red_h);}  
+        .__fill_mlib_class_light_red_c {
+                fill : url(#__gradient_mlib_light_red_c);}  
+                
+                
+                        
+        .__fill_mlib_class_midle_red_v {
+                fill : url(#__gradient_mlib_midle_red_v);}
+        .__fill_mlib_class_midle_red_h {
+                fill : url(#__gradient_mlib_midle_red_h);}  
+        .__fill_mlib_class_midle_red_c {
+                fill : url(#__gradient_mlib_midle_red_c);}
+                
+                
+                          
+        .__fill_mlib_class_dark_red_v {
+                fill : url(#__gradient_mlib_dark_red_v);}
+        .__fill_mlib_class_dark_red_h {
+                fill : url(#__gradient_mlib_dark_red_h);}  
+        .__fill_mlib_class_dark_red_c {
+                fill : url(#__gradient_mlib_dark_red_c);}   
+                
+        
+        .__fill_mlib_class_gaz_v {
+                fill : url(#__gradient_mlib_gaz_v);}
+        .__fill_mlib_class_gaz_h {
+                fill : url(#__gradient_mlib_gaz_h);}  
+        .__fill_mlib_class_gaz_c {
+                fill : url(#__gradient_mlib_gaz_c);}  
+                
+        
+        .__fill_mlib_class_air_v {
+                fill : url(#__gradient_mlib_air_v);}
+        .__fill_mlib_class_air_h {
+                fill : url(#__gradient_mlib_air_h);}  
+        .__fill_mlib_class_air_c {
+                fill : url(#__gradient_mlib_air_c);} 
+                
+        
+        .__fill_mlib_class_water_v {
+                fill : url(#__gradient_mlib_water_v);}
+        .__fill_mlib_class_water_h {
+                fill : url(#__gradient_mlib_water_h);}  
+        .__fill_mlib_class_water_c {
+                fill : url(#__gradient_mlib_water_c);}       
+                
+        
+        .__fill_mlib_class_vapor_v {
+                fill : url(#__gradient_mlib_vapor_v);}
+        .__fill_mlib_class_vapor_h {
+                fill : url(#__gradient_mlib_vapor_h);}  
+        .__fill_mlib_class_vapor_c {
+                fill : url(#__gradient_mlib_vapor_c);} 
+                
+        
+        .__fill_mlib_class_oil_v {
+                fill : url(#__gradient_mlib_oil_v);}
+        .__fill_mlib_class_oil_h {
+                fill : url(#__gradient_mlib_oil_h);}  
+        .__fill_mlib_class_oil_c {
+                fill : url(#__gradient_mlib_oil_c);} 
+                
+        
+        .__fill_mlib_class_stream_v {
+                fill : url(#__gradient_mlib_stream_v);}
+        .__fill_mlib_class_stream_h {
+                fill : url(#__gradient_mlib_stream_h);}  
+        .__fill_mlib_class_stream_c {
+                fill : url(#__gradient_mlib_stream_c);}  
+                
+        
+        .__fill_mlib_class_smoke_v {
+                fill : url(#__gradient_mlib_smoke_v);}
+        .__fill_mlib_class_smoke_h {
+                fill : url(#__gradient_mlib_smoke_h);}  
+        .__fill_mlib_class_smoke_c {
+                fill : url(#__gradient_mlib_smoke_c);}               
+                
+        
+        .__fill_mlib_class_notice_v {
+                fill : url(#__gradient_mlib_notice_v);}
+        .__fill_mlib_class_notice_h {
+                fill : url(#__gradient_mlib_notice_h);}  
+        .__fill_mlib_class_notice_c {
+                fill : url(#__gradient_mlib_notice_c);}  
+                
+        
+        .__fill_mlib_class_alarm_v {
+                fill : url(#__gradient_mlib_alarm_v);}
+        .__fill_mlib_class_alarm_h {
+                fill : url(#__gradient_mlib_alarm_h);}  
+        .__fill_mlib_class_alarm_c {
+                fill : url(#__gradient_mlib_alarm_c);}  
+                
+        
+        .__fill_mlib_class_accident_v {
+                fill : url(#__gradient_mlib_accident_v);}
+        .__fill_mlib_class_accident_h {
+                fill : url(#__gradient_mlib_accident_h);}  
+        .__fill_mlib_class_accident_c {
+                fill : url(#__gradient_mlib_accident_c);} 
+                
+                
+                
+        
+        
+         .__mlib_armatura[cursor="pointer"] {
+                outline: 1px solid transparent;
+                cursor: pointer;}
+                
+         .__mlib_armatura[cursor="pointer"]:hover {
+                outline: 1px solid #40FF00;
+                cursor: pointer;}
+                               
+         .__mlib_armatura {             
+               cursor: none;}
+                     
+         .__mlib_armatura:hover {            
+               cursor: none;}
+                 
+                    
+         
+         
+         
+         
+        
+                
+        svg svg text.__mlib_button_default {         
+                 font-weight: bold;
+                 text-anchor: middle;
+                 dominant-baseline: central; 
+                 -webkit-user-select: none;}
+                 
+           
+        svg[state="disable"] svg text.__mlib_button_default {            
+                 font-weight: normal;}
+           
+        svg.__mlib_button_default &gt; g &gt; rect {
+                cursor: pointer;}
+          
+        svg[state="disable"].__mlib_button_default &gt; g &gt; rect {
+                cursor: default;}
+          
+        svg.__mlib_button_default  &gt; g  &gt; rect {
+                fill: transparent;}
+                
+        svg[state="off"].__mlib_button_default &gt;   rect {        
+                stroke: #555;
+                stroke-width: 1;}   
+                    
+        svg[state="off"].__mlib_button_default:hover &gt;  rect {         
+                stroke:  #333;
+                stroke-width: 1;}                  
+                
+        svg[state="disable"].__mlib_button_default &gt;  rect , svg[state="disable"].__mlib_button_default:hover &gt;  rect:hover , svg[state="disable"].__mlib_button_default &gt;  rect:active {
+                 stroke-width: 0;
+                 stroke: none;}  
+                 
+        svg[state="disable"].__mlib_button_default &gt; rect , svg[state="disable"].__mlib_button_default:hover &gt; rect , svg[state="disable"].__mlib_button_default:active &gt; rect {
+                -webkit-svg-shadow: 0px 0px 0px rgba(0, 0, 0, 0);}  
+                
+        svg.__mlib_button_default:hover &gt; rect {               
+                -webkit-svg-shadow: 3px 3px  3px rgba(0, 0, 0, 0.5);}
+         
+        svg.__mlib_button_default:active &gt; rect{
+                -webkit-svg-shadow: 0px 0px 0px rgba(0, 0, 0, 0);} 
+                
+ 
+
+
+        .__mlib__button_green {
+                fill: url(#__gradient_mlib_midle_green_h);} 
+            
+        svg[state=""]:active &gt; rect.__mlib__button_green {
+                fill: url(#__gradient_mlib_midle_green_ho);}  
+                 
+        svg[state="off"] &gt; rect.__mlib__button_green {
+                fill: url(#__gradient_mlib_midle_gray_h);} 
+                    
+        svg[state="off"]:active &gt; rect.__mlib__button_green {
+                fill: url(#__gradient_mlib_midle_gray_ho);}               
+           
+        svg[state="disable"] &gt; rect.__mlib__button_green ,
+        svg[state="disable"]:hover &gt; rect.__mlib__button_green ,
+        svg[state="disable"]:active &gt; rect.__mlib__button_green {
+                 fill: url(#__gradient_mlib_dark_gray_h); }  
+
+
+
+
+        .__mlib__button_red {
+                fill: url(#__gradient_mlib_midle_red_h);}
+            
+        svg[state=""]:active &gt; rect.__mlib__button_red {
+                fill: url(#__gradient_mlib_midle_red_ho);}  
+                 
+        svg[state="off"] &gt; rect.__mlib__button_red {
+                fill: url(#__gradient_mlib_midle_red_h);} 
+                    
+        svg[state="off"]:active &gt; rect.__mlib__button_red {
+                fill: url(#__gradient_mlib_midle_red_ho);}               
+           
+        svg[state="disable"] &gt; rect.__mlib__button_red ,
+        svg[state="disable"]:hover &gt; rect.__mlib__button_red ,
+        svg[state="disable"]:active &gt; rect.__mlib__button_red {
+                 fill: url(#__gradient_mlib_dark_gray_h); }
+                 
+   
+
+ 
+        .__mlib__button_custom {
+                fill: url(#__gradient_mlib_dark_button);} 
+            
+        svg[state=""]:active &gt; rect.__mlib__button_custom {
+                fill: url(#__gradient_mlib_dark_buttono);}  
+                 
+        svg[state="off"] &gt; rect.__mlib__button_custom {
+                fill: url(#__gradient_mlib_dark_button);} 
+                    
+        svg[state="off"]:active &gt; rect.__mlib__button_custom {
+                fill: url(#__gradient_mlib_dark_buttono);}               
+           
+        svg[state="disable"] &gt; rect.__mlib__button_custom ,
+        svg[state="disable"]:hover &gt; rect.__mlib__button_custom ,
+        svg[state="disable"]:active &gt; rect.__mlib__button_custom {
+                 fill: url(#__gradient_mlib_dark_buttond); }  
+                 
+                 
+                 
+        .__mlib__button_rg {
+                fill: url(#__gradient_mlib_midle_red_h);} 
+            
+        svg[state=""]:active &gt; rect.__mlib__button_rg {
+                fill: url(#__gradient_mlib_midle_red_ho);}  
+                 
+        svg[state="off"] &gt; rect.__mlib__button_rg {
+                fill: url(#__gradient_mlib_midle_green_h);} 
+                    
+        svg[state="off"]:active &gt; rect.__mlib__button_rg {
+                fill: url(#__gradient_mlib_midle_green_ho);}               
+           
+        svg[state="disable"] &gt; rect.__mlib__button_rg ,
+        svg[state="disable"]:hover &gt; rect.__mlib__button_rg ,
+        svg[state="disable"]:active &gt; rect.__mlib__button_rg {
+                 fill: url(#__gradient_mlib_dark_gray_h); }
+                 
+
+        .__mlib__button_gr {
+                fill: url(#__gradient_mlib_midle_green_h);} 
+            
+        svg[state=""]:active &gt; rect.__mlib__button_gr {
+                fill: url(#__gradient_mlib_midle_green_ho);}  
+                 
+        svg[state="off"] &gt; rect.__mlib__button_gr {
+                fill: url(#__gradient_mlib_midle_red_h);} 
+                    
+        svg[state="off"]:active &gt; rect.__mlib__button_gr {
+                fill: url(#__gradient_mlib_midle_red_ho);}               
+           
+        svg[state="disable"] &gt; rect.__mlib__button_gr ,
+        svg[state="disable"]:hover &gt; rect.__mlib__button_gr ,
+        svg[state="disable"]:active &gt; rect.__mlib__button_gr {
+                 fill: url(#__gradient_mlib_dark_gray_h); }
+   
+               
+                
+              
+        
+        
+        </style></defs>rect.calcpopup___popup_sensorcalc_sensor_gradient_classon {
+                        fill : url(#calcpopup___popup_sensorcalc_sensor_gradient);}
+                                
+                        rect.calcpopup___popup_sensorcalc_sensor_gradient_classnone {
+                        fill : url(#gradientnone_h);}
+                        
+                        <g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="calcpopup___popup_sensorcalc_sensor_rect" isdesined="isdesined"><rect x="5" y="7" width="118" height="36" rx="5" ry="5" stroke="#eee" stroke-width="1" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="calcpopup___popup_sensorcalc_sensor_text" isdesined="isdesined"><text x="106.2" y="18" style="text-anchor: end; dominant-baseline: central;  -webkit-user-select: none;fill :  yellow;font-size: 18;;"/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="2" y="2" width="34" height="34" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><text x="15" y="15" style="fill: yellow; font-size: 18;"/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="4" y="4" width="30" height="30" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="2" y="2" width="34" height="34" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><text x="15" y="15" style="fill: yellow; font-size: 18;"/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="4" y="4" width="30" height="30" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="2" y="2" width="34" height="34" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><text x="15" y="15" style="fill: yellow; font-size: 18;"/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="4" y="4" width="30" height="30" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="2" y="2" width="34" height="34" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><text x="15" y="15" style="fill: yellow; font-size: 18;"/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="4" y="4" width="30" height="30" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="2" y="2" width="34" height="34" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><text x="15" y="15" style="fill: yellow; font-size: 18;"/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="4" y="4" width="30" height="30" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="2" y="2" width="34" height="34" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><text x="15" y="15" style="fill: yellow; font-size: 18;"/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="4" y="4" width="30" height="30" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="2" y="2" width="34" height="34" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><text x="15" y="15" style="fill: yellow; font-size: 18;"/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="4" y="4" width="30" height="30" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="2" y="2" width="34" height="34" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><text x="15" y="15" style="fill: yellow; font-size: 18;"/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="4" y="4" width="30" height="30" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="2" y="2" width="34" height="34" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><text x="15" y="15" style="fill: yellow; font-size: 18;"/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="4" y="4" width="30" height="30" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="2" y="2" width="34" height="34" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><text x="15" y="15" style="fill: yellow; font-size: 18;"/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="4" y="4" width="30" height="30" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="2" y="2" width="34" height="34" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><text x="15" y="15" style="fill: yellow; font-size: 18;"/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="4" y="4" width="30" height="30" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="2" y="2" width="34" height="34" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><text x="15" y="15" style="fill: yellow; font-size: 18;"/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="4" y="4" width="30" height="30" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="2" y="2" width="34" height="34" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><text x="15" y="15" style="fill: yellow; font-size: 18;"/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="4" y="4" width="30" height="30" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="2" y="2" width="34" height="34" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><text x="15" y="15" style="fill: yellow; font-size: 18;"/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="4" y="4" width="30" height="30" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="2" y="2" width="34" height="34" rx="5" ry="5" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><text x="15" y="15" style="fill: yellow; font-size: 18;"/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="4" y="4" width="30" height="30" rx="5" ry="5" style=""/></g>
+        .__fill_mlib_class_light_gray_v {
+                fill : url(#__gradient_mlib_light_gray_v);}
+        .__fill_mlib_class_light_gray_h {
+                fill : url(#__gradient_mlib_light_gray_h);}  
+        .__fill_mlib_class_light_gray_c {
+                fill : url(#__gradient_mlib_light_gray_c);}  
+                
+                
+                        
+        .__fill_mlib_class_midle_gray_v {
+                fill : url(#__gradient_mlib_midle_gray_v);}
+        .__fill_mlib_class_midle_gray_h {
+                fill : url(#__gradient_mlib_midle_gray_h);}  
+        .__fill_mlib_class_midle_gray_c {
+                fill : url(#__gradient_mlib_midle_gray_c);}
+                
+                
+                          
+        .__fill_mlib_class_dark_gray_v {
+                fill : url(#__gradient_mlib_dark_gray_v);}
+        .__fill_mlib_class_dark_fill {
+                fill : url(#__gradient_mlib_dark_fill);}    
+        .__fill_mlib_class_dark_button {
+                fill : url(#__gradient_mlib_dark_button);}                   
+        .__fill_mlib_class_dark_gray_h {
+                fill : url(#__gradient_mlib_dark_gray_h);}  
+        .__fill_mlib_class_dark_gray_c {
+                fill : url(#__gradient_mlib_dark_gray_c);}         
+                
+                
+        
+        .__fill_mlib_class_light_blue_v {
+                fill : url(#__gradient_mlib_light_blue_v);}
+        .__fill_mlib_class_light_blue_h {
+                fill : url(#__gradient_mlib_light_blue_h);}  
+        .__fill_mlib_class_light_blue_c {
+                fill : url(#__gradient_mlib_light_blue_c);}  
+                
+                
+                        
+        .__fill_mlib_class_midle_blue_v {
+                fill : url(#__gradient_mlib_midle_blue_v);}
+        .__fill_mlib_class_midle_blue_h {
+                fill : url(#__gradient_mlib_midle_blue_h);}  
+        .__fill_mlib_class_midle_blue_c {
+                fill : url(#__gradient_mlib_midle_blue_c);}
+                
+                
+                          
+        .__fill_mlib_class_dark_blue_v {
+                fill : url(#__gradient_mlib_dark_blue_v);}
+        .__fill_mlib_class_dark_blue_h {
+                fill : url(#__gradient_mlib_dark_blue_h);}  
+        .__fill_mlib_class_dark_blue_c {
+                fill : url(#__gradient_mlib_dark_blue_c);}
+                
+        
+        .__fill_mlib_class_light_green_v {
+                fill : url(#__gradient_mlib_light_green_v);}
+        .__fill_mlib_class_light_green_h {
+                fill : url(#__gradient_mlib_light_green_h);}  
+        .__fill_mlib_class_light_green_c {
+                fill : url(#__gradient_mlib_light_green_c);}  
+                
+                
+                        
+        .__fill_mlib_class_midle_green_v {
+                fill : url(#__gradient_mlib_midle_green_v);}
+        .__fill_mlib_class_midle_green_h {
+                fill : url(#__gradient_mlib_midle_green_h);}  
+        .__fill_mlib_class_midle_green_c {
+                fill : url(#__gradient_mlib_midle_green_c);}
+                
+                
+                          
+        .__fill_mlib_class_dark_green_v {
+                fill : url(#__gradient_mlib_dark_green_v);}
+        .__fill_mlib_class_dark_green_h {
+                fill : url(#__gradient_mlib_dark_green_h);}  
+        .__fill_mlib_class_dark_green_c {
+                fill : url(#__gradient_mlib_dark_green_c);}   
+                
+        
+        .__fill_mlib_class_light_red_v {
+                fill : url(#__gradient_mlib_light_red_v);}
+        .__fill_mlib_class_light_red_h {
+                fill : url(#__gradient_mlib_light_red_h);}  
+        .__fill_mlib_class_light_red_c {
+                fill : url(#__gradient_mlib_light_red_c);}  
+                
+                
+                        
+        .__fill_mlib_class_midle_red_v {
+                fill : url(#__gradient_mlib_midle_red_v);}
+        .__fill_mlib_class_midle_red_h {
+                fill : url(#__gradient_mlib_midle_red_h);}  
+        .__fill_mlib_class_midle_red_c {
+                fill : url(#__gradient_mlib_midle_red_c);}
+                
+                
+                          
+        .__fill_mlib_class_dark_red_v {
+                fill : url(#__gradient_mlib_dark_red_v);}
+        .__fill_mlib_class_dark_red_h {
+                fill : url(#__gradient_mlib_dark_red_h);}  
+        .__fill_mlib_class_dark_red_c {
+                fill : url(#__gradient_mlib_dark_red_c);}   
+                
+        
+        .__fill_mlib_class_gaz_v {
+                fill : url(#__gradient_mlib_gaz_v);}
+        .__fill_mlib_class_gaz_h {
+                fill : url(#__gradient_mlib_gaz_h);}  
+        .__fill_mlib_class_gaz_c {
+                fill : url(#__gradient_mlib_gaz_c);}  
+                
+        
+        .__fill_mlib_class_air_v {
+                fill : url(#__gradient_mlib_air_v);}
+        .__fill_mlib_class_air_h {
+                fill : url(#__gradient_mlib_air_h);}  
+        .__fill_mlib_class_air_c {
+                fill : url(#__gradient_mlib_air_c);} 
+                
+        
+        .__fill_mlib_class_water_v {
+                fill : url(#__gradient_mlib_water_v);}
+        .__fill_mlib_class_water_h {
+                fill : url(#__gradient_mlib_water_h);}  
+        .__fill_mlib_class_water_c {
+                fill : url(#__gradient_mlib_water_c);}       
+                
+        
+        .__fill_mlib_class_vapor_v {
+                fill : url(#__gradient_mlib_vapor_v);}
+        .__fill_mlib_class_vapor_h {
+                fill : url(#__gradient_mlib_vapor_h);}  
+        .__fill_mlib_class_vapor_c {
+                fill : url(#__gradient_mlib_vapor_c);} 
+                
+        
+        .__fill_mlib_class_oil_v {
+                fill : url(#__gradient_mlib_oil_v);}
+        .__fill_mlib_class_oil_h {
+                fill : url(#__gradient_mlib_oil_h);}  
+        .__fill_mlib_class_oil_c {
+                fill : url(#__gradient_mlib_oil_c);} 
+                
+        
+        .__fill_mlib_class_stream_v {
+                fill : url(#__gradient_mlib_stream_v);}
+        .__fill_mlib_class_stream_h {
+                fill : url(#__gradient_mlib_stream_h);}  
+        .__fill_mlib_class_stream_c {
+                fill : url(#__gradient_mlib_stream_c);}  
+                
+        
+        .__fill_mlib_class_smoke_v {
+                fill : url(#__gradient_mlib_smoke_v);}
+        .__fill_mlib_class_smoke_h {
+                fill : url(#__gradient_mlib_smoke_h);}  
+        .__fill_mlib_class_smoke_c {
+                fill : url(#__gradient_mlib_smoke_c);}               
+                
+        
+        .__fill_mlib_class_notice_v {
+                fill : url(#__gradient_mlib_notice_v);}
+        .__fill_mlib_class_notice_h {
+                fill : url(#__gradient_mlib_notice_h);}  
+        .__fill_mlib_class_notice_c {
+                fill : url(#__gradient_mlib_notice_c);}  
+                
+        
+        .__fill_mlib_class_alarm_v {
+                fill : url(#__gradient_mlib_alarm_v);}
+        .__fill_mlib_class_alarm_h {
+                fill : url(#__gradient_mlib_alarm_h);}  
+        .__fill_mlib_class_alarm_c {
+                fill : url(#__gradient_mlib_alarm_c);}  
+                
+        
+        .__fill_mlib_class_accident_v {
+                fill : url(#__gradient_mlib_accident_v);}
+        .__fill_mlib_class_accident_h {
+                fill : url(#__gradient_mlib_accident_h);}  
+        .__fill_mlib_class_accident_c {
+                fill : url(#__gradient_mlib_accident_c);} 
+                
+                
+                
+        
+        
+         .__mlib_armatura[cursor="pointer"] {
+                outline: 1px solid transparent;
+                cursor: pointer;}
+                
+         .__mlib_armatura[cursor="pointer"]:hover {
+                outline: 1px solid #40FF00;
+                cursor: pointer;}
+                               
+         .__mlib_armatura {             
+               cursor: none;}
+                     
+         .__mlib_armatura:hover {            
+               cursor: none;}
+                 
+                    
+         
+         
+         
+         
+        
+                
+        svg svg text.__mlib_button_default {         
+                 font-weight: bold;
+                 text-anchor: middle;
+                 dominant-baseline: central; 
+                 -webkit-user-select: none;}
+                 
+           
+        svg[state="disable"] svg text.__mlib_button_default {            
+                 font-weight: normal;}
+           
+        svg.__mlib_button_default &gt; g &gt; rect {
+                cursor: pointer;}
+          
+        svg[state="disable"].__mlib_button_default &gt; g &gt; rect {
+                cursor: default;}
+          
+        svg.__mlib_button_default  &gt; g  &gt; rect {
+                fill: transparent;}
+                
+        svg[state="off"].__mlib_button_default &gt;   rect {        
+                stroke: #555;
+                stroke-width: 1;}   
+                    
+        svg[state="off"].__mlib_button_default:hover &gt;  rect {         
+                stroke:  #333;
+                stroke-width: 1;}                  
+                
+        svg[state="disable"].__mlib_button_default &gt;  rect , svg[state="disable"].__mlib_button_default:hover &gt;  rect:hover , svg[state="disable"].__mlib_button_default &gt;  rect:active {
+                 stroke-width: 0;
+                 stroke: none;}  
+                 
+        svg[state="disable"].__mlib_button_default &gt; rect , svg[state="disable"].__mlib_button_default:hover &gt; rect , svg[state="disable"].__mlib_button_default:active &gt; rect {
+                -webkit-svg-shadow: 0px 0px 0px rgba(0, 0, 0, 0);}  
+                
+        svg.__mlib_button_default:hover &gt; rect {               
+                -webkit-svg-shadow: 3px 3px  3px rgba(0, 0, 0, 0.5);}
+         
+        svg.__mlib_button_default:active &gt; rect{
+                -webkit-svg-shadow: 0px 0px 0px rgba(0, 0, 0, 0);} 
+                
+ 
+
+
+        .__mlib__button_green {
+                fill: url(#__gradient_mlib_midle_green_h);} 
+            
+        svg[state=""]:active &gt; rect.__mlib__button_green {
+                fill: url(#__gradient_mlib_midle_green_ho);}  
+                 
+        svg[state="off"] &gt; rect.__mlib__button_green {
+                fill: url(#__gradient_mlib_midle_gray_h);} 
+                    
+        svg[state="off"]:active &gt; rect.__mlib__button_green {
+                fill: url(#__gradient_mlib_midle_gray_ho);}               
+           
+        svg[state="disable"] &gt; rect.__mlib__button_green ,
+        svg[state="disable"]:hover &gt; rect.__mlib__button_green ,
+        svg[state="disable"]:active &gt; rect.__mlib__button_green {
+                 fill: url(#__gradient_mlib_dark_gray_h); }  
+
+
+
+
+        .__mlib__button_red {
+                fill: url(#__gradient_mlib_midle_red_h);}
+            
+        svg[state=""]:active &gt; rect.__mlib__button_red {
+                fill: url(#__gradient_mlib_midle_red_ho);}  
+                 
+        svg[state="off"] &gt; rect.__mlib__button_red {
+                fill: url(#__gradient_mlib_midle_red_h);} 
+                    
+        svg[state="off"]:active &gt; rect.__mlib__button_red {
+                fill: url(#__gradient_mlib_midle_red_ho);}               
+           
+        svg[state="disable"] &gt; rect.__mlib__button_red ,
+        svg[state="disable"]:hover &gt; rect.__mlib__button_red ,
+        svg[state="disable"]:active &gt; rect.__mlib__button_red {
+                 fill: url(#__gradient_mlib_dark_gray_h); }
+                 
+   
+
+ 
+        .__mlib__button_custom {
+                fill: url(#__gradient_mlib_dark_button);} 
+            
+        svg[state=""]:active &gt; rect.__mlib__button_custom {
+                fill: url(#__gradient_mlib_dark_buttono);}  
+                 
+        svg[state="off"] &gt; rect.__mlib__button_custom {
+                fill: url(#__gradient_mlib_dark_button);} 
+                    
+        svg[state="off"]:active &gt; rect.__mlib__button_custom {
+                fill: url(#__gradient_mlib_dark_buttono);}               
+           
+        svg[state="disable"] &gt; rect.__mlib__button_custom ,
+        svg[state="disable"]:hover &gt; rect.__mlib__button_custom ,
+        svg[state="disable"]:active &gt; rect.__mlib__button_custom {
+                 fill: url(#__gradient_mlib_dark_buttond); }  
+                 
+                 
+                 
+        .__mlib__button_rg {
+                fill: url(#__gradient_mlib_midle_red_h);} 
+            
+        svg[state=""]:active &gt; rect.__mlib__button_rg {
+                fill: url(#__gradient_mlib_midle_red_ho);}  
+                 
+        svg[state="off"] &gt; rect.__mlib__button_rg {
+                fill: url(#__gradient_mlib_midle_green_h);} 
+                    
+        svg[state="off"]:active &gt; rect.__mlib__button_rg {
+                fill: url(#__gradient_mlib_midle_green_ho);}               
+           
+        svg[state="disable"] &gt; rect.__mlib__button_rg ,
+        svg[state="disable"]:hover &gt; rect.__mlib__button_rg ,
+        svg[state="disable"]:active &gt; rect.__mlib__button_rg {
+                 fill: url(#__gradient_mlib_dark_gray_h); }
+                 
+
+        .__mlib__button_gr {
+                fill: url(#__gradient_mlib_midle_green_h);} 
+            
+        svg[state=""]:active &gt; rect.__mlib__button_gr {
+                fill: url(#__gradient_mlib_midle_green_ho);}  
+                 
+        svg[state="off"] &gt; rect.__mlib__button_gr {
+                fill: url(#__gradient_mlib_midle_red_h);} 
+                    
+        svg[state="off"]:active &gt; rect.__mlib__button_gr {
+                fill: url(#__gradient_mlib_midle_red_ho);}               
+           
+        svg[state="disable"] &gt; rect.__mlib__button_gr ,
+        svg[state="disable"]:hover &gt; rect.__mlib__button_gr ,
+        svg[state="disable"]:active &gt; rect.__mlib__button_gr {
+                 fill: url(#__gradient_mlib_dark_gray_h); }
+   
+               
+                
+              
+        
+        
+        
+    
+                        body{
+                          -webkit-user-select: none;
+                          margin: 0px 0px; 
+                          padding: 0px 0px;}
+
+                        div{
+                          float:left;
+                          overflow:scroll;
+                          height: 100%;
+                          width: 100%;
+                          border:  1px solid grey;
+                          background-color: white;}
+
+                        table{
+                          border-collapse:collapse;
+                          text-align: left;     
+                          font-size: 13px;
+                          font-family: Georgia, 'Times New Roman', Times, serif;
+                          background:#f0f0f0;}
+
+                        tbody{
+                          overflow:auto;
+                          margin: 0; 
+                          width: 100%;}
+
+                        tr{
+                          display: table-row;
+                          border-spacing: 0;
+                          border: 1px solid #999999;}
+
+                        th{
+                          display: table-cell;
+                          border: 1px solid #999999;
+                          position: relative;
+                          padding: 4px 4px;
+                          text-shadow: black 1px 1px 0px, #aaa  0 0 1em;
+                          color: white;
+                          background:  -webkit-linear-gradient(#333 0%, #111 50%, #333 100%);}
+                            
+                        td{
+                          display: table-cell;
+                          border: 1px;                         
+                          padding: 3px;
+                          border: 1px solid #999999;}
+
+
+                        tr.avaron{
+                          color: yellow;
+                          font-weight: bold;
+                          background:  -webkit-linear-gradient(#600 0%, #b00 50%, #600 100%);}
+
+                        tr.alarmon{
+                          color: #220;
+                          font-weight: bold;
+                          background:  -webkit-linear-gradient(#f90 0%, #f60 50%, #f90 100%);}
+
+                        tr.noticeon{
+                          color: darksalmon;
+                          font-weight: bold;}
+
+                        tr.avarkvit{
+                          color:  red;
+                          font-weight: normal;                         
+                          background:   -webkit-linear-gradient(#eee 0%, #ddd 50%, #eee 100%);}
+
+                        tr.alarmkvit{
+                          color:  #c60;
+                          font-weight: normal;                         
+                          background:   -webkit-linear-gradient(#eee 0%, #ddd 50%, #eee 100%);}
+
+                        tr.noticekvit{
+                          color:  lightsteelblue;
+                          font-weight: normal;} 
+                          
+                    document.alarmfunc___ = function(){ console.log('document.alarmfunc___'); document.alarmobj___ = new libutil.alarmtable(document.getElementById('name0'));} ВремяИмяСообщение
+    g#name1 &gt; svg &gt; rect.name1__mlibbuttonstyle {
+                        fill: url(#name1__gradienton);} 
+            
+                    g#name1 &gt; svg:active &gt; rect.name1__mlibbuttonstyle {
+                        fill: url(#name1__gradientona);  
+                 
+                    g#name1 &gt; svg[state="off"] &gt; rect.name1__mlibbuttonstyle {
+                        fill: url(#name1__gradientoff);} 
+                    
+                    g#name1 &gt; svg[state="off"]:active &gt; rect.name1__mlibbuttonstyle {
+                        fill: url(#name1__gradientoffa);}           
+
+ 
+           
+           
+                    g#name1 &gt; svg[state="disable"] &gt; rect.name1__mlibbuttonstyle , g#name1 &gt; svg[state="disable"]:hover &gt; rect.name1__mlibbuttonstyle , g#name1 &gt; svg[state="disable"]:active &gt; rect.name1__mlibbuttonstyle {
+                         fill: url(#name1__gradientdsbl); } 
+                
+                    <g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="2" y="2" width="126" height="156" rx="1" ry="1" style=""/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><text x="61" y="76" style="                  font-size: 14;                  fill: white;                     "/></g><g xmlns:html="http://www.w3.org/TR/xhtml1" xmlns:exsl="http://xmlsoft.org/XSLT/namespace" id="" isdesined="isdesined"><rect x="4" y="4" width="122" height="152" rx="1" ry="1" style=""/></g>
+.designer_selected { opacity: 0.8 !important; outline: 1px solid #E00 !important;} 
+*[isgoupelement]{ outline: 1px dashed green !important; } 
+*[ismaybeinvisible]{ outline: 1px dashed yellow !important; } 
+*[isinvisibleelement]{ outline: 1px solid green !important; } 
+g[cursor="pointer"]:hover { outline: 0px solid transparent  !important;} 
+g[cursor="pointer"].designer_selected { opacity: 0.8 !important;  outline: 1px solid red !important;} 
+*[isgoupelement].designer_selected { opacity: 0.8 !important;  outline: 1px solid red !important;}
+*[isinvisibleelement].designer_selected { opacity: 0.8 !important;  outline: 1px solid red !important;}
+*[filter] { filter: url('') !important;} 
+.highlight-selected{ fill: none !important; stroke-width: 1 !important; stroke: red !important;}
+.design_captured {display: block !important;}
+*[dv-visible] { display: block !important;} 
+</svg:svg>
