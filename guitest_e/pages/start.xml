@@ -575,8 +575,8 @@ var vent = simulator.valve_init(2,'vent_on', null , 'vent_don', 'vent_doff', 've
   
   <scriptfile name="script1" file="script1.js"/>
 
-  <lib xsd="../libs/main/mainlib.xsd" name="mainlib" caption="Базовая библиотека компонентов"/>
-  <lib xsd="../libs/elec/eleclib.xsd" name="eleclib" caption="Базовая библиотека компонентов"/>
+  <lib xsd="../libs/main/mainlib.xsd" name="mainlib" caption="Basic"/>
+  <lib xsd="../libs/elec/eleclib.xsd" name="eleclib" caption="Electro"/>
   <lib xsd="../libs/svg/svg.xsd" name="svglib" caption="SVG"/>
 </project>
 
