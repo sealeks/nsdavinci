@@ -177,11 +177,11 @@
 </xsd:element>
         
         
-<xsd:element name="rect">
+<xsd:element name="erect">
     <xsd:annotation>
         <xsd:appinfo>
-            <lib:creator name="elib:rect" hint="rect">
-                <elib:rect x="" y="" height="50" width="200" stroke="#ddd" r="4" stroke-width="1"/>
+            <lib:creator name="elib:erect" hint="erect">
+                <elib:erect x="" y="" height="50" width="200" stroke="#ddd" r="4" stroke-width="1"/>
             </lib:creator>
         </xsd:appinfo>
     </xsd:annotation>

@@ -2,7 +2,7 @@ var eleclib = {
     
 };
 
-eleclib.NAMESPACE_URL = 'http://dvnci/mlib';
+eleclib.NAMESPACE_URL = 'http://dvnci/elib';
 
 eleclib.CHART_WIDTH = 350;
 
