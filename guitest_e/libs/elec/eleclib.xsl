@@ -609,24 +609,24 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     -->
  
  
-    <xsl:template name="apply_elib_araturatype_motor">    
-        <circle cx="500" cy="500" r="300" stroke-width="20"/>
-        <path d="M 400,600 L 400,400 L 500,500 L 600,400 L 600,600" stroke-width="30"/>
+    <xsl:template name="apply_elib_switchertype_breaker">    
+        <rect x="200" y="200" width="600" height="600" stroke-width="50"/>
+        <!-- path d="M 400,600 L 400,400 L 500,500 L 600,400 L 600,600" stroke-width="30"/-->
     </xsl:template>
     
     
-    <xsl:template name="apply_elib_araturatype_motorD">    
+    <xsl:template name="apply_elib_switchertype_breakerD">    
         <circle cx="500" cy="500" r="300" stroke-width="20"/>
         <path d="M 400,450 L 400,550 L 550,550 L 550,600 L 650,500 L 550,400 L 550,450z" stroke-width="20"/>
     </xsl:template>
     
     
-    <xsl:template name="apply_elib_araturatype_simple">    
+    <xsl:template name="apply_elib_switchertype_simple">    
         <path d="M 200,350 L 200,650 L 800,350 L 800,650 z" stroke-width="20"/>
     </xsl:template>
     
     
-    <xsl:template name="apply_elib_araturatype_cvalve">    
+    <xsl:template name="apply_elib_switchertype_cvalve">    
         <path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/>
         <path d="M 350,220 L 650, 220 L 650,320 L 350, 320z" stroke-width="20"/>  
         <path d="M 500,650 L 500, 550 L 600,500 L 400, 450 L 600, 400 L 500,350 L 500, 320" fill="none" stroke-width="20"/>
@@ -636,7 +636,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>
     
     
-    <xsl:template name="apply_elib_araturatype_ovalve">    
+    <xsl:template name="apply_elib_switchertype_ovalve">    
         <path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/>
         <path d="M 350,220 L 650, 220 L 650,320 L 350, 320z" stroke-width="20"/>  
         <path d="M 500,650 L 500, 550 L 600,500 L 400, 450 L 600, 400 L 500,350 L 500, 320" fill="none" stroke-width="20"/>
@@ -646,14 +646,14 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>
     
     
-    <xsl:template name="apply_elib_araturatype_rvalve">    
+    <xsl:template name="apply_elib_switchertype_rvalve">    
         <path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/> 
         <path d="M 500,650 L 500, 360" fill="none" stroke-width="20"/>
         <path d="M 410 ,360 L 590, 360 L 500,220 z"  stroke-width="20"/>
     </xsl:template> 
     
     
-    <xsl:template name="apply_elib_araturatype_bolt">    
+    <xsl:template name="apply_elib_switchertype_bolt">    
         <path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/> 
         <path d="M 500,650 L 500, 380" fill="none" stroke-width="20"/>
         <circle cx="500" cy="320" r="120" stroke-width="20"/>
@@ -661,7 +661,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>
     
     
-    <xsl:template name="apply_elib_araturatype_regul">    
+    <xsl:template name="apply_elib_switchertype_regul">    
         <path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/> 
         <path d="M 500,650 L 500, 450" fill="none" stroke-width="20"/>
         <path d="M 430,550 L 570, 550" fill="none" stroke-width="20"/>
@@ -693,38 +693,38 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
 
     
-    <xsl:template name="apply_elib_araturatype"> 
+    <xsl:template name="apply_elib_switchertype"> 
         <xsl:choose>                         
             <xsl:when test="boolean(@type) and not(normalize-space(@type)='')">                             
                 <xsl:choose>
                     <xsl:when test="@type='cvalve'"> 
-                        <xsl:call-template name="apply_elib_araturatype_cvalve"/>
+                        <xsl:call-template name="apply_elib_switchertype_cvalve"/>
                     </xsl:when>
                     <xsl:when test="@type='ovalve'"> 
-                        <xsl:call-template name="apply_elib_araturatype_ovalve"/>
+                        <xsl:call-template name="apply_elib_switchertype_ovalve"/>
                     </xsl:when>
                     <xsl:when test="@type='rvalve'">
-                        <xsl:call-template name="apply_elib_araturatype_rvalve"/> 
+                        <xsl:call-template name="apply_elib_switchertype_rvalve"/> 
                     </xsl:when> 
                     <xsl:when test="@type='bolt'">
-                        <xsl:call-template name="apply_elib_araturatype_bolt"/> 
+                        <xsl:call-template name="apply_elib_switchertype_bolt"/> 
                     </xsl:when>
-                    <xsl:when test="@type='motorD'">
-                        <xsl:call-template name="apply_elib_araturatype_motorD"/> 
+                    <xsl:when test="@type='breakerD'">
+                        <xsl:call-template name="apply_elib_switchertype_breakerD"/> 
                     </xsl:when> 
                     <xsl:when test="@type='simple'">
-                        <xsl:call-template name="apply_elib_araturatype_simple"/> 
+                        <xsl:call-template name="apply_elib_switchertype_simple"/> 
                     </xsl:when>
                     <xsl:when test="@type='regul'">
-                        <xsl:call-template name="apply_elib_araturatype_regul"/> 
+                        <xsl:call-template name="apply_elib_switchertype_regul"/> 
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:call-template name="apply_elib_araturatype_motor"/> 
+                        <xsl:call-template name="apply_elib_switchertype_breaker"/> 
                     </xsl:otherwise>                     
                 </xsl:choose>
             </xsl:when> 
             <xsl:otherwise>
-                <xsl:call-template name="apply_elib_araturatype_motor"/> 
+                <xsl:call-template name="apply_elib_switchertype_breaker"/> 
             </xsl:otherwise>                           
         </xsl:choose>    
     
@@ -979,7 +979,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     </xsl:attribute>
                 </xsl:otherwise> 
             </xsl:choose>              
-            <xsl:call-template name="apply_elib_araturatype"/> 
+            <xsl:call-template name="apply_elib_switchertype"/> 
         </g>
     </xsl:template> 
 
@@ -1189,7 +1189,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:when test="boolean(@rauto) or boolean(@roff) or boolean(@ron)">  
                 <xsl:attribute name="onclick">
                     <xsl:text>if (this.getAttribute('cursor')=='pointer') {</xsl:text> 
-                            <xsl:text>eleclib.armatura_popup(this, '</xsl:text>
+                            <xsl:text>eleclib.switcher_popup(this, '</xsl:text>
                             <xsl:value-of select="@rauto"/>                                                    
                             <xsl:text>');};</xsl:text>
                 </xsl:attribute>                   
@@ -1293,10 +1293,10 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:choose>
             </xsl:variable> 
             
-            <xsl:variable name="armaturakind"> 
+            <xsl:variable name="switcherkind"> 
                     <xsl:choose>
-                        <xsl:when test="not(boolean(@type)) or (@type='motorD') or (@type='motor') or (normalize-space(@type)='')">
-                            <xsl:text>motor</xsl:text>
+                        <xsl:when test="not(boolean(@type)) or (@type='breakerD') or (@type='breaker') or (normalize-space(@type)='')">
+                            <xsl:text>breaker</xsl:text>
                         </xsl:when> 
                         <xsl:otherwise>
                             <xsl:text>valve</xsl:text>
@@ -1306,7 +1306,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             
             <xsl:variable name="oncaption">
                     <xsl:choose>
-                        <xsl:when test="($armaturakind='motor')">
+                        <xsl:when test="($switcherkind='breaker')">
                             <xsl:text>Пуск</xsl:text>
                         </xsl:when> 
                         <xsl:otherwise>
@@ -1317,7 +1317,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             
             <xsl:variable name="offcaption">
                     <xsl:choose>
-                        <xsl:when test="($armaturakind='motor')">
+                        <xsl:when test="($switcherkind='breaker')">
                             <xsl:text>Стоп</xsl:text>
                         </xsl:when> 
                         <xsl:otherwise>
@@ -1328,7 +1328,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             
             <xsl:variable name="stopcaption">
                     <xsl:choose>
-                        <xsl:when test="($armaturakind='motor')">
+                        <xsl:when test="($switcherkind='breaker')">
                             <xsl:text>Сброс</xsl:text>
                         </xsl:when> 
                         <xsl:otherwise>
@@ -1516,7 +1516,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     -->
       
     
-    <xsl:template match="//elib:armatura" >   
+    <xsl:template match="//elib:switcher" >   
         <g>       
         
             <xsl:attribute name="desc">

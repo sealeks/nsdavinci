@@ -65,10 +65,10 @@
     </xsd:restriction>
 </xsd:simpleType>
         
-<xsd:simpleType name="armaturatype">
+<xsd:simpleType name="switchertype">
     <xsd:restriction base="xsd:string">
-        <xsd:enumeration value="motor"/>
-        <xsd:enumeration value="motorD"/>
+        <xsd:enumeration value="breaker"/>
+        <xsd:enumeration value="breakerD"/>
         <xsd:enumeration value="cvalve"/>
         <xsd:enumeration value="ovalve"/>
         <xsd:enumeration value="rvalve"/>
@@ -138,17 +138,17 @@
     
 
         
-<xsd:element name="armatura">
+<xsd:element name="switcher">
     <xsd:annotation>
         <xsd:appinfo>
-            <lib:creator name="elib:armatura" hint="armatura">
-                <elib:armatura x="" y="" height="50" width="50"/>
+            <lib:creator name="elib:switcher" hint="switcher">
+                <elib:switcher x="" y="" height="50" width="50"/>
             </lib:creator>
         </xsd:appinfo>
     </xsd:annotation>        
     <xsd:complexType>
         <xsd:attribute name="id" type="xsd:ID" use="required"/>
-        <xsd:attribute name="type" type="elib:armaturatype"/>
+        <xsd:attribute name="type" type="elib:switchertype"/>
         <xsd:attribute name="x" type="xsd:string" default="0"/>
         <xsd:attribute name="y" type="xsd:string" default="0"/>
         <xsd:attribute name="width" type="xsd:string" default="100"/>

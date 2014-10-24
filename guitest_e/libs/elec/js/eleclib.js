@@ -489,7 +489,7 @@ eleclib.get_staticpopupbody  = function(el, width, height, remfunc, shift, namep
 
 
 
-eleclib.armatura_popup = function(el, rauto){
+eleclib.switcher_popup = function(el, rauto){
     if (el.popup){
         el.popup.setAttribute('style', '');
         return;
@@ -507,7 +507,7 @@ eleclib.armatura_popup = function(el, rauto){
 
     }
     catch(error){
-        throw console.error('eleclib.armatura_popup error: ' + error);
+        throw console.error('eleclib.switcher_popup error: ' + error);
     }  
 
 
