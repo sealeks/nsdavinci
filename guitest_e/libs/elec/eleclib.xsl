@@ -2,7 +2,7 @@
 
 <xsl:stylesheet version="1.0"
 xmlns="http://www.w3.org/2000/svg"
-xmlns:mlib="http://dvnci/mlib"
+xmlns:elib="http://dvnci/elib"
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:html="http://www.w3.org/TR/xhtml1"
 xmlns:xlink="http://www.w3.org/1999/xlink" 
@@ -19,7 +19,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>
     
       
-    <xsl:template name="apply_mlib_schema">    
+    <xsl:template name="apply_elib_schema">    
         <!--xsl:attribute name="xsi:schemaLocation">
             <xsl:text>../libs/elec/maillib.xsd</xsl:text>
         </xsl:attribute-->  
@@ -51,46 +51,46 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
           dark_fill
           dark_button
         -->  
-    <xsl:template name="mlib_gradient_select">
+    <xsl:template name="elib_gradient_select">
         <xsl:param name="invir"/>
         <xsl:param name="gradtype"/>
         <xsl:choose> 
             <xsl:when test="normalize-space($invir)='light_gray'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_light_gray_v</xsl:text>
+                        <xsl:text>__fill_elib_class_light_gray_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_light_gray_c</xsl:text>
+                        <xsl:text>__fill_elib_class_light_gray_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_light_gray_h</xsl:text>
+                        <xsl:text>__fill_elib_class_light_gray_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>
             <xsl:when test="normalize-space($invir)='midle_gray'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_midle_gray_v</xsl:text>
+                        <xsl:text>__fill_elib_class_midle_gray_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_midle_gray_c</xsl:text>
+                        <xsl:text>__fill_elib_class_midle_gray_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_midle_gray_h</xsl:text>
+                        <xsl:text>__fill_elib_class_midle_gray_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>
             <xsl:when test="normalize-space($invir)='dark_gray'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_dark_gray_v</xsl:text>
+                        <xsl:text>__fill_elib_class_dark_gray_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_dark_gray_c</xsl:text>
+                        <xsl:text>__fill_elib_class_dark_gray_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_dark_gray_h</xsl:text>
+                        <xsl:text>__fill_elib_class_dark_gray_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when> 
@@ -98,39 +98,39 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:when test="normalize-space($invir)='light_blue'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_light_blue_v</xsl:text>
+                        <xsl:text>__fill_elib_class_light_blue_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_light_blue_c</xsl:text>
+                        <xsl:text>__fill_elib_class_light_blue_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_light_blue_h</xsl:text>
+                        <xsl:text>__fill_elib_class_light_blue_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>
             <xsl:when test="normalize-space($invir)='midle_blue'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_midle_blue_v</xsl:text>
+                        <xsl:text>__fill_elib_class_midle_blue_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_midle_blue_c</xsl:text>
+                        <xsl:text>__fill_elib_class_midle_blue_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_midle_blue_h</xsl:text>
+                        <xsl:text>__fill_elib_class_midle_blue_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>
             <xsl:when test="normalize-space($invir)='dark_blue'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_dark_blue_v</xsl:text>
+                        <xsl:text>__fill_elib_class_dark_blue_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_dark_blue_c</xsl:text>
+                        <xsl:text>__fill_elib_class_dark_blue_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_dark_blue_h</xsl:text>
+                        <xsl:text>__fill_elib_class_dark_blue_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>    
@@ -138,39 +138,39 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:when test="normalize-space($invir)='light_green'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_light_green_v</xsl:text>
+                        <xsl:text>__fill_elib_class_light_green_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_light_green_c</xsl:text>
+                        <xsl:text>__fill_elib_class_light_green_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_light_green_h</xsl:text>
+                        <xsl:text>__fill_elib_class_light_green_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>
             <xsl:when test="normalize-space($invir)='midle_green'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_midle_green_v</xsl:text>
+                        <xsl:text>__fill_elib_class_midle_green_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_midle_green_c</xsl:text>
+                        <xsl:text>__fill_elib_class_midle_green_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_midle_green_h</xsl:text>
+                        <xsl:text>__fill_elib_class_midle_green_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>
             <xsl:when test="normalize-space($invir)='dark_green'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_dark_green_v</xsl:text>
+                        <xsl:text>__fill_elib_class_dark_green_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_dark_green_c</xsl:text>
+                        <xsl:text>__fill_elib_class_dark_green_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_dark_green_h</xsl:text>
+                        <xsl:text>__fill_elib_class_dark_green_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>  
@@ -178,39 +178,39 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:when test="normalize-space($invir)='light_red'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_light_red_v</xsl:text>
+                        <xsl:text>__fill_elib_class_light_red_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_light_red_c</xsl:text>
+                        <xsl:text>__fill_elib_class_light_red_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_light_red_h</xsl:text>
+                        <xsl:text>__fill_elib_class_light_red_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>
             <xsl:when test="normalize-space($invir)='midle_red'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_midle_red_v</xsl:text>
+                        <xsl:text>__fill_elib_class_midle_red_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_midle_red_c</xsl:text>
+                        <xsl:text>__fill_elib_class_midle_red_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_midle_red_h</xsl:text>
+                        <xsl:text>__fill_elib_class_midle_red_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>
             <xsl:when test="normalize-space($invir)='dark_red'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_dark_red_v</xsl:text>
+                        <xsl:text>__fill_elib_class_dark_red_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_dark_red_c</xsl:text>
+                        <xsl:text>__fill_elib_class_dark_red_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_dark_red_h</xsl:text>
+                        <xsl:text>__fill_elib_class_dark_red_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>  
@@ -218,13 +218,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:when test="normalize-space($invir)='gaz'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_gaz_v</xsl:text>
+                        <xsl:text>__fill_elib_class_gaz_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_gaz_c</xsl:text>
+                        <xsl:text>__fill_elib_class_gaz_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_gaz_h</xsl:text>
+                        <xsl:text>__fill_elib_class_gaz_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>   
@@ -232,13 +232,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:when test="normalize-space($invir)='water'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_water_v</xsl:text>
+                        <xsl:text>__fill_elib_class_water_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_water_c</xsl:text>
+                        <xsl:text>__fill_elib_class_water_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_water_h</xsl:text>
+                        <xsl:text>__fill_elib_class_water_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>  
@@ -246,13 +246,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:when test="normalize-space($invir)='air'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_air_v</xsl:text>
+                        <xsl:text>__fill_elib_class_air_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_air_c</xsl:text>
+                        <xsl:text>__fill_elib_class_air_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_air_h</xsl:text>
+                        <xsl:text>__fill_elib_class_air_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when> 
@@ -260,13 +260,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:when test="normalize-space($invir)='vapor'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_vapor_v</xsl:text>
+                        <xsl:text>__fill_elib_class_vapor_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_vapor_c</xsl:text>
+                        <xsl:text>__fill_elib_class_vapor_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_vapor_h</xsl:text>
+                        <xsl:text>__fill_elib_class_vapor_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>  
@@ -274,13 +274,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:when test="normalize-space($invir)='oil'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_oil_v</xsl:text>
+                        <xsl:text>__fill_elib_class_oil_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_oil_c</xsl:text>
+                        <xsl:text>__fill_elib_class_oil_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_oil_h</xsl:text>
+                        <xsl:text>__fill_elib_class_oil_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when> 
@@ -288,13 +288,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:when test="normalize-space($invir)='stream'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_stream_v</xsl:text>
+                        <xsl:text>__fill_elib_class_stream_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_stream_c</xsl:text>
+                        <xsl:text>__fill_elib_class_stream_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_stream_h</xsl:text>
+                        <xsl:text>__fill_elib_class_stream_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>        
@@ -302,13 +302,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
              <xsl:when test="normalize-space($invir)='smoke'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_smoke_v</xsl:text>
+                        <xsl:text>__fill_elib_class_smoke_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_smoke_c</xsl:text>
+                        <xsl:text>__fill_elib_class_smoke_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_smoke_h</xsl:text>
+                        <xsl:text>__fill_elib_class_smoke_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>   
@@ -316,13 +316,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:when test="normalize-space($invir)='notice'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_notice_v</xsl:text>
+                        <xsl:text>__fill_elib_class_notice_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_notice_c</xsl:text>
+                        <xsl:text>__fill_elib_class_notice_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_notice_h</xsl:text>
+                        <xsl:text>__fill_elib_class_notice_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>  
@@ -330,13 +330,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:when test="normalize-space($invir)='alarm'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_alarm_v</xsl:text>
+                        <xsl:text>__fill_elib_class_alarm_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_alarm_c</xsl:text>
+                        <xsl:text>__fill_elib_class_alarm_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_alarm_h</xsl:text>
+                        <xsl:text>__fill_elib_class_alarm_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>    
@@ -344,39 +344,39 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:when test="normalize-space($invir)='accident'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_accident_v</xsl:text>
+                        <xsl:text>__fill_elib_class_accident_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_accident_c</xsl:text>
+                        <xsl:text>__fill_elib_class_accident_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_accident_h</xsl:text>
+                        <xsl:text>__fill_elib_class_accident_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>    
             
            <xsl:when test="normalize-space($invir)='dark_fill'">
                  
-                        <xsl:text>__fill_mlib_class_dark_fill</xsl:text>
+                        <xsl:text>__fill_elib_class_dark_fill</xsl:text>
                
             </xsl:when>  
             
            <xsl:when test="normalize-space($invir)='dark_button'">
                  
-                      <xsl:text>__fill_mlib_class_dark_button</xsl:text>
+                      <xsl:text>__fill_elib_class_dark_button</xsl:text>
                 
             </xsl:when>             
             
             <xsl:otherwise>
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_mlib_class_dark_blue_v</xsl:text>
+                        <xsl:text>__fill_elib_class_dark_blue_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_mlib_class_dark_blue_c</xsl:text>
+                        <xsl:text>__fill_elib_class_dark_blue_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_mlib_class_dark_blue_h</xsl:text>
+                        <xsl:text>__fill_elib_class_dark_blue_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:otherwise>        
@@ -393,7 +393,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
 
     
     
-    <xsl:template name="mlib_config_popup_row">
+    <xsl:template name="elib_config_popup_row">
         <xsl:param name="token"/>
         <xsl:param name="hdr"/>
         <xsl:param name="frmt"/>
@@ -421,7 +421,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:choose>            
         </xsl:variable>         
         
-        <mlib:sensor x="5"  height="22" width="156" stroke="#eee" stroke-width="1" r="4"  color1="#111"   alighn="left" fontcolor="yellow" fontstyle="font-size: 11">
+        <elib:sensor x="5"  height="22" width="156" stroke="#eee" stroke-width="1" r="4"  color1="#111"   alighn="left" fontcolor="yellow" fontstyle="font-size: 11">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_popup_config_rowheader</xsl:text>
@@ -433,8 +433,8 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:attribute name="y">
                 <xsl:value-of select="30 + ($depth -1) * 24"/>
             </xsl:attribute>  
-       </mlib:sensor>
-        <mlib:sensor x="162"  height="22" width="82" stroke="#0e0" stroke-width="1" r="4"  color1="#001" caption="" alighn="right" fontcolor="#0e0" fontstyle="font-size: 11" sensorevent="valueedit">
+       </elib:sensor>
+        <elib:sensor x="162"  height="22" width="82" stroke="#0e0" stroke-width="1" r="4"  color1="#001" caption="" alighn="right" fontcolor="#0e0" fontstyle="font-size: 11" sensorevent="valueedit">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_popup_config_setter</xsl:text>
@@ -449,11 +449,11 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:attribute name="y">
                 <xsl:value-of select="30 + ($depth -1) * 24"/>
             </xsl:attribute>              
-        </mlib:sensor>
+        </elib:sensor>
     </xsl:template>  
     
     
-    <xsl:template name="mlib_config_popup_split" >
+    <xsl:template name="elib_config_popup_split" >
         <xsl:param name="str" select="."/>
         <xsl:param name="hdrs"/>
         <xsl:param name="frmts"/>
@@ -473,13 +473,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         
         <xsl:choose> 
             <xsl:when test="contains($str,$worddiv)">
-                <xsl:call-template name="mlib_config_popup_row">
+                <xsl:call-template name="elib_config_popup_row">
                     <xsl:with-param name="token" select="substring-before($str, $worddiv)"/>
                     <xsl:with-param name="frmt" select="substring-before($frmts, $worddiv)"/>
                     <xsl:with-param name="hdr" select="substring-before($hdrs, $worddiv)"/>
                     <xsl:with-param name="depth" select="$depthvar"/>
                 </xsl:call-template>
-                <xsl:call-template name="mlib_config_popup_split"> 
+                <xsl:call-template name="elib_config_popup_split"> 
                     <xsl:with-param name="str" select="substring-after($str, $worddiv)"/>
                     <xsl:with-param name="frmts" select="substring-after($frmts, $worddiv)"/>
                     <xsl:with-param name="hdrs" select="substring-after($hdrs, $worddiv)"/>                    
@@ -489,7 +489,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             </xsl:when>
  
             <xsl:otherwise>
-                <xsl:call-template name="mlib_config_popup_row">
+                <xsl:call-template name="elib_config_popup_row">
                     <xsl:with-param name="token" select="$str"/>
                     <xsl:with-param name="frmt" select="$frmts"/>
                     <xsl:with-param name="hdr" select="$hdrs"/>
@@ -501,7 +501,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>
       
     
-    <xsl:template name="mlib_config_popup">
+    <xsl:template name="elib_config_popup">
         <xsl:param name="header"/>
         <xsl:choose>
             <xsl:when test="not(normalize-space(@config)='')"> 
@@ -535,7 +535,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         </xsl:attribute>                        
                 
                         <xsl:variable name="popupbody">
-                            <mlib:sensor x="5" y="2" height="26" width="240" stroke="#ccc" stroke-width="1" r="4"  environment="midle_red"  alighn="center" fontcolor="#eee" fontstyle="font-size: 12">
+                            <elib:sensor x="5" y="2" height="26" width="240" stroke="#ccc" stroke-width="1" r="4"  environment="midle_red"  alighn="center" fontcolor="#eee" fontstyle="font-size: 12">
                                 <xsl:attribute name="id">
                                     <xsl:value-of select="@id"/>
                                     <xsl:text>_popup_config_header</xsl:text>
@@ -559,8 +559,8 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                         </xsl:otherwise>
                                     </xsl:choose>                                                                       
                                 </xsl:attribute> 
-                            </mlib:sensor>
-                            <xsl:call-template name="mlib_config_popup_split">
+                            </elib:sensor>
+                            <xsl:call-template name="elib_config_popup_split">
                                 <xsl:with-param name="str" select="@config"/>
                                 <xsl:with-param name="hdrs" select="@config-headers"/>
                                 <xsl:with-param name="frmts" select="@config-formats"/>
@@ -572,10 +572,10 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         <xsl:for-each select="exsl:node-set($popupbody)/*">
                             <xsl:choose>
                                 <xsl:when test="local-name()='rect'">
-                                    <xsl:call-template name="mlib_button"/>
+                                    <xsl:call-template name="elib_button"/>
                                 </xsl:when> 
                                 <xsl:when test="local-name()='sensor'">
-                                    <xsl:call-template name="mlib_sensor"/>
+                                    <xsl:call-template name="elib_sensor"/>
                                 </xsl:when>                         
                             </xsl:choose>
                         </xsl:for-each> 
@@ -609,24 +609,24 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     -->
  
  
-    <xsl:template name="apply_mlib_araturatype_motor">    
+    <xsl:template name="apply_elib_araturatype_motor">    
         <circle cx="500" cy="500" r="300" stroke-width="20"/>
         <path d="M 400,600 L 400,400 L 500,500 L 600,400 L 600,600" stroke-width="30"/>
     </xsl:template>
     
     
-    <xsl:template name="apply_mlib_araturatype_motorD">    
+    <xsl:template name="apply_elib_araturatype_motorD">    
         <circle cx="500" cy="500" r="300" stroke-width="20"/>
         <path d="M 400,450 L 400,550 L 550,550 L 550,600 L 650,500 L 550,400 L 550,450z" stroke-width="20"/>
     </xsl:template>
     
     
-    <xsl:template name="apply_mlib_araturatype_simple">    
+    <xsl:template name="apply_elib_araturatype_simple">    
         <path d="M 200,350 L 200,650 L 800,350 L 800,650 z" stroke-width="20"/>
     </xsl:template>
     
     
-    <xsl:template name="apply_mlib_araturatype_cvalve">    
+    <xsl:template name="apply_elib_araturatype_cvalve">    
         <path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/>
         <path d="M 350,220 L 650, 220 L 650,320 L 350, 320z" stroke-width="20"/>  
         <path d="M 500,650 L 500, 550 L 600,500 L 400, 450 L 600, 400 L 500,350 L 500, 320" fill="none" stroke-width="20"/>
@@ -636,7 +636,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>
     
     
-    <xsl:template name="apply_mlib_araturatype_ovalve">    
+    <xsl:template name="apply_elib_araturatype_ovalve">    
         <path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/>
         <path d="M 350,220 L 650, 220 L 650,320 L 350, 320z" stroke-width="20"/>  
         <path d="M 500,650 L 500, 550 L 600,500 L 400, 450 L 600, 400 L 500,350 L 500, 320" fill="none" stroke-width="20"/>
@@ -646,14 +646,14 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>
     
     
-    <xsl:template name="apply_mlib_araturatype_rvalve">    
+    <xsl:template name="apply_elib_araturatype_rvalve">    
         <path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/> 
         <path d="M 500,650 L 500, 360" fill="none" stroke-width="20"/>
         <path d="M 410 ,360 L 590, 360 L 500,220 z"  stroke-width="20"/>
     </xsl:template> 
     
     
-    <xsl:template name="apply_mlib_araturatype_bolt">    
+    <xsl:template name="apply_elib_araturatype_bolt">    
         <path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/> 
         <path d="M 500,650 L 500, 380" fill="none" stroke-width="20"/>
         <circle cx="500" cy="320" r="120" stroke-width="20"/>
@@ -661,7 +661,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>
     
     
-    <xsl:template name="apply_mlib_araturatype_regul">    
+    <xsl:template name="apply_elib_araturatype_regul">    
         <path d="M 200,500 L 200,800 L 800,500 L 800,800 z" stroke-width="20"/> 
         <path d="M 500,650 L 500, 450" fill="none" stroke-width="20"/>
         <path d="M 430,550 L 570, 550" fill="none" stroke-width="20"/>
@@ -693,38 +693,38 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
 
     
-    <xsl:template name="apply_mlib_araturatype"> 
+    <xsl:template name="apply_elib_araturatype"> 
         <xsl:choose>                         
             <xsl:when test="boolean(@type) and not(normalize-space(@type)='')">                             
                 <xsl:choose>
                     <xsl:when test="@type='cvalve'"> 
-                        <xsl:call-template name="apply_mlib_araturatype_cvalve"/>
+                        <xsl:call-template name="apply_elib_araturatype_cvalve"/>
                     </xsl:when>
                     <xsl:when test="@type='ovalve'"> 
-                        <xsl:call-template name="apply_mlib_araturatype_ovalve"/>
+                        <xsl:call-template name="apply_elib_araturatype_ovalve"/>
                     </xsl:when>
                     <xsl:when test="@type='rvalve'">
-                        <xsl:call-template name="apply_mlib_araturatype_rvalve"/> 
+                        <xsl:call-template name="apply_elib_araturatype_rvalve"/> 
                     </xsl:when> 
                     <xsl:when test="@type='bolt'">
-                        <xsl:call-template name="apply_mlib_araturatype_bolt"/> 
+                        <xsl:call-template name="apply_elib_araturatype_bolt"/> 
                     </xsl:when>
                     <xsl:when test="@type='motorD'">
-                        <xsl:call-template name="apply_mlib_araturatype_motorD"/> 
+                        <xsl:call-template name="apply_elib_araturatype_motorD"/> 
                     </xsl:when> 
                     <xsl:when test="@type='simple'">
-                        <xsl:call-template name="apply_mlib_araturatype_simple"/> 
+                        <xsl:call-template name="apply_elib_araturatype_simple"/> 
                     </xsl:when>
                     <xsl:when test="@type='regul'">
-                        <xsl:call-template name="apply_mlib_araturatype_regul"/> 
+                        <xsl:call-template name="apply_elib_araturatype_regul"/> 
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:call-template name="apply_mlib_araturatype_motor"/> 
+                        <xsl:call-template name="apply_elib_araturatype_motor"/> 
                     </xsl:otherwise>                     
                 </xsl:choose>
             </xsl:when> 
             <xsl:otherwise>
-                <xsl:call-template name="apply_mlib_araturatype_motor"/> 
+                <xsl:call-template name="apply_elib_araturatype_motor"/> 
             </xsl:otherwise>                           
         </xsl:choose>    
     
@@ -737,14 +737,14 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     -->  
     
     
-    <xsl:template name="apply_mlib_aratura_cursor_dsbl">
+    <xsl:template name="apply_elib_aratura_cursor_dsbl">
         <xsl:attribute name="cursor">
             <xsl:text>none</xsl:text>
         </xsl:attribute>
     </xsl:template>
     
     
-    <xsl:template name="apply_mlib_aratura_cursor_checkstatevalid">
+    <xsl:template name="apply_elib_aratura_cursor_checkstatevalid">
         <xsl:choose>                        
             <xsl:when test="not(normalize-space(@off)='') and not(normalize-space(@on)='')">
                 <xsl:text>(!(</xsl:text>
@@ -771,10 +771,10 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>
     
 
-    <xsl:template name="apply_mlib_aratura_cursor_autocontrol">
+    <xsl:template name="apply_elib_aratura_cursor_autocontrol">
         <xsl:attribute name="cursor">
             <xsl:text>#{ </xsl:text>
-            <xsl:call-template name="apply_mlib_aratura_cursor_checkstatevalid"/>
+            <xsl:call-template name="apply_elib_aratura_cursor_checkstatevalid"/>
             <xsl:text> ( </xsl:text>
             <xsl:choose>                        
                 <xsl:when test="(boolean(@local) and not(normalize-space(@local)=''))"> 
@@ -798,10 +798,10 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>
     
     
-    <xsl:template name="apply_mlib_aratura_cursor_auto">
+    <xsl:template name="apply_elib_aratura_cursor_auto">
         <xsl:attribute name="cursor">
             <xsl:text>#{ </xsl:text>
-            <xsl:call-template name="apply_mlib_aratura_cursor_checkstatevalid"/>
+            <xsl:call-template name="apply_elib_aratura_cursor_checkstatevalid"/>
             <xsl:text> ( </xsl:text>
             <xsl:choose>                        
                 <xsl:when test="(boolean(@local) and not(normalize-space(@local)=''))"> 
@@ -822,10 +822,10 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>
     
     
-    <xsl:template name="apply_mlib_aratura_cursor_local">
+    <xsl:template name="apply_elib_aratura_cursor_local">
         <xsl:attribute name="cursor">
             <xsl:text>#{ </xsl:text>
-            <xsl:call-template name="apply_mlib_aratura_cursor_checkstatevalid"/>
+            <xsl:call-template name="apply_elib_aratura_cursor_checkstatevalid"/>
             <xsl:text> ( </xsl:text>
             <xsl:choose>                        
                 <xsl:when test="(boolean(@local) and not(normalize-space(@local)=''))"> 
@@ -842,30 +842,30 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     
     
-    <xsl:template name="apply_mlib_aratura_cursor">
+    <xsl:template name="apply_elib_aratura_cursor">
         <xsl:choose>                        
             <xsl:when test="not(normalize-space(@off)='') or  not(normalize-space(@on)='')">
                 <xsl:choose>                        
                     <xsl:when test=" not(normalize-space(@roff)='') or not(normalize-space(@ron)='') or not(normalize-space(@rauto)='')">
                         <xsl:choose>                        
                             <xsl:when test="not(normalize-space(@rauto)='') and  not(normalize-space(@auto)='')">
-                                <xsl:call-template name="apply_mlib_aratura_cursor_autocontrol"/>
+                                <xsl:call-template name="apply_elib_aratura_cursor_autocontrol"/>
                             </xsl:when>
                             <xsl:when test="(boolean(@auto) and not(normalize-space(@auto)=''))">
-                                <xsl:call-template name="apply_mlib_aratura_cursor_auto"/>
+                                <xsl:call-template name="apply_elib_aratura_cursor_auto"/>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:call-template name="apply_mlib_aratura_cursor_local"/>
+                                <xsl:call-template name="apply_elib_aratura_cursor_local"/>
                             </xsl:otherwise>
                         </xsl:choose>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:call-template name="apply_mlib_aratura_cursor_dsbl"/>
+                        <xsl:call-template name="apply_elib_aratura_cursor_dsbl"/>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>
             <xsl:otherwise>
-                <xsl:call-template name="apply_mlib_aratura_cursor_dsbl"/>
+                <xsl:call-template name="apply_elib_aratura_cursor_dsbl"/>
             </xsl:otherwise>        
         </xsl:choose>    
     </xsl:template>
@@ -878,7 +878,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     -->  
     
     
-    <xsl:template name="apply_mlib_aratura_state"> 
+    <xsl:template name="apply_elib_aratura_state"> 
         <g class="none">
             <xsl:variable name="envir"> 
                 <xsl:choose>
@@ -979,7 +979,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     </xsl:attribute>
                 </xsl:otherwise> 
             </xsl:choose>              
-            <xsl:call-template name="apply_mlib_araturatype"/> 
+            <xsl:call-template name="apply_elib_araturatype"/> 
         </g>
     </xsl:template> 
 
@@ -991,13 +991,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     -->
     
-    <xsl:template name="apply_mlib_aratura_local_img">    
+    <xsl:template name="apply_elib_aratura_local_img">    
         <circle cx="150" cy="150" r="100" stroke-width="20"/>
         <path d="M 110,190 L 110,110 L 150,150 L 190,110 L 190,190" stroke-width="15"/>
     </xsl:template>
     
     
-    <xsl:template name="apply_mlib_aratura_local">    
+    <xsl:template name="apply_elib_aratura_local">    
         <xsl:choose>
             <xsl:when test="not(normalize-space(@local)='')">
                 <g>
@@ -1006,7 +1006,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         <xsl:value-of select="@local"/>
                         <xsl:text> ? 'local'  : 'transparent' :default transparent }</xsl:text>
                     </xsl:attribute>                           
-                    <xsl:call-template name="apply_mlib_aratura_local_img"/>
+                    <xsl:call-template name="apply_elib_aratura_local_img"/>
                 </g>                    
             </xsl:when>
         </xsl:choose>
@@ -1021,13 +1021,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     -->
     
-    <xsl:template name="apply_mlib_aratura_auto_img">    
+    <xsl:template name="apply_elib_aratura_auto_img">    
         <circle cx="150" cy="150" r="100" stroke-width="20"/>
         <path d="M 110,190 L 150,110  L 190,190 M 140,150 L 160,150" stroke-width="15" fill="none"/>
     </xsl:template>
     
     
-    <xsl:template name="apply_mlib_aratura_auto">    
+    <xsl:template name="apply_elib_aratura_auto">    
         <xsl:choose>
             <xsl:when test="not(normalize-space(@auto)='')">
                 <g>
@@ -1036,7 +1036,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         <xsl:value-of select="@auto"/>
                         <xsl:text> ? 'autocontrol'  : 'transparent' :default transparent }</xsl:text>
                     </xsl:attribute>                              
-                    <xsl:call-template name="apply_mlib_aratura_auto_img"/>
+                    <xsl:call-template name="apply_elib_aratura_auto_img"/>
                 </g>                    
             </xsl:when>
         </xsl:choose>
@@ -1050,12 +1050,12 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     -->
     
-    <xsl:template name="apply_mlib_aratura_control_img">    
+    <xsl:template name="apply_elib_aratura_control_img">    
         <circle cx="850" cy="150" r="60" stroke-width="0"/>
     </xsl:template>
     
     
-    <xsl:template name="apply_mlib_aratura_control">    
+    <xsl:template name="apply_elib_aratura_control">    
         <xsl:choose>
             <xsl:when test="not(normalize-space(@control)='')">
                 <g>
@@ -1064,7 +1064,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         <xsl:value-of select="@control"/>
                         <xsl:text> ? 'oncheckcontrol'  : 'offcheckcontrol' :default oncheckcontrol }</xsl:text>
                     </xsl:attribute>                              
-                    <xsl:call-template name="apply_mlib_aratura_control_img"/>
+                    <xsl:call-template name="apply_elib_aratura_control_img"/>
                 </g>                    
             </xsl:when>
         </xsl:choose>
@@ -1079,19 +1079,19 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     -->
     
     
-    <xsl:template name="apply_mlib_aratura_onsig">    
+    <xsl:template name="apply_elib_aratura_onsig">    
         <path d="M 450, 170 L 450,100 L 400,100 L 500,10  L 600,100 L 550,100 L 550,170z" stroke-width="0" stroke="none" fill="#0F0">
             <animate  attributeType="XML" attributeName="fill" values="#0F0;transparent;" keyTimes="0;.5" dur="500ms"  repeatCount="indefinite" calcMode="discrete"/>
         </path>
     </xsl:template>  
     
-    <xsl:template name="apply_mlib_aratura_offsig">
+    <xsl:template name="apply_elib_aratura_offsig">
         <path d="M 450, 10 L 450,80 L 400,80 L 500,170  L 600,80 L 550,80 L 550,10z" stroke-width="0" stroke="none" fill="#F00">
             <animate  attributeType="XML" attributeName="fill" values="transparent;#F00;" keyTimes="0;.5" dur="500ms"  repeatCount="indefinite" calcMode="discrete"/>
         </path>
     </xsl:template> 
     
-    <xsl:template name="apply_mlib_aratura_sig">   
+    <xsl:template name="apply_elib_aratura_sig">   
         <xsl:choose>                          
             <xsl:when test="not(normalize-space(@don)='')"> 
                 <g>
@@ -1113,7 +1113,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                             </xsl:otherwise>                         
                         </xsl:choose>
                     </xsl:attribute> 
-                    <xsl:call-template name="apply_mlib_aratura_onsig"/>
+                    <xsl:call-template name="apply_elib_aratura_onsig"/>
                 </g>
             </xsl:when>
         </xsl:choose> 
@@ -1138,7 +1138,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                             </xsl:otherwise>                            
                         </xsl:choose>
                     </xsl:attribute> 
-                    <xsl:call-template name="apply_mlib_aratura_offsig"/>
+                    <xsl:call-template name="apply_elib_aratura_offsig"/>
                 </g>                    
             </xsl:when>                    
         </xsl:choose>                                                   
@@ -1151,7 +1151,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     -->
     
-    <xsl:template name="apply_mlib_aratura_alarmstate">    
+    <xsl:template name="apply_elib_aratura_alarmstate">    
         <xsl:choose>                
             <xsl:when test="(boolean(@alarms) and not(normalize-space(@alarms)=''))">
                 <g  class="accident" opacity="0.0">
@@ -1184,7 +1184,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     -->
     
     
-    <xsl:template name="apply_mlib_aratura_event"> 
+    <xsl:template name="apply_elib_aratura_event"> 
         <xsl:choose>             
             <xsl:when test="boolean(@rauto) or boolean(@roff) or boolean(@ron)">  
                 <xsl:attribute name="onclick">
@@ -1204,7 +1204,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     -->    
     
     
-    <xsl:template name="apply_mlib_aratura_style">
+    <xsl:template name="apply_elib_aratura_style">
         <xsl:choose> 
             <xsl:when test="normalize-space(@environment)=''">
                 <defs>
@@ -1260,7 +1260,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>
     
     
-   <xsl:template name="apply_mlib_aratura_popup">
+   <xsl:template name="apply_elib_aratura_popup">
        <defs>
            
             <xsl:variable name="typecontrol">
@@ -1489,13 +1489,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:for-each select="exsl:node-set($popupbody)/*">
                     <xsl:choose>
                         <xsl:when test="local-name()='button'">
-                            <xsl:call-template name="mlib_button"/>
+                            <xsl:call-template name="elib_button"/>
                         </xsl:when>
                         <xsl:when test="local-name()='rect'">
-                            <xsl:call-template name="mlib_button"/>
+                            <xsl:call-template name="elib_button"/>
                         </xsl:when> 
                         <xsl:when test="local-name()='sensor'">
-                            <xsl:call-template name="mlib_sensor"/>
+                            <xsl:call-template name="elib_sensor"/>
                         </xsl:when>                         
                     </xsl:choose>
                 </xsl:for-each>    
@@ -1516,7 +1516,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     -->
       
     
-    <xsl:template match="//mlib:armatura" >   
+    <xsl:template match="//elib:armatura" >   
         <g>       
         
             <xsl:attribute name="desc">
@@ -1533,7 +1533,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             
             <xsl:call-template name="apply_id"/>
             
-            <xsl:call-template name="apply_mlib_schema"/>
+            <xsl:call-template name="apply_elib_schema"/>
                        
             <xsl:call-template name="apply_cental_rotate"/>
             
@@ -1543,13 +1543,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             
             <xsl:call-template name="apply_svg_g_visible"/> 
                                                                                
-            <xsl:call-template name="apply_mlib_aratura_cursor"/>
+            <xsl:call-template name="apply_elib_aratura_cursor"/>
                        
-            <xsl:call-template name="apply_mlib_aratura_event"/>
+            <xsl:call-template name="apply_elib_aratura_event"/>
             
-            <xsl:call-template name="apply_mlib_aratura_style"/>
+            <xsl:call-template name="apply_elib_aratura_style"/>
             
-            <xsl:call-template name="apply_mlib_aratura_popup"/>
+            <xsl:call-template name="apply_elib_aratura_popup"/>
 
             <rect fill="white" stroke="white" opacity="0">
                 <xsl:call-template name="apply_rect"/> 
@@ -1561,17 +1561,17 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 
                 <xsl:call-template name="apply_rect"/>
                                
-                <xsl:call-template name="apply_mlib_aratura_alarmstate"/>
+                <xsl:call-template name="apply_elib_aratura_alarmstate"/>
              
-                <xsl:call-template name="apply_mlib_aratura_state"/>
+                <xsl:call-template name="apply_elib_aratura_state"/>
                 
-                <xsl:call-template name="apply_mlib_aratura_auto"/> 
+                <xsl:call-template name="apply_elib_aratura_auto"/> 
                                 
-                <xsl:call-template name="apply_mlib_aratura_local"/>
+                <xsl:call-template name="apply_elib_aratura_local"/>
                 
-                <xsl:call-template name="apply_mlib_aratura_control"/> 
+                <xsl:call-template name="apply_elib_aratura_control"/> 
                                 
-                <xsl:call-template name="apply_mlib_aratura_sig"/>
+                <xsl:call-template name="apply_elib_aratura_sig"/>
 
             </svg>
             
@@ -1604,7 +1604,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     -->
     
     
-    <xsl:template name="apply_mlib_button_control"> 
+    <xsl:template name="apply_elib_button_control"> 
     
         <xsl:variable name="on_eventvar"> 
             <xsl:choose> 
@@ -1806,7 +1806,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     -->     
     
-    <xsl:template name="apply_mlib_button_state"> 
+    <xsl:template name="apply_elib_button_state"> 
         <xsl:attribute name="state">
             <xsl:choose>                
                 <xsl:when test="(boolean(@disable) and not(normalize-space(@disable)=''))">                                    
@@ -1856,27 +1856,27 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     --> 
     
     
-    <xsl:template name="apply_mlib_button_class">
+    <xsl:template name="apply_elib_button_class">
         <xsl:choose>
             <xsl:when test="(normalize-space(@kind)='')"> 
                 <xsl:attribute name="class">
                     <xsl:value-of select="@id"/>
-                    <xsl:text>__mlibbuttonstyle</xsl:text>
+                    <xsl:text>__elibbuttonstyle</xsl:text>
                 </xsl:attribute> 
             </xsl:when>
         </xsl:choose>
     </xsl:template>
     
     
-    <xsl:template name="apply_mlib_button_rectclass">
+    <xsl:template name="apply_elib_button_rectclass">
         <xsl:variable name="buttonstyle">
             <xsl:choose>
                 <xsl:when test="(normalize-space(@kind)='')"> 
                     <xsl:value-of select="@id"/>
-                    <xsl:text>__mlibbuttonstyle</xsl:text>
+                    <xsl:text>__elibbuttonstyle</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:text>__mlib__button_</xsl:text>
+                    <xsl:text>__elib__button_</xsl:text>
                     <xsl:value-of select="@kind"/>
                 </xsl:otherwise> 
             </xsl:choose>
@@ -1886,7 +1886,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         </xsl:attribute> 
     </xsl:template>
     
-     <xsl:template name="apply_mlib_button_textclass">
+     <xsl:template name="apply_elib_button_textclass">
          
       <xsl:variable name="var_fontstyle">
             <xsl:choose>
@@ -1928,7 +1928,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         </xsl:variable>         
          
         <xsl:attribute name="class">
-             <xsl:text>__mlib_button_default</xsl:text>
+             <xsl:text>__elib_button_default</xsl:text>
         </xsl:attribute> 
         
         <xsl:attribute name="style">
@@ -1995,13 +1995,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>
     
  
-    <xsl:template name="apply_mlib_button_style">       
+    <xsl:template name="apply_elib_button_style">       
         <xsl:choose>                
             <xsl:when test="(normalize-space(@kind)='')">        
                 <xsl:variable name="buttonstyle"> 
                     <xsl:text>.</xsl:text>
                     <xsl:value-of select="@id"/>
-                    <xsl:text>__mlibbuttonstyle</xsl:text>
+                    <xsl:text>__elibbuttonstyle</xsl:text>
                 </xsl:variable>
         
                 <xsl:variable name="gradienton_id"> 
@@ -2223,12 +2223,12 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     --> 
     
-    <xsl:template name="apply_mlib_button_body"> 
-        <svg class="__mlib_button_default">
+    <xsl:template name="apply_elib_button_body"> 
+        <svg class="__elib_button_default">
             <xsl:call-template name="apply_rect"/>
-            <!--xsl:call-template name="apply_mlib_button_class"/-->
-            <xsl:call-template name="apply_mlib_button_state"/>
-            <xsl:call-template name="apply_mlib_button_style"/>          
+            <!--xsl:call-template name="apply_elib_button_class"/-->
+            <xsl:call-template name="apply_elib_button_state"/>
+            <xsl:call-template name="apply_elib_button_style"/>          
             <rect role="button" aria-pressed="true"> 
                 <xsl:attribute name="x">
                     <xsl:value-of select="2"/>
@@ -2242,13 +2242,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:attribute name="width">
                     <xsl:value-of select="@width - 4"/>
                 </xsl:attribute>
-                <xsl:call-template name="apply_mlib_button_rectclass"/>
+                <xsl:call-template name="apply_elib_button_rectclass"/>
                 <xsl:call-template name="apply_r"/>
             </rect>   
-            <xsl:call-template name="apply_mlib_button_caption"/>
+            <xsl:call-template name="apply_elib_button_caption"/>
             <g>
-                <xsl:call-template name="apply_mlib_button_class"/>
-                <rect class="__mlib_button_default">
+                <xsl:call-template name="apply_elib_button_class"/>
+                <rect class="__elib_button_default">
                     
                     <xsl:attribute name="x">
                         <xsl:value-of select="4"/>
@@ -2262,7 +2262,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     <xsl:attribute name="width">
                         <xsl:value-of select="@width - 8"/>
                     </xsl:attribute>
-                    <xsl:call-template name="apply_mlib_button_class"/>
+                    <xsl:call-template name="apply_elib_button_class"/>
                     <xsl:call-template name="apply_r"/>   
                 </rect>
             </g>
@@ -2278,7 +2278,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     -->
     
-    <xsl:template name="apply_mlib_button_caption_value_both">
+    <xsl:template name="apply_elib_button_caption_value_both">
         <xsl:text>#{ (!</xsl:text>
         <xsl:value-of select="@disable"/>
         <xsl:text> &#38;&#38;(</xsl:text>
@@ -2298,7 +2298,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:text>}</xsl:text>     
     </xsl:template> 
     
-    <xsl:template name="apply_mlib_button_caption_value_dsbl">
+    <xsl:template name="apply_elib_button_caption_value_dsbl">
         <xsl:text>#{ (!</xsl:text>
         <xsl:value-of select="@disable"/>
         <xsl:text> &#38;&#38; (</xsl:text>
@@ -2312,7 +2312,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:text>}</xsl:text>      
     </xsl:template> 
     
-    <xsl:template name="apply_mlib_button_caption_value_state">
+    <xsl:template name="apply_elib_button_caption_value_state">
         <xsl:text>#{ (</xsl:text>
         <xsl:value-of select="@state"/>
         <xsl:text>) ? '</xsl:text>
@@ -2324,7 +2324,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:text>}</xsl:text>   
     </xsl:template>     
     
-    <xsl:template name="apply_mlib_button_caption_value"> 
+    <xsl:template name="apply_elib_button_caption_value"> 
         <xsl:choose>
             <xsl:when test="(boolean(@oncaption) and not(normalize-space(@oncaption)=''))">
                 <xsl:choose>
@@ -2333,17 +2333,17 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                             <xsl:when test="(boolean(@state) and not(normalize-space(@state)=''))">
                                 <xsl:choose>
                                     <xsl:when test="(boolean(@disable) and not(normalize-space(@disable)=''))">                                
-                                        <xsl:call-template name="apply_mlib_button_caption_value_both"/>                               
+                                        <xsl:call-template name="apply_elib_button_caption_value_both"/>                               
                                     </xsl:when>
                                     <xsl:otherwise>
-                                        <xsl:call-template name="apply_mlib_button_caption_value_state"/>                      
+                                        <xsl:call-template name="apply_elib_button_caption_value_state"/>                      
                                     </xsl:otherwise>     
                                 </xsl:choose>                                                                                               
                             </xsl:when>
                             <xsl:otherwise>
                                 <xsl:choose>
                                     <xsl:when test="(boolean(@disable) and not(normalize-space(@disable)=''))">                                
-                                        <xsl:call-template name="apply_mlib_button_caption_value_dsbl"/>                                
+                                        <xsl:call-template name="apply_elib_button_caption_value_dsbl"/>                                
                                     </xsl:when>
                                     <xsl:otherwise>
                                         <xsl:value-of select="@caption"/>                      
@@ -2355,7 +2355,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     <xsl:otherwise>
                         <xsl:choose>
                             <xsl:when test="(boolean(@state) and not(normalize-space(@state)=''))">
-                                <xsl:call-template name="apply_mlib_button_caption_value_state"/>     
+                                <xsl:call-template name="apply_elib_button_caption_value_state"/>     
                             </xsl:when>
                             <xsl:otherwise>
                                 <xsl:value-of select="@caption"/>                      
@@ -2369,7 +2369,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     <xsl:when test="(boolean(@dsblcaption) and not(normalize-space(@dsblcaption)=''))">                       
                         <xsl:choose>
                             <xsl:when test="(boolean(@disable) and not(normalize-space(@disable)=''))">                              
-                                <xsl:call-template name="apply_mlib_button_caption_value_dsbl"/>                                                                                                                                                                           
+                                <xsl:call-template name="apply_elib_button_caption_value_dsbl"/>                                                                                                                                                                           
                             </xsl:when>
                             <xsl:otherwise>
                                 <xsl:value-of select="@caption"/>                                                                 
@@ -2385,7 +2385,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>
      
      
-    <xsl:template name="apply_mlib_button_caption"> 
+    <xsl:template name="apply_elib_button_caption"> 
         <svg> 
             <xsl:attribute name="x">
                 <xsl:value-of select="4"/>
@@ -2399,7 +2399,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:attribute name="width">
                 <xsl:value-of select="@width - 8"/>
             </xsl:attribute>
-            <xsl:call-template name="apply_mlib_button_class"/>
+            <xsl:call-template name="apply_elib_button_class"/>
             <text>
                 <xsl:attribute name="x">
                     <xsl:value-of select="(@width - 8) div 2"/>
@@ -2407,8 +2407,8 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:attribute name="y">
                     <xsl:value-of select="(@height - 8) div 2"/>
                 </xsl:attribute>     
-                <xsl:call-template name="apply_mlib_button_textclass"/>
-                <xsl:call-template name="apply_mlib_button_caption_value"/>
+                <xsl:call-template name="apply_elib_button_textclass"/>
+                <xsl:call-template name="apply_elib_button_caption_value"/>
                 
             </text>
         </svg>     
@@ -2424,15 +2424,15 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     -->
     
     
-    <xsl:template match="//mlib:button" name="mlib_button">   
+    <xsl:template match="//elib:button" name="elib_button">   
         <g>       
             <xsl:call-template name="apply_id"/>            
-            <xsl:call-template name="apply_mlib_schema"/>   
+            <xsl:call-template name="apply_elib_schema"/>   
             <xsl:call-template name="apply_rect"/>
-            <xsl:call-template name="apply_mlib_button_control"/>            
+            <xsl:call-template name="apply_elib_button_control"/>            
             <xsl:call-template name="apply_cental_rotate"/>             
             <xsl:call-template name="apply_svg_g_visible"/>                     
-            <xsl:call-template  name="apply_mlib_button_body"/>  
+            <xsl:call-template  name="apply_elib_button_body"/>  
         </g>  
     </xsl:template>
     
@@ -2454,7 +2454,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     <!-- style   -->
    
-    <xsl:template name="mlib_rect_style">
+    <xsl:template name="elib_rect_style">
         
         <xsl:variable name="gradtype">
             <xsl:choose>
@@ -2620,7 +2620,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
      <!-- rectclass -->  
      
-    <xsl:template name="mlib_rect_rectclass">       
+    <xsl:template name="elib_rect_rectclass">       
         <xsl:variable name="gradtype">
             <xsl:choose>
                 <xsl:when test="(@gradient-type='tb')">
@@ -2638,13 +2638,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:variable name="gradnone">
             <xsl:choose>
                 <xsl:when test="($gradtype='tb')">
-                    <xsl:text>__fill_mlib_class_light_gray_v</xsl:text>
+                    <xsl:text>__fill_elib_class_light_gray_v</xsl:text>
                 </xsl:when>
                 <xsl:when test="($gradtype='c')">
-                    <xsl:text>__fill_mlib_class_light_gray_c</xsl:text>
+                    <xsl:text>__fill_elib_class_light_gray_c</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:text>__fill_mlib_class_light_gray_h</xsl:text>
+                    <xsl:text>__fill_elib_class_light_gray_h</xsl:text>
                 </xsl:otherwise>
             </xsl:choose>    
         </xsl:variable> 
@@ -2656,7 +2656,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     <xsl:text>_rect_gradient_classon</xsl:text> 
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:call-template name="mlib_gradient_select">
+                    <xsl:call-template name="elib_gradient_select">
                         <xsl:with-param name="invir" select="@environment">
                             <xsl:value-of select="@environment"/>
                         </xsl:with-param>
@@ -2716,7 +2716,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
      <!-- rect -->   
     
-    <xsl:template name="mlib_rect_rect"> 
+    <xsl:template name="elib_rect_rect"> 
         <rect>            
             <xsl:call-template name="apply_rect"/>
             
@@ -2733,7 +2733,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:when>
             </xsl:choose>   
                 
-            <xsl:call-template name="mlib_rect_rectclass"/>              
+            <xsl:call-template name="elib_rect_rectclass"/>              
         </rect>          
     </xsl:template>
     
@@ -2741,7 +2741,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
    <!-- fillsrectclass -->    
     
     
-    <xsl:template name="mlib_fillrect_rectclass">  
+    <xsl:template name="elib_fillrect_rectclass">  
     
         <xsl:variable name="gradtype">
             <xsl:choose>
@@ -2760,13 +2760,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:variable name="gradnone">
             <xsl:choose>
                 <xsl:when test="($gradtype='tb')">
-                    <xsl:text>__fill_mlib_class_light_gray_v</xsl:text>
+                    <xsl:text>__fill_elib_class_light_gray_v</xsl:text>
                 </xsl:when>
                 <xsl:when test="($gradtype='c')">
-                    <xsl:text>__fill_mlib_class_light_gray_c</xsl:text>
+                    <xsl:text>__fill_elib_class_light_gray_c</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:text>__fill_mlib_class_light_gray_h</xsl:text>
+                    <xsl:text>__fill_elib_class_light_gray_h</xsl:text>
                 </xsl:otherwise>
             </xsl:choose>    
         </xsl:variable> 
@@ -2778,7 +2778,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     <xsl:text>_rect_gradientfill_classon</xsl:text> 
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:call-template name="mlib_gradient_select">
+                    <xsl:call-template name="elib_gradient_select">
                         <xsl:with-param name="invir">
                             <xsl:value-of select="@fillenvironment"/>
                         </xsl:with-param>
@@ -2793,13 +2793,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:variable name="gradnotice">
             <xsl:choose>
                 <xsl:when test="($gradtype='tb')">
-                    <xsl:text>__fill_mlib_class_notice_v</xsl:text>
+                    <xsl:text>__fill_elib_class_notice_v</xsl:text>
                 </xsl:when>
                 <xsl:when test="($gradtype='c')">
-                    <xsl:text>__fill_mlib_class_notice_c</xsl:text>
+                    <xsl:text>__fill_elib_class_notice_c</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:text>__fill_mlib_class_notice_h</xsl:text>
+                    <xsl:text>__fill_elib_class_notice_h</xsl:text>
                 </xsl:otherwise>
             </xsl:choose>                  
         </xsl:variable>  
@@ -2807,13 +2807,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:variable name="gradalarm">
             <xsl:choose>
                 <xsl:when test="($gradtype='tb')">
-                    <xsl:text>__fill_mlib_class_alarm_v</xsl:text>
+                    <xsl:text>__fill_elib_class_alarm_v</xsl:text>
                 </xsl:when>
                 <xsl:when test="($gradtype='c')">
-                    <xsl:text>__fill_mlib_class_alarm_c</xsl:text>
+                    <xsl:text>__fill_elib_class_alarm_c</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:text>__fill_mlib_class_alarm_h</xsl:text>
+                    <xsl:text>__fill_elib_class_alarm_h</xsl:text>
                 </xsl:otherwise>
             </xsl:choose>                  
         </xsl:variable>         
@@ -2821,13 +2821,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:variable name="gradaccident">
             <xsl:choose>
                 <xsl:when test="($gradtype='tb')">
-                    <xsl:text>__fill_mlib_class_accdident_v</xsl:text>
+                    <xsl:text>__fill_elib_class_accdident_v</xsl:text>
                 </xsl:when>
                 <xsl:when test="($gradtype='c')">
-                    <xsl:text>__fill_mlib_class_accdident_c</xsl:text>
+                    <xsl:text>__fill_elib_class_accdident_c</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:text>__fill_mlib_class_accdident_h</xsl:text>
+                    <xsl:text>__fill_elib_class_accdident_h</xsl:text>
                 </xsl:otherwise>
             </xsl:choose>                  
         </xsl:variable>  
@@ -2916,7 +2916,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
    
     
 
-    <xsl:template name="mlib_rect_fillrect">    
+    <xsl:template name="elib_rect_fillrect">    
             
         <rect >
             
@@ -2937,7 +2937,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
              
             <xsl:call-template name="apply_r"/>
                 
-            <xsl:call-template name="mlib_fillrect_rectclass"/>
+            <xsl:call-template name="elib_fillrect_rectclass"/>
                
         </rect>              
             
@@ -2945,12 +2945,12 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
    
     
     
-    <xsl:template match="//mlib:rect" name="mlib_rect">
+    <xsl:template match="//elib:rect" name="elib_rect">
         <g>
             
             <xsl:call-template name="apply_id"/>
             
-            <xsl:call-template name="apply_mlib_schema"/>
+            <xsl:call-template name="apply_elib_schema"/>
             
             <xsl:call-template name="apply_rect"/>
             
@@ -2958,11 +2958,11 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             
             <xsl:call-template name="apply_svg_g_visible"/> 
             
-            <xsl:call-template name="mlib_rect_style"/>
+            <xsl:call-template name="elib_rect_style"/>
 
-            <xsl:call-template name="mlib_rect_rect"/>            
+            <xsl:call-template name="elib_rect_rect"/>            
             
-            <xsl:call-template name="mlib_rect_fillrect"/> 
+            <xsl:call-template name="elib_rect_fillrect"/> 
 
         </g>
     </xsl:template>
@@ -2983,7 +2983,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     <!-- event -->
     
     
-    <xsl:template name="mlib_sensor_event">
+    <xsl:template name="elib_sensor_event">
         <xsl:choose>
             <xsl:when test="not(normalize-space(@param)='')">                  
                 <xsl:choose>
@@ -2995,7 +2995,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                             <xsl:text>',</xsl:text>
                             <xsl:value-of select="@width * 1.3"/>
                             <xsl:text>) </xsl:text> 
-                             <!--xsl:call-template name="mlib_config_list_check"/-->
+                             <!--xsl:call-template name="elib_config_list_check"/-->
                              <xsl:text>} </xsl:text> 
                         </xsl:attribute>    
                     </xsl:when>
@@ -3023,7 +3023,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                             <xsl:text>','</xsl:text>                            
                             <xsl:value-of select="@fontstyle"/>  
                              <xsl:text>') </xsl:text>    
-                             <!--xsl:call-template name="mlib_config_list_check"/-->
+                             <!--xsl:call-template name="elib_config_list_check"/-->
                              <xsl:text>} </xsl:text>                              
                         </xsl:attribute>    
                     </xsl:when>                    
@@ -3035,7 +3035,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                             <xsl:text>','</xsl:text>  
                             <xsl:value-of select="@fontcolor"/>
                             <xsl:text>') </xsl:text>  
-                             <!--xsl:call-template name="mlib_config_list_check"/-->
+                             <!--xsl:call-template name="elib_config_list_check"/-->
                              <xsl:text>} </xsl:text>                               
                         </xsl:attribute> 
                     </xsl:when>     
@@ -3048,7 +3048,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
  <!-- style -->
     
     
-    <xsl:template name="mlib_sensor_style">
+    <xsl:template name="elib_sensor_style">
 
         <xsl:choose>
             <xsl:when test="normalize-space(@environment)='' and (not(normalize-space(@color1)='') and not(normalize-space(@color2)=''))">   
@@ -3144,7 +3144,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     <!-- fill -->
     
     
-    <xsl:template name="mlib_sensor_fill">
+    <xsl:template name="elib_sensor_fill">
         <xsl:variable name="gradtype">
             <xsl:choose>
                 <xsl:when test="(@gradient-type='tb')">
@@ -3162,13 +3162,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:variable name="gradnone">
             <xsl:choose>
                 <xsl:when test="($gradtype='tb')">
-                    <xsl:text>__fill_mlib_class_light_gray_v</xsl:text>
+                    <xsl:text>__fill_elib_class_light_gray_v</xsl:text>
                 </xsl:when>
                 <xsl:when test="($gradtype='c')">
-                    <xsl:text>__fill_mlib_class_light_gray_c</xsl:text>
+                    <xsl:text>__fill_elib_class_light_gray_c</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:text>__fill_mlib_class_light_gray_h</xsl:text>
+                    <xsl:text>__fill_elib_class_light_gray_h</xsl:text>
                 </xsl:otherwise>
             </xsl:choose>    
         </xsl:variable> 
@@ -3180,7 +3180,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     <xsl:text>_sensor_gradient_classon</xsl:text> 
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:call-template name="mlib_gradient_select">
+                    <xsl:call-template name="elib_gradient_select">
                         <xsl:with-param name="invir" select="@environment">
                             <xsl:value-of select="@environment"/>
                         </xsl:with-param>
@@ -3240,7 +3240,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
      <!-- rect -->    
     
-    <xsl:template name="mlib_sensor_rect">   
+    <xsl:template name="elib_sensor_rect">   
         <rect>        
                 
             <xsl:attribute name="id">
@@ -3263,16 +3263,16 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 
             <xsl:call-template name="apply_r"/>
                 
-            <xsl:call-template name="mlib_sensor_fill"/>   
+            <xsl:call-template name="elib_sensor_fill"/>   
             
-             <!--xsl:call-template name="mlib_sensor_strokealarm"/-->
+             <!--xsl:call-template name="elib_sensor_strokealarm"/-->
         </rect>
     </xsl:template>    
      
     <!-- cursor -->
     
     
-    <xsl:template name="mlib_sensor_cursor">
+    <xsl:template name="elib_sensor_cursor">
         <xsl:choose>
             <xsl:when test="not(normalize-space(@param)='')">                  
                 <xsl:choose>
@@ -3316,7 +3316,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     <!-- textcontent -->   
     
-    <xsl:template name="mlib_sensor_textcontent">     
+    <xsl:template name="elib_sensor_textcontent">     
         <xsl:choose>                              
             <xsl:when test="not(normalize-space(@param)='')">
                 
@@ -3373,7 +3373,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     <!-- textalarm -->
     
     
-    <xsl:template name="mlib_sensor_textalarm">
+    <xsl:template name="elib_sensor_textalarm">
 
         <xsl:choose>
             <xsl:when test="(not(normalize-space(@alarms-low)='')) or (not(normalize-space(@alarms-high)='')) or (not(normalize-space(@alarms)=''))">
@@ -3442,7 +3442,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
       <!-- text --> 
 
-    <xsl:template name="mlib_sensor_text">
+    <xsl:template name="elib_sensor_text">
         <svg>
             <xsl:call-template name="apply_rect"/>
             <text>    
@@ -3517,9 +3517,9 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
 
                
                                                    
-                <xsl:call-template name="mlib_sensor_textcontent"/>
+                <xsl:call-template name="elib_sensor_textcontent"/>
 
-                <xsl:call-template name="mlib_sensor_textalarm"/>
+                <xsl:call-template name="elib_sensor_textalarm"/>
                 
                                                         
             </text>
@@ -3527,7 +3527,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template> 
     
     
-    <xsl:template name="apply_mlib_sensor_alarmstate">    
+    <xsl:template name="apply_elib_sensor_alarmstate">    
         <xsl:choose>                
             <xsl:when test="not(normalize-space(@alarms-low)='')">
                 <g  class="accident">  
@@ -3615,7 +3615,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
    <!-- control --> 
     
     
-    <xsl:template name="apply_mlib_sensor_control_img">    
+    <xsl:template name="apply_elib_sensor_control_img">    
         <circle  r="3" stroke-width="0">
             <xsl:attribute name="cx">
                 <xsl:value-of select="@x +  @width + 3"/> 
@@ -3627,7 +3627,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>
     
     
-    <xsl:template name="apply_mlib_sensor_control">    
+    <xsl:template name="apply_elib_sensor_control">    
         <xsl:choose>
             <xsl:when test="not(normalize-space(@control)='')">
                 <g>
@@ -3636,14 +3636,14 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         <xsl:value-of select="@control"/>
                         <xsl:text> ? 'oncheckcontrol'  : 'offcheckcontrol' :default oncheckcontrol }</xsl:text>
                     </xsl:attribute>                              
-                    <xsl:call-template name="apply_mlib_sensor_control_img"/>
+                    <xsl:call-template name="apply_elib_sensor_control_img"/>
                 </g>                    
             </xsl:when>
         </xsl:choose>
     </xsl:template>
     
     
-    <xsl:template name="apply_mlib_sensor_calcbutton">
+    <xsl:template name="apply_elib_sensor_calcbutton">
         <xsl:param name="id"/> 
         <xsl:param name="num"/>
         <xsl:attribute name="onclick">
@@ -3657,7 +3657,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>
     
     
-    <xsl:template name="apply_mlib_sensor_popup"> 
+    <xsl:template name="apply_elib_sensor_popup"> 
              <xsl:param name="id"/>     
                 <defs>
                     <svg width="100%" height="100%" viewBox="0 0 128 250"> 
@@ -3683,7 +3683,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_button1</xsl:text>
                                 </xsl:attribute>
-                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                <xsl:call-template name="apply_elib_sensor_calcbutton">
                                     <xsl:with-param name="num">1</xsl:with-param>
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>
@@ -3693,7 +3693,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_button2</xsl:text>
                                 </xsl:attribute>
-                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                <xsl:call-template name="apply_elib_sensor_calcbutton">
                                     <xsl:with-param name="num">2</xsl:with-param>
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>                                
@@ -3703,7 +3703,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_button3</xsl:text>
                                 </xsl:attribute>
-                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                <xsl:call-template name="apply_elib_sensor_calcbutton">
                                     <xsl:with-param name="num">3</xsl:with-param>
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>                                
@@ -3713,7 +3713,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_button4</xsl:text>
                                 </xsl:attribute>
-                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                <xsl:call-template name="apply_elib_sensor_calcbutton">
                                     <xsl:with-param name="num">4</xsl:with-param>
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>                                
@@ -3723,7 +3723,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_button5</xsl:text>
                                 </xsl:attribute>
-                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                <xsl:call-template name="apply_elib_sensor_calcbutton">
                                     <xsl:with-param name="num">5</xsl:with-param>
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>                                
@@ -3733,7 +3733,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_button6</xsl:text>
                                 </xsl:attribute>
-                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                <xsl:call-template name="apply_elib_sensor_calcbutton">
                                     <xsl:with-param name="num">6</xsl:with-param>
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>                                
@@ -3743,7 +3743,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_button7</xsl:text>
                                 </xsl:attribute>
-                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                <xsl:call-template name="apply_elib_sensor_calcbutton">
                                     <xsl:with-param name="num">7</xsl:with-param>
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>                                
@@ -3753,7 +3753,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_button8</xsl:text>
                                 </xsl:attribute>
-                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                <xsl:call-template name="apply_elib_sensor_calcbutton">
                                     <xsl:with-param name="num">8</xsl:with-param>
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>                                
@@ -3763,7 +3763,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_button9</xsl:text>
                                 </xsl:attribute>
-                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                <xsl:call-template name="apply_elib_sensor_calcbutton">
                                     <xsl:with-param name="num">9</xsl:with-param>
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>                                
@@ -3773,7 +3773,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_buttondot</xsl:text>
                                 </xsl:attribute>
-                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                <xsl:call-template name="apply_elib_sensor_calcbutton">
                                     <xsl:with-param name="num">.</xsl:with-param>
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>
@@ -3783,7 +3783,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_buttonn</xsl:text>
                                 </xsl:attribute>
-                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                <xsl:call-template name="apply_elib_sensor_calcbutton">
                                     <xsl:with-param name="num">0</xsl:with-param>
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>
@@ -3805,7 +3805,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     <xsl:value-of select="$id"/>
                                     <xsl:text>_popup_buttonnegativ</xsl:text>
                                 </xsl:attribute>
-                                <xsl:call-template name="apply_mlib_sensor_calcbutton">
+                                <xsl:call-template name="apply_elib_sensor_calcbutton">
                                     <xsl:with-param name="num">-</xsl:with-param>
                                     <xsl:with-param name="id"><xsl:value-of select="$id"/></xsl:with-param>
                                 </xsl:call-template>
@@ -3832,13 +3832,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         <xsl:for-each select="exsl:node-set($popupbody)/*">
                             <xsl:choose>
                                 <xsl:when test="local-name()='button'">
-                                    <xsl:call-template name="mlib_button"/>
+                                    <xsl:call-template name="elib_button"/>
                                 </xsl:when>
                                 <xsl:when test="local-name()='rect'">
-                                    <xsl:call-template name="mlib_button"/>
+                                    <xsl:call-template name="elib_button"/>
                                 </xsl:when> 
                                 <xsl:when test="local-name()='sensor'">
-                                    <xsl:call-template name="mlib_sensor"/>
+                                    <xsl:call-template name="elib_sensor"/>
                                 </xsl:when>                         
                             </xsl:choose>
                         </xsl:for-each>  
@@ -3852,12 +3852,12 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
 
         
-    <xsl:template match="//mlib:sensor" name="mlib_sensor">
+    <xsl:template match="//elib:sensor" name="elib_sensor">
         <g>
             
             <xsl:call-template name="apply_id"/>
             
-            <xsl:call-template name="apply_mlib_schema"/>
+            <xsl:call-template name="apply_elib_schema"/>
 
             <xsl:attribute name="period">            
                 <xsl:choose>
@@ -3876,21 +3876,21 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             
             <xsl:call-template name="apply_svg_g_visible"/> 
             
-            <xsl:call-template name="mlib_sensor_event"/> 
+            <xsl:call-template name="elib_sensor_event"/> 
             
-            <xsl:call-template name="mlib_sensor_cursor"/>
+            <xsl:call-template name="elib_sensor_cursor"/>
             
-            <xsl:call-template name="mlib_sensor_style"/>
+            <xsl:call-template name="elib_sensor_style"/>
             
-            <xsl:call-template name="mlib_sensor_rect"/> 
+            <xsl:call-template name="elib_sensor_rect"/> 
             
-            <xsl:call-template name="mlib_sensor_text"/>
+            <xsl:call-template name="elib_sensor_text"/>
             
-            <xsl:call-template name="apply_mlib_sensor_alarmstate"/> 
+            <xsl:call-template name="apply_elib_sensor_alarmstate"/> 
             
-            <xsl:call-template name="apply_mlib_sensor_control"/>
+            <xsl:call-template name="apply_elib_sensor_control"/>
             
-            <xsl:call-template name="mlib_config_popup"/>
+            <xsl:call-template name="elib_config_popup"/>
                        
         </g>
     </xsl:template>
@@ -3910,7 +3910,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     -->  
     
     
-    <xsl:template name="apply_mlib_path_main">
+    <xsl:template name="apply_elib_path_main">
         <path fill="none">
    
             <xsl:attribute name="d">
@@ -3977,7 +3977,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>
     
     
-    <xsl:template name="apply_mlib_path_fill">
+    <xsl:template name="apply_elib_path_fill">
         <xsl:choose>
             <xsl:when test="not(@on='')">           
                 <path fill="none">    
@@ -4035,15 +4035,15 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>
     
     
-    <xsl:template match="//mlib:path" >
+    <xsl:template match="//elib:path" >
         <g>    
             <xsl:call-template name="apply_id"/>            
-            <xsl:call-template name="apply_mlib_schema"/>
+            <xsl:call-template name="apply_elib_schema"/>
             <xsl:call-template name="apply_svg_g_visible"/> 
 
-            <xsl:call-template name="apply_mlib_path_main"/>
+            <xsl:call-template name="apply_elib_path_main"/>
             
-            <xsl:call-template name="apply_mlib_path_fill"/>
+            <xsl:call-template name="apply_elib_path_fill"/>
             
         </g> 
 
@@ -4062,13 +4062,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     -->
     
     
-    <xsl:template match="//mlib:alarmtable" >
+    <xsl:template match="//elib:alarmtable" >
          
         <foreignObject>
 
             <xsl:call-template name="apply_rect"/>
             <xsl:call-template name="apply_id"/>            
-            <xsl:call-template name="apply_mlib_schema"/>
+            <xsl:call-template name="apply_elib_schema"/>
             
             <xsl:variable name="rectvarw"> 
                 <xsl:text> width: </xsl:text> 
@@ -4223,7 +4223,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     -->   
     
     
-    <xsl:template name="mlib_translate"> 
+    <xsl:template name="elib_translate"> 
         <xsl:choose>
             <xsl:when test="(not(normalize-space(@translate-x)='')) and  (not(normalize-space(@translate-y)=''))">
                 <xsl:attribute name="transform">
@@ -4234,7 +4234,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     <xsl:text>)</xsl:text>
                 </xsl:attribute>    
                 <g>
-                    <xsl:call-template name="mlib_rotate"/>
+                    <xsl:call-template name="elib_rotate"/>
                 </g>
             </xsl:when>
             <xsl:when test="not(normalize-space(@translate-x)='')">  
@@ -4245,7 +4245,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     <xsl:text>)</xsl:text>
                 </xsl:attribute>              
                 <g>
-                    <xsl:call-template name="mlib_rotate"/>
+                    <xsl:call-template name="elib_rotate"/>
                 </g>
             </xsl:when>
             <xsl:when test="not(normalize-space(@translate-y)='')"> 
@@ -4256,17 +4256,17 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     <xsl:text>)</xsl:text>
                 </xsl:attribute>
                 <g>
-                    <xsl:call-template name="mlib_rotate"/>
+                    <xsl:call-template name="elib_rotate"/>
                 </g>
             </xsl:when>            
             <xsl:otherwise>
-                <xsl:call-template name="mlib_rotate"/>
+                <xsl:call-template name="elib_rotate"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
     
 
-    <xsl:template name="mlib_rotate"> 
+    <xsl:template name="elib_rotate"> 
         <xsl:choose>
             <xsl:when test=" (not(normalize-space(@rotate-angle)='')) or (not(normalize-space(@rotate-angle-binding)='')) ">
                 <xsl:variable name="rotate-x"> 
@@ -4323,7 +4323,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                             <xsl:text>)}</xsl:text>
                         </xsl:attribute>    
                         <g>
-                            <xsl:call-template name="mlib_scale"/>
+                            <xsl:call-template name="elib_scale"/>
                         </g>
                     </xsl:when>
                     <xsl:when test="not(normalize-space(@rotate-angle)='')">            
@@ -4337,7 +4337,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                             <xsl:text>)</xsl:text>
                         </xsl:attribute>    
                         <g>
-                            <xsl:call-template name="mlib_scale"/>
+                            <xsl:call-template name="elib_scale"/>
                         </g>
                     </xsl:when>
                     <xsl:when test="(not(normalize-space(@rotate-angle-binding)='')) ">            
@@ -4359,24 +4359,24 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                             <xsl:text>' :default }</xsl:text>
                         </xsl:attribute>    
                         <g>
-                            <xsl:call-template name="mlib_scale"/>
+                            <xsl:call-template name="elib_scale"/>
                         </g>
                     </xsl:when>            
                     <xsl:otherwise>
-                        <xsl:call-template name="mlib_scale"/>
+                        <xsl:call-template name="elib_scale"/>
                     </xsl:otherwise>
                 </xsl:choose>                
              
 
             </xsl:when>
             <xsl:otherwise>
-                <xsl:call-template name="mlib_scale"/>
+                <xsl:call-template name="elib_scale"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template> 
     
     
-    <xsl:template name="mlib_scale"> 
+    <xsl:template name="elib_scale"> 
         <xsl:choose>
             <xsl:when test="not(normalize-space(@scale)='') and not(normalize-space(@scale-binding)='') ">            
                 <xsl:attribute name="transform">
@@ -4423,10 +4423,10 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>  
     
     
-    <xsl:template match="//mlib:group">
+    <xsl:template match="//elib:group">
         <g>
             <xsl:call-template name="apply_id"/>            
-            <xsl:call-template name="apply_mlib_schema"/>
+            <xsl:call-template name="apply_elib_schema"/>
             <xsl:attribute name="isgoupelement">
                     <xsl:text>true</xsl:text>
             </xsl:attribute>
@@ -4441,7 +4441,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         <xsl:call-template name="apply_0_0_width_height"/> 
                     </rect>
                     <g> 
-                        <xsl:call-template name="mlib_translate"/>
+                        <xsl:call-template name="elib_translate"/>
                     </g>
                 </g>
             </svg>
@@ -4460,7 +4460,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
    
    <!-- style   -->
    
-    <xsl:template name="apply_mlib_slider_style">
+    <xsl:template name="apply_elib_slider_style">
        <xsl:variable name="gradtype">
             <xsl:choose>
                 <xsl:when test="(@gradient-type='tb')">
@@ -4624,7 +4624,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>  
   
    
-    <xsl:template name="apply_mlib_slider_stroke">
+    <xsl:template name="apply_elib_slider_stroke">
         <xsl:attribute name="stroke">
             <xsl:choose> 
                 <xsl:when test="(boolean(@stroke) and not(normalize-space(@stroke)=''))">
@@ -4637,7 +4637,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         </xsl:attribute>       
     </xsl:template>
     
-    <xsl:template name="apply_mlib_slider_strokewidth">
+    <xsl:template name="apply_elib_slider_strokewidth">
         <xsl:attribute name="stroke-width">
             <xsl:choose> 
                 <xsl:when test="(boolean(@stroke-width) and not(normalize-space(@stroke-width)=''))">
@@ -4651,7 +4651,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>  
     
     
-    <xsl:template name="apply_mlib_slider_sliderrectclass"> 
+    <xsl:template name="apply_elib_slider_sliderrectclass"> 
      <xsl:variable name="gradtype">
             <xsl:choose>
                 <xsl:when test="(@gradient-type='tb')">
@@ -4669,13 +4669,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:variable name="gradnone">
             <xsl:choose>
                 <xsl:when test="($gradtype='tb')">
-                    <xsl:text>__fill_mlib_class_light_gray_v</xsl:text>
+                    <xsl:text>__fill_elib_class_light_gray_v</xsl:text>
                 </xsl:when>
                 <xsl:when test="($gradtype='c')">
-                    <xsl:text>__fill_mlib_class_light_gray_c</xsl:text>
+                    <xsl:text>__fill_elib_class_light_gray_c</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:text>__fill_mlib_class_light_gray_h</xsl:text>
+                    <xsl:text>__fill_elib_class_light_gray_h</xsl:text>
                 </xsl:otherwise>
             </xsl:choose>    
         </xsl:variable> 
@@ -4687,7 +4687,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     <xsl:text>_slider_gradient_classon</xsl:text> 
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:call-template name="mlib_gradient_select">
+                    <xsl:call-template name="elib_gradient_select">
                         <xsl:with-param name="invir" select="@environment">
                             <xsl:value-of select="@environment"/>
                         </xsl:with-param>
@@ -4746,7 +4746,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>      
     
     
-    <xsl:template name="apply_mlib_slider_sliderrect"> 
+    <xsl:template name="apply_elib_slider_sliderrect"> 
         <rect>
             
             <xsl:variable name="kh">
@@ -4772,16 +4772,16 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         
             <xsl:call-template name="apply_r"/>
             
-            <xsl:call-template name="apply_mlib_slider_sliderrectclass"/>
+            <xsl:call-template name="apply_elib_slider_sliderrectclass"/>
             
-            <xsl:call-template name="apply_mlib_slider_stroke"/>
-            <xsl:call-template name="apply_mlib_slider_strokewidth"/>
+            <xsl:call-template name="apply_elib_slider_stroke"/>
+            <xsl:call-template name="apply_elib_slider_strokewidth"/>
     
         </rect>
     </xsl:template>
     
     
-    <xsl:template name="apply_mlib_slider_sliderfillrectclass"> 
+    <xsl:template name="apply_elib_slider_sliderfillrectclass"> 
         <xsl:variable name="gradtype">
             <xsl:choose>
                 <xsl:when test="(@gradient-type='tb')">
@@ -4799,13 +4799,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <xsl:variable name="gradnone">
             <xsl:choose>
                 <xsl:when test="($gradtype='tb')">
-                    <xsl:text>__fill_mlib_class_light_gray_v</xsl:text>
+                    <xsl:text>__fill_elib_class_light_gray_v</xsl:text>
                 </xsl:when>
                 <xsl:when test="($gradtype='c')">
-                    <xsl:text>__fill_mlib_class_light_gray_c</xsl:text>
+                    <xsl:text>__fill_elib_class_light_gray_c</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:text>__fill_mlib_class_light_gray_h</xsl:text>
+                    <xsl:text>__fill_elib_class_light_gray_h</xsl:text>
                 </xsl:otherwise>
             </xsl:choose>    
         </xsl:variable> 
@@ -4817,7 +4817,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     <xsl:text>_slider_gradientfill_classon</xsl:text> 
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:call-template name="mlib_gradient_select">
+                    <xsl:call-template name="elib_gradient_select">
                         <xsl:with-param name="invir">
                             <xsl:value-of select="@fillenvironment"/>
                         </xsl:with-param>
@@ -4865,7 +4865,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         
     </xsl:template>     
     
-    <xsl:template name="apply_mlib_slider_sliderfillrect"> 
+    <xsl:template name="apply_elib_slider_sliderfillrect"> 
         <rect stroke="none">
             
             <xsl:attribute name="id">            
@@ -4887,7 +4887,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:choose>
             </xsl:variable>
             
-            <xsl:call-template name="apply_mlib_slider_sliderfillrectclass"/>
+            <xsl:call-template name="apply_elib_slider_sliderfillrectclass"/>
             
             <xsl:call-template name="apply_lib_fillrectangle"> 
                 <xsl:with-param name="param" select=" @param"/>
@@ -4899,7 +4899,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:with-param name="stroke-width" select="@stroke-width"/>
             </xsl:call-template>
                        
-            <xsl:call-template name="apply_mlib_slider_strokewidth"/>
+            <xsl:call-template name="apply_elib_slider_strokewidth"/>
             
             <xsl:call-template name="apply_r"/>
     
@@ -4909,7 +4909,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
 
    
     
-    <xsl:template name="apply_mlib_slider_button"> 
+    <xsl:template name="apply_elib_slider_button"> 
         <xsl:param name="size"/>
         <defs>
             <symbol>
@@ -4940,7 +4940,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>    
     
     
-    <xsl:template name="apply_mlib_slider_buttoncontrol"> 
+    <xsl:template name="apply_elib_slider_buttoncontrol"> 
     
         <xsl:variable name="kh">
             <xsl:choose>
@@ -5020,7 +5020,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     
         <!--line x1="{$x1}" x2="{$x2}" y1="{$y1}" y2="{$y2}" stroke="#003" stroke-width="3" direct="{$rev}"/-->
         
-        <xsl:call-template name="apply_mlib_slider_button">
+        <xsl:call-template name="apply_elib_slider_button">
             <xsl:with-param name="size" select="$buttonsize"/>
         </xsl:call-template>            
             
@@ -5201,16 +5201,16 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:text>this.tmpslidertarget = eleclib.check_click(this); if (this.tmpslidertarget.hasAttribute('class'))  {  console.log('removeslidershadow');  this.tmpslidertarget.setAttribute('class',''); }</xsl:text>            
             </xsl:attribute> 
             
-            <xsl:call-template name="mlib_slider_cursor"/>
+            <xsl:call-template name="elib_slider_cursor"/>
             
-            <xsl:call-template name="apply_mlib_slider_stroke"/>
+            <xsl:call-template name="apply_elib_slider_stroke"/>
             
-            <xsl:call-template name="apply_mlib_slider_strokewidth"/> 
+            <xsl:call-template name="apply_elib_slider_strokewidth"/> 
             
         </use>    
     </xsl:template>  
     
-    <xsl:template name="mlib_slider_cursor">
+    <xsl:template name="elib_slider_cursor">
         <xsl:choose>
             <xsl:when test="not(normalize-space(@param)='') and not(normalize-space(@disable)='')">                                
                 <xsl:attribute name="cursor">
@@ -5235,24 +5235,24 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template> 
    
    
-    <xsl:template match="//mlib:slider" name="mlib_slider">
+    <xsl:template match="//elib:slider" name="elib_slider">
         <g>
             <xsl:call-template name="apply_id"/>            
-            <xsl:call-template name="apply_mlib_schema"/>            
+            <xsl:call-template name="apply_elib_schema"/>            
             <svg>        
                 <xsl:call-template name="apply_rect"/>
                 <xsl:call-template name="apply_svg_g_visible_binding"/>           
-                <xsl:call-template name="apply_mlib_slider_style"/>
+                <xsl:call-template name="apply_elib_slider_style"/>
                 <g>           
                     <rect stroke="white" fill="white" opacity="0.0">
                         <xsl:call-template name="apply_0_0_width_height"/> 
                     </rect>
                 
-                    <xsl:call-template name="apply_mlib_slider_sliderrect"/>
+                    <xsl:call-template name="apply_elib_slider_sliderrect"/>
                 
-                    <xsl:call-template name="apply_mlib_slider_sliderfillrect"/>
+                    <xsl:call-template name="apply_elib_slider_sliderfillrect"/>
                 
-                    <xsl:call-template name="apply_mlib_slider_buttoncontrol"/> 
+                    <xsl:call-template name="apply_elib_slider_buttoncontrol"/> 
                 </g>
             </svg>
         </g>
@@ -5266,10 +5266,10 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     ||_______________________________________________________________________________________________________________________________________||    
     --> 
     
-    <xsl:template match="//mlib:chart"  name="mlib_chart">
+    <xsl:template match="//elib:chart"  name="elib_chart">
         <g>  
             <xsl:call-template name="apply_id"/>            
-            <xsl:call-template name="apply_mlib_schema"/>
+            <xsl:call-template name="apply_elib_schema"/>
             <svg>        
                 <xsl:attribute name="id">
                     <xsl:value-of select="@id"/>
@@ -5386,7 +5386,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
      
     
-    <xsl:template name="mlib_regulator_control">
+    <xsl:template name="elib_regulator_control">
         <xsl:param name="shift"/>
         <xsl:param name="preff"/>
         <xsl:param name="param"/>
@@ -5411,7 +5411,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:value-of select="$shift"/>                            
             </xsl:attribute> 
         </svgrect>                       
-        <mlib:sensor x="10"  height="18" width="60" stroke="#eee" stroke-width="0.5" r="2"   fontstyle="font-size: 12" color1="#001">
+        <elib:sensor x="10"  height="18" width="60" stroke="#eee" stroke-width="0.5" r="2"   fontstyle="font-size: 12" color1="#001">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_sensor_</xsl:text>
@@ -5436,8 +5436,8 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     </xsl:otherwise>                      
                 </xsl:choose>                       
             </xsl:attribute>             
-        </mlib:sensor>                    
-        <mlib:sensor x="135"  height="18" width="60" stroke="#eee" stroke-width="0.5" r="2" color1="#001"  fontstyle="font-size: 12" sensorevent="valueset" >
+        </elib:sensor>                    
+        <elib:sensor x="135"  height="18" width="60" stroke="#eee" stroke-width="0.5" r="2" color1="#001"  fontstyle="font-size: 12" sensorevent="valueset" >
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_sensor_</xsl:text>
@@ -5470,8 +5470,8 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     </xsl:when> 
                 </xsl:choose>
             </xsl:attribute>                
-        </mlib:sensor>   
-        <mlib:button x="200"  height="15" width="15" caption="+"  kind="custom" alighn="center"  dsblfontstyle="font-size: 4; fill: #333;" disable="level_sp &gt;= level_sp.maxeu">
+        </elib:sensor>   
+        <elib:button x="200"  height="15" width="15" caption="+"  kind="custom" alighn="center"  dsblfontstyle="font-size: 4; fill: #333;" disable="level_sp &gt;= level_sp.maxeu">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_buttoninc_</xsl:text>
@@ -5521,8 +5521,8 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     </xsl:otherwise> 
                 </xsl:choose>                
             </xsl:attribute> 
-        </mlib:button>
-        <mlib:button x="200" height="15" width="15" caption="-" kind="custom" alighn="center"  dsblfontstyle="font-size: 4; fill: #333;">        
+        </elib:button>
+        <elib:button x="200" height="15" width="15" caption="-" kind="custom" alighn="center"  dsblfontstyle="font-size: 4; fill: #333;">        
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_buttondec_</xsl:text>
@@ -5572,7 +5572,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     </xsl:otherwise> 
                 </xsl:choose>                
             </xsl:attribute>             
-        </mlib:button>
+        </elib:button>
         <line stroke="#eee" stroke-width="4" x1="0" y1="0" x2="221" y2="0" stroke-dasharray="1 109">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
@@ -5697,7 +5697,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:choose>  
             </xsl:attribute>              
         </text>         
-        <mlib:slider x="3" height="12" width="244" color1="#111" fillcolor1="#0e0" gradient-type="lr"> 
+        <elib:slider x="3" height="12" width="244" color1="#111" fillcolor1="#0e0" gradient-type="lr"> 
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_slider_</xsl:text> 
@@ -5735,9 +5735,9 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:attribute name="slidercolor1">
                 <xsl:text>#a00</xsl:text>                             
             </xsl:attribute>
-        </mlib:slider>  
+        </elib:slider>  
 
-        <mlib:rect x="15" height="5" width="220" color1="#111" fillcolor1="#0e0" stroke="#000" r="1" stroke-width="0.5"> 
+        <elib:rect x="15" height="5" width="220" color1="#111" fillcolor1="#0e0" stroke="#000" r="1" stroke-width="0.5"> 
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_rect_</xsl:text> 
@@ -5761,7 +5761,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <!--xsl:attribute name="fillcolor2">
                 <xsl:value-of select="$color2"/>                            
             </xsl:attribute--> 
-        </mlib:rect>
+        </elib:rect>
         <text x="9"  fill="#eee" style="font-size: 11;">
             <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
@@ -5845,7 +5845,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
 
     </xsl:template> 
     
-    <xsl:template name="mlib_regulator_autocontrol">
+    <xsl:template name="elib_regulator_autocontrol">
         <xsl:param name="shift"/>
         <xsl:param name="preff"/>        
         <xsl:param name="param"/>
@@ -5865,7 +5865,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:text>_name</xsl:text>
             </xsl:attribute>             
         </text>  
-        <mlib:button x="65" y="185" height="35" width="35" caption="Д" r="4"  kind="green" fontstyle="font-size: 13; fill: #eee;" offfontstyle="font-size: 13; fill: #eee;">
+        <elib:button x="65" y="185" height="35" width="35" caption="Д" r="4"  kind="green" fontstyle="font-size: 13; fill: #eee;" offfontstyle="font-size: 13; fill: #eee;">
              <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_auto_</xsl:text> 
@@ -5879,8 +5879,8 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
               <xsl:attribute name="state">                
                 <xsl:value-of select="$param"/>
             </xsl:attribute>             
-        </mlib:button>         
-        <mlib:button x="150" y="185" height="35" width="35" caption="А" r="4" kind="green"  fontstyle="font-size: 13; fill: #eee;" offfontstyle="font-size: 13; fill: #eee;">
+        </elib:button>         
+        <elib:button x="150" y="185" height="35" width="35" caption="А" r="4" kind="green"  fontstyle="font-size: 13; fill: #eee;" offfontstyle="font-size: 13; fill: #eee;">
              <xsl:attribute name="id">
                 <xsl:value-of select="@id"/>
                 <xsl:text>_auto_</xsl:text> 
@@ -5895,10 +5895,10 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                   <xsl:text>!</xsl:text>
                 <xsl:value-of select="$param"/>
             </xsl:attribute>            
-        </mlib:button>
+        </elib:button>
     </xsl:template>    
     
-    <xsl:template name="mlib_regulator_cursor">
+    <xsl:template name="elib_regulator_cursor">
         <xsl:attribute name="cursor">
             <xsl:choose>
                 <xsl:when test="not(normalize-space(@param-sp)='') and not(normalize-space(@actuator-sp)='')">                  
@@ -5917,13 +5917,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         </xsl:attribute>          
     </xsl:template> 
     
-    <xsl:template name="mlib_regulator_event">
+    <xsl:template name="elib_regulator_event">
         <xsl:choose>
             <xsl:when test="not(normalize-space(@param-sp)='') and not(normalize-space(@actuator-sp)='')">                  
                 <xsl:attribute name="onclick">
                     <xsl:text>if (this.getAttribute('cursor')=='pointer') {</xsl:text> 
                     <xsl:text>if (event.button==0) eleclib.regulator_click(this,null) </xsl:text> 
-                    <!--xsl:call-template name="mlib_config_list_check"/-->
+                    <!--xsl:call-template name="elib_config_list_check"/-->
                     <xsl:text>} </xsl:text>                     
                 </xsl:attribute>    
             </xsl:when>  
@@ -5931,14 +5931,14 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 <xsl:attribute name="onclick">
                     <xsl:text>if (this.getAttribute('cursor')=='pointer') {</xsl:text> 
                     <xsl:text>if (event.button==0) eleclib.regulator_click(this,true) </xsl:text> 
-                    <!--xsl:call-template name="mlib_config_list_check"/-->
+                    <!--xsl:call-template name="elib_config_list_check"/-->
                     <xsl:text>} </xsl:text>                       
                 </xsl:attribute>    
             </xsl:when>            
         </xsl:choose>
     </xsl:template> 
     
-    <xsl:template name="apply_mlib_regulator_popup">
+    <xsl:template name="apply_elib_regulator_popup">
         <defs>           
             <svg width="100%" height="100%"> 
                 <xsl:attribute name="id">
@@ -5965,7 +5965,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
                     <xsl:choose>
                         <xsl:when test="not(normalize-space(@param-sp)='') and not(normalize-space(@actuator-sp)='') and not(normalize-space(@auto)='')">                    
-                            <xsl:call-template name="mlib_regulator_control"> 
+                            <xsl:call-template name="elib_regulator_control"> 
                                 <xsl:with-param name="shift" select="58"/>
                                 <xsl:with-param name="preff">param</xsl:with-param>
                                 <xsl:with-param name="param" select="@param"/>
@@ -6003,12 +6003,12 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                     </xsl:choose>
                                 </xsl:with-param>                                  
                             </xsl:call-template> 
-                            <xsl:call-template name="mlib_regulator_autocontrol"> 
+                            <xsl:call-template name="elib_regulator_autocontrol"> 
                                 <xsl:with-param name="shift" select="162"/>
                                 <xsl:with-param name="preff">autoset</xsl:with-param>
                                 <xsl:with-param name="param" select="@auto"/>                        
                             </xsl:call-template>                             
-                            <xsl:call-template name="mlib_regulator_control"> 
+                            <xsl:call-template name="elib_regulator_control"> 
                                 <xsl:with-param name="shift" select="230"/>
                                 <xsl:with-param name="preff">actuator</xsl:with-param>
                                 <xsl:with-param name="param" select="@actuator"/>
@@ -6052,7 +6052,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                             </xsl:call-template>                             
                         </xsl:when> 
                         <xsl:when test="not(normalize-space(@actuator-sp)='')">                    
-                            <xsl:call-template name="mlib_regulator_control"> 
+                            <xsl:call-template name="elib_regulator_control"> 
                                 <xsl:with-param name="shift" select="58"/>
                                 <xsl:with-param name="preff">actuator</xsl:with-param>
                                 <xsl:with-param name="param" select="@actuator"/>
@@ -6095,7 +6095,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                             </xsl:call-template> 
                         </xsl:when>       
                         <xsl:when test="not(normalize-space(@param-sp)='')">                    
-                            <xsl:call-template name="mlib_regulator_control"> 
+                            <xsl:call-template name="elib_regulator_control"> 
                                 <xsl:with-param name="shift" select="58"/>
                                 <xsl:with-param name="preff">param</xsl:with-param>
                                 <xsl:with-param name="param" select="@param"/>
@@ -6144,16 +6144,16 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:for-each select="exsl:node-set($popupbody)/*">
                 <xsl:choose>
                     <xsl:when test="local-name()='button'">
-                        <xsl:call-template name="mlib_button"/>
+                        <xsl:call-template name="elib_button"/>
                     </xsl:when>
                     <xsl:when test="local-name()='rect'">
-                        <xsl:call-template name="mlib_rect"/>
+                        <xsl:call-template name="elib_rect"/>
                     </xsl:when> 
                     <xsl:when test="local-name()='sensor'">
-                        <xsl:call-template name="mlib_sensor"/>
+                        <xsl:call-template name="elib_sensor"/>
                     </xsl:when> 
                     <xsl:when test="local-name()='slider'">
-                        <xsl:call-template name="mlib_slider"/>
+                        <xsl:call-template name="elib_slider"/>
                     </xsl:when>    
                     <xsl:when test="local-name()='text'">
                         <xsl:call-template name="svg_text"/>
@@ -6173,10 +6173,10 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
 
     
-    <xsl:template match="//mlib:regulator">
+    <xsl:template match="//elib:regulator">
         <g>  
             <xsl:call-template name="apply_id"/>            
-            <xsl:call-template name="apply_mlib_schema"/>
+            <xsl:call-template name="apply_elib_schema"/>
             <xsl:attribute name="period">            
                 <xsl:choose>
                     <xsl:when test="not(normalize-space(@period)='')"> 
@@ -6276,10 +6276,10 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:when>                
             </xsl:choose>                
             
-            <xsl:call-template name="mlib_regulator_event"/>
-            <xsl:call-template name="mlib_regulator_cursor"/>
-            <xsl:call-template name="apply_mlib_regulator_popup"/>
-            <xsl:call-template name="mlib_config_popup"/>
+            <xsl:call-template name="elib_regulator_event"/>
+            <xsl:call-template name="elib_regulator_cursor"/>
+            <xsl:call-template name="apply_elib_regulator_popup"/>
+            <xsl:call-template name="elib_config_popup"/>
                      
             <svg>                   
                 <xsl:call-template name="apply_rect"/>  
