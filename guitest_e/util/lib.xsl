@@ -11,6 +11,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     <xsl:import href="scriptinclude.xsl"/>
 
     <xsl:include href="../libs/main/mainlib.xsl" xsi:schemaLocation="../libs/main/mainlib.xsd"/>
+    <xsl:include href="../libs/elec/eleclib.xsl" xsi:schemaLocation="../libs/elec/eleclib.xsd"/>    
     <xsl:include href="../libs/svg/svg.xsl" xsi:schemaLocation="../libs/svg/svg.xsd"/>
     
 

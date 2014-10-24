@@ -2945,7 +2945,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
    
     
     
-    <xsl:template match="//elib:rect" name="elib_rect">
+    <xsl:template match="//elib:erect" name="elib_rect">
         <g>
             
             <xsl:call-template name="apply_id"/>
