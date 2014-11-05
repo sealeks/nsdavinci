@@ -7,10 +7,22 @@
   fill: #EEEE33;
 }
 
+.onkU800
+{
+  stroke: black;
+  fill: #3264FF;
+}
+
 .onwater
 {
   stroke: black;
   fill: #33CC99;
+}
+
+.onkU500
+{
+  stroke: black;
+  fill: #D50000;
 }
 
 .onair
@@ -19,11 +31,22 @@
   fill: #3399FF;
 }
 
+.onkU400
+{
+  stroke: black;
+  fill: #FF641E;
+}
 
 .onstream
 {
   stroke: black;
   fill: #FF00FF;
+}
+
+.onkU150
+{
+  stroke: black;
+  fill: #CD8AFF;
 }
 
 .onoil
@@ -32,10 +55,22 @@
   fill: #C63;
 }
 
+.onkU220
+{
+  stroke: black;
+  fill: #FFD200;
+}
+
 .onsmoke
 {
   stroke: black;
   fill: #CCC;
+}
+
+.onkU110
+{
+  stroke: black;
+  fill: #3CA0FF;
 }
 
 .onvapor
@@ -44,7 +79,17 @@
   fill: #d55;
 }
 
+.onkU330
+{
+  stroke: black;
+  fill: #00AA00;
+}
 
+.onkUlow
+{
+  stroke: black;
+  fill: #5F5F5F;
+}
 
 .on
 {
@@ -59,16 +104,34 @@
   stroke: #EEEE33;
 }
 
+ .offkU800
+{
+  fill: #383838;
+  stroke: #3264FF;
+}
+
 .offwater
 {
   fill: #383838;
-  stroke: #33CC99;
+  stroke: #D50000;
+}
+
+.offkU500
+{
+  fill: #383838;
+  stroke: #0000A8;
 }
 
 .offair
 {
   fill: #383838;
   stroke: #3399FF;
+}
+
+.offkU400
+{
+  fill: #383838;
+  stroke: #FF641E;
 }
 
 
@@ -78,10 +141,22 @@
   stroke: #FF00FF;
 }
 
+.offkU150
+{
+  fill: #383838;
+  stroke: #CD8AFF;
+}
+
 .offoil
 {
   fill: #383838;
   stroke: #CC6633;
+}
+
+.offkU220
+{
+  fill: #383838;
+  stroke: #FFD200;
 }
 
 .offsmoke
@@ -90,10 +165,28 @@
   stroke: #CCC;
 }
 
+.offkU110
+{
+  fill: black;
+  stroke: #3CA0FF;
+}
+
 .offvapor
 {
   fill: black;
   stroke: #d55;
+}
+
+.offkU330
+{
+  fill: black;
+  stroke: #00AA00;
+}
+
+.offkUlow
+{
+  fill: black;
+  stroke: #5F5F5F;
 }
 
 .off
@@ -219,6 +312,14 @@
     fill: url(#gradientgaz_v)
 }
 
+.kU800gradh{
+    fill: url(#gradientkU800_h)
+}
+
+.kU800gradv{
+    fill: url(#gradientkU800_v)
+}
+
 .watergradh{
     fill: url(#gradientwater_h)
 }
@@ -227,12 +328,28 @@
     fill: url(#gradientwater_v)
 }
 
+.kU500gradh{
+    fill: url(#gradientkU500_h)
+}
+
+.kU500gradv{
+    fill: url(#gradientkU500_v)
+}
+
 .airgradh{
     fill: url(#gradientair_h)
 }
 
 .airgradv{
     fill: url(#gradientair_v)
+}
+
+.kU400gradh{
+    fill: url(#gradientkU400_h)
+}
+
+.kU400gradv{
+    fill: url(#gradientkU400_v)
 }
 
 
@@ -244,6 +361,14 @@
     fill: url(#gradientoil_v)
 }
 
+.kU220gradh{
+    fill: url(#gradientkU220_h)
+}
+
+.kU220gradv{
+    fill: url(#gradientkU220_v)
+}
+
 .streamgradh{
     fill: url(#gradientstream_h)
 }
@@ -252,7 +377,13 @@
     fill: url(#gradientstream_v)
 }
 
+.kU150gradh{
+    fill: url(#gradientkU150_h)
+}
 
+.kU150gradv{
+    fill: url(#gradientkU150_v)
+}
 
 .central_svgnatext{
 text-anchor: middle; 

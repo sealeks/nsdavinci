@@ -325,9 +325,26 @@ extension-element-prefixes="mlib">
             <stop offset="1" stop-color="#100"/>
         </linearGradient>
         <radialGradient id="__gradient_mlib_dark_red_c">
-		<stop  offset="0" style="stop-color:#100"/>
-		<stop  offset="1" style="stop-color:#300"/>
-	</radialGradient>
+            <stop  offset="0" style="stop-color:#100"/>
+            <stop  offset="1" style="stop-color:#300"/>
+        </radialGradient>
+        
+        <!-- kUlow -->
+        <linearGradient id="__gradient_mlib_kUlow_v" y2="100%" x1="0%" y1="100%" x2="100%">
+            <stop offset="0" stop-color="#100"/>
+            <stop offset="0.5" stop-color="#300"/>
+            <stop offset="1" stop-color="#100"/>
+        </linearGradient>
+        <linearGradient id="__gradient_mlib_kUlow_h" x2="100%" y2="100%" x1="100%" y1="0%">
+            <stop offset="0" stop-color="#100"/>
+            <stop offset="0.5" stop-color="#300"/>
+            <stop offset="1" stop-color="#100"/>
+        </linearGradient>
+        <radialGradient id="__gradient_mlib_kUlow_c">
+            <stop  offset="0" style="stop-color:#100"/>
+            <stop  offset="1" style="stop-color:#300"/>
+        </radialGradient>        
+        
         
         <!-- gaz -->
         <linearGradient id="__gradient_mlib_gaz_v" y2="100%" x1="0%" y1="100%" x2="100%">
@@ -341,9 +358,25 @@ extension-element-prefixes="mlib">
             <stop offset="1" stop-color="#dd0"/>
         </linearGradient>
         <radialGradient id="__gradient_mlib_gaz_c">
-		<stop  offset="0" style="stop-color:#880"/>
-		<stop  offset="1" style="stop-color:#dd0"/>
-	</radialGradient>  
+            <stop  offset="0" style="stop-color:#880"/>
+            <stop  offset="1" style="stop-color:#dd0"/>
+        </radialGradient>  
+        
+        <!-- kU800 -->
+        <linearGradient id="__gradient_mlib_kU800_v" y2="100%" x1="0%" y1="100%" x2="100%">
+            <stop offset="0" stop-color="#880"/>
+            <stop offset="0.5" stop-color="#dd0"/>
+            <stop offset="1" stop-color="#880"/>
+        </linearGradient>
+        <linearGradient id="__gradient_mlib_kU800_h" x2="100%" y2="100%" x1="100%" y1="0%">
+            <stop offset="0" stop-color="#dd0"/>
+            <stop offset="0.5" stop-color="#880"/>
+            <stop offset="1" stop-color="#dd0"/>
+        </linearGradient>
+        <radialGradient id="__gradient_mlib_kU800_c">
+            <stop  offset="0" style="stop-color:#880"/>
+            <stop  offset="1" style="stop-color:#dd0"/>
+        </radialGradient>          
         
         <!-- air -->
         <linearGradient id="__gradient_mlib_air_v" y2="100%" x1="0%" y1="100%" x2="100%">
@@ -357,9 +390,25 @@ extension-element-prefixes="mlib">
             <stop offset="1" stop-color="#04b"/>
         </linearGradient>
         <radialGradient id="__gradient_mlib_air_c">
-		<stop  offset="0" style="stop-color:#028"/>
-		<stop  offset="1" style="stop-color:#04b"/>
-	</radialGradient>
+            <stop  offset="0" style="stop-color:#028"/>
+            <stop  offset="1" style="stop-color:#04b"/>
+        </radialGradient>
+        
+        <!-- kU400 -->
+        <linearGradient id="__gradient_mlib_kU400_v" y2="100%" x1="0%" y1="100%" x2="100%">
+            <stop offset="0" stop-color="#028"/>
+            <stop offset="0.5" stop-color="#04b"/>
+            <stop offset="1" stop-color="#028"/>
+        </linearGradient>
+        <linearGradient id="__gradient_mlib_kU400_h" x2="100%" y2="100%" x1="100%" y1="0%">
+            <stop offset="0" stop-color="#04b"/>
+            <stop offset="0.5" stop-color="#028"/>
+            <stop offset="1" stop-color="#04b"/>
+        </linearGradient>
+        <radialGradient id="__gradient_mlib_kU400_c">
+            <stop  offset="0" style="stop-color:#028"/>
+            <stop  offset="1" style="stop-color:#04b"/>
+        </radialGradient>        
         
         <!-- water -->
         <linearGradient id="__gradient_mlib_water_v" y2="100%" x1="0%" y1="100%" x2="100%">
@@ -373,9 +422,25 @@ extension-element-prefixes="mlib">
             <stop offset="1" stop-color="#0c5"/>
         </linearGradient>
         <radialGradient id="__gradient_mlib_water_c">
-		<stop  offset="0" style="stop-color:#093"/>
-		<stop  offset="1" style="stop-color:#0c5"/>
-	</radialGradient>  
+            <stop  offset="0" style="stop-color:#093"/>
+            <stop  offset="1" style="stop-color:#0c5"/>
+        </radialGradient>  
+        
+        <!-- kU500 -->
+        <linearGradient id="__gradient_mlib_kU500_v" y2="100%" x1="0%" y1="100%" x2="100%">
+            <stop offset="0" stop-color="#093"/>
+            <stop offset="0.5" stop-color="#0c5"/>
+            <stop offset="1" stop-color="#093"/>
+        </linearGradient>
+        <linearGradient id="__gradient_mlib_kU500_h" x2="100%" y2="100%" x1="100%" y1="0%">
+            <stop offset="0" stop-color="#0c5"/>
+            <stop offset="0.5" stop-color="#093"/>
+            <stop offset="1" stop-color="#0c5"/>
+        </linearGradient>
+        <radialGradient id="__gradient_mlib_kU500_c">
+            <stop  offset="0" style="stop-color:#093"/>
+            <stop  offset="1" style="stop-color:#0c5"/>
+        </radialGradient>          
         
         <!-- smoke -->
         <linearGradient id="__gradient_mlib_smoke_v" y2="100%" x1="0%" y1="100%" x2="100%">
@@ -389,9 +454,26 @@ extension-element-prefixes="mlib">
             <stop offset="1" stop-color="#ccc"/>
         </linearGradient>
         <radialGradient id="__gradient_mlib_smoke_c">
-		<stop  offset="0" style="stop-color:#999"/>
-		<stop  offset="1" style="stop-color:#ccc"/>
-	</radialGradient> 
+            <stop  offset="0" style="stop-color:#999"/>
+            <stop  offset="1" style="stop-color:#ccc"/>
+        </radialGradient> 
+        
+        <!-- kU110 -->
+        <linearGradient id="__gradient_mlib_kU110_v" y2="100%" x1="0%" y1="100%" x2="100%">
+            <stop offset="0" stop-color="#999"/>
+            <stop offset="0.5" stop-color="#ccc"/>
+            <stop offset="1" stop-color="#999"/>
+        </linearGradient>
+        <linearGradient id="__gradient_mlib_kU110_h" x2="100%" y2="100%" x1="100%" y1="0%">
+            <stop offset="0" stop-color="#ccc"/>
+            <stop offset="0.5" stop-color="#999"/>
+            <stop offset="1" stop-color="#ccc"/>
+        </linearGradient>
+        <radialGradient id="__gradient_mlib_kU110_c">
+            <stop  offset="0" style="stop-color:#999"/>
+            <stop  offset="1" style="stop-color:#ccc"/>
+        </radialGradient> 
+                
         
         <!-- vapor -->
         <linearGradient id="__gradient_mlib_vapor_v" y2="100%" x1="0%" y1="100%" x2="100%">
@@ -405,9 +487,25 @@ extension-element-prefixes="mlib">
             <stop offset="1" stop-color="#d55"/>
         </linearGradient>
         <radialGradient id="__gradient_mlib_vapor_c">
-		<stop  offset="0" style="stop-color:#a33"/>
-		<stop  offset="1" style="stop-color:#d55"/>
-	</radialGradient>
+            <stop  offset="0" style="stop-color:#a33"/>
+            <stop  offset="1" style="stop-color:#d55"/>
+        </radialGradient>
+        
+        <!-- kU330 -->
+        <linearGradient id="__gradient_mlib_kU330_v" y2="100%" x1="0%" y1="100%" x2="100%">
+            <stop offset="0" stop-color="#a33"/>
+            <stop offset="0.5" stop-color="#d55"/>
+            <stop offset="1" stop-color="#a33"/>
+        </linearGradient>
+        <linearGradient id="__gradient_mlib_kU330_h" x2="100%" y2="100%" x1="100%" y1="0%">
+            <stop offset="0" stop-color="#d55"/>
+            <stop offset="0.5" stop-color="#a33"/>
+            <stop offset="1" stop-color="#d55"/>
+        </linearGradient>
+        <radialGradient id="__gradient_mlib_kU330_c">
+            <stop  offset="0" style="stop-color:#a33"/>
+            <stop  offset="1" style="stop-color:#d55"/>
+        </radialGradient>       
         
         <!-- stream -->
         <linearGradient id="__gradient_mlib_stream_v" y2="100%" x1="0%" y1="100%" x2="100%">
@@ -421,9 +519,25 @@ extension-element-prefixes="mlib">
             <stop offset="1" stop-color="#f0f"/>
         </linearGradient>
         <radialGradient id="__gradient_mlib_stream_c">
-		<stop  offset="0" style="stop-color:#c3c"/>
-		<stop  offset="1" style="stop-color:#f0f"/>
-	</radialGradient> 
+            <stop  offset="0" style="stop-color:#c3c"/>
+            <stop  offset="1" style="stop-color:#f0f"/>
+        </radialGradient> 
+        
+        <!-- kU150 -->
+        <linearGradient id="__gradient_mlib_kU150_v" y2="100%" x1="0%" y1="100%" x2="100%">
+            <stop offset="0" stop-color="#c3c"/>
+            <stop offset="0.5" stop-color="#f0f"/>
+            <stop offset="1" stop-color="#c3c"/>
+        </linearGradient>
+        <linearGradient id="__gradient_mlib_kU150_h" x2="100%" y2="100%" x1="100%" y1="0%">
+            <stop offset="0" stop-color="#f0f"/>
+            <stop offset="0.5" stop-color="#c3c"/>
+            <stop offset="1" stop-color="#f0f"/>
+        </linearGradient>
+        <radialGradient id="__gradient_mlib_kU150_c">
+            <stop  offset="0" style="stop-color:#c3c"/>
+            <stop  offset="1" style="stop-color:#f0f"/>
+        </radialGradient>       
         
         <!-- oil -->
         <linearGradient id="__gradient_mlib_oil_v" y2="100%" x1="0%" y1="100%" x2="100%">
@@ -437,9 +551,25 @@ extension-element-prefixes="mlib">
             <stop offset="1" stop-color="#f85"/>
         </linearGradient>
         <radialGradient id="__gradient_mlib_oil_c">
-		<stop  offset="0" style="stop-color:#c63"/>
-		<stop  offset="1" style="stop-color:#f85"/>
-	</radialGradient>           
+            <stop  offset="0" style="stop-color:#c63"/>
+            <stop  offset="1" style="stop-color:#f85"/>
+        </radialGradient>   
+        
+        <!-- kU220 -->
+        <linearGradient id="__gradient_mlib_kU220_v" y2="100%" x1="0%" y1="100%" x2="100%">
+            <stop offset="0" stop-color="#c63"/>
+            <stop offset="0.5" stop-color="#f85"/>
+            <stop offset="1" stop-color="#c63"/>
+        </linearGradient>
+        <linearGradient id="__gradient_mlib_kU220_h" x2="100%" y2="100%" x1="100%" y1="0%">
+            <stop offset="0" stop-color="#f85"/>
+            <stop offset="0.5" stop-color="#c63"/>
+            <stop offset="1" stop-color="#f85"/>
+        </linearGradient>
+        <radialGradient id="__gradient_mlib_kU220_c">
+            <stop  offset="0" style="stop-color:#c63"/>
+            <stop  offset="1" style="stop-color:#f85"/>
+        </radialGradient>                                
         
         <!-- notice -->
         <linearGradient id="__gradient_mlib_notice_v" y2="100%" x1="0%" y1="100%" x2="100%">
@@ -626,6 +756,14 @@ extension-element-prefixes="mlib">
         .__fill_mlib_class_dark_red_c {
                 fill : url(#__gradient_mlib_dark_red_c);}   
                 
+        <!-- kUlow -->                  
+        .__fill_mlib_class_kUlow_v {
+                fill : url(#__gradient_mlib_kUlow_v);}
+        .__fill_mlib_class_kUlow_h {
+                fill : url(#__gradient_mlib_kUlow_h);}  
+        .__fill_mlib_class_kUlow_c {
+                fill : url(#__gradient_mlib_kUlow_c);}                   
+                
         <!-- gaz -->
         .__fill_mlib_class_gaz_v {
                 fill : url(#__gradient_mlib_gaz_v);}
@@ -633,6 +771,14 @@ extension-element-prefixes="mlib">
                 fill : url(#__gradient_mlib_gaz_h);}  
         .__fill_mlib_class_gaz_c {
                 fill : url(#__gradient_mlib_gaz_c);}  
+                
+        <!-- kU800 -->
+        .__fill_mlib_class_kU800_v {
+                fill : url(#__gradient_mlib_kU800_v);}
+        .__fill_mlib_class_kU800_h {
+                fill : url(#__gradient_mlib_kU800_h);}  
+        .__fill_mlib_class_kU800_c {
+                fill : url(#__gradient_mlib_kU800_c);}  
                 
         <!-- air -->
         .__fill_mlib_class_air_v {
@@ -642,6 +788,14 @@ extension-element-prefixes="mlib">
         .__fill_mlib_class_air_c {
                 fill : url(#__gradient_mlib_air_c);} 
                 
+        <!-- kU400 -->
+        .__fill_mlib_class_kU400_v {
+                fill : url(#__gradient_mlib_kU400_v);}
+        .__fill_mlib_class_kU400_h {
+                fill : url(#__gradient_mlib_kU400_h);}  
+        .__fill_mlib_class_kU400_c {
+                fill : url(#__gradient_mlib_kU400_c);}                 
+                
         <!-- water -->
         .__fill_mlib_class_water_v {
                 fill : url(#__gradient_mlib_water_v);}
@@ -649,6 +803,14 @@ extension-element-prefixes="mlib">
                 fill : url(#__gradient_mlib_water_h);}  
         .__fill_mlib_class_water_c {
                 fill : url(#__gradient_mlib_water_c);}       
+                
+        <!-- kU500 -->
+        .__fill_mlib_class_kU500_v {
+                fill : url(#__gradient_mlib_kU500_v);}
+        .__fill_mlib_class_kU500_h {
+                fill : url(#__gradient_mlib_kU500_h);}  
+        .__fill_mlib_class_kU500_c {
+                fill : url(#__gradient_mlib_kU500_c);}                     
                 
         <!-- vapor -->
         .__fill_mlib_class_vapor_v {
@@ -658,6 +820,14 @@ extension-element-prefixes="mlib">
         .__fill_mlib_class_vapor_c {
                 fill : url(#__gradient_mlib_vapor_c);} 
                 
+        <!-- kU330 -->
+        .__fill_mlib_class_kU330_v {
+                fill : url(#__gradient_mlib_kU330_v);}
+        .__fill_mlib_class_kU330_h {
+                fill : url(#__gradient_mlib_kU330_h);}  
+        .__fill_mlib_class_kU330_c {
+                fill : url(#__gradient_mlib_kU330_c);}                 
+                
         <!-- oil -->
         .__fill_mlib_class_oil_v {
                 fill : url(#__gradient_mlib_oil_v);}
@@ -665,6 +835,14 @@ extension-element-prefixes="mlib">
                 fill : url(#__gradient_mlib_oil_h);}  
         .__fill_mlib_class_oil_c {
                 fill : url(#__gradient_mlib_oil_c);} 
+                
+        <!-- kU220 -->
+        .__fill_mlib_class_kU220_v {
+                fill : url(#__gradient_mlib_kU220_v);}
+        .__fill_mlib_class_kU220_h {
+                fill : url(#__gradient_mlib_kU220_h);}  
+        .__fill_mlib_class_kU220_c {
+                fill : url(#__gradient_mlib_kU220_c);}                 
                 
         <!-- stream -->
         .__fill_mlib_class_stream_v {
@@ -674,13 +852,29 @@ extension-element-prefixes="mlib">
         .__fill_mlib_class_stream_c {
                 fill : url(#__gradient_mlib_stream_c);}  
                 
+        <!-- kU150 -->
+        .__fill_mlib_class_kU150_v {
+                fill : url(#__gradient_mlib_kU150_v);}
+        .__fill_mlib_class_kU150_h {
+                fill : url(#__gradient_mlib_kU150_h);}  
+        .__fill_mlib_class_kU150_c {
+                fill : url(#__gradient_mlib_kU150_c);}                  
+                
         <!-- smoke -->
         .__fill_mlib_class_smoke_v {
                 fill : url(#__gradient_mlib_smoke_v);}
         .__fill_mlib_class_smoke_h {
                 fill : url(#__gradient_mlib_smoke_h);}  
         .__fill_mlib_class_smoke_c {
-                fill : url(#__gradient_mlib_smoke_c);}               
+                fill : url(#__gradient_mlib_smoke_c);}        
+                
+        <!-- kU110 -->
+        .__fill_mlib_class_kU110_v {
+                fill : url(#__gradient_mlib_kU110_v);}
+        .__fill_mlib_class_kU110_h {
+                fill : url(#__gradient_mlib_kU110_h);}  
+        .__fill_mlib_class_kU110_c {
+                fill : url(#__gradient_mlib_kU110_c);}                                    
                 
         <!-- notice -->
         .__fill_mlib_class_notice_v {

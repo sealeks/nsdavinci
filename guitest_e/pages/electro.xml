@@ -3,4 +3,4 @@
     <elib:erect x="1036" y="173" height="50" width="200" stroke="#ddd" r="4" stroke-width="1" id="erect0"/>
     <elib:path stroke-width="3" d=" M1343,288 l 100,100 l -100, 50" stroke="#e00" id="path0" filter="filter2"/>
     <mlib:sensor x="1449" y="130" height="30" width="150" stroke="white" stroke-width="1" r="4" id="sensor0"/>
-</svg:svg>
+<elib:switcher x="602" y="320" height="15" width="15" id="switcher0" type="isolator" environment="kU110" oncolor="yellow" offcolor="blue" filter=""/><elib:switcher x="680" y="356" height="30" width="30" id="switcher1" type="breaker" environment="kU110" oncolor="yellow" offcolor="blue" filter=""/></svg:svg>
