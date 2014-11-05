@@ -38,8 +38,8 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
           light_red
           midle_red
           dark_red  
-          gaz
-          water
+          kU800
+          kU500
           air
           vapor
           oil
@@ -68,247 +68,115 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>
-            <xsl:when test="normalize-space($invir)='midle_gray'">
+
+            <xsl:when test="normalize-space($invir)='kUlow'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_midle_gray_v</xsl:text>
+                        <xsl:text>__fill_elib_class_kUlow_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_midle_gray_c</xsl:text>
+                        <xsl:text>__fill_elib_class_kUlow_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_midle_gray_h</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose> 
-            </xsl:when>
-            <xsl:when test="normalize-space($invir)='dark_gray'">
-                <xsl:choose>
-                    <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_dark_gray_v</xsl:text>
-                    </xsl:when>
-                    <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_dark_gray_c</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_dark_gray_h</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose> 
-            </xsl:when> 
-            
-            <xsl:when test="normalize-space($invir)='light_blue'">
-                <xsl:choose>
-                    <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_light_blue_v</xsl:text>
-                    </xsl:when>
-                    <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_light_blue_c</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_light_blue_h</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose> 
-            </xsl:when>
-            <xsl:when test="normalize-space($invir)='midle_blue'">
-                <xsl:choose>
-                    <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_midle_blue_v</xsl:text>
-                    </xsl:when>
-                    <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_midle_blue_c</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_midle_blue_h</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose> 
-            </xsl:when>
-            <xsl:when test="normalize-space($invir)='dark_blue'">
-                <xsl:choose>
-                    <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_dark_blue_v</xsl:text>
-                    </xsl:when>
-                    <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_dark_blue_c</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_dark_blue_h</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose> 
-            </xsl:when>    
-            
-            <xsl:when test="normalize-space($invir)='light_green'">
-                <xsl:choose>
-                    <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_light_green_v</xsl:text>
-                    </xsl:when>
-                    <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_light_green_c</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_light_green_h</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose> 
-            </xsl:when>
-            <xsl:when test="normalize-space($invir)='midle_green'">
-                <xsl:choose>
-                    <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_midle_green_v</xsl:text>
-                    </xsl:when>
-                    <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_midle_green_c</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_midle_green_h</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose> 
-            </xsl:when>
-            <xsl:when test="normalize-space($invir)='dark_green'">
-                <xsl:choose>
-                    <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_dark_green_v</xsl:text>
-                    </xsl:when>
-                    <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_dark_green_c</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_dark_green_h</xsl:text>
+                        <xsl:text>__fill_elib_class_kUlow_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>  
             
-            <xsl:when test="normalize-space($invir)='light_red'">
+            <xsl:when test="normalize-space($invir)='kU800'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_light_red_v</xsl:text>
+                        <xsl:text>__fill_elib_class_kU800_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_light_red_c</xsl:text>
+                        <xsl:text>__fill_elib_class_kU800_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_light_red_h</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose> 
-            </xsl:when>
-            <xsl:when test="normalize-space($invir)='midle_red'">
-                <xsl:choose>
-                    <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_midle_red_v</xsl:text>
-                    </xsl:when>
-                    <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_midle_red_c</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_midle_red_h</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose> 
-            </xsl:when>
-            <xsl:when test="normalize-space($invir)='dark_red'">
-                <xsl:choose>
-                    <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_dark_red_v</xsl:text>
-                    </xsl:when>
-                    <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_dark_red_c</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_dark_red_h</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose> 
-            </xsl:when>  
-            
-            <xsl:when test="normalize-space($invir)='gaz'">
-                <xsl:choose>
-                    <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_gaz_v</xsl:text>
-                    </xsl:when>
-                    <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_gaz_c</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_gaz_h</xsl:text>
+                        <xsl:text>__fill_elib_class_kU800_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>   
             
-            <xsl:when test="normalize-space($invir)='water'">
+            <xsl:when test="normalize-space($invir)='kU500'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_water_v</xsl:text>
+                        <xsl:text>__fill_elib_class_kU500_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_water_c</xsl:text>
+                        <xsl:text>__fill_elib_class_kU500_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_water_h</xsl:text>
+                        <xsl:text>__fill_elib_class_kU500_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>  
             
-            <xsl:when test="normalize-space($invir)='air'">
+            <xsl:when test="normalize-space($invir)='kU400'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_air_v</xsl:text>
+                        <xsl:text>__fill_elib_class_kU400_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_air_c</xsl:text>
+                        <xsl:text>__fill_elib_class_kU400_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_air_h</xsl:text>
+                        <xsl:text>__fill_elib_class_kU400_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when> 
             
-            <xsl:when test="normalize-space($invir)='vapor'">
+            <xsl:when test="normalize-space($invir)='kU330'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_vapor_v</xsl:text>
+                        <xsl:text>__fill_elib_class_kU330_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_vapor_c</xsl:text>
+                        <xsl:text>__fill_elib_class_kU330_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_vapor_h</xsl:text>
+                        <xsl:text>__fill_elib_class_kU330_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>  
             
-            <xsl:when test="normalize-space($invir)='oil'">
+            <xsl:when test="normalize-space($invir)='kU220'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_oil_v</xsl:text>
+                        <xsl:text>__fill_elib_class_kU220_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_oil_c</xsl:text>
+                        <xsl:text>__fill_elib_class_kU220_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_oil_h</xsl:text>
+                        <xsl:text>__fill_elib_class_kU220_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when> 
             
-            <xsl:when test="normalize-space($invir)='stream'">
+            <xsl:when test="normalize-space($invir)='kU150'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_stream_v</xsl:text>
+                        <xsl:text>__fill_elib_class_kU150_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_stream_c</xsl:text>
+                        <xsl:text>__fill_elib_class_kU150_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_stream_h</xsl:text>
+                        <xsl:text>__fill_elib_class_kU150_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>        
             
-             <xsl:when test="normalize-space($invir)='smoke'">
+             <xsl:when test="normalize-space($invir)='kU110'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_smoke_v</xsl:text>
+                        <xsl:text>__fill_elib_class_kU110_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_smoke_c</xsl:text>
+                        <xsl:text>__fill_elib_class_kU110_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_smoke_h</xsl:text>
+                        <xsl:text>__fill_elib_class_kU110_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:when>   
@@ -610,14 +478,25 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
  
  
     <xsl:template name="apply_elib_switchertype_breaker">    
-        <rect x="200" y="200" width="600" height="600" stroke-width="50"/>
-        <!-- path d="M 400,600 L 400,400 L 500,500 L 600,400 L 600,600" stroke-width="30"/-->
+        <!--rect x="200" y="200" height="50" width="600" stroke-width="0"/>
+        <rect x="200" y="200" height="600" width="50" stroke-width="0"/>
+        <rect x="200" y="800" height="50" width="600" stroke-width="0"/>
+        <rect x="800" y="200" height="600" width="50" stroke-width="0"/--> 
+        <!--rect x="200" y="200" width="600" height="600" stroke-width="50"/-->
+        <!--path d="M 200,200 L 600,0 L 0,600 L -600, 0 L 0,-600z" stroke-width="30"/-->
+        <!--path d="M 50 50 h 900 v 900 h -900 v -900 m 100 100 h 700 v 700 h -700 v -700z" stroke-width="none"/-->
+        <rect x="50" y="50" height="900" width="900" stroke-width="none"/>
+        <!--rect x="50" y="50" height="900" width="100" stroke-width="none"/>
+        <rect x="50" y="850" height="100" width="900" stroke-width="none"/>
+        <rect x="850" y="50" height="900" width="100" stroke-width="none"/-->        
     </xsl:template>
     
     
-    <xsl:template name="apply_elib_switchertype_breakerD">    
-        <circle cx="500" cy="500" r="300" stroke-width="20"/>
-        <path d="M 400,450 L 400,550 L 550,550 L 550,600 L 650,500 L 550,400 L 550,450z" stroke-width="20"/>
+    <xsl:template name="apply_elib_switchertype_isolator">    
+        <!--circle cx="500" cy="500" r="300" stroke-width="20"/>
+        <path d="M 400,450 L 400,550 L 550,550 L 550,600 L 650,500 L 550,400 L 550,450z" stroke-width="20"/-->
+        <rect x="50" y="50" height="100" width="900" stroke-width="none"/>
+        <rect x="50" y="850" height="100" width="900" stroke-width="none"/>
     </xsl:template>
     
     
@@ -709,8 +588,8 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     <xsl:when test="@type='bolt'">
                         <xsl:call-template name="apply_elib_switchertype_bolt"/> 
                     </xsl:when>
-                    <xsl:when test="@type='breakerD'">
-                        <xsl:call-template name="apply_elib_switchertype_breakerD"/> 
+                    <xsl:when test="@type='isolator'">
+                        <xsl:call-template name="apply_elib_switchertype_isolator"/> 
                     </xsl:when> 
                     <xsl:when test="@type='simple'">
                         <xsl:call-template name="apply_elib_switchertype_simple"/> 
@@ -1295,7 +1174,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             
             <xsl:variable name="switcherkind"> 
                     <xsl:choose>
-                        <xsl:when test="not(boolean(@type)) or (@type='breakerD') or (@type='breaker') or (normalize-space(@type)='')">
+                        <xsl:when test="not(boolean(@type)) or (@type='isolator') or (@type='breaker') or (normalize-space(@type)='')">
                             <xsl:text>breaker</xsl:text>
                         </xsl:when> 
                         <xsl:otherwise>
@@ -4035,7 +3914,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template>
     
     
-    <xsl:template match="//elib:path" >
+    <xsl:template match="//elib:epath" >
         <g>    
             <xsl:call-template name="apply_id"/>            
             <xsl:call-template name="apply_elib_schema"/>

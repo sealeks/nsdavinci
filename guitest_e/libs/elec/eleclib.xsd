@@ -34,28 +34,29 @@
         <xsd:enumeration value=""/>
     </xsd:restriction>
 </xsd:simpleType>
+
+<!--
+        kUlow  #5F5F5F
+        kU800  #3264FF
+        kU500  #D50000
+        kU400  #FF641E
+        kU330  #00AA00
+        kU220  #FFD200
+        kU150  #CD8AFF
+        kU110  #3CA0FF
+-->
         
 <xsd:simpleType name="environment">
     <xsd:restriction base="xsd:string">
         <xsd:enumeration value="light_gray"/>
-        <xsd:enumeration value="midle_gray"/>
-        <xsd:enumeration value="dark_gray"/>
-        <xsd:enumeration value="light_blue"/>
-        <xsd:enumeration value="midle_blue"/>
-        <xsd:enumeration value="dark_blue"/> 
-        <xsd:enumeration value="light_green"/>
-        <xsd:enumeration value="midle_green"/>
-        <xsd:enumeration value="dark_green"/>          
-        <xsd:enumeration value="light_red"/>
-        <xsd:enumeration value="midle_red"/>
-        <xsd:enumeration value="dark_red"/>  
-        <xsd:enumeration value="gaz"/>
-        <xsd:enumeration value="water"/>
-        <xsd:enumeration value="air"/>
-        <xsd:enumeration value="vapor"/>
-        <xsd:enumeration value="oil"/>
-        <xsd:enumeration value="stream"/>
-        <xsd:enumeration value="smoke"/>
+        <xsd:enumeration value="kUlow"/>  
+        <xsd:enumeration value="kU800"/>
+        <xsd:enumeration value="kU500"/>
+        <xsd:enumeration value="kU400"/>
+        <xsd:enumeration value="kU330"/>
+        <xsd:enumeration value="kU220"/>
+        <xsd:enumeration value="kU150"/>
+        <xsd:enumeration value="kU110"/>
         <xsd:enumeration value="notice"/>
         <xsd:enumeration value="alarm"/>
         <xsd:enumeration value="accident"/>   
@@ -68,7 +69,7 @@
 <xsd:simpleType name="switchertype">
     <xsd:restriction base="xsd:string">
         <xsd:enumeration value="breaker"/>
-        <xsd:enumeration value="breakerD"/>
+        <xsd:enumeration value="isolator"/>
         <xsd:enumeration value="cvalve"/>
         <xsd:enumeration value="ovalve"/>
         <xsd:enumeration value="rvalve"/>
@@ -296,11 +297,11 @@
 </xsd:element>
         
         
-<xsd:element name="path">
+<xsd:element name="epath">
     <xsd:annotation>
         <xsd:appinfo>
-            <lib:creator name="elib:path" hint="path">
-                <elib:path stroke-width="5" d=" M0,0 l 100,100" stroke="#bbb"/>
+            <lib:creator name="elib:epath" hint="epath">
+                <elib:epath stroke-width="5" d=" M0,0 l 100,100" stroke="#bbb"/>
             </lib:creator>
         </xsd:appinfo>
     </xsd:annotation>
