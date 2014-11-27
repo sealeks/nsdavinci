@@ -396,7 +396,10 @@ namespace dvnci {
                     load_entities(NT_TAG, tagmap_);
                     for (iteminfo_map::iterator it = tagmap_.begin(); it != tagmap_.end(); ++it) {
                         tag_data tmp;
-                        tmp.name = tag(it->first).name();
+                        std::string dname = tag(it->first).name();
+                        std::string::size_type dit = dname.find_last_of(':');
+                        dname = ((dit != std::string::npos) && ((dit+1)<dname.size())) ? (dname.substr(dit+1)) : dname;
+                        tmp.name = dname;
                         tmp.bind = tag(it->first).binding();
                         tmp.comment = tag(it->first).comment();
                         tmp.group = (groupsmap_.find(tag(it->first).group()) != groupsmap_.end()) ?
@@ -504,10 +507,16 @@ namespace dvnci {
                 for (vect_tag_data::iterator it = base.tags.begin(); it != base.tags.end(); ++it) {
                     indxgr = grp_map.find(it->group)->second;
                     if (indxgr != npos) {
-                        newit_map.insert(str_indx_pair(it->name, indxgr));
+                        str_indx_map newit_mapc;
+                        std::string ndname = it->name;
+                        std::string::size_type ndit = ndname.find_last_of(':');
+                        ndname = ((ndit != std::string::npos) && ((ndit + 1)<ndname.size())) ? (ndname.substr(ndit + 1)) : ndname;
+                        newit_mapc.insert(str_indx_pair(ndname, indxgr));
+                        insert_entities(NT_TAG, indxgr, newit_mapc);
+                        newit_map.insert(*newit_mapc.begin());
                     }
                 }
-                insert_entities(NT_TAG, indxgr, newit_map);
+
                 for (str_indx_map::iterator it = newit_map.begin(); it != newit_map.end(); ++it) {
                     if (it->second != npos) ent_set.insert(it->second);
                     else tmp_errmap.insert(int_dvncierror_pair(tmp_errmap.size(), dvncierror(ERROR_PARENTENTETY_CORRECT, it->first)));
