@@ -304,8 +304,8 @@ struct TDocV {
                                     tmpstruct.almsg = (tmpitem.size() > 16) ? trim_copy(tmpitem.at(16)) : "";
                                     tmpstruct.offmsg = (tmpitem.size() > 14) ? trim_copy(tmpitem.at(14)) : "";
                                     tmpstruct.onmsg = (tmpitem.size() > 12) ? trim_copy(tmpitem.at(12)) : "";
-                                    if (old) ((tagstruct*) & tmpstruct.tginfo)->type() == (tmpitem.size() > 5) ? oldtypetonew(str_to<int>(trim_copy(tmpitem.at(5)), 0)) : 0;
-                                    else ((tagstruct*) & tmpstruct.tginfo)->type() == (tmpitem.size() > 5) ? str_to<int>(trim_copy(tmpitem.at(5)), 0) : 0;
+                                    if (old) ((tagstruct*) & tmpstruct.tginfo)->type((tmpitem.size() > 5) ? oldtypetonew(str_to<int>(trim_copy(tmpitem.at(5)), 0)) : 0);
+                                    else ((tagstruct*) & tmpstruct.tginfo)->type((tmpitem.size() > 5) ? str_to<int>(trim_copy(tmpitem.at(5)), 0) : 0);
                                     ((tagstruct*) & tmpstruct.tginfo)->minraw(trim_copy(tmpitem.at(7)));
                                     ((tagstruct*) & tmpstruct.tginfo)->maxraw(trim_copy(tmpitem.at(8)));
                                     ((tagstruct*) & tmpstruct.tginfo)->mineu(trim_copy(tmpitem.at(9)));
@@ -544,8 +544,8 @@ struct TDocV {
                 tmpoutdata += to_str(((tagstruct*) & it->tginfo)->alarmlevel()) + ";";
                 tmpoutdata += to_str(((tagstruct*) & it->tginfo)->alarmcase()) + ";";
                 tmpoutdata += to_str(((tagstruct*) & it->tginfo)->alarmconst_str()) + ";";
-                tmpoutdata += it->ue + ";";
                 tmpoutdata += to_str(((tagstruct*) & it->tginfo)->devdb()) + ";";
+                tmpoutdata += it->ue + ";" ;
                 tmpoutdata += to_str(((tagstruct*) & it->tginfo)->rwtype()) + ";\n";
                 outdata += tmpoutdata;
             }
