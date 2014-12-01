@@ -401,6 +401,7 @@ namespace dvnci {
                         dname = ((dit != std::string::npos) && ((dit+1)<dname.size())) ? (dname.substr(dit+1)) : dname;
                         tmp.name = dname;
                         tmp.bind = tag(it->first).binding();
+                        tmp.ue = tag(it->first).eu();
                         tmp.comment = tag(it->first).comment();
                         tmp.group = (groupsmap_.find(tag(it->first).group()) != groupsmap_.end()) ?
                                 groupsmap_.find(tag(it->first).group())->second.name() : "";
