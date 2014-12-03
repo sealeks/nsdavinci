@@ -2584,26 +2584,23 @@ libutil.proggress.throbber.prototype.destroy = function(){
 
 
 
-libutil.validator.expresssion = function(val) {
-    if ((val==undefined) || (val=='') || (val==null))  return undefined;
-    var error = $$error(val);
-    var test = $$check(val);
-    return ((error===undefined) || (test===undefined)) ? undefined : (error==0);
+libutil.validator.expresssion = function(val, el) {
+    if (!((val==undefined) || (val=='') || (val==null)))
+    $$check(val, function(){ el.className = dsutl.toolwin.validate_to_class(event.error==0);});
+    return undefined;
     
+ }
+
+libutil.validator.taglist = function(val, el) {
+    if (!((val==undefined) || (val=='') || (val==null)))
+    $$check('tags('+val+')', function(){ el.className = dsutl.toolwin.validate_to_class(event.error==0);});
+    return undefined;    
 }
 
-libutil.validator.taglist = function(val) {
-    if ((val==undefined) || (val=='') || (val==null))  return undefined;
-    var error = $$error('tags('+val+')');
-    var check = $$check('tags('+val+')');
-    return (error===undefined) ? undefined : (error==0 && check);   
-}
-
-libutil.validator.tag = function(val) {
-    if ((val==undefined) || (val=='') || (val==null))  return undefined;
-    var error = $$error('tags('+val+')');
-    var check = $$check(val+'.binding');
-    return (error==undefined) ? undefined : (error==0 && (check!=undefined));   
+libutil.validator.tag = function(val, el) {
+    if (!((val==undefined) || (val=='') || (val==null))) 
+    $$check('('+val+').binding', function(){ el.className = dsutl.toolwin.validate_to_class(event.error==0);});
+    return undefined;  
 }
 
 libutil.validator.regex = function(val , regex) {
