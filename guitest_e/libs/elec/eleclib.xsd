@@ -310,6 +310,7 @@
         <xsd:attribute name="d" type="xsd:string"/>
         <xsd:attribute name="on" type="lib:expression"/>
         <xsd:attribute name="fill" type="xsd:string"/>
+        <xsd:attribute name="environment" type="elib:environment"/>        
         <xsd:attribute name="stroke" type="xsd:string"/>
         <xsd:attribute name="off-stroke" type="xsd:string"/>
         <xsd:attribute name="stroke-width" type="xsd:string"/>
