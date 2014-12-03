@@ -1391,6 +1391,7 @@ designer.prototype.show_property = function(){
    
         var td2= libutil.html.create_element('td', tr, [ {name : 'style' , value : 'margin: 0 0 0 0; padding: 0 0 0 0;'} ] );
         var val=this.getAttributeValue(attriblist[i]['name']);
+        
         td2.innerHTML= val ? val : "";
         
         if (val==undefined)
@@ -1399,9 +1400,17 @@ designer.prototype.show_property = function(){
         td2.type=(!attriblist[i]['type']) ? 0 : (attriblist[i]['type']['type'] ? attriblist[i]['type']['type'] : 0) ;
         td2.regex=(!attriblist[i]['type']) ? null : (attriblist[i]['type']['regex'] ? attriblist[i]['type']['type'] : null) ;
         td2.list=(!attriblist[i]['type']) ? null : (attriblist[i]['type']['list'] ? attriblist[i]['type']['list'] : null) ;
-        td2.validator = this.attribute_validator(attriblist[i]) ;
-        if (td2.validator)
-             td2.className = dsutl.toolwin.validate_to_class(td2.validator(val));
+        td2.validator = this.attribute_validator(val, attriblist[i], td2) ;
+        
+        if (td2.validator) {
+            if (attriblist[i]['type']['validator'] == 'libutil.validator.expresssion')
+                libutil.validator.expresssion(val, td2);
+            if (attriblist[i]['type']['validator'] == 'libutil.validator.taglist')
+                libutil.validator.taglist(val, td2);
+            if (attriblist[i]['type']['validator'] == 'libutil.validator.tag')
+                libutil.validator.tag(val, td2);
+        }
+                 
          
         td2.onclick=function(ev) {
             if (document.red) document.red.property_row_focus(ev);
@@ -1412,10 +1421,14 @@ designer.prototype.show_property = function(){
     }
 }
 
-designer.prototype.attribute_validator = function(attr){
+designer.prototype.attribute_validator = function(val, attr, el){
   if (!attr['type']) return null;
-  if (attr['type']['validator'])  
-            return new Function("val", " return " + attr['type']['validator'] + "(val)");
+  if (attr['type']['validator']=='libutil.validator.expresssion')  
+            return function(){libutil.validator.expresssion(val, el); };
+  if (attr['type']['validator']=='libutil.validator.taglist')  
+            return function(){libutil.validator.taglist(val, el); };   
+  if (attr['type']['validator']=='libutil.validator.tag')  
+            return function(){libutil.validator.tag(val, el); };          
   return null;          
 }
 

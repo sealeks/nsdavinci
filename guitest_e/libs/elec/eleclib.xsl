@@ -3801,13 +3801,13 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:choose>    
             </xsl:attribute>
             
-            <xsl:choose>                              
+            <!--xsl:choose>                              
                 <xsl:when test="not(@filter='')">
                     <xsl:attribute name="filter">
                         <xsl:text>url(#filter_lib3)</xsl:text>
                     </xsl:attribute>
                 </xsl:when>
-            </xsl:choose>
+            </xsl:choose-->
             
             <xsl:attribute name="stroke-width">
                 <xsl:choose>
@@ -3820,7 +3820,27 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:choose> 
             </xsl:attribute> 
             
-            <xsl:attribute name="stroke">
+            <xsl:attribute name="class">
+                <xsl:choose>
+                    <xsl:when test="not(@environment='')">  
+                        <xsl:text>off</xsl:text>
+                        <xsl:value-of select="@environment"/>
+                    </xsl:when>
+                    <!--xsl:when test="not(@on='')">                  
+                        <xsl:text>#{ 'offkU330' </xsl:text>   
+                        <xsl:text>}</xsl:text>                       
+                            <xsl:text> : 'offevalid' :default  offevalid;}</xsl:text>
+                    </xsl:when> 
+                    <xsl:value-of select="@environment"/-->                       
+                    <xsl:otherwise>
+                        <xsl:text>offevalid</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose> 
+            </xsl:attribute> 
+            
+            
+                        
+            <!--xsl:attribute name="stroke">
                 <xsl:choose>
                     <xsl:when test="not(normalize-space(@on)='')"> 
                         <xsl:choose>
@@ -3849,7 +3869,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         </xsl:choose>  
                     </xsl:otherwise>
                 </xsl:choose> 
-            </xsl:attribute>
+            </xsl:attribute-->
                        
         </path>        
         
@@ -3889,9 +3909,33 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                             </xsl:otherwise>
                         </xsl:choose> 
                     </xsl:attribute> 
+                    
+                    <xsl:attribute name="class">
+                        <xsl:choose>
+                            <xsl:when test="not(@environment='')">  
+                                <xsl:text>on</xsl:text>
+                                <xsl:value-of select="@environment"/>
+                            </xsl:when>   
+                            <xsl:otherwise>
+                                <xsl:text>onevalid</xsl:text>
+                            </xsl:otherwise>
+                        </xsl:choose> 
+                    </xsl:attribute>               
+                    
+                    <!--xsl:choose>
+                        <xsl:when test="(boolean(@on) and not(normalize-space(@on)='')) ">                   
+                            <xsl:attribute name="visible">  
+                                <xsl:text>#{ (</xsl:text>  
+                                <xsl:value-of select="@on"/>
+                                <xsl:text> &#38;&#38; (</xsl:text> 
+                                <xsl:value-of select="@on"/>
+                                <xsl:text> ).valid ) ? 'false' : 'true' :default  true;}</xsl:text> 
+                            </xsl:attribute>
+                        </xsl:when>   
+                    </xsl:choose-->                             
 
             
-                    <xsl:attribute name="stroke">
+                    <!--xsl:attribute name="stroke">
                         <xsl:choose>
                             <xsl:when test="not(@off-stroke='')">  
                                 <xsl:text>#{ (</xsl:text>
@@ -3906,7 +3950,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                                 <xsl:text>).valid ? '#000' : '#ddd' :default #ddd}</xsl:text>
                             </xsl:otherwise>
                         </xsl:choose>                     
-                    </xsl:attribute>
+                    </xsl:attribute-->
          
                 </path>
             </xsl:when>        

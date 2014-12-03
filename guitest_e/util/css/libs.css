@@ -73,6 +73,12 @@
   fill: #3CA0FF;
 }
 
+.onevalid
+{
+  stroke: black;
+  fill: #CCC;
+}
+
 .onvapor
 {
   stroke: black;
@@ -169,6 +175,12 @@
 {
   fill: black;
   stroke: #3CA0FF;
+}
+
+.offevalid
+{
+  fill: black;
+  stroke: #CCC;
 }
 
 .offvapor
