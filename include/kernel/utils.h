@@ -71,7 +71,7 @@ namespace dvnci {
     void upper_and_fulltrim(std::wstring& val);
     void lower_and_fulltrim(std::string& val);
     void lower_and_fulltrim(std::wstring& val);
-
+  
     size_t regex_tokin_parser(const std::string& val, str_vect& dst, const boost::regex& re);
     size_t regex_tokin_parser(const std::wstring& val, wstr_vect& dst, const boost::wregex& re);
     size_t regex_tokin_parser(const std::wstring& val, str_vect& dst, const boost::wregex& re);
