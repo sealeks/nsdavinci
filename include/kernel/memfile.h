@@ -2130,7 +2130,7 @@ namespace dvnci {
         size_type insert_entity(nodetype enttp, const std::string& newname, ns_error& rslt, const std::string& parentid);
 
         size_type insert_tag(std::string newname, size_type groupid) {
-            lower_and_trim(newname);
+            /*lower_and_*/fulltrim(newname);
             if (!groups()->exists(groupid))
                 throw dvncierror(NS_ERROR_NOPARENT, "");
             return add(newname, groupid);
@@ -2149,7 +2149,7 @@ namespace dvnci {
         }
 
         size_type insert_group(std::string newname) {
-            lower_and_trim(newname);
+            /*lower_and_*/fulltrim(newname);
             checkname_ex(newname);
             size_type newind = groups()->add(newname);
             if (newind != npos) {
@@ -2160,7 +2160,7 @@ namespace dvnci {
         }
 
         size_type insert_agroup(std::string newname) {
-            lower_and_trim(newname);
+            /*lower_and_*/fulltrim(newname);
             checkname_ex(newname);
             size_type newind = agroups()->add(newname);
             if (newind != npos) {
@@ -2194,20 +2194,20 @@ namespace dvnci {
         void rename_tag(size_type id, std::string newname) {
             if (!exists(id))
                 throw dvncierror(ERROR_TAGNOEXIST);
-            lower_and_trim(newname);
+            /*lower_and_*/fulltrim(newname);
             name(id, newname);
         }
 
         void rename_tag(std::string oldname, std::string newname) {
-            lower_and_trim(newname);
-            lower_and_trim(oldname);
+            /*lower_and_*/fulltrim(newname);
+            /*lower_and_*/fulltrim(oldname);
             if (!exists(oldname))
                 throw dvncierror(ERROR_TAGNOEXIST, oldname);
             rename_tag(operator()(oldname), newname);
         }
 
         void rename_group(size_type id, std::string newname) {
-            lower_and_trim(newname);
+            /*lower_and_*/fulltrim(newname);
             checkname_ex(newname);
             if (!groups()->exists(id))
                 throw dvncierror(ERROR_ENTNOEXIST);
@@ -2220,15 +2220,15 @@ namespace dvnci {
         }
 
         void rename_group(std::string oldname, std::string newname) {
-            lower_and_trim(newname);
-            lower_and_trim(oldname);
+            /*lower_and_*/fulltrim(newname);
+            /*lower_and_*/fulltrim(oldname);
             if (!groups()->exists(oldname))
                 throw dvncierror(ERROR_ENTNOEXIST, oldname);
             rename_group(groups()->operator()(oldname), newname);
         }
 
         void rename_agroup(size_type id, std::string newname) {
-            lower_and_trim(newname);
+            /*lower_and_*/fulltrim(newname);
             checkname_ex(newname);
             if (!agroups()->exists(id))
                 throw dvncierror(ERROR_ENTNOEXIST);
@@ -2239,8 +2239,8 @@ namespace dvnci {
         }
 
         void rename_agroup(std::string oldname, std::string newname) {
-            lower_and_trim(newname);
-            lower_and_trim(oldname);
+            /*lower_and_*/fulltrim(newname);
+            /*lower_and_*/fulltrim(oldname);
             if (!agroups()->exists(oldname))
                 throw dvncierror(ERROR_ENTNOEXIST, oldname);
             rename_agroup(agroups()->operator()(oldname), newname);

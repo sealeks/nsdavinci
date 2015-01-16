@@ -1984,8 +1984,8 @@ namespace dvnci {
         if (groupnm.empty()) {
             groupnm = get_namespace_delimit(newname);
         }
-        lower_and_trim(newname);
-        lower_and_trim(groupnm);
+        /*lower_and_*/fulltrim(newname);
+        /*lower_and_*/fulltrim(groupnm);
         if (!groups()->exists(groupnm))
             throw dvncierror(NS_ERROR_NOPARENT, groupnm);
         return add(newname, groups()->operator ()(groupnm));
@@ -2180,15 +2180,15 @@ namespace dvnci {
     }
 
     tagsbase::size_type tagsbase::duplicate_group(std::string grp, std::string newname) {
-        lower_and_trim(grp);
-        lower_and_trim(newname);
+        /*lower_and_*/fulltrim(grp);
+        /*lower_and_*/fulltrim(newname);
         if (!groups()->exists(grp))
             throw dvncierror(ERROR_ENTNOEXIST, grp);
         return duplicate_group(groups()->operator ()(grp), newname);
     }
 
     tagsbase::size_type tagsbase::duplicate_group(size_type id, std::string newname) {
-        lower_and_trim(newname);
+        /*lower_and_*/fulltrim(newname);
         checkname_ex(newname);
         if (!groups()->exists(id))
             throw dvncierror(ERROR_ENTNOEXIST);
@@ -3667,7 +3667,7 @@ namespace dvnci {
         for (str_indx_map::iterator it = newnames.begin(); it != newnames.end(); ++it) {
             try {
                 tmpstr = it->first;
-                lower_and_trim(tmpstr);
+                /*lower_and_*/fulltrim(tmpstr);
                 it->second = add(tmpstr, groupid, false);
             }            catch (dvncierror& err) {
                 it->second = npos;

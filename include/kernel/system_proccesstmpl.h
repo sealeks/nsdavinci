@@ -54,7 +54,7 @@ namespace dvnci {
         }
 
         virtual void expressionstr(std::string val) {
-            lower_and_fulltrim(val);
+            /*lower_and_*/fulltrim(val);
             if (val != expression_) {
                 if (!val.empty()) parse(val);
                 else error(ERROR_EXPRNOINIT);

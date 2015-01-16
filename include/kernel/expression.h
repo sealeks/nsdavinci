@@ -718,13 +718,13 @@ namespace dvnci {
             }
 
             void expressionstr(std::string val) {
-                lower_and_fulltrim(val);
+                /*lower_and_*/fulltrim(val);
                 parse(val);
                 expression_ = val;
             }
 
             void expressionstr(std::wstring val) {
-                lower_and_fulltrim(val);
+                /*lower_and_*/fulltrim(val);
                 parse(val);
                 expression_ = wstr_to_utf8(val);
             }
@@ -837,7 +837,7 @@ namespace dvnci {
         template<typename BASEINTF, typename REFCOUNTER>
         calc_token expression_templ<BASEINTF, REFCOUNTER>::parse_token(std::string val) {
             if (val.empty()) return calc_token(notoperation);
-            lower_and_trim(val);
+            /*lower_and_*/fulltrim(val);
             calc_token operat_token = test_operator_token(val);
             if (operat_token.operation() != notoperation)
                 return operat_token;
