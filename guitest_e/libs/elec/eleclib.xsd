@@ -70,12 +70,22 @@
     <xsd:restriction base="xsd:string">
         <xsd:enumeration value="breaker"/>
         <xsd:enumeration value="isolator"/>
-        <xsd:enumeration value="cvalve"/>
-        <xsd:enumeration value="ovalve"/>
-        <xsd:enumeration value="rvalve"/>
-        <xsd:enumeration value="bolt"/>
-        <xsd:enumeration value="simple"/>
-        <xsd:enumeration value="regul"/>
+        <xsd:enumeration value="generator"/>
+        <xsd:enumeration value="grounding"/>        
+        <xsd:enumeration value="arrester"/>        
+        <xsd:enumeration value="coil"/>
+        <xsd:enumeration value="compensator"/>
+        <xsd:enumeration value="condenser"/>
+        <xsd:enumeration value="ctransformator"/>
+        <xsd:enumeration value="fuse"/>        
+        <xsd:enumeration value="kvpu"/>
+        <xsd:enumeration value="reactor"/>    
+        <xsd:enumeration value="suppressor"/>   
+        <xsd:enumeration value="synccondenser"/>        
+        <xsd:enumeration value="transformator1"/>   
+        <xsd:enumeration value="transformator2"/>         
+        <xsd:enumeration value="transformator3"/>   
+        <xsd:enumeration value="transformator4"/>                             
         <xsd:enumeration value=""/>
     </xsd:restriction>
 </xsd:simpleType>
