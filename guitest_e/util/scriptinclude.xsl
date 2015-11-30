@@ -19,9 +19,7 @@
         
         
 
-    <xsl:call-template name="lib_script_include_file">
-            <xsl:with-param name="file">simulator.js</xsl:with-param>
-        </xsl:call-template></xsl:template>
+    </xsl:template>
 
 
 </xsl:stylesheet>

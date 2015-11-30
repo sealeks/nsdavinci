@@ -48,7 +48,6 @@
         
 <xsd:simpleType name="environment">
     <xsd:restriction base="xsd:string">
-        <xsd:enumeration value="light_gray"/>
         <xsd:enumeration value="kUlow"/>  
         <xsd:enumeration value="kU800"/>
         <xsd:enumeration value="kU500"/>
@@ -57,11 +56,6 @@
         <xsd:enumeration value="kU220"/>
         <xsd:enumeration value="kU150"/>
         <xsd:enumeration value="kU110"/>
-        <xsd:enumeration value="notice"/>
-        <xsd:enumeration value="alarm"/>
-        <xsd:enumeration value="accident"/>   
-        <xsd:enumeration value="dark_fill"/>
-        <xsd:enumeration value="dark_button"/>  
         <xsd:enumeration value=""/>
     </xsd:restriction>
 </xsd:simpleType>
@@ -69,7 +63,9 @@
 <xsd:simpleType name="switchertype">
     <xsd:restriction base="xsd:string">
         <xsd:enumeration value="breaker"/>
-        <xsd:enumeration value="isolator"/>
+        <xsd:enumeration value="side"/>
+        <xsd:enumeration value="fside"/>        
+        <xsd:enumeration value="lside"/>        
         <xsd:enumeration value="generator"/>
         <xsd:enumeration value="grounding"/>        
         <xsd:enumeration value="arrester"/>        
@@ -166,10 +162,7 @@
         <xsd:attribute name="height" type="xsd:string" default="100"/>
         <xsd:attribute name="header" type="xsd:string"/>
         <xsd:attribute name="environment" type="elib:environment"/>
-        <xsd:attribute name="oncolor" type="xsd:string"/>
-        <xsd:attribute name="offcolor" type="xsd:string"/>
-        <xsd:attribute name="on" type="lib:expression"/>
-        <xsd:attribute name="position" type="lib:tag"/>
+        <xsd:attribute name="state" type="lib:expression"/>
         <xsd:attribute name="off" type="lib:expression"/>
         <xsd:attribute name="local" type="lib:expression"/>
         <xsd:attribute name="auto" type="lib:expression"/>
@@ -318,13 +311,11 @@
     <xsd:complexType>
         <xsd:attribute name="id" type="xsd:ID" use="required"/>
         <xsd:attribute name="d" type="xsd:string"/>
-        <xsd:attribute name="on" type="lib:expression"/>
-        <xsd:attribute name="fill" type="xsd:string"/>
+        <xsd:attribute name="state" type="lib:expression"/>
         <xsd:attribute name="environment" type="elib:environment"/>        
         <xsd:attribute name="stroke" type="xsd:string"/>
-        <xsd:attribute name="off-stroke" type="xsd:string"/>
         <xsd:attribute name="stroke-width" type="xsd:string"/>
-        <xsd:attribute name="visible" type="xsd:string"/>
+        <xsd:attribute name="visible" type="lib:expression"/>
         <xsd:attribute name="filter" type="elib:filtertype"/>
     </xsd:complexType>
 </xsd:element>

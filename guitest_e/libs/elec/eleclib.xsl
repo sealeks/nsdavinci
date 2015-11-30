@@ -25,49 +25,11 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         </xsl:attribute-->  
     </xsl:template>
     
-          <!--
-          light_gray
-          midle_gray
-          dark_gray
-          light_blue
-          midle_blue
-          dark_blue 
-          light_green
-          midle_green
-          dark_green          
-          light_red
-          midle_red
-          dark_red  
-          kU800
-          kU500
-          air
-          vapor
-          oil
-          stream
-          smoke
-          notice
-          alarm
-          accident
-          dark_fill
-          dark_button
-        -->  
+
     <xsl:template name="elib_gradient_select">
         <xsl:param name="invir"/>
         <xsl:param name="gradtype"/>
         <xsl:choose> 
-            <xsl:when test="normalize-space($invir)='light_gray'">
-                <xsl:choose>
-                    <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_light_gray_v</xsl:text>
-                    </xsl:when>
-                    <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_light_gray_c</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_light_gray_h</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose> 
-            </xsl:when>
 
             <xsl:when test="normalize-space($invir)='kUlow'">
                 <xsl:choose>
@@ -167,7 +129,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:choose> 
             </xsl:when>        
             
-             <xsl:when test="normalize-space($invir)='kU110'">
+            <xsl:when test="normalize-space($invir)='kU110'">
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
                         <xsl:text>__fill_elib_class_kU110_v</xsl:text>
@@ -179,72 +141,18 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         <xsl:text>__fill_elib_class_kU110_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
-            </xsl:when>   
-            
-            <xsl:when test="normalize-space($invir)='notice'">
-                <xsl:choose>
-                    <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_notice_v</xsl:text>
-                    </xsl:when>
-                    <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_notice_c</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_notice_h</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose> 
-            </xsl:when>  
-            
-            <xsl:when test="normalize-space($invir)='alarm'">
-                <xsl:choose>
-                    <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_alarm_v</xsl:text>
-                    </xsl:when>
-                    <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_alarm_c</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_alarm_h</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose> 
-            </xsl:when>    
-            
-            <xsl:when test="normalize-space($invir)='accident'">
-                <xsl:choose>
-                    <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_accident_v</xsl:text>
-                    </xsl:when>
-                    <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_accident_c</xsl:text>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_accident_h</xsl:text>
-                    </xsl:otherwise>
-                </xsl:choose> 
-            </xsl:when>    
-            
-           <xsl:when test="normalize-space($invir)='dark_fill'">
-                 
-                        <xsl:text>__fill_elib_class_dark_fill</xsl:text>
-               
-            </xsl:when>  
-            
-           <xsl:when test="normalize-space($invir)='dark_button'">
-                 
-                      <xsl:text>__fill_elib_class_dark_button</xsl:text>
-                
-            </xsl:when>             
+            </xsl:when>                                       
             
             <xsl:otherwise>
                 <xsl:choose>
                     <xsl:when test="($gradtype='tb')">
-                        <xsl:text>__fill_elib_class_dark_blue_v</xsl:text>
+                        <xsl:text>__fill_elib_class_kUlow_v</xsl:text>
                     </xsl:when>
                     <xsl:when test="($gradtype='c')">
-                        <xsl:text>__fill_elib_class_dark_blue_c</xsl:text>
+                        <xsl:text>__fill_elib_class_kUlow_c</xsl:text>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__fill_elib_class_dark_blue_h</xsl:text>
+                        <xsl:text>__fill_elib_class_kUlow_h</xsl:text>
                     </xsl:otherwise>
                 </xsl:choose> 
             </xsl:otherwise>        
@@ -478,27 +386,21 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
  
  
     <xsl:template name="apply_elib_switchertype_breaker">    
-        <!--rect x="200" y="200" height="50" width="600" stroke-width="0"/>
-        <rect x="200" y="200" height="600" width="50" stroke-width="0"/>
-        <rect x="200" y="800" height="50" width="600" stroke-width="0"/>
-        <rect x="800" y="200" height="600" width="50" stroke-width="0"/--> 
-        <!--rect x="200" y="200" width="600" height="600" stroke-width="50"/-->
-        <!--path d="M 200,200 L 600,0 L 0,600 L -600, 0 L 0,-600z" stroke-width="30"/-->
-        <!--path d="M 50 50 h 900 v 900 h -900 v -900 m 100 100 h 700 v 700 h -700 v -700z" stroke-width="none"/-->
-        <rect x="50" y="50" height="900" width="900" stroke-width="none"/>
-        <!--rect x="50" y="50" height="900" width="100" stroke-width="none"/>
-        <rect x="50" y="850" height="100" width="900" stroke-width="none"/>
-        <rect x="850" y="50" height="900" width="100" stroke-width="none"/-->        
+        <path d="M 0,5 h 95 v 90 h -90 v -95" style="fill-rule:nonzero" fill="none" stroke-width="10"/>   
     </xsl:template>
     
     
-    <xsl:template name="apply_elib_switchertype_isolator">    
-        <!--circle cx="500" cy="500" r="300" stroke-width="20"/>
-        <path d="M 400,450 L 400,550 L 550,550 L 550,600 L 650,500 L 550,400 L 550,450z" stroke-width="20"/-->
-        <rect x="50" y="50" height="100" width="900" stroke-width="none"/>
-        <rect x="50" y="850" height="100" width="900" stroke-width="none"/>
+    <xsl:template name="apply_elib_switchertype_side">    
+        <line x1="30"  y1="5" x2="70" y2="5" stroke-width="10"/>
     </xsl:template>
     
+    <xsl:template name="apply_elib_switchertype_fside">    
+        <line x1="5"  y1="5" x2="95" y2="5" stroke-width="10"/>
+    </xsl:template>    
+    
+    <xsl:template name="apply_elib_switchertype_lside">    
+        <path d="M 35,25 a 15,15 0 1 1 25,0" fill="none" stroke-width="10"/>
+    </xsl:template>    
     
     <xsl:template name="apply_elib_switchertype_ctransformator">    
         <circle cx="40" cy="50" r="35" fill="none" stroke-width="10"/>
@@ -624,9 +526,6 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     <xsl:when test="@type='condenser'">
                         <xsl:call-template name="apply_elib_switchertype_condenser"/> 
                     </xsl:when>
-                    <xsl:when test="@type='isolator'">
-                        <xsl:call-template name="apply_elib_switchertype_isolator"/> 
-                    </xsl:when> 
                     <xsl:when test="@type='ctransformator'">
                         <xsl:call-template name="apply_elib_switchertype_ctransformator"/> 
                     </xsl:when>
@@ -645,6 +544,12 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     <xsl:when test="@type='synccondenser'">
                         <xsl:call-template name="apply_elib_switchertype_synccondenser"/> 
                     </xsl:when>        
+                    <xsl:when test="@type='side'">
+                        <xsl:call-template name="apply_elib_switchertype_side"/> 
+                    </xsl:when> 
+                    <xsl:when test="@type='lside'">
+                        <xsl:call-template name="apply_elib_switchertype_lside"/> 
+                    </xsl:when>                                         
                     <xsl:when test="@type='transformator1'">
                         <xsl:call-template name="apply_elib_switchertype_transformator1"/> 
                     </xsl:when>                    
@@ -685,22 +590,9 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     <xsl:template name="apply_elib_switchertype_cursor_checkstatevalid">
         <xsl:choose>                        
-            <xsl:when test="not(normalize-space(@off)='') and not(normalize-space(@on)='')">
-                <xsl:text>(!(</xsl:text>
-                <xsl:value-of select="@on"/>
-                <xsl:text>).valid  &#38;&#38; !(</xsl:text>
-                <xsl:value-of select="@off"/>
-                <xsl:text>).valid) ? 'none' : </xsl:text>
-                               
-            </xsl:when>
-            <xsl:when test="boolean(@off) and not(normalize-space(@off)='')">
-                <xsl:text>(!(</xsl:text>
-                <xsl:value-of select="@off"/>
-                <xsl:text>).valid) ? 'none' : </xsl:text>
-            </xsl:when>
             <xsl:when test="boolean(@on) and not(normalize-space(@on)='')">
                 <xsl:text>(!(</xsl:text>
-                <xsl:value-of select="@on"/>
+                <xsl:value-of select="state"/>
                 <xsl:text>).valid) ? 'none' : </xsl:text>
             </xsl:when>
             <xsl:otherwise>
@@ -839,58 +731,12 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:when>
             </xsl:choose> 
             <xsl:choose>                        
-                <xsl:when test="(not(normalize-space(@on)=''))  and not(normalize-space(@off)='')"> 
-                    <xsl:attribute name="class">
-                        <xsl:text>non</xsl:text> 
-                    </xsl:attribute>
-                    <animate attributeName="class" attributeType="XML" fill="freeze" keyTimes="0;.5" dur="1000ms"  repeatCount="indefinite" calcMode="discrete"> 
-                        <xsl:attribute name="values">
-                            <xsl:text>#{ (!(</xsl:text>
-                            <xsl:value-of select="@on"/>
-                            <xsl:text>).valid &#38;&#38; !(</xsl:text>
-                            <xsl:value-of select="@off"/>
-                            <xsl:text>).valid) ? 'non;non;' : (</xsl:text>
-                                
-                            <xsl:value-of select="@on"/>
-                            <xsl:text> &#38;&#38; !</xsl:text>
-                            <xsl:value-of select="@off"/>
-                            <xsl:text>) ? </xsl:text>
-                                
-                            <xsl:text>'on</xsl:text>
-                            <xsl:value-of select="$envir"/>
-                            <xsl:text>;on</xsl:text>
-                            <xsl:value-of select="$envir"/>
-                            <xsl:text>;'</xsl:text>
-                                
-                            <xsl:text> : (!</xsl:text>
-                            <xsl:value-of select="@on"/>
-                            <xsl:text> &#38;&#38; </xsl:text>
-                            <xsl:value-of select="@off"/>
-                            <xsl:text>) ? </xsl:text>
-                                
-                            <xsl:text>'off</xsl:text>
-                            <!--xsl:value-of select="$envir"/--><xsl:text>kUNone</xsl:text>
-                            <xsl:text>;off</xsl:text>
-                            <!--xsl:value-of select="$envir"/--><xsl:text>kUNone</xsl:text>
-                            <xsl:text>;' : </xsl:text>
-                                
-                                
-                            <xsl:text>'on</xsl:text>
-                            <xsl:value-of select="$envir"/>
-                            <xsl:text>;off</xsl:text>
-                            <!--xsl:value-of select="$envir"/--><xsl:text>kUNone</xsl:text>
-                            <xsl:text>;'</xsl:text>
-                                                                
-                            <xsl:text> :default non;non;}</xsl:text>
-                        </xsl:attribute>    
-                    </animate>
-                </xsl:when>
-                <xsl:when test="boolean(@on) and not(normalize-space(@on)='')"> 
+                <xsl:when test="boolean(@state) and not(normalize-space(@state)='')"> 
                     <xsl:attribute name="class">
                         <xsl:text>#{ !(</xsl:text>
-                        <xsl:value-of select="@on"/>
+                        <xsl:value-of select="@state"/>
                         <xsl:text>).valid  ? 'non'  : ((</xsl:text>
-                        <xsl:value-of select="@on"/>
+                        <xsl:value-of select="@state"/>
                         <xsl:text>)  ? 'on</xsl:text>
                         <xsl:value-of select="$envir"/>
                         <xsl:text>':  'off</xsl:text>
@@ -898,19 +744,6 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         <xsl:text>') :default non}</xsl:text> 
                     </xsl:attribute>
                 </xsl:when>                    
-                <xsl:when test="boolean(@off) and not(normalize-space(@off)='')"> 
-                    <xsl:attribute name="class">
-                        <xsl:text>#{ !(</xsl:text>
-                        <xsl:value-of select="@off"/>
-                        <xsl:text>).valid  ? 'non'  : ((</xsl:text>
-                        <xsl:value-of select="@off"/>
-                        <xsl:text>)  ? 'off</xsl:text>
-                        <!--xsl:value-of select="$envir"/--><xsl:text>kUNone</xsl:text>
-                        <xsl:text>':  'on</xsl:text>
-                        <xsl:value-of select="$envir"/>
-                        <xsl:text>') :default non}</xsl:text> 
-                    </xsl:attribute>
-                </xsl:when>
                 <xsl:otherwise> 
                     <xsl:attribute name="class">
                         <xsl:text>on</xsl:text>
@@ -923,71 +756,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     </xsl:template> 
 
     
-    
-    <!--
-    
-    Отображение состояния мест.
-    
-    -->
-    
-    <xsl:template name="apply_elib_switchertype_local_img">    
-        <circle cx="150" cy="150" r="100" stroke-width="20"/>
-        <path d="M 110,190 L 110,110 L 150,150 L 190,110 L 190,190" stroke-width="15"/>
-    </xsl:template>
-    
-    
-    <xsl:template name="apply_elib_switchertype_local">    
-        <xsl:choose>
-            <xsl:when test="not(normalize-space(@local)='')">
-                <g>
-                    <xsl:attribute name="class">
-                        <xsl:text>#{</xsl:text> 
-                        <xsl:value-of select="@local"/>
-                        <xsl:text> ? 'local'  : 'transparent' :default transparent }</xsl:text>
-                    </xsl:attribute>                           
-                    <xsl:call-template name="apply_elib_switchertype_local_img"/>
-                </g>                    
-            </xsl:when>
-        </xsl:choose>
-    </xsl:template>  
-    
-    
-    
-    
-    <!--
-    
-    Отображение состояния автоматический.
-    
-    -->
-    
-    <xsl:template name="apply_elib_switchertype_auto_img">    
-        <circle cx="150" cy="150" r="100" stroke-width="20"/>
-        <path d="M 110,190 L 150,110  L 190,190 M 140,150 L 160,150" stroke-width="15" fill="none"/>
-    </xsl:template>
-    
-    
-    <xsl:template name="apply_elib_switchertype_auto">    
-        <xsl:choose>
-            <xsl:when test="not(normalize-space(@auto)='')">
-                <g>
-                    <xsl:attribute name="class">
-                        <xsl:text>#{</xsl:text> 
-                        <xsl:value-of select="@auto"/>
-                        <xsl:text> ? 'autocontrol'  : 'transparent' :default transparent }</xsl:text>
-                    </xsl:attribute>                              
-                    <xsl:call-template name="apply_elib_switchertype_auto_img"/>
-                </g>                    
-            </xsl:when>
-        </xsl:choose>
-    </xsl:template>   
-    
-    
-    
-    <!--
-    
-    Отображение состояния автоматический.
-    
-    -->
+
     
     <xsl:template name="apply_elib_switchertype_control_img">    
         <circle cx="850" cy="150" r="60" stroke-width="0"/>
@@ -1011,110 +780,6 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
     
     
-    <!--
-    
-    Отображение сигналов открытия и закрытия
-    
-    -->
-    
-    
-    <xsl:template name="apply_elib_switchertype_onsig">    
-        <path d="M 450, 170 L 450,100 L 400,100 L 500,10  L 600,100 L 550,100 L 550,170z" stroke-width="0" stroke="none" fill="#0F0">
-            <animate  attributeType="XML" attributeName="fill" values="#0F0;transparent;" keyTimes="0;.5" dur="500ms"  repeatCount="indefinite" calcMode="discrete"/>
-        </path>
-    </xsl:template>  
-    
-    <xsl:template name="apply_elib_switchertype_offsig">
-        <path d="M 450, 10 L 450,80 L 400,80 L 500,170  L 600,80 L 550,80 L 550,10z" stroke-width="0" stroke="none" fill="#F00">
-            <animate  attributeType="XML" attributeName="fill" values="transparent;#F00;" keyTimes="0;.5" dur="500ms"  repeatCount="indefinite" calcMode="discrete"/>
-        </path>
-    </xsl:template> 
-    
-    <xsl:template name="apply_elib_switchertype_sig">   
-        <xsl:choose>                          
-            <xsl:when test="not(normalize-space(@don)='')"> 
-                <g>
-                    <xsl:attribute name="style">
-                        <xsl:choose>                          
-                            <xsl:when test="not(normalize-space(@on)='')">                                               
-                                <xsl:text>#{ (</xsl:text>
-                                <xsl:value-of select="@don"/>
-                                <xsl:text> &#38;&#38; !</xsl:text>
-                                <xsl:value-of select="@on"/>
-                                <xsl:text>)  ? 'display: block;' :  'display: none;'</xsl:text>
-                                <xsl:text> :default display: none; }</xsl:text>                        
-                            </xsl:when>
-                            <xsl:otherwise>                         
-                                <xsl:text>#{ </xsl:text>
-                                <xsl:value-of select="@don"/>
-                                <xsl:text>  ? 'display: block;' :  'display: none;'</xsl:text>
-                                <xsl:text> :default display: none; }</xsl:text>                           
-                            </xsl:otherwise>                         
-                        </xsl:choose>
-                    </xsl:attribute> 
-                    <xsl:call-template name="apply_elib_switchertype_onsig"/>
-                </g>
-            </xsl:when>
-        </xsl:choose> 
-        <xsl:choose>
-            <xsl:when test="not(normalize-space(@doff)='')"> 
-                <g>
-                    <xsl:attribute name="style">
-                        <xsl:choose>                          
-                            <xsl:when test="not(normalize-space(@off)='')">                                                 
-                                <xsl:text>#{ (</xsl:text>
-                                <xsl:value-of select="@doff"/>
-                                <xsl:text> &#38;&#38; !</xsl:text>
-                                <xsl:value-of select="@off"/>
-                                <xsl:text>)  ? 'display: block;' :  'display: none;'</xsl:text>
-                                <xsl:text> :default display: none; }</xsl:text>                             
-                            </xsl:when>
-                            <xsl:otherwise>                          
-                                <xsl:text>#{ </xsl:text>
-                                <xsl:value-of select="@doff"/>
-                                <xsl:text>  ? 'display: block;' :  'display: none;'</xsl:text>
-                                <xsl:text> :default display: none; }</xsl:text>                          
-                            </xsl:otherwise>                            
-                        </xsl:choose>
-                    </xsl:attribute> 
-                    <xsl:call-template name="apply_elib_switchertype_offsig"/>
-                </g>                    
-            </xsl:when>                    
-        </xsl:choose>                                                   
-    </xsl:template> 
-    
-    
-    <!--
-    
-    Отображение аварийности
-    
-    -->
-    
-    <xsl:template name="apply_elib_switchertype_alarmstate">    
-        <xsl:choose>                
-            <xsl:when test="(boolean(@alarms) and not(normalize-space(@alarms)=''))">
-                <g  class="accident" opacity="0.0">
-                    <xsl:call-template name="apply_lib_alarm_class">
-                        <xsl:with-param name="alarms" select="@alarms"/>
-                        <xsl:with-param name="accident">accident</xsl:with-param>
-                        <xsl:with-param name="alarm">alarm</xsl:with-param>
-                        <xsl:with-param name="notice">notice</xsl:with-param>
-                        <xsl:with-param name="default">accident</xsl:with-param>
-                    </xsl:call-template>
-                    <circle cx="500" cy="500" r="500"/>
-                    <xsl:call-template name="apply_lib_alarm_animate">
-                        <xsl:with-param name="attributeName">opacity</xsl:with-param>
-                        <xsl:with-param name="attributeType">XML</xsl:with-param>
-                        <xsl:with-param name="calcMode">linear</xsl:with-param>
-                        <xsl:with-param name="alarms" select="@alarms"/>
-                        <xsl:with-param name="on">1</xsl:with-param>
-                        <xsl:with-param name="off">0</xsl:with-param> 
-                    </xsl:call-template>                      
-                </g>     
-            </xsl:when>   
-        </xsl:choose>  
-    </xsl:template>
-    
     
       <!--
     
@@ -1136,67 +801,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         </xsl:choose>
     </xsl:template>  
     
-    <!--
-    
-    формирование стиля
-    
-    -->    
-    
-    
-    <xsl:template name="apply_elib_switchertype_style">
-        <xsl:choose> 
-            <xsl:when test="normalize-space(@environment)=''">
-                <defs>
-                    <style type="text/css">          
-                        <xsl:choose>
-                            <xsl:when test="boolean(@oncolor) and not(normalize-space(@oncolor)='')">
-                                <xsl:variable name="offcolor">
-                                    <xsl:choose>
-                                        <xsl:when test="boolean(@offcolor) and not(normalize-space(@offcolor)='')">
-                                            <xsl:value-of select="@offcolor"/>
-                                        </xsl:when>
-                                        <xsl:otherwise> 
-                                            <xsl:text>black</xsl:text>
-                                        </xsl:otherwise> 
-                                    </xsl:choose>
-                                </xsl:variable>
-                                <xsl:text> 
-                   
-                                </xsl:text>
-                                <xsl:text>.on__</xsl:text>
-                                <xsl:value-of select="@id"/>
-                                <xsl:text>_armatclass {</xsl:text>
-                                <xsl:text>stroke: </xsl:text>
-                                <xsl:value-of select="$offcolor"/>
-                                <xsl:text>; </xsl:text>
-                                <xsl:text>fill: </xsl:text>
-                                <xsl:value-of select="@oncolor"/>
-                                <xsl:text>;} 
-                                </xsl:text>
-                                <xsl:text> 
-                  
-                                </xsl:text>                  
-                                <xsl:text>.off__</xsl:text>
-                                <xsl:value-of select="@id"/>
-                                <xsl:text>_armatclass {</xsl:text>
-                                <xsl:text>stroke: </xsl:text>
-                                <xsl:value-of select="@oncolor"/>
-                                <xsl:text>; </xsl:text>
-                                <xsl:text>fill: </xsl:text>
-                                <xsl:value-of select="$offcolor"/>
-                                <xsl:text>;} 
-                                </xsl:text>
-                            </xsl:when>
-                        </xsl:choose>   
-            
-            
-                        <xsl:text> 
-                        </xsl:text>
-                    </style>  
-                </defs>
-            </xsl:when> 
-        </xsl:choose> 
-    </xsl:template>
+
     
     
    <xsl:template name="apply_elib_switchertype_popup">
@@ -1460,7 +1065,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         
             <xsl:attribute name="desc">
                 <xsl:if test="boolean(@on)">
-                    <xsl:value-of select="@on"/>
+                    <xsl:value-of select="@state"/>
                 </xsl:if>
             </xsl:attribute>
                     
@@ -1486,8 +1091,6 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                        
             <xsl:call-template name="apply_elib_switchertype_event"/>
             
-            <xsl:call-template name="apply_elib_switchertype_style"/>
-            
             <xsl:call-template name="apply_elib_switchertype_popup"/>
 
             <rect fill="white" stroke="white" opacity="0">
@@ -1497,20 +1100,11 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <svg viewBox="0 0 100 100" preserveAspectRatio="none"> 
             
                 
-                
                 <xsl:call-template name="apply_rect"/>
-                               
-                <xsl:call-template name="apply_elib_switchertype_alarmstate"/>
              
                 <xsl:call-template name="apply_elib_switchertype_state"/>
                 
-                <xsl:call-template name="apply_elib_switchertype_auto"/> 
-                                
-                <xsl:call-template name="apply_elib_switchertype_local"/>
-                
                 <xsl:call-template name="apply_elib_switchertype_control"/> 
-                                
-                <xsl:call-template name="apply_elib_switchertype_sig"/>
 
             </svg>
             
@@ -3861,13 +3455,6 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                 </xsl:choose>    
             </xsl:attribute>
             
-            <!--xsl:choose>                              
-                <xsl:when test="not(@filter='')">
-                    <xsl:attribute name="filter">
-                        <xsl:text>url(#filter_lib3)</xsl:text>
-                    </xsl:attribute>
-                </xsl:when>
-            </xsl:choose-->
             
             <xsl:attribute name="stroke-width">
                 <xsl:choose>
@@ -3882,135 +3469,22 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             
             <xsl:attribute name="class">
                 <xsl:text>#{ !(</xsl:text>
-                <xsl:value-of select="@on"/>
+                <xsl:value-of select="@state"/>
                 <xsl:text>).valid  ? 'offkUNone'  : (!(</xsl:text>
-                <xsl:value-of select="@on"/>
+                <xsl:value-of select="@state"/>
                 <xsl:text>)  ? 'offkUNone</xsl:text>
-                <!--xsl:value-of select="$envir"/-->
-                <!--xsl:text>kUNone</xsl:text-->
                 <xsl:text>':  'on</xsl:text>
                 <xsl:value-of select="@environment"/>
                 <xsl:text>') :default offkUNone}</xsl:text> 
             </xsl:attribute>
             
-                                 
-                        
-            <!--xsl:attribute name="stroke">
-                <xsl:choose>
-                    <xsl:when test="not(normalize-space(@on)='')"> 
-                        <xsl:choose>
-                            <xsl:when test="not(@stroke='')">  
-                                <xsl:text>#{ (</xsl:text>
-                                <xsl:value-of select="@on"/>
-                                <xsl:text>).valid ? '</xsl:text>
-                                <xsl:value-of select="@stroke"/>
-                                <xsl:text>' : '#eee' :default #eee}</xsl:text>
-                            </xsl:when>   
-                            <xsl:otherwise>
-                                <xsl:text>#{ (</xsl:text>
-                                <xsl:value-of select="@on"/>
-                                <xsl:text>).valid ? '#333' : '#eee' :default #eee}</xsl:text>
-                            </xsl:otherwise>
-                        </xsl:choose>                     
-                    </xsl:when>   
-                    <xsl:otherwise>
-                        <xsl:choose>
-                            <xsl:when test="not(@stroke='')">  
-                                <xsl:value-of select="@stroke"/>
-                            </xsl:when>   
-                            <xsl:otherwise>
-                                <xsl:text>#333</xsl:text>
-                            </xsl:otherwise>
-                        </xsl:choose>  
-                    </xsl:otherwise>
-                </xsl:choose> 
-            </xsl:attribute-->
-                       
+                     
         </path>        
         
     </xsl:template>
     
 
-    <xsl:template name="apply_elib_path_fill">
-        <xsl:choose>
-            <xsl:when test="not(@on='')">           
-                <path fill="none">    
-                    
-                    <xsl:attribute name="d">
-                        <xsl:choose>                              
-                            <xsl:when test="not(@d='')">  
-                                <xsl:value-of select="@d"/>
-                            </xsl:when>   
-                            <xsl:otherwise> </xsl:otherwise>
-                        </xsl:choose>    
-                    </xsl:attribute>
-            
-   
-                    <xsl:attribute name="style">
-                        <xsl:text>#{ </xsl:text>
-                        <xsl:value-of select="@on"/>
-                        <xsl:text>  ? 'display: none;' :  'display: block;' :default display: none;</xsl:text>
-                        <xsl:text>}</xsl:text>
-                    </xsl:attribute>
 
-            
-                    <xsl:attribute name="stroke-width">
-                        <xsl:choose>
-                            <xsl:when test="not(@stroke-width='')">  
-                                <xsl:value-of select="@stroke-width div 1.5"/>
-                            </xsl:when>   
-                            <xsl:otherwise>
-                                <xsl:text>1</xsl:text>
-                            </xsl:otherwise>
-                        </xsl:choose> 
-                    </xsl:attribute> 
-                    
-                    <xsl:attribute name="class">
-                        <xsl:choose>
-                            <xsl:when test="not(@environment='')">  
-                                <xsl:text>on</xsl:text>
-                                <xsl:value-of select="@environment"/>
-                            </xsl:when>   
-                            <xsl:otherwise>
-                                <xsl:text>onevalid</xsl:text>
-                            </xsl:otherwise>
-                        </xsl:choose> 
-                    </xsl:attribute>               
-                    
-                    <!--xsl:choose>
-                        <xsl:when test="(boolean(@on) and not(normalize-space(@on)='')) ">                   
-                            <xsl:attribute name="visible">  
-                                <xsl:text>#{ (</xsl:text>  
-                                <xsl:value-of select="@on"/>
-                                <xsl:text> &#38;&#38; (</xsl:text> 
-                                <xsl:value-of select="@on"/>
-                                <xsl:text> ).valid ) ? 'false' : 'true' :default  true;}</xsl:text> 
-                            </xsl:attribute>
-                        </xsl:when>   
-                    </xsl:choose-->                             
-
-            
-                    <!--xsl:attribute name="stroke">
-                        <xsl:choose>
-                            <xsl:when test="not(@off-stroke='')">  
-                                <xsl:text>#{ (</xsl:text>
-                                <xsl:value-of select="@on"/>
-                                <xsl:text>).valid ? '</xsl:text>
-                                <xsl:value-of select="@off-stroke"/>
-                                <xsl:text>' : '#ddd' :default #ddd}</xsl:text>
-                            </xsl:when>   
-                            <xsl:otherwise>
-                                <xsl:text>#{ (</xsl:text>
-                                <xsl:value-of select="@on"/>
-                                <xsl:text>).valid ? '#000' : '#ddd' :default #ddd}</xsl:text>
-                            </xsl:otherwise>
-                        </xsl:choose>                     
-                    </xsl:attribute-->
-         
-                </path>
-            </xsl:when>        
-        </xsl:choose>               
-    </xsl:template>
     
     
     <xsl:template match="//elib:epath" >
@@ -4018,10 +3492,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:call-template name="apply_id"/>            
             <xsl:call-template name="apply_elib_schema"/>
             <xsl:call-template name="apply_svg_g_visible"/> 
-
             <xsl:call-template name="apply_elib_path_main"/>
-            
-            <!--xsl:call-template name="apply_elib_path_fill"/-->
             
         </g> 
 

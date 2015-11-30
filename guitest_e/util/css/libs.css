@@ -9,8 +9,8 @@
 
 .onkU800
 {
-  stroke: black;
-  fill: #3264FF;
+  stroke: #3264FF;
+  fill: none;
 }
 
 .onwater
@@ -21,8 +21,8 @@
 
 .onkU500
 {
-  stroke: black;
-  fill: #D50000;
+  stroke: #D50000;
+  fill: none;
 }
 
 .onair
@@ -33,8 +33,8 @@
 
 .onkU400
 {
-  stroke: black;
-  fill: #FF641E;
+  stroke: #FF641E;
+  fill: none;
 }
 
 .onstream
@@ -45,8 +45,8 @@
 
 .onkU150
 {
-  stroke: black;
-  fill: #CD8AFF;
+  stroke: #CD8AFF;
+  fill: none;
 }
 
 .onoil
@@ -57,8 +57,8 @@
 
 .onkU220
 {
-  stroke: black;
-  fill: #FFD200;
+  stroke: #FFD200;
+  fill: none;
 }
 
 .onsmoke
@@ -69,8 +69,8 @@
 
 .onkU110
 {
-  stroke: black;
-  fill: #3CA0FF;
+  stroke: #3CA0FF;
+  fill: none;
 }
 
 .onevalid
@@ -87,14 +87,20 @@
 
 .onkU330
 {
-  stroke: black;
-  fill: #00AA00;
+  stroke: #00AA00;
+  fill: none;
 }
 
 .onkUlow
 {
-  stroke: black;
-  fill: #5F5F5F;
+  stroke: #5F5F5F;
+  fill: none;
+}
+
+.offkUNone
+{
+  stroke: gray;
+  fill: none;
 }
 
 .on
