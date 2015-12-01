@@ -63,6 +63,8 @@
 <xsd:simpleType name="switchertype">
     <xsd:restriction base="xsd:string">
         <xsd:enumeration value="breaker"/>
+        <xsd:enumeration value="disconnector"/>        
+        <xsd:enumeration value="key"/>               
         <xsd:enumeration value="side"/>
         <xsd:enumeration value="fside"/>        
         <xsd:enumeration value="lside"/>        
@@ -163,7 +165,7 @@
         <xsd:attribute name="header" type="xsd:string"/>
         <xsd:attribute name="environment" type="elib:environment"/>
         <xsd:attribute name="state" type="lib:expression"/>
-        <xsd:attribute name="off" type="lib:expression"/>
+        <xsd:attribute name="pos" type="lib:expression"/>
         <xsd:attribute name="local" type="lib:expression"/>
         <xsd:attribute name="auto" type="lib:expression"/>
         <xsd:attribute name="ron" type="lib:tag"/>

@@ -47,7 +47,8 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     
 
     <xsl:template name="includelib">       
-        <xsl:call-template name="mainlib"/>     
+        <xsl:call-template name="mainlib"/>    
+        <xsl:call-template name="eleclib"/> 
     </xsl:template> 
     
     <!--xsl:template match="*|@*|text()">

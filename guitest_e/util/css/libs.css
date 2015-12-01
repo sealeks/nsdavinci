@@ -103,6 +103,12 @@
   fill: none;
 }
 
+.offkUunvalid
+{
+  stroke: #666;
+  fill: none;
+}
+
 .on
 {
   stroke: black;

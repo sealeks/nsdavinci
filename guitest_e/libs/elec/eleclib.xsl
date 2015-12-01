@@ -502,7 +502,16 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
         <circle cy="50" cx="25" r="22" fill="none" stroke-width="5"/>
         <circle cy="50" cx="75" r="22" fill="none" stroke-width="5"/>           
     </xsl:template>         
+    
+    <xsl:template name="apply_elib_switchertype_disconnector">    
+        <line x1="30"  y1="5" x2="70" y2="5" stroke-width="10"/>
+        <line x1="30" y1="95" x2="70" y2="95" stroke-width="10"/>        
+    </xsl:template>         
 
+    <xsl:template name="apply_elib_switchertype_key">
+        <line x1="50" y1="100" x2="50" y2="90" stroke-width="10"/>       
+        <line x1="40" y1="90" x2="60" y2="90" stroke-width="5"/>  
+    </xsl:template>    
     
     <xsl:template name="apply_elib_switchertype"> 
         <xsl:choose>                         
@@ -561,17 +570,108 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     </xsl:when>                    
                     <xsl:when test="@type='transformator4'">
                         <xsl:call-template name="apply_elib_switchertype_transformator4"/> 
-                    </xsl:when>                                                          
+                    </xsl:when>     
+                    <xsl:when test="@type='disconnector'">
+                        <xsl:call-template name="apply_elib_switchertype_disconnector"/>                         
+                        <xsl:choose>             
+                            <xsl:when test="boolean(@pos) and not(normalize-space(@pos)='')">
+                                <line x1="50" y1="20" x2="50" y2="80" stroke-width="10"> 
+                                    <xsl:attribute name="display">                                       
+                                        <xsl:text>#{ !(</xsl:text>
+                                        <xsl:value-of select="@pos"/>
+                                        <xsl:text>).valid ?  'none' : ( </xsl:text>
+                                        <xsl:value-of select="@pos"/>
+                                        <xsl:text> ? 'inherit'  : 'none' </xsl:text>
+                                        <xsl:text> ) :default 'none' } </xsl:text>                                        
+                                    </xsl:attribute>                                  
+                                </line>
+                                <line x1="20" y1="50" x2="80" y2="50" stroke-width="10">   
+                                    <xsl:attribute name="display">
+                                        <xsl:text>#{ !(</xsl:text>
+                                        <xsl:value-of select="@pos"/>
+                                        <xsl:text>).valid ?  'none' : ( </xsl:text>
+                                        <xsl:value-of select="@pos"/>
+                                        <xsl:text> ? 'none'  : 'inherit' </xsl:text>
+                                        <xsl:text> ) :default 'none' } </xsl:text>                                       
+                                    </xsl:attribute>                                             
+                                </line>                                      
+                            </xsl:when>       
+                            <xsl:otherwise>
+                                <line x1="50" y1="20" x2="50" y2="80" stroke-width="10">   
+                                </line>                              
+                            </xsl:otherwise>     
+                        </xsl:choose>                                  
+                    </xsl:when>        
+                    <xsl:when test="@type='key'">
+                        <xsl:call-template name="apply_elib_switchertype_key"/>                         
+                        <xsl:choose>             
+                            <xsl:when test="boolean(@pos) and not(normalize-space(@pos)='')">
+                                <line x1="50" y1="10" x2="50" y2="90" stroke-width="10"> 
+                                    <xsl:attribute name="display">                                       
+                                        <xsl:text>#{ !(</xsl:text>
+                                        <xsl:value-of select="@pos"/>
+                                        <xsl:text>).valid ?  'none' : ( </xsl:text>
+                                        <xsl:value-of select="@pos"/>
+                                        <xsl:text> ? 'inherit'  : 'none' </xsl:text>
+                                        <xsl:text> ) :default 'none' } </xsl:text>                                        
+                                    </xsl:attribute>                                  
+                                </line>
+                                <line  x1="50" y1="90" x2="90" y2="15" stroke-width="10">   
+                                    <xsl:attribute name="display">
+                                        <xsl:text>#{ !(</xsl:text>
+                                        <xsl:value-of select="@pos"/>
+                                        <xsl:text>).valid ?  'none' : ( </xsl:text>
+                                        <xsl:value-of select="@pos"/>
+                                        <xsl:text> ? 'none'  : 'inherit' </xsl:text>
+                                        <xsl:text> ) :default 'none' } </xsl:text>                                       
+                                    </xsl:attribute>                                             
+                                </line>                                      
+                            </xsl:when>       
+                            <xsl:otherwise>
+                                <line x1="50" y1="20" x2="50" y2="80" stroke-width="10">   
+                                </line>                              
+                            </xsl:otherwise>     
+                        </xsl:choose>                                  
+                    </xsl:when>                                                                                         
                     <xsl:otherwise>
-                        <xsl:call-template name="apply_elib_switchertype_breaker"/> 
+                        <xsl:call-template name="apply_elib_switchertype_breaker"/>     
+                        <xsl:choose>             
+                            <xsl:when test="boolean(@pos) and not(normalize-space(@pos)='')">                             
+                                <rect x="10" y="10" width="80" height="80" stroke-width="0" fill="none"> 
+                                    <xsl:attribute name="fill">
+                                        <xsl:text>#{ !(</xsl:text>
+                                        <xsl:value-of select="@pos"/>
+                                        <xsl:text>).valid ?  'white' : ( </xsl:text>
+                                        <xsl:value-of select="@pos"/>
+                                        <xsl:text> ? ((</xsl:text>
+                                        <xsl:value-of select="@pos"/>
+                                        <xsl:text>==1) ? 'green' : 'none' </xsl:text>
+                                        <xsl:text>) : 'red' </xsl:text>
+                                        <xsl:text> ) :default 'none' } </xsl:text>
+                                    </xsl:attribute>
+                                </rect>
+                            </xsl:when>            
+                        </xsl:choose>                                          
                     </xsl:otherwise>                     
                 </xsl:choose>
             </xsl:when> 
             <xsl:otherwise>
-                <xsl:call-template name="apply_elib_switchertype_breaker"/> 
+                <xsl:call-template name="apply_elib_switchertype_breaker"/>             
             </xsl:otherwise>                           
         </xsl:choose>    
+    </xsl:template>
     
+    
+    <xsl:template name="apply_elib_switchertyped"> 
+        <xsl:choose>                         
+            <xsl:when test="boolean(@type) and not(normalize-space(@type)='')">                             
+                <xsl:choose>
+                    <xsl:when test="@type='generator'"> 
+                        <xsl:call-template name="apply_elib_switchertype_generator"/>
+                    </xsl:when>            
+                </xsl:choose>
+            </xsl:when>                            
+        </xsl:choose>       
     </xsl:template>
     
      <!--
@@ -579,124 +679,20 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
     Отображение аттоибута cursor
     
     -->  
-    
-    
-    <xsl:template name="apply_elib_switchertype_cursor_dsbl">
-        <xsl:attribute name="cursor">
-            <xsl:text>none</xsl:text>
-        </xsl:attribute>
-    </xsl:template>
-    
-    
-    <xsl:template name="apply_elib_switchertype_cursor_checkstatevalid">
-        <xsl:choose>                        
-            <xsl:when test="boolean(@on) and not(normalize-space(@on)='')">
-                <xsl:text>(!(</xsl:text>
-                <xsl:value-of select="state"/>
-                <xsl:text>).valid) ? 'none' : </xsl:text>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:text></xsl:text>
-            </xsl:otherwise>
-        </xsl:choose> 
-    </xsl:template>
-    
 
-    <xsl:template name="apply_elib_switchertype_cursor_autocontrol">
-        <xsl:attribute name="cursor">
-            <xsl:text>#{ </xsl:text>
-            <xsl:call-template name="apply_elib_switchertype_cursor_checkstatevalid"/>
-            <xsl:text> ( </xsl:text>
-            <xsl:choose>                        
-                <xsl:when test="(boolean(@local) and not(normalize-space(@local)=''))"> 
-                    <xsl:value-of select="@local"/>
-                    <xsl:text> ? 'none' : ( </xsl:text>
-                    <xsl:value-of select="@auto"/>
-                    <xsl:text> ? 'pointer' : 'pointer' </xsl:text>
-                    <xsl:text> ) </xsl:text>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="@auto"/>
-                    <xsl:text> ? 'pointer' : 'pointer' </xsl:text>
-                    <xsl:text>  </xsl:text>                   
-                </xsl:otherwise>
-            </xsl:choose>        
-            <xsl:text> ) :default none} </xsl:text>
-        </xsl:attribute>
-        <xsl:attribute name="autocontrol">
-            <xsl:text>yes</xsl:text> 
-        </xsl:attribute>    
-    </xsl:template>
-    
-    
-    <xsl:template name="apply_elib_switchertype_cursor_auto">
-        <xsl:attribute name="cursor">
-            <xsl:text>#{ </xsl:text>
-            <xsl:call-template name="apply_elib_switchertype_cursor_checkstatevalid"/>
-            <xsl:text> ( </xsl:text>
-            <xsl:choose>                        
-                <xsl:when test="(boolean(@local) and not(normalize-space(@local)=''))"> 
-                    <xsl:value-of select="@local"/>
-                    <xsl:text> ? 'none' : ( </xsl:text>
-                    <xsl:value-of select="@auto"/>
-                    <xsl:text> ? 'none' : 'pointer' </xsl:text>
-                    <xsl:text> ) </xsl:text>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:value-of select="@auto"/>
-                    <xsl:text> ? 'none' : 'pointer' </xsl:text>
-                    <xsl:text>  </xsl:text>                   
-                </xsl:otherwise>
-            </xsl:choose>        
-            <xsl:text> ) :default none} </xsl:text>
-        </xsl:attribute>
-    </xsl:template>
-    
-    
-    <xsl:template name="apply_elib_switchertype_cursor_local">
-        <xsl:attribute name="cursor">
-            <xsl:text>#{ </xsl:text>
-            <xsl:call-template name="apply_elib_switchertype_cursor_checkstatevalid"/>
-            <xsl:text> ( </xsl:text>
-            <xsl:choose>                        
-                <xsl:when test="(boolean(@local) and not(normalize-space(@local)=''))"> 
-                    <xsl:value-of select="@local"/>
-                    <xsl:text> ? ('none' : 'pointer' )</xsl:text>
-                </xsl:when>
-                <xsl:otherwise>
-                    <xsl:text> 'pointer'  </xsl:text>                  
-                </xsl:otherwise>
-            </xsl:choose>        
-            <xsl:text> ) :default none} </xsl:text>
-        </xsl:attribute>
-    </xsl:template>
-    
-    
+
     
     <xsl:template name="apply_elib_switchertype_cursor">
         <xsl:choose>                        
-            <xsl:when test="not(normalize-space(@off)='') or  not(normalize-space(@on)='')">
-                <xsl:choose>                        
-                    <xsl:when test=" not(normalize-space(@roff)='') or not(normalize-space(@ron)='') or not(normalize-space(@rauto)='')">
-                        <xsl:choose>                        
-                            <xsl:when test="not(normalize-space(@rauto)='') and  not(normalize-space(@auto)='')">
-                                <xsl:call-template name="apply_elib_switchertype_cursor_autocontrol"/>
-                            </xsl:when>
-                            <xsl:when test="(boolean(@auto) and not(normalize-space(@auto)=''))">
-                                <xsl:call-template name="apply_elib_switchertype_cursor_auto"/>
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:call-template name="apply_elib_switchertype_cursor_local"/>
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:call-template name="apply_elib_switchertype_cursor_dsbl"/>
-                    </xsl:otherwise>
-                </xsl:choose> 
+            <xsl:when test="not(normalize-space(@ron)='')"> 
+                <xsl:attribute name="cursor">
+                    <xsl:text>pointer</xsl:text>
+                </xsl:attribute>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:call-template name="apply_elib_switchertype_cursor_dsbl"/>
+                <xsl:attribute name="cursor">
+                    <xsl:text>none</xsl:text>
+                </xsl:attribute>
             </xsl:otherwise>        
         </xsl:choose>    
     </xsl:template>
@@ -717,9 +713,7 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                         <xsl:value-of select="@environment"/> 
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:text>__</xsl:text>
-                        <xsl:value-of select="@id"/>
-                        <xsl:text>_armatclass</xsl:text>                        
+                        <xsl:text>kU110</xsl:text>                        
                     </xsl:otherwise>
                 </xsl:choose>                
             </xsl:variable>
@@ -735,13 +729,11 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
                     <xsl:attribute name="class">
                         <xsl:text>#{ !(</xsl:text>
                         <xsl:value-of select="@state"/>
-                        <xsl:text>).valid  ? 'non'  : ((</xsl:text>
+                        <xsl:text>).valid  ? 'offkUunvalid'  : ((</xsl:text>
                         <xsl:value-of select="@state"/>
                         <xsl:text>)  ? 'on</xsl:text>
                         <xsl:value-of select="$envir"/>
-                        <xsl:text>':  'off</xsl:text>
-                        <!--xsl:value-of select="$envir"/--><xsl:text>kUNone</xsl:text>
-                        <xsl:text>') :default non}</xsl:text> 
+                        <xsl:text>':  'offkUNone') :default offkUunvalid}</xsl:text> 
                     </xsl:attribute>
                 </xsl:when>                    
                 <xsl:otherwise> 
@@ -3470,12 +3462,11 @@ xmlns:exsl="http://xmlsoft.org/XSLT/namespace">
             <xsl:attribute name="class">
                 <xsl:text>#{ !(</xsl:text>
                 <xsl:value-of select="@state"/>
-                <xsl:text>).valid  ? 'offkUNone'  : (!(</xsl:text>
+                <xsl:text>).valid  ? 'offkUunvalid'  : (!(</xsl:text>
                 <xsl:value-of select="@state"/>
-                <xsl:text>)  ? 'offkUNone</xsl:text>
-                <xsl:text>':  'on</xsl:text>
+                <xsl:text>)  ? 'offkUNone' :  'on</xsl:text>
                 <xsl:value-of select="@environment"/>
-                <xsl:text>') :default offkUNone}</xsl:text> 
+                <xsl:text>') :default offkUunvalid}</xsl:text> 
             </xsl:attribute>
             
                      
