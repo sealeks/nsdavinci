@@ -101,12 +101,16 @@ namespace WebCore {
     }
 
 
-	const int DVNCI_EXECUTE_EXPRESSION = 0;
-	const int DVNCI_EXECUTE_CHECK = 1;
-	const int DVNCI_EXECUTE_ERROR = 2;
-	const int DVNCI_EXECUTE_USERLIST =3;
-	const int DVNCI_EXECUTE_REGIST =4;
-	const int DVNCI_EXECUTE_UNREGIST = 5;
+    const int DVNCI_EXECUTE_EXPRESSION = 0;
+    const int DVNCI_EXECUTE_CHECK = 1;
+    const int DVNCI_EXECUTE_ERROR = 2;
+    const int DVNCI_EXECUTE_USERLIST = 3;
+    const int DVNCI_EXECUTE_REGIST = 4;
+    const int DVNCI_EXECUTE_UNREGIST = 5;
+    const int DVNCI_EXECUTE_ADDUSER = 6;
+    const int DVNCI_EXECUTE_REMOVEUSER = 7;
+    const int DVNCI_EXECUTE_CHANGEUSERPASS =8;    
+    const int DVNCI_EXECUTE_CHANGEUSERACCESS =9;    
 
     v8::Handle<v8::Value> dvnciExecute(int code, const v8::Arguments& args);
 

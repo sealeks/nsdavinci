@@ -26,9 +26,13 @@
  $$(expr [,handler])   ?!
  $$check(expr [,handler])  ?!
  $$error(expr [,handler])   ?!
- $$userlist(handler)  ?!
- $$regist(handler, user, password )   ?!
- $$unregist(handler)   ?!
+ $$users(handler)  ?!
+ $$registuser(handler, user, password )   ?!
+ $$unregistuser(handler)   ?!
+ $$adduser(handler, user, password, access)   ?!
+ $$removeuser(handler, user, password)   ?!
+ $$changeuserpassword(handler, user, oldpassword, newpassword)   ?!
+ $$changeuseraccess(handler, user, access)   ?!
  $$exit()
  $$writefile()
  $$filelist([ext]) !!!!
@@ -155,8 +159,39 @@ namespace WebCore {
             return dvnciExecute(DVNCI_EXECUTE_UNREGIST,args);
         }
         return v8::Undefined();
-    }   
+    } 
+     
+     static v8::Handle<v8::Value> dvnci_adduserCallback(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.dvnci_adduser");
+        if (args.Length() > 0) {
+            return dvnciExecute(DVNCI_EXECUTE_ADDUSER, args);
+        }
+        return v8::Undefined();
+    }
 
+    static v8::Handle<v8::Value> dvnci_removeuserCallback(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.dvnci_removeuser");
+        if (args.Length() > 0) {
+            return dvnciExecute(DVNCI_EXECUTE_REMOVEUSER, args);
+        }
+        return v8::Undefined();
+    }
+
+    static v8::Handle<v8::Value> dvnci_changeuserpassCallback(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.dvnci_changeuserpassword");
+        if (args.Length() > 0) {
+            return dvnciExecute(DVNCI_EXECUTE_CHANGEUSERPASS, args);
+        }
+        return v8::Undefined();
+    } 
+    
+    static v8::Handle<v8::Value> dvnci_changeuseraccessCallback(const v8::Arguments& args) {
+        INC_STATS("DOM.DOMWindow.dvnci_changeuseraccess");
+        if (args.Length() > 0) {
+            return dvnciExecute(DVNCI_EXECUTE_CHANGEUSERACCESS, args);
+        }
+        return v8::Undefined();
+    }     
     
     static v8::Handle<v8::Value> dvnci_writefileCallback(const v8::Arguments& args) {
         INC_STATS("DOM.DOMWindow.dvnci_writefile");
@@ -422,7 +457,11 @@ namespace WebCore {
         {"$$users", dvnci_userslistCallback},
         {"$$entety", dvnci_entetylistCallback},
         {"$$registuser", dvnci_registuserCallback},
-        {"$$unregistuser", dvnci_unregistuserCallback},        
+        {"$$unregistuser", dvnci_unregistuserCallback},
+        {"$$adduser", dvnci_adduserCallback},
+        {"$$removeuser", dvnci_removeuserCallback},
+        {"$$changeuserpassword", dvnci_changeuserpassCallback},
+        {"$$changeuseraccess", dvnci_changeuseraccessCallback},        
         {"$$exit", dvnci_exitCallback},
         {"$$kill", dvnci_shutdownCallback},
         {"$$editable", dvnci_isEditableCallback},

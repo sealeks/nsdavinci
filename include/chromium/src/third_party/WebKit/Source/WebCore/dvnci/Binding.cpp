@@ -945,7 +945,7 @@ namespace WebCore {
                     v8::Handle<v8::Object> tmp = v8::Object::New();
 
                     tmp->Set(v8::String::New("name"), v8::String::New(it->second.name().c_str(), it->second.name().size() ));
-                    tmp->Set(v8::String::New("type"), v8::Integer::New(it->second.typeex()));
+                    tmp->Set(v8::String::New("type"), v8::Integer::New(type==dvnci::NT_USER ? (it->second.typeex().tgtype()) : it->second.typeex()));
                     tmp->Set(v8::String::New("id"), v8::Integer::New(it->first));
 
                     array->Set(i++, tmphandle_scope.Close(tmp));
@@ -978,6 +978,11 @@ namespace WebCore {
             dvnci::registrate_listener(dvnci::registrate_listener::UNREGIST) , m_context(context) ,  m_scriptcontext(scriptcontext) {
                 m_function = v8::Persistent<v8::Function>::New(func);
             }
+            
+            regitrate_expression_listener(const int operate, const std::string& user, const std::string& password, const std::string& newpassword, v8::Handle<v8::Context> context, ScriptExecutionContext* scriptcontext, v8::Handle<v8::Function> func) :
+            dvnci::registrate_listener(operate, user,  password, newpassword) , m_context(context) ,  m_scriptcontext(scriptcontext) {
+                m_function = v8::Persistent<v8::Function>::New(func);
+            }            
 
             virtual ~regitrate_expression_listener() {
                 if (m_function.IsEmpty())
@@ -1054,7 +1059,7 @@ namespace WebCore {
 
         String stringarg1 = "";
         String stringarg2 = "";
-
+        String stringarg3 = "";
 
         switch (code) {
             case DVNCI_EXECUTE_EXPRESSION:
@@ -1092,6 +1097,44 @@ namespace WebCore {
                 callbackid = 0;
                 break;
             }
+            case DVNCI_EXECUTE_ADDUSER:
+            {
+                if (argumentCount < 3) return v8::Undefined();
+                callbackid = 0;
+                stringarg1 = toWebCoreString(args[1]) ;
+                stringarg2 = toWebCoreString(args[2]);
+                if (argumentCount > 3)
+                    stringarg3 = toWebCoreString(args[3]);                  
+                break;
+            }     
+            case DVNCI_EXECUTE_REMOVEUSER:
+            {
+                if (argumentCount < 2) return v8::Undefined();
+                callbackid = 0;
+                stringarg1 = toWebCoreString(args[1]);
+                if (argumentCount > 2)
+                    stringarg2 = toWebCoreString(args[2]);
+                break;
+            }         
+            case DVNCI_EXECUTE_CHANGEUSERPASS:
+            {
+                if (argumentCount < 3) return v8::Undefined();
+                callbackid = 0;
+                stringarg1 = toWebCoreString(args[1]) ;
+                stringarg2 = toWebCoreString(args[2]);
+                if (argumentCount > 3)
+                    stringarg3 = toWebCoreString(args[3]);                
+                break;
+            }             
+            case DVNCI_EXECUTE_CHANGEUSERACCESS:
+            {
+                if (argumentCount < 2) return v8::Undefined();
+                callbackid = 0;
+                stringarg1 = toWebCoreString(args[1]);
+                if (argumentCount > 2)
+                    stringarg2 = toWebCoreString(args[2]);
+                break;
+            }              
         };
 
 
@@ -1133,6 +1176,7 @@ namespace WebCore {
                     bool rslt = intf->regist_expr_listener(exprstr, exrptr, code != DVNCI_EXECUTE_EXPRESSION);
                     return v8::Boolean::New(rslt);
                 }
+                break;
             }
 
             case DVNCI_EXECUTE_USERLIST:
@@ -1144,6 +1188,7 @@ namespace WebCore {
                     bool rslt = intf->regist_entety_listener(exrptr);
                     return v8::Boolean::New(rslt);
                 }
+                break;
             }
 
             case DVNCI_EXECUTE_REGIST:
@@ -1155,6 +1200,7 @@ namespace WebCore {
                     bool rslt = intf->regist_registrate_listener(exrptr);
                     return v8::Boolean::New(rslt);
                 }
+                break;
             }
 
             case DVNCI_EXECUTE_UNREGIST:
@@ -1166,7 +1212,56 @@ namespace WebCore {
                     bool rslt = intf->regist_registrate_listener(exrptr);
                     return v8::Boolean::New(rslt);
                 }
+                break;
             }
+            
+            case DVNCI_EXECUTE_ADDUSER:
+            {
+                dvnci::chrome_executor_ptr intf = getexecutordvnci();
+                if (intf && hascallback) {
+                    dvnci::registrate_listener_ptr  exrptr = dvnci::registrate_listener_ptr(
+                            new WebCore::DVNCI::regitrate_expression_listener(dvnci::registrate_listener::ADDUSER, stringarg1.utf8().data(), stringarg2.utf8().data(), stringarg3.utf8().data(), V8Proxy::context(imp->frame()), scriptContext, v8::Handle<v8::Function>::Cast(function)));
+                    bool rslt = intf->regist_registrate_listener(exrptr);
+                    return v8::Boolean::New(rslt);
+                }
+                break;
+            }
+
+            case DVNCI_EXECUTE_REMOVEUSER:
+            {
+                dvnci::chrome_executor_ptr intf = getexecutordvnci();
+                if (intf && hascallback) {
+                    dvnci::registrate_listener_ptr  exrptr = dvnci::registrate_listener_ptr(
+                            new WebCore::DVNCI::regitrate_expression_listener (dvnci::registrate_listener::REMOVEUSER, stringarg1.utf8().data(), stringarg2.utf8().data(), stringarg3.utf8().data(), V8Proxy::context(imp->frame()), scriptContext, v8::Handle<v8::Function>::Cast(function)));
+                    bool rslt = intf->regist_registrate_listener(exrptr);
+                    return v8::Boolean::New(rslt);
+                }
+                break;
+            } 
+            
+            case DVNCI_EXECUTE_CHANGEUSERPASS:
+            {
+                dvnci::chrome_executor_ptr intf = getexecutordvnci();
+                if (intf && hascallback) {
+                    dvnci::registrate_listener_ptr  exrptr = dvnci::registrate_listener_ptr(
+                            new WebCore::DVNCI::regitrate_expression_listener (dvnci::registrate_listener::CHANGEPASS, stringarg1.utf8().data(), stringarg2.utf8().data(), stringarg3.utf8().data(), V8Proxy::context(imp->frame()), scriptContext, v8::Handle<v8::Function>::Cast(function)));
+                    bool rslt = intf->regist_registrate_listener(exrptr);
+                    return v8::Boolean::New(rslt);
+                }
+                break;
+            }            
+            
+            case DVNCI_EXECUTE_CHANGEUSERACCESS:
+            {
+                dvnci::chrome_executor_ptr intf = getexecutordvnci();
+                if (intf && hascallback) {
+                    dvnci::registrate_listener_ptr  exrptr = dvnci::registrate_listener_ptr(
+                            new WebCore::DVNCI::regitrate_expression_listener (dvnci::registrate_listener::CHANGEACCESS, stringarg1.utf8().data(), stringarg3.utf8().data(), stringarg2.utf8().data(), V8Proxy::context(imp->frame()), scriptContext, v8::Handle<v8::Function>::Cast(function)));
+                    bool rslt = intf->regist_registrate_listener(exrptr);
+                    return v8::Boolean::New(rslt);
+                }
+                break;
+            }             
 
         }
 
