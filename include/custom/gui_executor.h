@@ -340,9 +340,13 @@ namespace dvnci {
 
         static const int REGIST = 1;
         static const int UNREGIST = 0;
+        static const int ADDUSER = 2;    
+        static const int REMOVEUSER = 3;     
+        static const int CHANGEPASS = 4;        
+        static const int CHANGEACCESS = 5;         
 
-        registrate_listener(int type, const std::string& user = "", const std::string& password = "")
-        : template_listener<ns_error >(true), type_(type), user_(user), password_(password) {
+        registrate_listener(int type, const std::string& user = "", const std::string& password = "", const std::string& newpassword = "")
+        : template_listener<ns_error >(true), type_(type), user_(user), password_(password), newpassword_(newpassword) {
         };
 
         virtual bool set(const valuetype& val) {
@@ -358,6 +362,14 @@ namespace dvnci {
         std::string password() const {
             return password_;
         }
+        
+        std::string newpassword() const {
+            return newpassword_;
+        }        
+        
+        std::string access() const {
+            return newpassword_;
+        }            
 
         int type() const {
             return type_;
@@ -368,6 +380,7 @@ namespace dvnci {
         int type_;
         std::string user_;
         std::string password_;
+        std::string newpassword_;        
     };
 
 
@@ -700,10 +713,41 @@ namespace dvnci {
                 THD_EXCLUSIVE_LOCK(mtx);
                 for (registrate_listener_iterator it = registrate_set.begin(); it != registrate_set.end(); ++it) {
                     ns_error result = 0;
-                    if ((*it)->type() == registrate_listener::REGIST) {
-                        result = intf->registrate_user((*it)->user(), (*it)->password());
-                    } else {
-                        result = intf->unregistrate_user();
+                    switch ((*it)->type()) {
+                        case registrate_listener::REGIST:
+                        {
+                            result = intf->registrate_user((*it)->user(), (*it)->password());
+                            break;
+                        }
+                        case registrate_listener::UNREGIST:
+                        {
+                            result = intf->unregistrate_user();
+                            break;
+                        }
+                        case registrate_listener::ADDUSER:
+                        {
+                            result = intf->add_user((*it)->user(), (*it)->password(), (*it)->access());
+                            break;
+                        }
+                        case registrate_listener::REMOVEUSER:
+                        {
+                            result = intf->remove_user((*it)->user()); //
+                            break;
+                        }
+                        case registrate_listener::CHANGEPASS:
+                        {
+                            result = intf->changepassword_user((*it)->user(), (*it)->password(), (*it)->newpassword()); //
+                            break;
+                        }
+                        case registrate_listener::CHANGEACCESS:
+                        {
+                            result = intf->changeaccess_user((*it)->user(), (*it)->access()); //
+                            break;
+                        }
+                        default:
+                        {
+                            result = NS_ERROR_ENTITY_OPERATE; //
+                        }
                     }
                     (*it)->set(result);
                     updatemap.insert(*it);
@@ -711,7 +755,7 @@ namespace dvnci {
                 }
                 return false;
             }
-
+            
             bool init_trend_listeners() {
                 if (newtrendset.empty())
                     return false;
