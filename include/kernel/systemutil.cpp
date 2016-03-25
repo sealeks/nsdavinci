@@ -92,9 +92,11 @@ namespace dvnci {
 
     bool util_memory::map_utl(boost::interprocess::mapped_region& rgn, std::string name, bool& isnew, size_t size) {
         isnew = false;
+        boost::interprocess::permissions permis;
+        permis.set_unrestricted();        
 #ifdef _WIN32_WINNT
-        try {
-            boost::interprocess::windows_shared_memory shm(boost::interprocess::create_only, name.c_str(), boost::interprocess::read_write, size);
+        try {            
+            boost::interprocess::windows_shared_memory shm(boost::interprocess::create_only, name.c_str(), boost::interprocess::read_write, size, permis);
             isnew = true;
             rgn = boost::interprocess::mapped_region(shm, boost::interprocess::read_write);
             return true;
@@ -110,8 +112,8 @@ namespace dvnci {
 #endif
 #ifdef _DVN_LIN_
         try {
-            boost::interprocess::permissions permis;
-            permis.set_unrestricted();
+            //boost::interprocess::permissions permis;
+            //permis.set_unrestricted();
             boost::interprocess::shared_memory_object shm(boost::interprocess::create_only, name.c_str(), boost::interprocess::read_write, permis);
             isnew = true;
             shm.truncate(size);

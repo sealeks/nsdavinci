@@ -2662,6 +2662,14 @@ namespace dvnci {
 
         ns_error unregistrate_user();
 
+        ns_error add_user(const std::string& usr, const std::string& password, const std::string& access = "");
+
+        ns_error remove_user(const std::string& usr);
+
+        ns_error changepassword_user(const std::string& usr, const std::string& password, const std::string& newpassword);
+
+        ns_error changeaccess_user(const std::string& usr, const std::string& access);        
+
         indx userid() const;
 
         std::string user() const;

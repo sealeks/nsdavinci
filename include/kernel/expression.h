@@ -1288,6 +1288,7 @@ namespace dvnci {
                             case oprt_command1:
                             case oprt_assign:
                             {
+                                calc_operation topert=it->operation();
                                 if (calcstack.size() >= 2) {
                                     if ((calcstack.top().operation() == constant) && (calcstack.top().isnan())) {
                                         //calcstack.pop();
@@ -1303,10 +1304,16 @@ namespace dvnci {
                                     calcstack.pop();
                                     if ((intf) && (!calcstack.top().isnan()) && (calcstack.top().id() != npos)) {
                                         if (!testmode()) {
-                                            intf->send_command(calcstack.top().id(), short_value(rsideit.value(), rsideit.type(), rsideit.valid(), rsideit.error()),
-                                                    ((it->operation() == oprt_command) || (it->operation() == oprt_commandset)) ? acQueuedCommand :
-                                                    (((it->operation() == oprt_command1) || (it->operation() == oprt_commandset1)) ? acNewCommand : acNullCommand),
-                                                    ((it->operation() == oprt_commandset) || (it->operation() == oprt_commandset1) || (it->operation() == acNullCommand)));
+                                            if (rsideit.type() != TYPE_TEXT)
+                                                intf->send_command(calcstack.top().id(), short_value(rsideit.value(), rsideit.type(), rsideit.valid(), rsideit.error()),
+                                                    ((topert == oprt_command) || (topert == oprt_commandset)) ? acQueuedCommand :
+                                                    (((topert == oprt_command1) || (topert == oprt_commandset1)) ? acNewCommand : acNullCommand),
+                                                    ((topert == oprt_commandset) || (topert == oprt_commandset1) || (topert == acNullCommand)));
+                                            else
+                                                intf->send_command(calcstack.top().id(), short_value(rsideit.value<std::string>(), rsideit.valid(), rsideit.error()),
+                                                    ((topert == oprt_command) || (topert == oprt_commandset)) ? acQueuedCommand :
+                                                    (((topert == oprt_command1) || (topert == oprt_commandset1)) ? acNewCommand : acNullCommand),
+                                                    ((topert == oprt_commandset) || (topert == oprt_commandset1) || (topert == acNullCommand)));                                                
                                         }
                                         //calcstack.pop();
                                         /*calcstack.push(rsideit);*/

@@ -55,10 +55,10 @@ namespace dvnci {
                 map["&&"] = oprt_logicand;
                 map["++"] = oprt_prefinc;
                 map["--"] = oprt_prefdec;
-                map["''"] = "";
+                map["''"] = calc_token(std::string());
                 map["@@"] = oprt_command1;
                 map["@="] = oprt_commandset;
-                map["\"\""] = "";
+                map["\"\""] = calc_token(std::string());
                 map["<<<"] = oprt_cyclbitleft;
                 map[">>>"] = oprt_cyclbitright;
                 map["@@="] = oprt_commandset1;

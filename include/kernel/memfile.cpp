@@ -56,7 +56,10 @@ namespace dvnci {
                 }
                 default:
                 {
-                    return tgbs_ptr->comment(tagid(id));
+                    if (tgbs_ptr->type(tagid(id)) == TYPE_TEXT)
+                        return tgbs_ptr->value<std::string>(tagid(id));
+                    else
+                        return tgbs_ptr->comment(tagid(id));                    
                 }
             }
         };
@@ -86,7 +89,10 @@ namespace dvnci {
                 }
                 default:
                 {
-                    return tgbs_ptr->comment(tagid_retrosp(id));
+                    if (tgbs_ptr->type(tagid_retrosp(id)) == TYPE_TEXT)
+                        return tgbs_ptr->value<std::string>(tagid_retrosp(id));
+                    else
+                        return tgbs_ptr->comment(tagid_retrosp(id));
                 }
             }
         };
@@ -1792,6 +1798,7 @@ namespace dvnci {
             switch (type(id)) {
                 case TYPE_TEXT:
                 {
+                    send_command_str(id, val.value<std::string>(), queue, setval, clid);                    
                     return;
                 }
                 case TYPE_DISCRET:
@@ -2630,7 +2637,8 @@ namespace dvnci {
             if (users()->exists(i)) {
                 if ((!filtered_.isEnable()) ||
                         (filtered_.included(NAME_CRITERIA, users()->name(i)))) {
-                    val.insert(iteminfo_pair(i, name_with_type(users()->name(i), NT_USER)));
+                    val.insert(iteminfo_pair(i, name_with_type(users()->name(i), NT_USER,
+                            static_cast<tagtype> (users()->accesslevel(i)))));
                 };
             }
     }
@@ -2640,7 +2648,8 @@ namespace dvnci {
         indx_set::const_iterator it = idset.begin();
         while (it != idset.end()) {
             if (users()->exists(*it)) {
-                val.insert(iteminfo_pair(*it, name_with_type(users()->name(*it), NT_USER)));
+                val.insert(iteminfo_pair(*it, name_with_type(users()->name(*it), NT_USER,
+                            static_cast<tagtype> (users()->accesslevel(*it)))));
             }
             it++;
         }
@@ -2708,6 +2717,55 @@ namespace dvnci {
         clientid_ = npos;
         return 0;
     }
+
+    ns_error tagsbase::add_user(const std::string& usr, const std::string& password, const std::string& access) {
+        if (!users()->exists(usr)) {
+            insert_user(usr);
+            indx clid = users()->operator()(usr);
+            if (clid != npos) {
+                acclevtype lv = str_to<acclevtype>(access, 0);
+                users()->password(clid, password);
+                users()->accesslevel(clid, lv);
+                users()->writetofile(clid);
+                return 0;
+            }
+            return ERROR_ENTNOEXIST;
+        }
+        return  ERROR_NAMEENTETY_DUBLICATE;
+    }
+
+    ns_error tagsbase::remove_user(const std::string& usr) {
+        if (users()->exists(usr)) {
+            delete_user(usr);
+            return 0;
+        }
+        return  ERROR_ENTNOEXIST;
+    }
+
+    ns_error tagsbase::changepassword_user(const std::string& usr, const std::string& password, const std::string& newpassword) {
+        if (users()->exists(usr)) {
+            indx clid = users()->operator()(usr);
+            if (users()->password(clid) == password) {
+                users()->password(clid, newpassword);
+                users()->writetofile(clid);                
+                return 0;
+            }
+        }
+        return  ERROR_ENTNOEXIST;
+    }
+
+    ns_error tagsbase::changeaccess_user(const std::string& usr, const std::string& access) {
+        if (users()->exists(usr)) {
+            indx clid = users()->operator()(usr);
+            acclevtype lv = str_to<acclevtype>(access, 0);
+            if (clid != npos) {
+                users()->accesslevel(clid, lv);
+                users()->writetofile(clid);                
+                return 0;
+            }
+        }
+        return ERROR_ENTNOEXIST;
+    }   
 
     indx tagsbase::userid() const {
         return clientid_;
