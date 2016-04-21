@@ -189,7 +189,7 @@ namespace dvnci {
          * @return является ли строка валидной директорией
          */
         static bool isdirectory(const fspath& path) {
-            return ((exists(path.string().c_str())) && (boost::filesystem::is_directory(path.string().c_str())));
+            return ((exists(path)) && (boost::filesystem::is_directory(path)));
         }
 
         /**
@@ -421,7 +421,7 @@ namespace dvnci {
         size_t readstructfromfile(void* dt, size_t offset = 0, size_t sz = 0);
 
         size_t filesize() const {
-            return filestream::filesize(filename().string());
+            return filestream::filesize(filename());
         }
 
         size_t writenosave_to_end(size_t sz);

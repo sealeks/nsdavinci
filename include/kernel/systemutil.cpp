@@ -14,18 +14,22 @@ namespace dvnci {
 
     size_t filestream::filesize(const fspath& filename) {
 
-        if (filestream::exists(filename.string().c_str())) {
-            boost::filesystem::path p(filename.string().c_str());
+        if (filestream::exists(filename)) {
+            boost::filesystem::path p(filename);
             return static_cast<size_t> (boost::filesystem::file_size(p));
         }
         return 0;
     }
 
     size_t filestream::read(const fspath& filename, void* addr, size_t offset, size_t size) {
-        size_t fsz = filestream::filesize(filename.string().c_str());
+        size_t fsz = filestream::filesize(filename);
         if (fsz) {
             if (offset > fsz) return 0;
-            std::ifstream ifs(filename.string().c_str(), std::ios::binary);
+#if defined(_MSC_VER) 
+            std::ifstream ifs(filename.wstring().c_str(), std::ios::binary);            
+#else
+            std::ifstream ifs(filename.string().c_str(), std::ios::binary);            
+#endif            
             if (!ifs)
                 return 0;
             if (offset)
@@ -42,7 +46,11 @@ namespace dvnci {
     size_t filestream::writestr(const fspath& filename, const void* addr, size_t offset, size_t size) {
         if (!size) return 0;
         std::ios_base::openmode mode = std::ios::binary | std::ios::trunc;
-        std::ofstream ofs(filename.string().c_str(), mode);
+#if defined(_MSC_VER) 
+            std::ofstream ofs(filename.wstring().c_str(), mode);            
+#else
+            std::ofstream ofs(filename.string().c_str(), mode);            
+#endif          
         if (!ofs)
             return 0;
         if (offset)
@@ -54,10 +62,14 @@ namespace dvnci {
 
     size_t filestream::write(const fspath& filename, const void* addr, size_t offset, size_t size) {
         if (!size) return 0;
-        size_t fsz = filestream::filesize(filename.string());
+        size_t fsz = filestream::filesize(filename);
         std::ios_base::openmode mode = std::ios::binary | std::ios::in;
         if (!fsz) mode = std::ios::binary | std::ios::trunc;
-        std::ofstream ofs(filename.string().c_str(), mode);
+#if defined(_MSC_VER) 
+            std::ofstream ofs(filename.wstring().c_str(), mode);            
+#else
+            std::ofstream ofs(filename.string().c_str(), mode);            
+#endif                
         if (!ofs)
             return 0;
         if (offset)
@@ -169,8 +181,8 @@ namespace dvnci {
     // util_static_size_shmemory        
 
     util_filemapmemory::util_filemapmemory(const std::string& name, const fspath& file, size_t sz) : util_memory(name, sz), filename_(file) {
-        if (filestream::exists(file.string())) {
-            size_t siz = filestream::filesize(file.string());
+        if (filestream::exists(file)) {
+            size_t siz = filestream::filesize(file);
             sz += siz;
             sz += sizeof (intern_header);
             size_ = sz;
@@ -179,7 +191,7 @@ namespace dvnci {
                     intern_hdr = new (get_address_internal()) intern_header;
                     INP_EXCLUSIVE_LOCK(filelock());
                     size_internal(size_);
-                    if (!filestream::read(file.string(), get_address(), 0, siz)) {
+                    if (!filestream::read(file, get_address(), 0, siz)) {
                         return;
                     }
                 } else {
@@ -204,25 +216,25 @@ namespace dvnci {
     size_t util_filemapmemory::writetofile(size_t offset, size_t sz) {
         if (!sz) return 0;
         INP_EXCLUSIVE_LOCK(filelock());
-        return filestream::write(filename().string(), (char*) get_address() + offset, offset, sz);
+        return filestream::write(filename(), (char*) get_address() + offset, offset, sz);
     }
 
     size_t util_filemapmemory::writestructtofile(const void* dt, size_t offset, size_t sz) {
         if (!sz) return 0;
         INP_EXCLUSIVE_LOCK(filelock());
-        return filestream::write(filename().string(), (const num8*) dt, offset, sz);
+        return filestream::write(filename(), (const num8*) dt, offset, sz);
     }
 
     size_t util_filemapmemory::readstructfromfile(void* dt, size_t offset, size_t sz) {
         if (!sz) return 0;
         INP_EXCLUSIVE_LOCK(filelock());
-        return filestream::read(filename().string(), (num8*) dt, offset, sz);
+        return filestream::read(filename(), (num8*) dt, offset, sz);
     }
 
     size_t util_filemapmemory::writenosave_to_end(size_t sz) {
         if (!sz) return 0;
         size_t offset = filesize();
-        return filestream::write(filename().string(), (num8*) get_address() + offset, offset, sz);
+        return filestream::write(filename(), (num8*) get_address() + offset, offset, sz);
     }
 
 
@@ -240,10 +252,10 @@ namespace dvnci {
     // filememorymap
 
     filememorymap::filememorymap(const fspath& filepth, const string& mapname, size_t exsize) {
-        if (!filestream::filesize(filepth.string())) {
+        if (!filestream::filesize(filepth)) {
             throw dvncierror(NS_ERROR_MAINFILENOTFOUND, filepth.string());
         }
-        utilptr = util_filemapmemory_ptr(new util_filemapmemory(mapname, filepth.string(), exsize));
+        utilptr = util_filemapmemory_ptr(new util_filemapmemory(mapname, filepth, exsize));
         if (!utilptr) {
             throw new dvncierror(NS_ERROR_MAPMEMORY, mapname);
         }
