@@ -500,7 +500,8 @@ namespace dvnci {
             map_.insert(wstringtranslate_pair("maintable.offmsg", "Сообщ. выкл."));
             map_.insert(wstringtranslate_pair("maintable.almsg", "Авар. сообщ."));
             map_.insert(wstringtranslate_pair("maintable.alconstmsg", "Трев. сообщ."));
-            map_.insert(wstringtranslate_pair("maintable.devdb", "devdb;"));
+            map_.insert(wstringtranslate_pair("maintable.devdb", "devdb"));
+            map_.insert(wstringtranslate_pair("maintable.value", "Значпение"));
             map_.insert(wstringtranslate_pair("grouptable.key", "Индекс"));
             map_.insert(wstringtranslate_pair("grouptable.name", "Имя"));
             map_.insert(wstringtranslate_pair("grouptable.appid", "Тип"));

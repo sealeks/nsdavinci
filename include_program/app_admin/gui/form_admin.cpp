@@ -975,7 +975,13 @@ namespace dvnci {
                             baseevent->curitem->clear_child();
                             baseevent->curitem->nodetp(NT_ROOT_NODEF);
                             curitem_ = baseevent->curitem;
+#if defined(_MSC_VER) 
+                            std::wstring rslt;
+                            dvnci::utf8_to_wstr(baseevent->parameter_str, rslt);
+                            setlocalbasepath(rslt);                            
+#else                            
                             setlocalbasepath(baseevent-> parameter_str);
+#endif                            
                             addserver(baseevent->curitem);}
                         break;}
 
@@ -994,8 +1000,15 @@ namespace dvnci {
                             addloglist(baseevent->curitem->intf()->errors(), tpevent);
                             baseevent->curitem->clear_child();
                             baseevent->curitem->nodetp(NT_ROOT_NODEF);
+#if defined(_MSC_VER) 
+                            std::wstring rslt;
+                            dvnci::utf8_to_wstr(baseevent->parameter_str, rslt);
+                            setlocalbasepath(rslt);
+                            tagsbase::writezero(fspath(rslt));
+#else
                             setlocalbasepath(baseevent->parameter_str);
                             tagsbase::writezero(fspath(baseevent-> parameter_str));
+#endif                            
                             addserver(baseevent->curitem);}
                         break;}
 

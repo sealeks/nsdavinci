@@ -69,7 +69,7 @@ namespace dvnci {
                     const QModelIndex &parent ) const;
 
             int columnCount(const QModelIndex &parent  = QModelIndex() ) const {
-                return 22;};
+                return 24;};
             virtual Qt::ItemFlags flags(const QModelIndex &index) const;
             virtual bool setData(const QModelIndex &id, const QVariant &val, int role);
             void removenoactive();

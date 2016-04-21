@@ -270,12 +270,16 @@ namespace dvnci {
                             break;}
                         case 22:{
                             tmp = to_str(((tagstruct*) & base_->tags.at(id).tginfo)->devdb()).c_str();
-                            break;}}}}
+                            break;}                        
+                        case 23:{
+                            tmp = ((tagstruct*)& base_->tags.at(id).tginfo)->value_str().c_str();
+                            break;}
+                    }}}
             return tmp;}
 
         Qt::ItemFlags importtagmodel::flags(const QModelIndex &index) const {
             if (!index.isValid())  return 0;
-            if ((index.column() == 0) || ((index.column() >= 17)  && (index.column() <= 22)))
+            if ((index.column() == 0) || ((index.column() >= 17)  && (index.column() <= 23)))
                 return (  Qt::ItemIsUserCheckable |   Qt::ItemIsEnabled );
             else return ( Qt::ItemIsEditable | Qt::ItemIsEnabled  );
             ;}
@@ -308,7 +312,8 @@ namespace dvnci {
                 case 19: return QVariant(qtstr_translate("maintable.offmsg"));
                 case 20: return QVariant(qtstr_translate("maintable.almsg"));
                 case 21: return QVariant(qtstr_translate("maintable.alconstmsg"));
-                case 22: return QVariant(qtstr_translate("maintable.devdb"));}
+                case 22: return QVariant(qtstr_translate("maintable.devdb"));
+                case 23: return QVariant(qtstr_translate("maintable.value"));}
 
             return  QVariant();}
 
@@ -388,6 +393,9 @@ namespace dvnci {
                         break;}
                     case 22:{
                         ((tagstruct*) & base_->tags.at(id).tginfo)->devdb(str_to<double>(val.toString().toStdString()));
+                        break;}
+                    case 23:{
+                        ((tagstruct*) & base_->tags.at(id).tginfo)->value(val.toString().toStdString());
                         break;}}}
             return true;}
 
