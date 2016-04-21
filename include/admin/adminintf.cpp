@@ -408,6 +408,8 @@ namespace dvnci {
                         tmp.onmsg = tag(it->first).onmsg();
                         tmp.offmsg = tag(it->first).offmsg();
                         tmp.almsg = tag(it->first).alarmmsg();
+                        if (!tag(it->first).value().empty())
+                            ((tagstruct*) & tmp.tginfo)->value(tag(it->first).value());
                         ((tagstruct*) & tmp.tginfo)->minraw(tag(it->first).minraw());
                         ((tagstruct*) & tmp.tginfo)->maxraw(tag(it->first).maxraw());
                         ((tagstruct*) & tmp.tginfo)->mineu(tag(it->first).mineu());
@@ -537,6 +539,7 @@ namespace dvnci {
                         tag(pair_.first).onmsg(it->onmsg);
                         tag(pair_.first).offmsg(it->offmsg);
                         tag(pair_.first).alarmmsg(it->almsg);
+                        tag(pair_.first).value(((tagstruct*)& it->tginfo)->value_str());
                         tag(pair_.first).type(((tagstruct*) & it->tginfo)->type());
                         tag(pair_.first).logged(((tagstruct*) & it->tginfo)->logged());
                         tag(pair_.first).logdb(to_str<double>(((tagstruct*) & it->tginfo)->logdb()));

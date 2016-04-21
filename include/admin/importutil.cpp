@@ -326,9 +326,12 @@ struct TDocV {
                                         ((tagstruct*) & tmpstruct.tginfo)->alarmcase(((tmpitem.size() > 18)) ? str_to<int>(trim_copy(tmpitem.at(18)), 0) : 0);
                                     if (((tmpitem.size() > 19))) ((tagstruct*) & tmpstruct.tginfo)->alarmconstr(trim_copy(tmpitem.at(19)));
                                     if ((old) && ((tmpitem.size() > 21))) ((tagstruct*) & tmpstruct.tginfo)->devdb(str_to<double>(trim_copy(tmpitem.at(21))));
-                                    if (old) ((tagstruct*) & tmpstruct.tginfo)->alarmlevel(((tmpitem.size() > 15) && (lower_copy(trim_copy(tmpitem.at(15))) != "true")) ? 0 :
+                                    /*if (old) ((tagstruct*) & tmpstruct.tginfo)->alarmlevel(((tmpitem.size() > 15) && (lower_copy(trim_copy(tmpitem.at(15))) != "true")) ? 0 :
                                             ((tmpitem.size() > 17) && (lower_copy(trim_copy(tmpitem.at(17))) == "600")) ? altAccident : altWarning);
-                                    else ((tagstruct*) & tmpstruct.tginfo)->alarmlevel(str_to<int>(lower_copy(trim_copy(tmpitem.at(17))), 0));
+                                    else*/
+                                    if ((tmpitem.size() > 15) && !trim_copy(tmpitem.at(15)).empty())
+                                        ((tagstruct*) & tmpstruct.tginfo)->value(trim_copy(tmpitem.at(15)));
+                                    ((tagstruct*) & tmpstruct.tginfo)->alarmlevel(str_to<int>(lower_copy(trim_copy(tmpitem.at(17))), 0));
                                     if (!old) ((tagstruct*) & tmpstruct.tginfo)->rwtype((tmpitem.size() > 21) ? str_to<int>(trim_copy(tmpitem.at(21)), 0) : 0);
                                     tmpstruct.changeset = MASK_RT_EXPORT1;
                                     base.tags.push_back(tmpstruct);
@@ -514,7 +517,7 @@ struct TDocV {
 
         bool csv_setexportdata(std::string filepath, base_data& base) {
             std::string outdata = "Name;Group;Item;Comment;Logged;Type;LogDB;MinRaw;MaxRaw;MinEu;MaxEu;OnMsged;OnMsg;offMsged;"
-                    "OffMsg;;AlarmMsg;AlarmLevel;AlarmCase;AlarmConst;DeadBaund;EU;RW;\n";
+                    "OffMsg;Val;AlarmMsg;AlarmLevel;AlarmCase;AlarmConst;DeadBaund;EU;RW;\n";
             for (vect_tag_data::iterator it = base.tags.begin(); it != base.tags.end(); ++it) {
                 std::string tmpoutdata = "";
                 tmpoutdata += it->name + ";";
@@ -538,7 +541,7 @@ struct TDocV {
                     tmpoutdata += "true;";
                 else tmpoutdata += "false;";
                 tmpoutdata += it->offmsg + ";";
-                tmpoutdata += ";";
+                tmpoutdata += ((tagstruct*)& it->tginfo)->value_str() + (";");
 
                 tmpoutdata += it->almsg + ";";
                 tmpoutdata += to_str(((tagstruct*) & it->tginfo)->alarmlevel()) + ";";
