@@ -279,8 +279,7 @@ int main(int argc, char** argv) {
                 return tst ? 1 : 0;
             }
             return 1;
-        }
-        else if (params[0].find("w") != std::string::npos) {
+        } else if (params[0].find("w") != std::string::npos) {
             if (params.size() > 1) {
                 bool tst = write_REG(params[1].c_str());
                 return tst ? 1 : 0;
