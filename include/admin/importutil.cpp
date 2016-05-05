@@ -6,7 +6,6 @@
  */
 
 #include <admin/importutil.h>
-#include <bits/basic_string.h>
 
 
 using namespace pugi;
@@ -277,9 +276,9 @@ struct TDocV {
 
         static std::string correct_csv_escapesec(const std::string& vl) {
             std::string rslt = vl;
-            if (!rslt.length() > 1) {
+            if (rslt.length() > 1) {
                 if (rslt[0] == '"' && (*rslt.rbegin()) == '"')
-                    rslt = rslt.substr(1, rslt.length() - 1);
+                    rslt = rslt.substr(1, rslt.length() - 2);
                 if (!rslt.empty()) {
                     boost::algorithm::replace_all(rslt, "\";\"", ";");
                     boost::algorithm::replace_all(rslt, "\",\"", ",");
