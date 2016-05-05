@@ -5,6 +5,9 @@
 #undef min
 
 namespace dvnci {
+    
+    const bool& globalFalse=false;
+    const bool& globalTrue=true;    
 
     using namespace std;
 
@@ -720,7 +723,7 @@ namespace dvnci {
     }
 
     template<> const bool& from_num64_cast<bool>(const num64& val) {
-        return ((ptype_punned) (&val))->bl;
+        return ((ptype_punned) (&val))->n64 ? globalTrue :  globalFalse;
     }
 
     template<> const num64& from_num64_cast<num64>(const num64& val) {
