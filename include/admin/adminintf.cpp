@@ -539,8 +539,8 @@ namespace dvnci {
                         tag(pair_.first).onmsg(it->onmsg);
                         tag(pair_.first).offmsg(it->offmsg);
                         tag(pair_.first).alarmmsg(it->almsg);
+                        tag(pair_.first).type(((tagstruct*)& it->tginfo)->type());
                         tag(pair_.first).value(((tagstruct*)& it->tginfo)->value_str());
-                        tag(pair_.first).type(((tagstruct*) & it->tginfo)->type());
                         tag(pair_.first).logged(((tagstruct*) & it->tginfo)->logged());
                         tag(pair_.first).logdb(to_str<double>(((tagstruct*) & it->tginfo)->logdb()));
                         tag(pair_.first).mineu(((tagstruct*) & it->tginfo)->mineu_str());
