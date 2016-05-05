@@ -6,6 +6,7 @@
  */
 
 #include <admin/importutil.h>
+#include <bits/basic_string.h>
 
 
 using namespace pugi;
@@ -274,6 +275,28 @@ struct TDocV {
             return false;
         }
 
+        static std::string correct_csv_escapesec(const std::string& vl) {
+            std::string rslt = vl;
+            if (!rslt.length() > 1) {
+                if (rslt[0] == '"' && (*rslt.rbegin()) == '"')
+                    rslt = rslt.substr(1, rslt.length() - 1);
+                if (!rslt.empty()) {
+                    boost::algorithm::replace_all(rslt, "\";\"", ";");
+                    boost::algorithm::replace_all(rslt, "\",\"", ",");
+                    boost::algorithm::replace_all(rslt, "\"\n\"", "\n");
+                    boost::algorithm::replace_all(rslt, "\"\"", "\"");
+                }
+            }
+            return rslt;
+        }
+        
+        static void csv_split_str(std::string vl, const std::string& spl, str_vect& tmprow) {
+            boost::algorithm::replace_all(vl, "\",\"", ",");
+            boost::algorithm::replace_all(vl, "\"\n\"", "\n");
+            boost::algorithm::replace_all(vl, "\"\"", "\"");
+            split_str(vl, spl, tmprow);
+        }        
+
         bool csv_getimportdata(std::string filepath, base_data& base, int& loc, std::string group) {
             loc = NS_CODPAGE_LOC8;
             const int sz = filestream::filesize(filepath);
@@ -285,25 +308,25 @@ struct TDocV {
                 if (filestream::read(filepath, (void*) data) > 0) {
                     std::string data_str(data);
                     str_vect tmprow;
-                    split_str(data_str, "\n", tmprow);
+                    csv_split_str(data_str, "\n", tmprow);
 
                     for (str_vect::iterator it = tmprow.begin(); it != tmprow.end(); ++it) {
                         if (it == tmprow.begin()) old = (!boost::find_first((*it), "Type"));
                         if (it != tmprow.begin()) {
 
                             str_vect tmpitem;
-                            split_str(*it, ";", tmpitem);
+                            csv_split_str(*it, ";", tmpitem);
                             if (tmpitem.size() > 0) {
                                 if ((trim_copy(tmpitem.at(0)) != "") && ((it + 1) != tmprow.end())) {
                                     tag_data tmpstruct;
                                     tmpstruct.name = trim_copy(tmpitem.at(0));
                                     tmpstruct.group = (group != "") ? group : (tmpitem.size() > 1) ? trim_copy(tmpitem.at(1)) : "";
-                                    tmpstruct.comment = (tmpitem.size() > 3) ? trim_copy(tmpitem.at(3)) : "";
-                                    tmpstruct.bind = (tmpitem.size() > 2) ? trim_copy(tmpitem.at(2)) : "";
-                                    tmpstruct.ue = (tmpitem.size() > 21) ? trim_copy(tmpitem.at(21)) : "";
-                                    tmpstruct.almsg = (tmpitem.size() > 16) ? trim_copy(tmpitem.at(16)) : "";
-                                    tmpstruct.offmsg = (tmpitem.size() > 14) ? trim_copy(tmpitem.at(14)) : "";
-                                    tmpstruct.onmsg = (tmpitem.size() > 12) ? trim_copy(tmpitem.at(12)) : "";
+                                    tmpstruct.comment = correct_csv_escapesec((tmpitem.size() > 3) ? trim_copy(tmpitem.at(3)) : "");
+                                    tmpstruct.bind = correct_csv_escapesec((tmpitem.size() > 2) ? trim_copy(tmpitem.at(2)) : "");
+                                    tmpstruct.ue = correct_csv_escapesec((tmpitem.size() > 21) ? trim_copy(tmpitem.at(21)) : "");
+                                    tmpstruct.almsg = correct_csv_escapesec((tmpitem.size() > 16) ? trim_copy(tmpitem.at(16)) : "");
+                                    tmpstruct.offmsg = correct_csv_escapesec((tmpitem.size() > 14) ? trim_copy(tmpitem.at(14)) : "");
+                                    tmpstruct.onmsg = correct_csv_escapesec((tmpitem.size() > 12) ? trim_copy(tmpitem.at(12)) : "");
                                     if (old) ((tagstruct*) & tmpstruct.tginfo)->type((tmpitem.size() > 5) ? oldtypetonew(str_to<int>(trim_copy(tmpitem.at(5)), 0)) : 0);
                                     else ((tagstruct*) & tmpstruct.tginfo)->type((tmpitem.size() > 5) ? str_to<int>(trim_copy(tmpitem.at(5)), 0) : 0);
                                     ((tagstruct*) & tmpstruct.tginfo)->minraw(trim_copy(tmpitem.at(7)));
@@ -330,7 +353,7 @@ struct TDocV {
                                             ((tmpitem.size() > 17) && (lower_copy(trim_copy(tmpitem.at(17))) == "600")) ? altAccident : altWarning);
                                     else*/
                                     if ((tmpitem.size() > 15) && !trim_copy(tmpitem.at(15)).empty())
-                                        ((tagstruct*) & tmpstruct.tginfo)->value(trim_copy(tmpitem.at(15)));
+                                        ((tagstruct*) & tmpstruct.tginfo)->value(correct_csv_escapesec(trim_copy(tmpitem.at(15))));
                                     ((tagstruct*) & tmpstruct.tginfo)->alarmlevel(str_to<int>(lower_copy(trim_copy(tmpitem.at(17))), 0));
                                     if (!old) ((tagstruct*) & tmpstruct.tginfo)->rwtype((tmpitem.size() > 21) ? str_to<int>(trim_copy(tmpitem.at(21)), 0) : 0);
                                     tmpstruct.changeset = MASK_RT_EXPORT1;
@@ -515,6 +538,17 @@ struct TDocV {
             return true;
         }
 
+        static std::string add_csv_escapesec(const std::string& vl) {
+            std::string rslt = vl;
+            if (!rslt.empty()) {
+                boost::algorithm::replace_all(rslt, ";", "\";\"");
+                boost::algorithm::replace_all(rslt, ",", "\",\"");
+                boost::algorithm::replace_all(rslt, "\n", "\"\n\"");
+                boost::algorithm::replace_all(rslt, "\"", "\"\"");
+            }
+            return rslt;
+        }        
+
         bool csv_setexportdata(std::string filepath, base_data& base) {
             std::string outdata = "Name;Group;Item;Comment;Logged;Type;LogDB;MinRaw;MaxRaw;MinEu;MaxEu;OnMsged;OnMsg;offMsged;"
                     "OffMsg;Val;AlarmMsg;AlarmLevel;AlarmCase;AlarmConst;DeadBaund;EU;RW;\n";
@@ -522,8 +556,8 @@ struct TDocV {
                 std::string tmpoutdata = "";
                 tmpoutdata += it->name + ";";
                 tmpoutdata += it->group + ";";
-                tmpoutdata += it->bind + ";";
-                tmpoutdata += it->comment + ";";
+                tmpoutdata += add_csv_escapesec(it->bind) + ";";
+                tmpoutdata += add_csv_escapesec(it->comment) + ";";
                 if (((tagstruct*) & it->tginfo)->logged())
                     tmpoutdata += "true;";
                 else tmpoutdata += "false;";
@@ -536,19 +570,19 @@ struct TDocV {
                 if (((tagstruct*) & it->tginfo)->onmsged())
                     tmpoutdata += "true;";
                 else tmpoutdata += "false;";
-                tmpoutdata += it->onmsg + ";";
+                tmpoutdata += add_csv_escapesec(it->onmsg) + ";";
                 if (((tagstruct*) & it->tginfo)->offmsged())
                     tmpoutdata += "true;";
                 else tmpoutdata += "false;";
-                tmpoutdata += it->offmsg + ";";
-                tmpoutdata += ((tagstruct*)& it->tginfo)->value_str() + (";");
+                tmpoutdata += add_csv_escapesec(it->offmsg) + ";";
+                tmpoutdata += add_csv_escapesec(((tagstruct*)& it->tginfo)->value_str()) + (";");
 
-                tmpoutdata += it->almsg + ";";
+                tmpoutdata +=add_csv_escapesec(it->almsg) + ";";
                 tmpoutdata += to_str(((tagstruct*) & it->tginfo)->alarmlevel()) + ";";
                 tmpoutdata += to_str(((tagstruct*) & it->tginfo)->alarmcase()) + ";";
                 tmpoutdata += to_str(((tagstruct*) & it->tginfo)->alarmconst_str()) + ";";
                 tmpoutdata += to_str(((tagstruct*) & it->tginfo)->devdb()) + ";";
-                tmpoutdata += it->ue + ";" ;
+                tmpoutdata += add_csv_escapesec(it->ue) + ";" ;
                 tmpoutdata += to_str(((tagstruct*) & it->tginfo)->rwtype()) + ";\n";
                 outdata += tmpoutdata;
             }
