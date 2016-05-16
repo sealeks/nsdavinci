@@ -8,8 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
-#ifndef HTTP_SERVER2_IO_SERVICE_POOL_HPP
-#define HTTP_SERVER2_IO_SERVICE_POOL_HPP
+#ifndef HTTP_SERVER_IO_SERVICE_POOL_HPP
+#define HTTP_SERVER_IO_SERVICE_POOL_HPP
 
 #include <boost/asio.hpp>
 #include <vector>
@@ -17,40 +17,41 @@
 #include <boost/shared_ptr.hpp>
 
 namespace http {
-namespace server2 {
+    namespace server {
 
-/// A pool of io_service objects.
-class io_service_pool
-  : private boost::noncopyable
-{
-public:
-  /// Construct the io_service pool.
-  explicit io_service_pool(std::size_t pool_size);
+        /// A pool of io_service objects.
 
-  /// Run all io_service objects in the pool.
-  void run();
+        class io_service_pool
+        : private boost::noncopyable {
 
-  /// Stop all io_service objects in the pool.
-  void stop();
+        public:
+            /// Construct the io_service pool.
+            explicit io_service_pool(std::size_t pool_size);
 
-  /// Get an io_service to use.
-  boost::asio::io_service& get_io_service();
+            /// Run all io_service objects in the pool.
+            void run();
 
-private:
-  typedef boost::shared_ptr<boost::asio::io_service> io_service_ptr;
-  typedef boost::shared_ptr<boost::asio::io_service::work> work_ptr;
+            /// Stop all io_service objects in the pool.
+            void stop();
 
-  /// The pool of io_services.
-  std::vector<io_service_ptr> io_services_;
+            /// Get an io_service to use.
+            boost::asio::io_service& get_io_service();
 
-  /// The work that keeps the io_services running.
-  std::vector<work_ptr> work_;
+        private:
+            typedef boost::shared_ptr<boost::asio::io_service> io_service_ptr;
+            typedef boost::shared_ptr<boost::asio::io_service::work> work_ptr;
 
-  /// The next io_service to use for a connection.
-  std::size_t next_io_service_;
-};
+            /// The pool of io_services.
+            std::vector<io_service_ptr> io_services_;
 
-} // namespace server2
+            /// The work that keeps the io_services running.
+            std::vector<work_ptr> work_;
+
+            /// The next io_service to use for a connection.
+            std::size_t next_io_service_;
+        };
+
+    } // namespace server
 } // namespace http
 
-#endif // HTTP_SERVER2_IO_SERVICE_POOL_HPP
+#endif // HTTP_SERVER_IO_SERVICE_POOL_HPP
