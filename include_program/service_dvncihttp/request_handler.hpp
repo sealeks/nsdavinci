@@ -14,6 +14,8 @@
 #include <string>
 #include <boost/noncopyable.hpp>
 
+#include "request_executor.hpp"
+
 namespace http {
     namespace server {
 
@@ -42,8 +44,8 @@ namespace http {
             /// invalid.
             static bool url_decode(const std::string& in, std::string& out);
         };
-
-    } // namespace server
-} // namespace http
+                
+    } 
+} 
 
 #endif // HTTP_SERVER_REQUEST_HANDLER_HPP

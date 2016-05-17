@@ -35,7 +35,7 @@ namespace http {
                 return;
             }
 
-            DEBUG_VAL_DVNCI(request_path);
+            //DEBUG_VAL_DVNCI(request_path);
 
             // Request path must be absolute and not contain "..".
             if (request_path.empty() || request_path[0] != '/'
@@ -44,6 +44,8 @@ namespace http {
                 return;
             }
 
+            boost::algorithm::trim(request_path);
+            
             // If path ends in slash (i.e. is a directory) then add "index.html".
             if (request_path[request_path.size() - 1] == '/') {
                 request_path += "index.html";
@@ -59,15 +61,21 @@ namespace http {
 
             // Open the file to send back.
             std::string full_path = doc_root_ + request_path;
-            if (request_path == "/data/initreq.json") {
-                DEBUG_VAL_DVNCI(req.method)
-            }
+
 
             std::ifstream is(full_path.c_str(), std::ios::in | std::ios::binary);
             if (!is) {
                 rep = reply::stock_reply(reply::not_found);
                 return;
             }
+            
+             if ((request_path.find("/data")==0) && (handle_datarequest(req, rep))) {
+                 return;
+             }
+            
+            /*if (request_path == "/data/initreq.json") {
+                DEBUG_VAL_DVNCI(req.method)
+            }*/            
 
             // Fill out the reply to be sent to the client.
             rep.status = reply::ok;
@@ -108,8 +116,13 @@ namespace http {
         }
                 
         bool request_handler::handle_datarequest(const request& req, reply& rep) {
+            if (!req.content.empty()){
+                std::string reqcontent=req.content;
+                DEBUG_VAL_DVNCI(reqcontent);
+                //return true;
+            }
             return false;
-        }      
-
+        }    
+        
     } // namespace server
 } // namespace http
