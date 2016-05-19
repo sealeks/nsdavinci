@@ -12,19 +12,55 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <boost/lexical_cast.hpp>
+
 #include "mime_types.hpp"
 #include "reply.hpp"
 #include "request.hpp"
 
-#include <kernel/constdef.h>
+
+/*
+ Type request:
+           
+ 1. init
+  
+                                        user                                                                                                                                      server
+                                  {  "init-req":  "0"    }                                                          ->           
+                                                                                                                                                    <-              {"init-resp" : "RESPID"}
+ 
+ 2. process
+ 
+    2.1 add tags in request
+ 
+              { "session" : "RESPID" , add-tag : [... added tags list...] }         ->
+     2.2                             
+ 
+ 
+ */
 
 
 namespace http {
     namespace server {
 
-        request_handler::request_handler(const std::string& doc_root)
-        : doc_root_(doc_root) {
+        namespace ptree = boost::property_tree;
+
+        typedef int operationid_type;
+        typedef std::map<std::string, operationid_type> operationmap;
+
+        const operationid_type SESSION_REQUEST = 1;
+        const operationid_type INIT_REQUEST = 2;
+        const operationid_type ADDTAG_REQUEST = 3;
+        const operationid_type REMOVETAG_REQUEST = 4;
+        const operationid_type UPDATE_REQUEST = 5;
+
+        const std::string& SESSION_REQUEST_S = "session";
+        const std::string& INIT_REQUEST_S = "init-req";
+        const std::string& INIT_RESPONSE_S = "init-resp";
+        const std::string& ADDTAG_REQUEST_S = "add-tags";
+        const std::string& REMOVETAG_REQUEST_S = "remove-tags";
+        const std::string& UPDATE_REQUEST_S = "get-update";
+
+        request_handler::request_handler(const std::string& doc_root, http_session_manager_ptr mngr)
+        : doc_root_(doc_root), manager_(mngr) {
         }
 
         void request_handler::handle_request(const request& req, reply& rep) {
@@ -45,7 +81,7 @@ namespace http {
             }
 
             boost::algorithm::trim(request_path);
-            
+
             // If path ends in slash (i.e. is a directory) then add "index.html".
             if (request_path[request_path.size() - 1] == '/') {
                 request_path += "index.html";
@@ -68,14 +104,11 @@ namespace http {
                 rep = reply::stock_reply(reply::not_found);
                 return;
             }
-            
-             if ((request_path.find("/data")==0) && (handle_datarequest(req, rep))) {
-                 return;
-             }
-            
-            /*if (request_path == "/data/initreq.json") {
-                DEBUG_VAL_DVNCI(req.method)
-            }*/            
+
+            if ((request_path.find("/data") == 0) && (handle_datarequest(req, rep))) {
+                return;
+            }
+
 
             // Fill out the reply to be sent to the client.
             rep.status = reply::ok;
@@ -114,15 +147,80 @@ namespace http {
             }
             return true;
         }
-                
+
         bool request_handler::handle_datarequest(const request& req, reply& rep) {
-            if (!req.content.empty()){
-                std::string reqcontent=req.content;
-                DEBUG_VAL_DVNCI(reqcontent);
-                //return true;
+            //return false;
+            if (!req.content.empty()) {
+
+                std::string resp;
+                if (proccess_request(req.content, resp, manager_)) {
+
+                    rep.status = reply::ok;
+                    rep.content = resp;
+                    rep.headers.resize(2);
+                    rep.headers[0].name = "Content-Length";
+                    rep.headers[0].value = boost::lexical_cast<std::string>(rep.content.size());
+                    rep.headers[1].name = "Content-Type";
+                    rep.headers[1].value = "application/json";
+                    return true;
+
+                }
             }
             return false;
-        }    
-        
+        }
+
+        bool proccess_request(const std::string& req, std::string& resp, http_session_manager_ptr self) {
+
+            ptree::ptree req_tree;
+            ptree::ptree resp_tree;
+
+            std::stringstream ss;
+            std::stringstream so;
+            ss << req;
+
+            ptree::json_parser::read_json(ss, req_tree);
+
+            if (proccess_requests(req_tree, resp_tree, self)) {
+
+                ss.clear();
+                ptree::json_parser::write_json(so, resp_tree);
+                resp = so.str();
+
+                return true;
+
+            }
+
+            return false;
+        }
+
+        bool proccess_requests(const ptree::ptree& req, ptree::ptree& resp, http_session_manager_ptr self) {
+
+            bool result = false;
+            sessionid_type sid = 0;
+
+            for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
+                if (it->first == INIT_REQUEST_S) {
+                    if (sid = self->create()) {
+                        resp.put(INIT_RESPONSE_S, sid);
+                        result = true;
+                    }
+                } else if (it->first == SESSION_REQUEST_S) {
+
+                } else {
+
+                }
+            }
+
+            return result;
+        }
+
+        bool proccess_request(const boost::property_tree::ptree& req, boost::property_tree::ptree& resp, http_session_manager_ptr self) {
+            return false;
+        }
+
+
+
+
+
     } // namespace server
 } // namespace http

@@ -58,6 +58,9 @@ namespace http {
 
             /// The next connection to be accepted.
             connection_ptr new_connection_;
+            
+            // Session_manager
+            http_session_manager_ptr manager_;            
 
             /// The handler for all incoming requests.
             request_handler request_handler_;

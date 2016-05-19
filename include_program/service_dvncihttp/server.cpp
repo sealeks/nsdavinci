@@ -20,7 +20,8 @@ namespace http {
         signals_(io_service_pool_.get_io_service()),
         acceptor_(io_service_pool_.get_io_service()),
         new_connection_(),
-        request_handler_(doc_root) {
+        manager_( new http_session_manager()),
+        request_handler_(doc_root, manager_){
             // Register to handle the signals that indicate when the server should exit.
             // It is safe to register for the same signal multiple times in a program,
             // provided all registration for the specified signal is made through Asio.
