@@ -96,9 +96,11 @@ namespace http {
 
             tagset_type& errortag() {
                 return errortag_;
-            }       
+            } 
             
+            void addtags(const tagset_type& vl);
             
+            void removetags(const tagset_type& vl);            
 
         private:
             sessionid_type id_;
@@ -138,10 +140,11 @@ namespace http {
 
             sessionid_type create();   
             
+            http_session_ptr get(sessionid_type id);            
+            
             
         protected:
             
-            http_session_ptr get(sessionid_type id);
             
         private:        
             

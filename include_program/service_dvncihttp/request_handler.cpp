@@ -182,7 +182,6 @@ namespace http {
 
             if (proccess_requests(req_tree, resp_tree, self)) {
 
-                ss.clear();
                 ptree::json_parser::write_json(so, resp_tree);
                 resp = so.str();
 
@@ -192,31 +191,59 @@ namespace http {
 
             return false;
         }
+        
+        static bool get_tags_list(const boost::property_tree::ptree& req, tagset_type& tgs){
+            for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) 
+                tgs.insert(it->second.get_value<std::string>());
+            return !tgs.empty();
+        }
 
         bool proccess_requests(const ptree::ptree& req, ptree::ptree& resp, http_session_manager_ptr self) {
 
             bool result = false;
             sessionid_type sid = 0;
+            http_session_ptr sess;
 
-            for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
-                if (it->first == INIT_REQUEST_S) {
-                    if (sid = self->create()) {
-                        resp.put(INIT_RESPONSE_S, sid);
-                        result = true;
+            if (self) {
+                for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
+                    if (it->first == INIT_REQUEST_S) {
+                        if (sid = self->create()) {
+                            resp.put(INIT_RESPONSE_S, sid);
+                            result = true;
+                        }
+                    } else if (it->first == SESSION_REQUEST_S) {
+                        sid = it->second.get_value<sessionid_type>();
+                        sess = self->get(sid);
+                    } else if (it->first == UPDATE_REQUEST_S) {
+                        if (sess) {
+                            resp.put(INIT_RESPONSE_S, sid);
+                            result = true;
+                        }
+                    } else if (it->first == ADDTAG_REQUEST_S) {
+                        if (sess) {
+                            tagset_type tgs;
+                            if (get_tags_list(it->second, tgs))
+                                sess->addtags(tgs);
+                            resp.put(INIT_RESPONSE_S, sid);
+                            result = true;
+                        }
+                    } else if (it->first == REMOVETAG_REQUEST_S) {
+                        if (sess) {
+                            tagset_type tgs;
+                            if (get_tags_list(it->second, tgs))
+                                sess->removetags(tgs);
+                            resp.put(INIT_RESPONSE_S, sid);
+                            result = true;
+                        }
                     }
-                } else if (it->first == SESSION_REQUEST_S) {
-
-                } else {
-
                 }
             }
-
             return result;
         }
+        
 
-        bool proccess_request(const boost::property_tree::ptree& req, boost::property_tree::ptree& resp, http_session_manager_ptr self) {
-            return false;
-        }
+
+
 
 
 

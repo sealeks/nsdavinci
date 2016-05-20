@@ -45,6 +45,37 @@ namespace http {
         }
                 
         
+        
+        
+        
+        
+        ////////////////////////////////////////////////////////
+        //  http_session
+        ////////////////////////////////////////////////////////           
+
+        void http_session::addtags(const tagset_type& vl) {
+            std::cout << "add: ";
+            for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
+                if (it == vl.begin())
+                    std::cout << *it;
+                else
+                    std::cout << ", " << *it;
+            }
+            std::cout << std::endl;
+        }
+
+        void http_session::removetags(const tagset_type& vl) {
+            std::cout << "remove: ";
+            for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
+                if (it == vl.begin())
+                    std::cout << *it;
+                else
+                    std::cout << ", " << *it;
+            }
+            std::cout << std::endl;
+        }           
+        
+        
        ////////////////////////////////////////////////////////
         //  http_session_manager
         ////////////////////////////////////////////////////////    

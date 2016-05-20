@@ -55,8 +55,7 @@ namespace http {
         
         
         bool proccess_request(const std::string& req, std::string& resp, http_session_manager_ptr self);    
-        bool proccess_requests(const boost::property_tree::ptree& req, boost::property_tree::ptree& resp, http_session_manager_ptr self);
-        bool proccess_request(const boost::property_tree::ptree& req, boost::property_tree::ptree& resp, http_session_manager_ptr self);        
+        bool proccess_requests(const boost::property_tree::ptree& req, boost::property_tree::ptree& resp, http_session_manager_ptr self);      
                 
     } 
 } 
