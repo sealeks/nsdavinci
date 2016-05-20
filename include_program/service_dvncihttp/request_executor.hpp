@@ -20,12 +20,17 @@
 #include <kernel/factory.h>
 #include <custom/gui_executor.h>
 
+#include <boost/enable_shared_from_this.hpp>
+
 namespace http {
     namespace server {
      
 
         typedef dvnci::custom::gui_executor<dvnci::tagsbase > http_gui_executor;
-        typedef callable_shared_ptr<http_gui_executor> http_executor_ptr;          
+        typedef callable_shared_ptr<http_gui_executor> http_executor_ptr;        
+        
+        class http_session;
+        typedef boost::shared_ptr<http_session> http_session_ptr;
         
         ////////////////////////////////////////////////////////
         //  http_terminated_thread
@@ -42,6 +47,10 @@ namespace http {
                     inf.terminate();
                 }
                 th.join();
+            }
+            
+            http_executor_ptr intf(){
+                return inf;
             }
 
         private:
@@ -65,6 +74,28 @@ namespace http {
         
         
         ////////////////////////////////////////////////////////
+        //  http_base_listener
+        ////////////////////////////////////////////////////////         
+
+        class http_expression_listener : public dvnci::expression_listener {
+
+        public:
+
+            http_expression_listener(const std::string& exp, http_session_ptr sess);
+
+            virtual ~http_expression_listener() {
+            }
+
+            virtual void event(const dvnci::short_value& val);
+            
+        private:
+            std::string expr;
+            http_session_ptr session;
+        };
+        
+        
+        
+        ////////////////////////////////////////////////////////
         //  http_session
         ////////////////////////////////////////////////////////       
         
@@ -76,7 +107,8 @@ namespace http {
         typedef std::map<std::string, value_type> valuemap_type;        
         
         
-        class http_session {
+        class http_session : 
+        public boost::enable_shared_from_this<http_session>{
                   
         public:
             
@@ -100,7 +132,13 @@ namespace http {
             
             void addtags(const tagset_type& vl);
             
-            void removetags(const tagset_type& vl);            
+            void removetags(const tagset_type& vl);         
+            
+            void call();             
+            
+        protected:
+
+            http_executor_ptr intf();           
 
         private:
             sessionid_type id_;

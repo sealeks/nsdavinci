@@ -45,7 +45,21 @@ namespace http {
         }
                 
         
-        
+        ////////////////////////////////////////////////////////
+        //  http_base_listener
+        ////////////////////////////////////////////////////////         
+
+       http_expression_listener::http_expression_listener(const std::string& exp, http_session_ptr sess) :
+        dvnci::expression_listener(), expr(exp), session(sess) {
+        }
+
+        void http_expression_listener::event(const dvnci::short_value& val) {
+            if (session){
+                session->updatelist()[expr]=val;
+            }
+        }
+            
+
         
         
         
@@ -54,17 +68,25 @@ namespace http {
         ////////////////////////////////////////////////////////           
 
         void http_session::addtags(const tagset_type& vl) {
+            http_executor_ptr inf =intf();
             std::cout << "add: ";
             for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
                 if (it == vl.begin())
                     std::cout << *it;
                 else
-                    std::cout << ", " << *it;
+                    std::cout << ", " << *it;               
             }
+            if (inf) {
+                for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
+                    dvnci::expression_listener_ptr exrptr = dvnci::expression_listener_ptr(new http_expression_listener(*it, shared_from_this()));
+                    inf->regist_expr_listener(*it, exrptr);
+                }
+            }                     
             std::cout << std::endl;
         }
 
         void http_session::removetags(const tagset_type& vl) {
+            http_executor_ptr inf =intf();
             std::cout << "remove: ";
             for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
                 if (it == vl.begin())
@@ -73,7 +95,21 @@ namespace http {
                     std::cout << ", " << *it;
             }
             std::cout << std::endl;
-        }           
+            if (inf) {
+                for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
+                    //inf->
+                }
+            }             
+        } 
+        
+        void http_session::call() {
+            if (th->intf())
+                th->intf()->call();
+        }
+        
+        http_executor_ptr http_session::intf() {
+            return th ? (th->intf()) : http_executor_ptr();
+        } 
         
         
        ////////////////////////////////////////////////////////

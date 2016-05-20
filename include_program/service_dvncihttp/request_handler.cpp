@@ -214,6 +214,8 @@ namespace http {
                     } else if (it->first == SESSION_REQUEST_S) {
                         sid = it->second.get_value<sessionid_type>();
                         sess = self->get(sid);
+                        if (sess)
+                            sess->call();
                     } else if (it->first == UPDATE_REQUEST_S) {
                         if (sess) {
                             resp.put(INIT_RESPONSE_S, sid);
