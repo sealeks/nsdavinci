@@ -58,6 +58,7 @@ namespace http {
         const std::string& ADDTAG_REQUEST_S = "add-tags";
         const std::string& REMOVETAG_REQUEST_S = "remove-tags";
         const std::string& UPDATE_REQUEST_S = "get-update";
+        const std::string& UPDATE_RESPONSE_S = "update-response";        
 
         request_handler::request_handler(const std::string& doc_root, http_session_manager_ptr mngr)
         : doc_root_(doc_root), manager_(mngr) {
@@ -197,6 +198,25 @@ namespace http {
                 tgs.insert(it->second.get_value<std::string>());
             return !tgs.empty();
         }
+        
+        static ptree::ptree add_tag_value(const dvnci::short_value& val){
+            ptree::ptree result;
+            result.put("value", val.value<std::string>());
+            result.put("type", dvnci::to_str(val.type()));
+            result.put("valid", dvnci::to_str(val.valid())); 
+            return result;
+        }        
+        
+        static void update_tags_value(http_session_ptr session, ptree::ptree& resp){
+            if (!session->updatelist().empty()){
+                ptree::ptree result;
+                for (valuemap_type::const_iterator it=session->updatelist().begin();it!=session->updatelist().end();++it){
+                    result.add_child(it->first,add_tag_value(it->second));
+                }
+                resp.add_child("update-value",result);
+                session->updatelist().clear();
+            }        
+        }                
 
         bool proccess_requests(const ptree::ptree& req, ptree::ptree& resp, http_session_manager_ptr self) {
 
@@ -219,6 +239,7 @@ namespace http {
                     } else if (it->first == UPDATE_REQUEST_S) {
                         if (sess) {
                             resp.put(INIT_RESPONSE_S, sid);
+                            update_tags_value(sess,resp);
                             result = true;
                         }
                     } else if (it->first == ADDTAG_REQUEST_S) {
