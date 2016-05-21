@@ -18,48 +18,11 @@
 #include "request.hpp"
 
 
-/*
- Type request:
-           
- 1. init
-  
-                                        user                                                                                                                                      server
-                                  {  "init-req":  "0"    }                                                          ->           
-                                                                                                                                                    <-              {"init-resp" : "RESPID"}
- 
- 2. process
- 
-    2.1 add tags in request
- 
-              { "session" : "RESPID" , add-tag : [... added tags list...] }         ->
-     2.2                             
- 
- 
- */
-
 
 namespace http {
     namespace server {
 
-        namespace ptree = boost::property_tree;
-
-        typedef int operationid_type;
-        typedef std::map<std::string, operationid_type> operationmap;
-
-        const operationid_type SESSION_REQUEST = 1;
-        const operationid_type INIT_REQUEST = 2;
-        const operationid_type ADDTAG_REQUEST = 3;
-        const operationid_type REMOVETAG_REQUEST = 4;
-        const operationid_type UPDATE_REQUEST = 5;
-
-        const std::string& SESSION_REQUEST_S = "session";
-        const std::string& INIT_REQUEST_S = "init-req";
-        const std::string& INIT_RESPONSE_S = "init-resp";
-        const std::string& ADDTAG_REQUEST_S = "add-tags";
-        const std::string& REMOVETAG_REQUEST_S = "remove-tags";
-        const std::string& UPDATE_REQUEST_S = "get-update";
-        const std::string& UPDATE_RESPONSE_S = "update-response";        
-
+      
         request_handler::request_handler(const std::string& doc_root, http_session_manager_ptr mngr)
         : doc_root_(doc_root), manager_(mngr) {
         }
@@ -106,7 +69,7 @@ namespace http {
                 return;
             }
 
-            if ((request_path.find("/data") == 0) && (handle_datarequest(req, rep))) {
+            if ((request_path.find("/data") == 0) && (handle_datarequest(req, rep)!=reply::none)) {
                 return;
             }
 
@@ -149,12 +112,13 @@ namespace http {
             return true;
         }
 
-        bool request_handler::handle_datarequest(const request& req, reply& rep) {
+        reply::status_type request_handler::handle_datarequest(const request& req, reply& rep) {
             //return false;
-            if (!req.content.empty()) {
+            if (!req.content.empty() && manager_) {
 
                 std::string resp;
-                if (proccess_request(req.content, resp, manager_)) {
+
+                if (manager_->proccess_request(req.content, resp)) {
 
                     rep.status = reply::ok;
                     rep.content = resp;
@@ -163,110 +127,12 @@ namespace http {
                     rep.headers[0].value = boost::lexical_cast<std::string>(rep.content.size());
                     rep.headers[1].name = "Content-Type";
                     rep.headers[1].value = "application/json";
-                    return true;
+                    return reply::ok;
 
                 }
             }
-            return false;
+            return reply::none;
         }
-
-        bool proccess_request(const std::string& req, std::string& resp, http_session_manager_ptr self) {
-
-            ptree::ptree req_tree;
-            ptree::ptree resp_tree;
-
-            std::stringstream ss;
-            std::stringstream so;
-            ss << req;
-
-            ptree::json_parser::read_json(ss, req_tree);
-
-            if (proccess_requests(req_tree, resp_tree, self)) {
-
-                ptree::json_parser::write_json(so, resp_tree);
-                resp = so.str();
-
-                return true;
-
-            }
-
-            return false;
-        }
-        
-        static bool get_tags_list(const boost::property_tree::ptree& req, tagset_type& tgs){
-            for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) 
-                tgs.insert(it->second.get_value<std::string>());
-            return !tgs.empty();
-        }
-        
-        static ptree::ptree add_tag_value(const dvnci::short_value& val){
-            ptree::ptree result;
-            result.put("value", val.value<std::string>());
-            result.put("type", dvnci::to_str(val.type()));
-            result.put("valid", dvnci::to_str(val.valid())); 
-            return result;
-        }        
-        
-        static void update_tags_value(http_session_ptr session, ptree::ptree& resp){
-            if (!session->updatelist().empty()){
-                ptree::ptree result;
-                for (valuemap_type::const_iterator it=session->updatelist().begin();it!=session->updatelist().end();++it){
-                    result.add_child(it->first,add_tag_value(it->second));
-                }
-                resp.add_child("update-value",result);
-                session->updatelist().clear();
-            }        
-        }                
-
-        bool proccess_requests(const ptree::ptree& req, ptree::ptree& resp, http_session_manager_ptr self) {
-
-            bool result = false;
-            sessionid_type sid = 0;
-            http_session_ptr sess;
-
-            if (self) {
-                for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
-                    if (it->first == INIT_REQUEST_S) {
-                        if (sid = self->create()) {
-                            resp.put(INIT_RESPONSE_S, sid);
-                            result = true;
-                        }
-                    } else if (it->first == SESSION_REQUEST_S) {
-                        sid = it->second.get_value<sessionid_type>();
-                        sess = self->get(sid);
-                        if (sess)
-                            sess->call();
-                    } else if (it->first == UPDATE_REQUEST_S) {
-                        if (sess) {
-                            resp.put(INIT_RESPONSE_S, sid);
-                            update_tags_value(sess,resp);
-                            result = true;
-                        }
-                    } else if (it->first == ADDTAG_REQUEST_S) {
-                        if (sess) {
-                            tagset_type tgs;
-                            if (get_tags_list(it->second, tgs))
-                                sess->addtags(tgs);
-                            resp.put(INIT_RESPONSE_S, sid);
-                            result = true;
-                        }
-                    } else if (it->first == REMOVETAG_REQUEST_S) {
-                        if (sess) {
-                            tagset_type tgs;
-                            if (get_tags_list(it->second, tgs))
-                                sess->removetags(tgs);
-                            resp.put(INIT_RESPONSE_S, sid);
-                            result = true;
-                        }
-                    }
-                }
-            }
-            return result;
-        }
-        
-
-
-
 
 
 

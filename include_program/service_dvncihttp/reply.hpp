@@ -27,6 +27,7 @@ namespace http {
 
             enum status_type {
 
+                none = 0,                
                 ok = 200,
                 created = 201,
                 accepted = 202,

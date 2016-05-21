@@ -13,11 +13,6 @@
 
 #include "request_executor.hpp"
 
-#include <boost/noncopyable.hpp>
-#include <boost/lexical_cast.hpp>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
-
 
 
 namespace http {
@@ -45,17 +40,13 @@ namespace http {
             // Session_manager
             http_session_manager_ptr manager_;
             
-            bool handle_datarequest(const request& req, reply& rep);
+            reply::status_type handle_datarequest(const request& req, reply& rep);
 
             /// Perform URL-decoding on a string. Returns false if the encoding was
             /// invalid.
             static bool url_decode(const std::string& in, std::string& out);
         };
         
-        
-        
-        bool proccess_request(const std::string& req, std::string& resp, http_session_manager_ptr self);    
-        bool proccess_requests(const boost::property_tree::ptree& req, boost::property_tree::ptree& resp, http_session_manager_ptr self);      
                 
     } 
 } 
