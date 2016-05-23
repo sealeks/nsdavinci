@@ -8,6 +8,8 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 //
 
+#include <cmath>
+
 #include "request_executor.hpp"
 
 /*
@@ -36,9 +38,6 @@ namespace http {
 
         namespace ptree = boost::property_tree;
 
-        typedef int operationid_type;
-        typedef std::map<std::string, operationid_type> operationmap;
-        typedef std::pair<std::string, operationid_type> operationpair;
 
 
         const operationid_type SESSION_REQUEST = 1;
@@ -77,7 +76,7 @@ namespace http {
         operationid_type get_operationid(const std::string& key) {
             const operationmap& mp = get_operationid_map();
             operationmap::const_iterator fnd = mp.find(key);
-            if (fnd!=mp.end())
+            if (fnd != mp.end())
                 return fnd->second;
             return 0;
         }
@@ -159,6 +158,11 @@ namespace http {
         ////////////////////////////////////////////////////////
         //  http_session
         ////////////////////////////////////////////////////////           
+        
+         http_session::http_session(sessionid_type id, http_terminated_thread_ptr th_, std::size_t ltm) :
+            id_(id), session_livetm_(MIN_SESSION_LT > ltm ?  
+                MIN_SESSION_LT : (MAX_SESSION_LT < ltm ?  MAX_SESSION_LT  : ltm)), th(th_), mtx_(), dt_(dvnci::now()) {
+            }        
 
         void http_session::addtags(const tagset_type& vl) {
             http_executor_ptr inf = intf();
@@ -195,14 +199,62 @@ namespace http {
             }
         }
 
-        reply::status_type http_session::proccess_request(const ptree::ptree& req, ptree::ptree& resp) {
-            return reply::none;
+        reply::status_type http_session::proccess_request(operationid_type oper, const ptree::ptree& req, ptree::ptree& resp) {
+            reply::status_type result = reply::none;
+            THD_EXCLUSIVE_LOCK(mtx_);
+            switch (oper) {
+                case UPDATE_REQUEST:
+                {
+                    resp.put(SESSION_REQUEST_S, id_);
+                    update_tags_value(shared_from_this(), resp);
+                    result = reply::ok;
+                    break;
+                }
+                case ADDTAG_REQUEST:
+                {
+                    tagset_type tgs;
+                    if (get_tags_list(req, tgs))
+                        addtags(tgs);
+                    resp.put(SESSION_REQUEST_S, id_);
+                    result = reply::ok;
+                    break;
+
+                }
+                case REMOVETAG_REQUEST:
+                {
+                    tagset_type tgs;
+                    if (get_tags_list(req, tgs))
+                        removetags(tgs);
+                    resp.put(SESSION_REQUEST_S, id_);
+                    result = reply::ok;
+                    break;
+                }
+                default:
+                {
+
+                }
+            }
+            return result;
         }
 
         void http_session::call() {
+            THD_EXCLUSIVE_LOCK(mtx_);
             if (th->intf())
                 th->intf()->call();
         }
+
+        std::size_t http_session::session_livetm() const  {
+            return session_livetm_;
+        }
+                        
+
+        bool http_session::expired() const {
+            return std::abs(dvnci::secondsbetween(dt_,  dvnci::now()));
+        }
+
+        void http_session::updtate_time() {
+            dt_ = dvnci::now();
+        }   
 
         http_executor_ptr http_session::intf() {
             return th ? (th->intf()) : http_executor_ptr();
@@ -268,6 +320,7 @@ namespace http {
                 switch (oper) {
                     case INIT_REQUEST:
                     {
+                        THD_EXCLUSIVE_LOCK(mtx);
                         if (sid = create()) {
                             resp.put(INIT_RESPONSE_S, sid);
                             result = reply::ok;
@@ -278,45 +331,21 @@ namespace http {
                     case SESSION_REQUEST:
                     {
                         sid = it->second.get_value<sessionid_type>();
-                        sess = get(sid);
+                        {
+                            THD_EXCLUSIVE_LOCK(mtx);
+                            sess = get(sid);
+                        }
                         if (sess)
                             sess->call();
                         break;
                     }
-                    case UPDATE_REQUEST:
+                    default:
                     {
                         if (sess) {
-                            resp.put(INIT_RESPONSE_S, sid);
-                            update_tags_value(sess, resp);
-                            result = reply::ok;
+                            reply::status_type result_p = sess->proccess_request(oper, it->second, resp);
+                            if (result == reply::none)
+                                result = result_p;
                         }
-                        break;
-                    }
-                    case ADDTAG_REQUEST:
-                    {
-                        if (sess) {
-                            tagset_type tgs;
-                            if (get_tags_list(it->second, tgs))
-                                sess->addtags(tgs);
-                            resp.put(INIT_RESPONSE_S, sid);
-                            result = reply::ok;
-
-                            break;
-                        }
-                    }
-                    case REMOVETAG_REQUEST:
-                    {
-                        if (sess) {
-                            tagset_type tgs;
-                            if (get_tags_list(it->second, tgs))
-                                sess->removetags(tgs);
-                            resp.put(INIT_RESPONSE_S, sid);
-                            result = reply::ok;
-                        }
-                        break;
-                    }
-                    default:{
-                        
                     }
                 }
             }

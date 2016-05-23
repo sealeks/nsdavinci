@@ -32,6 +32,10 @@ namespace http {
     namespace server {
 
 
+        typedef int operationid_type;
+        typedef std::map<std::string, operationid_type> operationmap;
+        typedef std::pair<std::string, operationid_type> operationpair;        
+
         typedef dvnci::custom::gui_executor<dvnci::tagsbase > http_gui_executor;
         typedef callable_shared_ptr<http_gui_executor> http_executor_ptr;
 
@@ -105,7 +109,9 @@ namespace http {
         //  http_session
         ////////////////////////////////////////////////////////       
 
-
+         const std::size_t MIN_SESSION_LT=60;        
+         const std::size_t DEFAULT_SESSION_LT=600;
+         const std::size_t MAX_SESSION_LT=3600;   
 
         typedef boost::uint64_t sessionid_type;
         typedef dvnci::short_value value_type;
@@ -117,15 +123,16 @@ namespace http {
 
         public:
 
-            http_session(sessionid_type id, http_terminated_thread_ptr th_) : id_(id), th(th_), mtx_() {
-            }
+            http_session(sessionid_type id, http_terminated_thread_ptr th_, std::size_t ltm = DEFAULT_SESSION_LT);
 
-            ~http_session() {
+            virtual ~http_session() {
             }
 
             sessionid_type id() const {
                 return id_;
             }
+            
+            std::size_t session_livetm() const;
 
             boost::mutex& mtx() {
                 return mtx_;
@@ -145,19 +152,26 @@ namespace http {
 
             void call();
 
-            reply::status_type proccess_request(const boost::property_tree::ptree& req, boost::property_tree::ptree& resp);
+            reply::status_type proccess_request(operationid_type oper, const boost::property_tree::ptree& req, boost::property_tree::ptree& resp);
+            
+            bool expired() const;
 
         protected:
+            
+            void updtate_time();
 
             http_executor_ptr intf();
 
         private:
             sessionid_type id_;
+            std::size_t session_livetm_;            
             http_terminated_thread_ptr th;
             boost::mutex mtx_;
+            dvnci::datetime dt_;
 
             valuemap_type updatelist_;
             tagset_type errortag_;
+            
 
         };
 
@@ -165,13 +179,18 @@ namespace http {
         typedef std::map<sessionid_type, http_session_ptr> http_session_map;
 
         http_session_ptr build_http_session(sessionid_type id);
+          
 
-
-
-
+        
+        
+        
         ////////////////////////////////////////////////////////
         //  http_session_manager
         ////////////////////////////////////////////////////////    
+        
+        class http_session_manager; 
+        typedef boost::shared_ptr<http_session_manager> http_session_manager_ptr;        
+        
 
         class http_session_manager {
 
@@ -180,7 +199,7 @@ namespace http {
             http_session_manager() : nextid_(1), mtx() {
             }
 
-            ~http_session_manager() {
+            virtual ~http_session_manager() {
             }
 
             sessionid_type nextid() const {
@@ -205,9 +224,6 @@ namespace http {
             http_session_map session_map;
             boost::mutex mtx;
         };
-
-        typedef boost::shared_ptr<http_session_manager> http_session_manager_ptr;
-
 
 
 
