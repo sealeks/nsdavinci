@@ -41,6 +41,8 @@ namespace http {
                     "HTTP/1.0 403 Forbidden\r\n";
             const std::string not_found =
                     "HTTP/1.0 404 Not Found\r\n";
+            const std::string request_timeout =
+                    "HTTP/1.0 408 Request Timeout\r\n";
             const std::string internal_server_error =
                     "HTTP/1.0 500 Internal Server Error\r\n";
             const std::string not_implemented =
@@ -76,6 +78,8 @@ namespace http {
                         return boost::asio::buffer(forbidden);
                     case reply::not_found:
                         return boost::asio::buffer(not_found);
+                    case reply::request_timeout:
+                        return boost::asio::buffer(request_timeout);
                     case reply::internal_server_error:
                         return boost::asio::buffer(internal_server_error);
                     case reply::not_implemented:
@@ -171,6 +175,11 @@ namespace http {
                     "<head><title>Not Found</title></head>"
                     "<body><h1>404 Not Found</h1></body>"
                     "</html>";
+            const char request_timeout[] =
+                    "<html>"
+                    "<head><title>Request Timeout</title></head>"
+                    "<body><h1>408 Request Timeout</h1></body>"
+                    "</html>";                        
             const char internal_server_error[] =
                     "<html>"
                     "<head><title>Internal Server Error</title></head>"

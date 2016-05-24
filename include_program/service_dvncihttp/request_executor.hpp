@@ -155,10 +155,10 @@ namespace http {
             reply::status_type proccess_request(operationid_type oper, const boost::property_tree::ptree& req, boost::property_tree::ptree& resp);
             
             bool expired() const;
+               
+            void updtate_time();            
 
         protected:
-            
-            void updtate_time();
 
             http_executor_ptr intf();
 
@@ -200,18 +200,20 @@ namespace http {
             }
 
             virtual ~http_session_manager() {
-            }
-
-            sessionid_type nextid() const {
-                return nextid_;
-            }
-
-            sessionid_type create();        
+            }  
+            
+            void check();
 
             reply::status_type proccess_request(const std::string& req, std::string& resp);
 
 
         protected:
+            
+            sessionid_type nextid() const {
+                return nextid_;
+            }
+
+            http_session_ptr create();              
             
              http_session_ptr get(sessionid_type id);            
 

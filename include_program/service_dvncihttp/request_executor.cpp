@@ -249,7 +249,7 @@ namespace http {
                         
 
         bool http_session::expired() const {
-            return std::abs(dvnci::secondsbetween(dt_,  dvnci::now()));
+            return std::abs(dvnci::secondsbetween(dt_,  dvnci::now()) > session_livetm());
         }
 
         void http_session::updtate_time() {
@@ -273,16 +273,32 @@ namespace http {
             return http_session_ptr();
         }
 
-        sessionid_type http_session_manager::create() {
+        http_session_ptr http_session_manager::create() {
             http_session_ptr newsession = build_http_session(nextid_);
             if (newsession) {
                 session_map.insert(http_session_map::value_type(nextid_, newsession));
-                sessionid_type result = nextid_;
                 if (!(++nextid_))
                     ++nextid_;
-                return result;
+                return newsession;
             }
-            return 0;
+            return http_session_ptr();
+        }
+
+        void http_session_manager::check() {
+            THD_EXCLUSIVE_LOCK(mtx);
+            //std::cout << "check" << std::endl;
+            if (!session_map.empty()) {
+                http_session_map::iterator it = session_map.begin();
+                while (it != session_map.end()) {
+                    if (it->second->expired()) {
+                        http_session_map::iterator fit = it;
+                        std::cout << "session id=" << it->first << " expired. Session count is " << (session_map.size() - 1) << std::endl;
+                        it++;
+                        session_map.erase(fit);
+                    } else
+                        ++it;
+                }
+            }
         }
 
         reply::status_type http_session_manager::proccess_request(const std::string& req, std::string& resp) {
@@ -321,7 +337,8 @@ namespace http {
                     case INIT_REQUEST:
                     {
                         THD_EXCLUSIVE_LOCK(mtx);
-                        if (sid = create()) {
+                        if (sess = create()) {
+                            sid=sess->id();
                             resp.put(INIT_RESPONSE_S, sid);
                             result = reply::ok;
 
@@ -335,8 +352,12 @@ namespace http {
                             THD_EXCLUSIVE_LOCK(mtx);
                             sess = get(sid);
                         }
-                        if (sess)
+                        if (sess) {
+                            sess->updtate_time();
                             sess->call();
+                        }
+                        else
+                            return reply::request_timeout;
                         break;
                     }
                     default:

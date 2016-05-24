@@ -24,6 +24,26 @@ namespace http {
     namespace server {
 
         /// The top-level class of the HTTP server.
+        
+        
+        struct sessions_checker {
+            
+            sessions_checker(http_session_manager_ptr manager_): 
+            manager(manager_), terminated(false) {}
+            
+            ~sessions_checker() {}   
+            
+            void terminate(){
+                terminated=true;
+            }
+            
+            void operator()();
+            
+            http_session_manager_ptr manager;
+            bool terminated;
+        };
+        
+        
 
         class server
         : private boost::noncopyable {
@@ -33,6 +53,8 @@ namespace http {
             /// serve up files from the given directory.
             explicit server(const std::string& address, const std::string& port,
                     const std::string& doc_root, std::size_t io_service_pool_size);
+            
+            virtual ~server();        
 
             /// Run the server's io_service loop.
             void run();
@@ -60,7 +82,11 @@ namespace http {
             connection_ptr new_connection_;
             
             // Session_manager
-            http_session_manager_ptr manager_;            
+            http_session_manager_ptr manager_;  
+            
+            sessions_checker checker_;
+            
+            boost::thread  th;
 
             /// The handler for all incoming requests.
             request_handler request_handler_;

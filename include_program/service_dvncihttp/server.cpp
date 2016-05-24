@@ -14,6 +14,16 @@
 namespace http {
     namespace server {
 
+        void sessions_checker::operator()() {
+            boost::xtime tx;
+            while (manager && !terminated) {
+                manager->check();            
+                dvnci::addmillisec_to_now(tx, 1000);
+                boost::thread::sleep(tx);
+            }
+        }    
+        
+
         server::server(const std::string& address, const std::string& port,
                 const std::string& doc_root, std::size_t io_service_pool_size)
         : io_service_pool_(io_service_pool_size),
@@ -21,6 +31,8 @@ namespace http {
         acceptor_(io_service_pool_.get_io_service()),
         new_connection_(),
         manager_( new http_session_manager()),
+        checker_(manager_),
+        th(checker_),                
         request_handler_(doc_root, manager_){
             // Register to handle the signals that indicate when the server should exit.
             // It is safe to register for the same signal multiple times in a program,
@@ -43,6 +55,10 @@ namespace http {
 
             start_accept();
         }
+
+        server::~server() {
+            checker_.terminate();
+        }            
 
         void server::run() {
             io_service_pool_.run();

@@ -118,17 +118,20 @@ namespace http {
 
                 std::string resp;
 
-                if (manager_->proccess_request(req.content, resp)) {
-
-                    rep.status = reply::ok;
-                    rep.content = resp;
-                    rep.headers.resize(2);
-                    rep.headers[0].name = "Content-Length";
-                    rep.headers[0].value = boost::lexical_cast<std::string>(rep.content.size());
-                    rep.headers[1].name = "Content-Type";
-                    rep.headers[1].value = "application/json";
-                    return reply::ok;
-
+                if (rep.status = manager_->proccess_request(req.content, resp)) {
+                    if (rep.status == reply::ok) {
+                        rep.content = resp;
+                        rep.headers.resize(2);
+                        rep.headers[0].name = "Content-Length";
+                        rep.headers[0].value = boost::lexical_cast<std::string>(rep.content.size());
+                        rep.headers[1].name = "Content-Type";
+                        rep.headers[1].value = "application/json";
+                        return rep.status;
+                    } else {
+                        if (rep.status != reply::none){
+                        return rep.status;                            
+                        }
+                    }
                 }
             }
             return reply::none;
