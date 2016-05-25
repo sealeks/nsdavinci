@@ -128,11 +128,11 @@ namespace http {
                         rep.headers[0].value = boost::lexical_cast<std::string>(rep.content.size());
                         rep.headers[1].name = "Content-Type";
                         rep.headers[1].value = "application/json";
-                        std::cout << "come out"  <<  std::endl;  
+                        //std::cout << "come out"  <<  std::endl;  
                         return rep.status;
                     } else {
                         if (rep.status != reply::none){
-                        std::cout << "come out"  <<  std::endl;  
+                        //std::cout << "come out"  <<  std::endl;  
                         return rep.status;                            
                         }
                     }
