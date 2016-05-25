@@ -9,6 +9,7 @@
 //
 
 #include <cmath>
+#include <sstream>
 
 #include "request_executor.hpp"
 
@@ -161,18 +162,19 @@ namespace http {
         
          http_session::http_session(sessionid_type id, http_terminated_thread_ptr th_, std::size_t ltm) :
             id_(id), session_livetm_(MIN_SESSION_LT > ltm ?  
-                MIN_SESSION_LT : (MAX_SESSION_LT < ltm ?  MAX_SESSION_LT  : ltm)), th(th_), mtx_(), dt_(dvnci::now()) {
+                MIN_SESSION_LT : (MAX_SESSION_LT < ltm ?  MAX_SESSION_LT  : ltm)), 
+                 th(th_), mtx_(), dt_(dvnci::now()) {
             }        
 
         void http_session::addtags(const tagset_type& vl) {
             http_executor_ptr inf = intf();
-            std::cout << "add: ";
-            for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
+            std::cout << "Session id = " << id_ <<  " add tags count is " << vl.size() << std::endl;
+            /*for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
                 if (it == vl.begin())
                     std::cout << *it;
                 else
                     std::cout << ", " << *it;
-            }
+            }*/
             if (inf) {
                 for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
                     dvnci::expression_listener_ptr exrptr = dvnci::expression_listener_ptr(new http_expression_listener(*it, shared_from_this()));
@@ -184,13 +186,13 @@ namespace http {
 
         void http_session::removetags(const tagset_type& vl) {
             http_executor_ptr inf = intf();
-            std::cout << "remove: ";
-            for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
+            std::cout << "Session id = " << id_ <<  " remove  tags count is " << vl.size() << std::endl;
+            /*for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
                 if (it == vl.begin())
                     std::cout << *it;
                 else
                     std::cout << ", " << *it;
-            }
+            }*/
             std::cout << std::endl;
             if (inf) {
                 for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
@@ -292,7 +294,8 @@ namespace http {
                 while (it != session_map.end()) {
                     if (it->second->expired()) {
                         http_session_map::iterator fit = it;
-                        std::cout << "session id=" << it->first << " expired. Session count is " << (session_map.size() - 1) << std::endl;
+                        std::cout << "session id=" << it->first << 
+                                " expired. Session count is " << (session_map.size() - 1) << std::endl;
                         it++;
                         session_map.erase(fit);
                     } else
@@ -341,7 +344,8 @@ namespace http {
                             sid=sess->id();
                             resp.put(INIT_RESPONSE_S, sid);
                             result = reply::ok;
-
+                            std::cout << "New session id=" << sid << 
+                                " was created. Sessins count is " << session_map.size()  << std::endl;
                         }
                         break;
                     }
@@ -353,6 +357,8 @@ namespace http {
                             sess = get(sid);
                         }
                         if (sess) {
+                            //std::cout << "hook session id=" << sid << 
+                                //" was created. << std::endl;
                             sess->updtate_time();
                             sess->call();
                         }
