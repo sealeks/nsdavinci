@@ -115,31 +115,21 @@ namespace http {
         reply::status_type request_handler::handle_datarequest(const request& req, reply& rep) {
             //return false;
             if (!req.content.empty() && manager_) {
-                
-                //std::cout << "come in"  <<  std::endl;
-                
+
                 std::string resp;
-                
-                if (rep.status = manager_->proccess_request(req.content, resp)) {
-                    if (rep.status == reply::ok) {
-                        rep.content = resp;
-                        rep.headers.resize(2);
-                        rep.headers[0].name = "Content-Length";
-                        rep.headers[0].value = boost::lexical_cast<std::string>(rep.content.size());
-                        rep.headers[1].name = "Content-Type";
-                        rep.headers[1].value = "application/json";
-                        //std::cout << "come out"  <<  std::endl;  
-                        return rep.status;
-                    } else {
-                        if (rep.status != reply::none){
-                        //std::cout << "come out"  <<  std::endl;  
-                        return rep.status;                            
-                        }
-                    }
+
+                if (manager_->proccess_request(req.content, resp)) {
+
+                    rep.status = reply::ok;
+                    rep.content = resp;
+                    rep.headers.resize(2);
+                    rep.headers[0].name = "Content-Length";
+                    rep.headers[0].value = boost::lexical_cast<std::string>(rep.content.size());
+                    rep.headers[1].name = "Content-Type";
+                    rep.headers[1].value = "application/json";
+                    return reply::ok;
+
                 }
-                
-                
-                //std::cout << "come out"  <<  std::endl;                
             }
             return reply::none;
         }

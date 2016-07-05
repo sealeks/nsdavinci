@@ -27,7 +27,10 @@
     2.1 add tags in request
  
               { "session" : "RESPID" , add-tag : [... added tags list...] }         ->
-     2.2                             
+ 
+     2.2 remove tags from request
+ 
+              { "session" : "RESPID" , remove-tag : [... remove tags list...] }         ->            
  
  
  */
@@ -315,6 +318,8 @@ namespace http {
             std::stringstream so;
             ss << req;
 
+            THD_EXCLUSIVE_LOCK(mtx);
+            
             ptree::json_parser::read_json(ss, req_tree);
 
             if (result = proccess_request(req_tree, resp_tree)) {
@@ -339,7 +344,7 @@ namespace http {
                 switch (oper) {
                     case INIT_REQUEST:
                     {
-                        THD_EXCLUSIVE_LOCK(mtx);
+                        //THD_EXCLUSIVE_LOCK(mtx);
                         if (sess = create()) {
                             sid=sess->id();
                             resp.put(INIT_RESPONSE_S, sid);
@@ -353,7 +358,7 @@ namespace http {
                     {
                         sid = it->second.get_value<sessionid_type>();
                         {
-                            THD_EXCLUSIVE_LOCK(mtx);
+                            //THD_EXCLUSIVE_LOCK(mtx);
                             sess = get(sid);
                         }
                         if (sess) {

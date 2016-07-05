@@ -25,7 +25,7 @@ namespace http {
         
 
         server::server(const std::string& address, const std::string& port,
-                const std::string& doc_root, std::size_t io_service_pool_size)
+                const std::string& doc_rt, std::size_t io_service_pool_size)
         : io_service_pool_(io_service_pool_size),
         signals_(io_service_pool_.get_io_service()),
         acceptor_(io_service_pool_.get_io_service()),
@@ -33,7 +33,7 @@ namespace http {
         manager_( new http_session_manager()),
         checker_(manager_),
         th(checker_),                
-        request_handler_(doc_root, manager_){
+        /*request_handler_(doc_root, manager_)*/doc_root(doc_rt){
             // Register to handle the signals that indicate when the server should exit.
             // It is safe to register for the same signal multiple times in a program,
             // provided all registration for the specified signal is made through Asio.
@@ -66,7 +66,7 @@ namespace http {
 
         void server::start_accept() {
             new_connection_.reset(new connection(
-                    io_service_pool_.get_io_service(), request_handler_));
+                    io_service_pool_.get_io_service(), doc_root, manager_));
             acceptor_.async_accept(new_connection_->socket(),
                     boost::bind(&server::handle_accept, this,
                     boost::asio::placeholders::error));

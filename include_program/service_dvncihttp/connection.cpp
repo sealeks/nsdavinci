@@ -17,9 +17,10 @@ namespace http {
     namespace server {
 
         connection::connection(boost::asio::io_service& io_service,
-                request_handler& handler)
+                //request_handler& handler
+                const std::string& doc_root, http_session_manager_ptr mngr)
         : socket_(io_service),
-        request_handler_(handler) {
+        request_handler_(doc_root, mngr) {
         }
 
         boost::asio::ip::tcp::socket& connection::socket() {

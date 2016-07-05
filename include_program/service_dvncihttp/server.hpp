@@ -89,7 +89,8 @@ namespace http {
             boost::thread  th;
 
             /// The handler for all incoming requests.
-            request_handler request_handler_;
+            //request_handler request_handler_;
+            std::string doc_root;
         };
 
     } // namespace server
