@@ -318,7 +318,7 @@ namespace http {
             std::stringstream so;
             ss << req;
 
-            THD_EXCLUSIVE_LOCK(mtx);
+            //THD_EXCLUSIVE_LOCK(mtx);
             
             ptree::json_parser::read_json(ss, req_tree);
 
