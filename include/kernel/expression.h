@@ -2141,7 +2141,7 @@ namespace dvnci {
             size_t casecounter = 0;
             size_t counter = 0;
             for (exprstack::iterator it = stringvector.begin(); it != stringvector.end(); ++it) {
-                DEBUG_VAL_DVNCI(*it)
+                //DEBUG_VAL_DVNCI(*it)
                 calc_token tmpit = calc_token_factory(*it);
                 if (tmpit.iserror()) {
                     if (tmpit.error() == ERROR_TAGNOEXIST) { // возможно появится
