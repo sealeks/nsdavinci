@@ -13,6 +13,7 @@
 
 #include <string>
 
+#define BOOST_SPIRIT_THREADSAFE
 
 #include <kernel/constdef.h>
 #include <kernel/utils.h>
