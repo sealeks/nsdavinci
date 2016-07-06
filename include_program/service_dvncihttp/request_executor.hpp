@@ -11,9 +11,10 @@
 #ifndef HTTP_EXECUTOR_HANDLER_HPP
 #define HTTP_EXECUTOR_HANDLER_HPP
 
+#define BOOST_SPIRIT_THREADSAFE
+
 #include <string>
 
-#define BOOST_SPIRIT_THREADSAFE
 
 #include <kernel/constdef.h>
 #include <kernel/utils.h>
