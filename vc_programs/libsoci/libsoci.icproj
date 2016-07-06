@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="11.1"
+	Name="libsoci"
+	ProjectGUID="{F35BCC6A-31A9-47A6-AED0-4AE60FF76EA4}"
+	VCNestedProjectGUID="{95A55FC6-8BE4-465C-8F3A-4AB3D0C11DFE}"
+	VCNestedProjectFileName="libsoci.vcproj">
+	<Configurations>
+		<Configuration
+			Name="vc_iw_db_WIN32|Win32">
+			<Tool
+				Name="CppCmplrTool"
+				EnableParallelDebugChecks="true"
+				EnableExpandedLineNumberInfo="true"/>
+		</Configuration>
+	</Configurations>
+	<Files/>
+</VisualStudioProject>

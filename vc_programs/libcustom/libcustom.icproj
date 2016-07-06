@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="11.1"
+	Name="libnetinterface"
+	ProjectGUID="{3739554A-0011-4CFC-A030-65D5E1AFCF41}"
+	VCNestedProjectGUID="{68B1E058-780C-4858-BF2C-E319276E5730}"
+	VCNestedProjectFileName="libnetinterface.vcproj">
+	<Configurations>
+		<Configuration
+			Name="vc_iw_db_WIN32|Win32">
+			<Tool
+				Name="CppCmplrTool"
+				EnableParallelDebugChecks="true"
+				EnableExpandedLineNumberInfo="true"/>
+		</Configuration>
+	</Configurations>
+	<Files/>
+</VisualStudioProject>

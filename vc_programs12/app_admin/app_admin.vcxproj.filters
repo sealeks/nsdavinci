@@ -1,0 +1,793 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;cxx;c;def</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+    </Filter>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>moc;h;cpp</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Debug">
+      <UniqueIdentifier>{93a2c35d-910b-4d35-8a3b-790374c9bf62}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Release">
+      <UniqueIdentifier>{04225f3f-eb7b-4120-ab5e-771c32f6bbdc}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\vc_ms_dbd_WIN32_12">
+      <UniqueIdentifier>{55845787-07ed-46ec-9d9a-52b9e5e93320}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\vc_ms_rld_WIN32_12">
+      <UniqueIdentifier>{7f11e7af-20bc-4f28-8823-44a29f90c992}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GeneratedFiles\vc_ms_dbd_WIN32_12\moc_viewmodels.cpp">
+      <Filter>Generated Files\vc_ms_dbd_WIN32_12</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_rld_WIN32_12\moc_viewmodels.cpp">
+      <Filter>Generated Files\vc_ms_rld_WIN32_12</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_dbd_WIN32_12\moc_uiuitil.cpp">
+      <Filter>Generated Files\vc_ms_dbd_WIN32_12</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_rld_WIN32_12\moc_uiuitil.cpp">
+      <Filter>Generated Files\vc_ms_rld_WIN32_12</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_dbd_WIN32_12\moc_form_setvalue.cpp">
+      <Filter>Generated Files\vc_ms_dbd_WIN32_12</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_rld_WIN32_12\moc_form_setvalue.cpp">
+      <Filter>Generated Files\vc_ms_rld_WIN32_12</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_dbd_WIN32_12\moc_form_import.cpp">
+      <Filter>Generated Files\vc_ms_dbd_WIN32_12</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_rld_WIN32_12\moc_form_import.cpp">
+      <Filter>Generated Files\vc_ms_rld_WIN32_12</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_dbd_WIN32_12\moc_form_getstring.cpp">
+      <Filter>Generated Files\vc_ms_dbd_WIN32_12</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_rld_WIN32_12\moc_form_getstring.cpp">
+      <Filter>Generated Files\vc_ms_rld_WIN32_12</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_dbd_WIN32_12\moc_form_filter.cpp">
+      <Filter>Generated Files\vc_ms_dbd_WIN32_12</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_rld_WIN32_12\moc_form_filter.cpp">
+      <Filter>Generated Files\vc_ms_rld_WIN32_12</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_dbd_WIN32_12\moc_form_esdfilter.cpp">
+      <Filter>Generated Files\vc_ms_dbd_WIN32_12</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_rld_WIN32_12\moc_form_esdfilter.cpp">
+      <Filter>Generated Files\vc_ms_rld_WIN32_12</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_dbd_WIN32_12\moc_form_admin.cpp">
+      <Filter>Generated Files\vc_ms_dbd_WIN32_12</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_rld_WIN32_12\moc_form_admin.cpp">
+      <Filter>Generated Files\vc_ms_rld_WIN32_12</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_dbd_WIN32_12\moc_form_addserver.cpp">
+      <Filter>Generated Files\vc_ms_dbd_WIN32_12</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_rld_WIN32_12\moc_form_addserver.cpp">
+      <Filter>Generated Files\vc_ms_rld_WIN32_12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin\gui\viewmodels.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin\gui\uiwidgetitem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin\gui\uiuitil.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin\gui\RU_dict.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin\gui\interfaceproccessor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin\gui\form_setvalue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin\gui\form_import.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin\gui\form_getstring.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin\gui\form_filter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin\gui\form_esdfilter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin\gui\form_admin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin\gui\form_addserver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin\gui\admin_configer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_mainresource.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_setvalue.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_import.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_getstring.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_filter.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_esdfilter.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_admin.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_addserver.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\viewmodels.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\uiuitil.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_setvalue.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_import.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_getstring.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_filter.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_esdfilter.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_admin.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_addserver.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\resourse\mainresource.qrc">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GeneratedFiles\ui_form_setvalue.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_form_import.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_form_getstring.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_form_filter.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_form_esdfilter.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_form_admin.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_form_addserver.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include_program\app_admin\gui\uiwidgetitem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include_program\app_admin\gui\RU_dict.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include_program\app_admin\gui\interfacetransaction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include_program\app_admin\gui\interfaceproccessor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include_program\app_admin\gui\admin_configer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\include_program\app_admin\resourse\icon\operation_clone.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\AppNodef.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\AppTestService.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\appAdmin.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\appAdminService.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\appArchService.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\appDDEService.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\appKoyoService.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\appLgkService.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\appModbusService.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\appNetService.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\appOpcService.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\appSystemService.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jrnoticenew.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jrnoticekvit.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jrevent.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jrnoticeoff.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jreventoff.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jrevental.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jreventav.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jreventnot.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntAccessRules.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntClients.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntRules.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntRule.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOModbus.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntUser.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntUsers.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOReport.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\startservice.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\stopservice.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntServicePend.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOReportCnt.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntServiceOn.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntService.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntServiceNo.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntServiceOff.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jron.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jralarmkvit.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jralarmnew.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jralarmoff.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jravarkvit.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jravarnew.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jravaroff.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jrcommand.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jroff.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\logwarning.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\logerror.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\lognotice.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\kvit.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\agroup_kvit.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\group_kvit.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\setvalidall.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\setinvalidall.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\setvalue.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\deccounter.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\inccounter.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\setcommand.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\setvalid.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\logscreanerror.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\logscreanall.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\logscreanclear.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\addserver.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntFinder.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\unmaproject.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\addfilter.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\addpr.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cascadkind.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\okitem.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\erroritem.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\changeagroup.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\changegroup.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\connectserver.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\delete.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\deleteuncheck.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\disconnectserver.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\export.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\import.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\linekind.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\maproject.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\merge.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\new.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\newproject.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\removefilter.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\removeserver.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\filter.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ok_lt.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\error_lt.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\errorscreanstateon.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\errorscreanoff.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\errorscreanon.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\errorscreanstateoff.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntActiveAlarmTable.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntAlarmTable.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\up.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtGroup.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtHomeList.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtMainGroup.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtMainMessageHeader.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtMessageHeader.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtMessageList.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtmeta.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtmsgtag.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtReportArr.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtReportHeader.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtReportList.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdttrend.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtTrendArr.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtTrendHeader.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtTrendList.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtunit.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\del.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\down.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\newtag.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntA.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntAl.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntAT.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntBaseTable.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntByte.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntChar.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntCommandTable.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntDay.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntDec.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntDiscret.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntDT.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntEvent.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntEventAnalog.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntG.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntGG.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntGl.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntGroupTable.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntGT.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntHour.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntInteger.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntLocalServ.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntLocalServNA.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntLogTable.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntLongWord.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntmainRoot.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntMin.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntMin10.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntMin30.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntMonth.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntO.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOBase.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOCmd.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntODDE.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntODKoy.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOll.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOLogika.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOnet.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOOPC.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOOPCHDA.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOPoint.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOServCount.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOSimple.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOSpac.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOSystem.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOSysVar.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntQvart.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntReal.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntReal48.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntRegTable.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntRemoteServ.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntRemoteServNC.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntRootTable.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntS.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntShortInt.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntSingle.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntSmallInt.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntST.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntT.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntText.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntTl.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntTT.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntValChTable.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntWord.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntYear.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\PrjMain.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\PrjMainold.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\PrjSome.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\PrjSomeold.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\PrjSoms.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\reload.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

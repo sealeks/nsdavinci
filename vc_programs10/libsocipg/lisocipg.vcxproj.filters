@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="soci">
+      <UniqueIdentifier>{a80f752c-3f1e-4f66-ab99-9101b133e7c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="soci\backends">
+      <UniqueIdentifier>{e5efa307-56ff-4ab8-b4de-6de1c244ddd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="soci\backends\postgresql">
+      <UniqueIdentifier>{df5afe36-3653-41a2-a024-f2238562b294}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\include\soci\backends\postgresql\blob.cpp">
+      <Filter>soci\backends\postgresql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include\soci\backends\postgresql\common.cpp">
+      <Filter>soci\backends\postgresql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include\soci\backends\postgresql\factory.cpp">
+      <Filter>soci\backends\postgresql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include\soci\backends\postgresql\row-id.cpp">
+      <Filter>soci\backends\postgresql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include\soci\backends\postgresql\session.cpp">
+      <Filter>soci\backends\postgresql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include\soci\backends\postgresql\standard-into-type.cpp">
+      <Filter>soci\backends\postgresql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include\soci\backends\postgresql\standard-use-type.cpp">
+      <Filter>soci\backends\postgresql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include\soci\backends\postgresql\statement.cpp">
+      <Filter>soci\backends\postgresql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include\soci\backends\postgresql\vector-into-type.cpp">
+      <Filter>soci\backends\postgresql</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include\soci\backends\postgresql\vector-use-type.cpp">
+      <Filter>soci\backends\postgresql</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\soci\backends\postgresql\common.h">
+      <Filter>soci\backends\postgresql</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\soci\backends\postgresql\soci-postgresql.h">
+      <Filter>soci\backends\postgresql</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

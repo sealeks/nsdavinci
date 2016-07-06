@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="11.1"
+	Name="lisocipg"
+	ProjectGUID="{1BFFA2F7-8E10-4803-B767-9E4AF8CC5A25}"
+	VCNestedProjectGUID="{082E9620-AD00-4285-B271-6A812F3DCB6A}"
+	VCNestedProjectFileName="lisocipg.vcproj">
+	<Configurations>
+		<Configuration
+			Name="vc_iw_db_WIN32|Win32">
+			<Tool
+				Name="CppCmplrTool"
+				EnableParallelDebugChecks="true"
+				EnableExpandedLineNumberInfo="true"/>
+		</Configuration>
+	</Configurations>
+	<Files/>
+</VisualStudioProject>

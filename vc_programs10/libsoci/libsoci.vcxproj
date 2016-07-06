@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="vc_ms_dbd_WIN32_10|Win32">
+      <Configuration>vc_ms_dbd_WIN32_10</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="vc_ms_db_WIN32_10|Win32">
+      <Configuration>vc_ms_db_WIN32_10</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="vc_ms_rl_WIN32_10|Win32">
+      <Configuration>vc_ms_rl_WIN32_10</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{95A55FC6-8BE4-465C-8F3A-4AB3D0C11DFE}</ProjectGuid>
+    <RootNamespace>libsoci</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32_10|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_rl_WIN32_10|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_db_WIN32_10|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32_10|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_rl_WIN32_10|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_db_WIN32_10|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='vc_ms_db_WIN32_10|Win32'">..\..\lib\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='vc_ms_db_WIN32_10|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='vc_ms_rl_WIN32_10|Win32'">..\..\lib\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='vc_ms_rl_WIN32_10|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32_10|Win32'">$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32_10|Win32'">$(Configuration)\</IntDir>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32_10|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32_10|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32_10|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='vc_ms_db_WIN32_10|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='vc_ms_db_WIN32_10|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='vc_ms_db_WIN32_10|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='vc_ms_rl_WIN32_10|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='vc_ms_rl_WIN32_10|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='vc_ms_rl_WIN32_10|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_db_WIN32_10|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Lib>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Lib>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_rl_WIN32_10|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32_10|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Bscmake>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+    </Bscmake>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\include\soci\backend-loader.cpp" />
+    <ClCompile Include="..\..\include\soci\blob.cpp" />
+    <ClCompile Include="..\..\include\soci\connection-pool.cpp" />
+    <ClCompile Include="..\..\include\soci\error.cpp" />
+    <ClCompile Include="..\..\include\soci\into-type.cpp" />
+    <ClCompile Include="..\..\include\soci\once-temp-type.cpp" />
+    <ClCompile Include="..\..\include\soci\prepare-temp-type.cpp" />
+    <ClCompile Include="..\..\include\soci\procedure.cpp" />
+    <ClCompile Include="..\..\include\soci\ref-counted-prepare-info.cpp" />
+    <ClCompile Include="..\..\include\soci\ref-counted-statement.cpp" />
+    <ClCompile Include="..\..\include\soci\row.cpp" />
+    <ClCompile Include="..\..\include\soci\rowid.cpp" />
+    <ClCompile Include="..\..\include\soci\session.cpp" />
+    <ClCompile Include="..\..\include\soci\soci-simple.cpp" />
+    <ClCompile Include="..\..\include\soci\statement.cpp" />
+    <ClCompile Include="..\..\include\soci\transaction.cpp" />
+    <ClCompile Include="..\..\include\soci\use-type.cpp" />
+    <ClCompile Include="..\..\include\soci\values.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\soci\backend-loader.h" />
+    <ClInclude Include="..\..\include\soci\blob-exchange.h" />
+    <ClInclude Include="..\..\include\soci\blob.h" />
+    <ClInclude Include="..\..\include\soci\boost-fusion.h" />
+    <ClInclude Include="..\..\include\soci\boost-gregorian-date.h" />
+    <ClInclude Include="..\..\include\soci\boost-optional.h" />
+    <ClInclude Include="..\..\include\soci\boost-tuple.h" />
+    <ClInclude Include="..\..\include\soci\connection-pool.h" />
+    <ClInclude Include="..\..\include\soci\error.h" />
+    <ClInclude Include="..\..\include\soci\exchange-traits.h" />
+    <ClInclude Include="..\..\include\soci\into-type.h" />
+    <ClInclude Include="..\..\include\soci\into.h" />
+    <ClInclude Include="..\..\include\soci\once-temp-type.h" />
+    <ClInclude Include="..\..\include\soci\prepare-temp-type.h" />
+    <ClInclude Include="..\..\include\soci\procedure.h" />
+    <ClInclude Include="..\..\include\soci\ref-counted-prepare-info.h" />
+    <ClInclude Include="..\..\include\soci\ref-counted-statement.h" />
+    <ClInclude Include="..\..\include\soci\row-exchange.h" />
+    <ClInclude Include="..\..\include\soci\row.h" />
+    <ClInclude Include="..\..\include\soci\rowid-exchange.h" />
+    <ClInclude Include="..\..\include\soci\rowid.h" />
+    <ClInclude Include="..\..\include\soci\rowset.h" />
+    <ClInclude Include="..\..\include\soci\session.h" />
+    <ClInclude Include="..\..\include\soci\soci-backend.h" />
+    <ClInclude Include="..\..\include\soci\soci-config.h" />
+    <ClInclude Include="..\..\include\soci\soci-platform.h" />
+    <ClInclude Include="..\..\include\soci\soci-simple.h" />
+    <ClInclude Include="..\..\include\soci\soci.h" />
+    <ClInclude Include="..\..\include\soci\statement.h" />
+    <ClInclude Include="..\..\include\soci\transaction.h" />
+    <ClInclude Include="..\..\include\soci\type-conversion-traits.h" />
+    <ClInclude Include="..\..\include\soci\type-conversion.h" />
+    <ClInclude Include="..\..\include\soci\type-holder.h" />
+    <ClInclude Include="..\..\include\soci\type-ptr.h" />
+    <ClInclude Include="..\..\include\soci\use-type.h" />
+    <ClInclude Include="..\..\include\soci\use.h" />
+    <ClInclude Include="..\..\include\soci\values-exchange.h" />
+    <ClInclude Include="..\..\include\soci\values.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="app_admin1">
+</Property><Property Name="Файл решения" Value="F:\Project\davinci\vc_programs10\app_admin1\app_admin1.sln">
+</Property><Property Name="Date" Value="31 октября 2013 г.">
+</Property><Property Name="Time" Value="1:15:30">
+</Property></Properties><Event ErrorLevel="0" Project="app_admin1" Source="app_admin1.vcproj" Description="Converting project file 'F:\Project\davinci\vc_programs10\app_admin1\app_admin1.vcproj'.">
+</Event><Event ErrorLevel="1" Project="app_admin1" Source="app_admin1.vcproj" Description="VCWebServiceProxyGeneratorTool is no longer supported. The tool has been removed from your project settings.">
+</Event><Event ErrorLevel="1" Project="app_admin1" Source="app_admin1.vcproj" Description="MSB8012: $(TargetPath) ('F:\Project\davinci\vc_programs10\app_admin1\..\..\bin\vc_ms_rl_WIN32_10\app_admin1.exe') does not match the Linker's OutputFile property value '..\..\bin\vc_ms_rl_WIN32_10\app_admin1.exe' ('F:\Project\davinci\bin\vc_ms_rl_WIN32_10\app_admin1.exe') in project configuration 'vc_ms_rl_WIN32_10|Win32'. This may cause your project to build incorrectly. To correct this, please make sure that $(TargetPath) property value matches the value specified in %(Link.OutputFile).">
+</Event><Event ErrorLevel="1" Project="app_admin1" Source="app_admin1.vcproj" Description="MSB8012: $(TargetPath) ('F:\Project\davinci\vc_programs10\app_admin1\..\..\bin\vc_ms_db_WIN32_10\app_admin1.exe') does not match the Linker's OutputFile property value '..\..\bin\vc_ms_db_WIN32_10\app_admin1.exe' ('F:\Project\davinci\bin\vc_ms_db_WIN32_10\app_admin1.exe') in project configuration 'vc_ms_db_WIN32_10|Win32'. This may cause your project to build incorrectly. To correct this, please make sure that $(TargetPath) property value matches the value specified in %(Link.OutputFile).">
+</Event><Event ErrorLevel="0" Project="app_admin1" Source="app_admin1.vcproj" Description="Done converting to new project file 'F:\Project\davinci\vc_programs10\app_admin1\app_admin1.vcxproj'.">
+</Event><Event ErrorLevel="3" Project="app_admin1" Source="app_admin1.vcproj" Description="Converted">
+</Event></UpgradeLog>

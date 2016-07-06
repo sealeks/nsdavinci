@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="11.1"
+	Name="service_mms"
+	ProjectGUID="{744A8DA6-3969-4E4C-8B83-5C1278050739}"
+	VCNestedProjectGUID="{335D178B-31D2-4EB9-8DC2-E3F741AA1B9B}"
+	VCNestedProjectFileName="service_mms.vcproj">
+	<Configurations>
+		<Configuration
+			Name="vc_iw_db_WIN32_10|Win32">
+			<Tool
+				Name="CppCmplrTool"
+				EnableParallelDebugChecks="true"
+				EnableExpandedLineNumberInfo="true"/>
+		</Configuration>
+	</Configurations>
+	<Files/>
+</VisualStudioProject>

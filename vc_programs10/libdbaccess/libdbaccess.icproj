@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="11.1"
+	Name="libdbaccess"
+	ProjectGUID="{6CD29395-E4D1-4034-BA22-DD0E7F4181EB}"
+	VCNestedProjectGUID="{AEE6BFF9-2031-4622-80A1-70653FF2E20D}"
+	VCNestedProjectFileName="libdbaccess.vcproj">
+	<Configurations>
+		<Configuration
+			Name="vc_iw_db_WIN32_10|Win32">
+			<Tool
+				Name="CppCmplrTool"
+				EnableParallelDebugChecks="true"
+				EnableExpandedLineNumberInfo="true"/>
+		</Configuration>
+	</Configurations>
+	<Files/>
+</VisualStudioProject>

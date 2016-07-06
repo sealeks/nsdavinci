@@ -1,0 +1,706 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;cxx;c;def</Extensions>
+    </Filter>
+    <Filter Include="gui">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+    </Filter>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Translation Files">
+      <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
+      <Extensions>ts</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\include_program\app_admin1\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin1\gui\admin_configer.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin1\gui\form_addserver.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin1\gui\form_admin.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin1\gui\form_esdfilter.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin1\gui\form_filter.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin1\gui\form_getstring.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin1\gui\form_import.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin1\gui\form_setvalue.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin1\gui\interfaceproccessor.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin1\gui\RU_dict.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin1\gui\uiuitil.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin1\gui\uiwidgetitem.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\include_program\app_admin1\gui\viewmodels.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include_program\app_admin1\gui\admin_configer.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include_program\app_admin1\gui\interfaceproccessor.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include_program\app_admin1\gui\interfacetransaction.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include_program\app_admin1\gui\RU_dict.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include_program\app_admin1\gui\uiwidgetitem.h">
+      <Filter>gui</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\include_program\app_admin1\resourse\icon\apAdmin.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\include_program\app_admin1\resourse\icon\appArshService.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="app_admin1_ru.ts">
+      <Filter>Translation Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\addfilter.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\addpr.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\addserver.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\agroup_kvit.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\appAdmin.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\appAdminService.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\appArchService.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\appDDEService.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\appKoyoService.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\appLgkService.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\appModbusService.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\appNetService.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\AppNodef.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\appOpcService.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\appSystemService.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\AppTestService.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\cascadkind.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\cdtGroup.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\cdtHomeList.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\cdtMainGroup.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\cdtMainMessageHeader.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\cdtMessageHeader.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\cdtMessageList.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\cdtmeta.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\cdtmsgtag.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\cdtReportArr.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\cdtReportHeader.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\cdtReportList.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\cdttrend.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\cdtTrendArr.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\cdtTrendHeader.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\cdtTrendList.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\cdtunit.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\changeagroup.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\changegroup.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\connectserver.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\deccounter.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\del.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\delete.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\deleteuncheck.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\disconnectserver.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\down.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\error_lt.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\erroritem.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\errorscreanoff.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\errorscreanon.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\errorscreanstateoff.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\errorscreanstateon.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\export.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\filter.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\group_kvit.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\import.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\inccounter.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\jralarmkvit.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\jralarmnew.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\jralarmoff.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\jravarkvit.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\jravarnew.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\jravaroff.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\jrcommand.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\jrevent.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\jrevental.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\jreventav.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\jreventnot.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\jreventoff.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\jrnoticekvit.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\jrnoticenew.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\jrnoticeoff.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\jroff.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\jron.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\kvit.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\linekind.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\logerror.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\lognotice.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\logscreanall.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\logscreanclear.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\logscreanerror.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\logwarning.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\maproject.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\merge.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\new.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\newproject.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\newtag.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntA.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntAccessRules.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntActiveAlarmTable.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntAl.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntAlarmTable.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntAT.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntBaseTable.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntByte.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntChar.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntClients.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntCommandTable.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntDay.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntDec.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntDiscret.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntDT.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntEvent.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntEventAnalog.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntFinder.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntG.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntGG.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntGl.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntGroupTable.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntGT.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntHour.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntInteger.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntLocalServ.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntLocalServNA.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntLogTable.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntLongWord.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntmainRoot.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntMin.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntMin10.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntMin30.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntMonth.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntO.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntOBase.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntOCmd.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntODDE.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntODKoy.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntOll.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntOLogika.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntOModbus.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntOnet.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntOOPC.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntOOPCHDA.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntOPoint.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntOReport.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntOReportCnt.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntOServCount.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntOSimple.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntOSpac.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntOSystem.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntOSysVar.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntQvart.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntReal.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntReal48.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntRegTable.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntRemoteServ.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntRemoteServNC.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntRootTable.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntRule.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntRules.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntS.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntService.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntServiceNo.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntServiceOff.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntServiceOn.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntServicePend.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntShortInt.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntSingle.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntSmallInt.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntST.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntT.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntText.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntTl.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntTT.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntUser.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntUsers.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntValChTable.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntWord.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ntYear.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\ok_lt.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\okitem.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\operation_clone.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\PrjMain.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\PrjMainold.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\PrjSome.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\PrjSomeold.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\PrjSoms.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\reload.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\removefilter.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\removeserver.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\setcommand.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\setinvalidall.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\setvalid.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\setvalidall.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\setvalue.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\startservice.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\stopservice.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\unmaproject.png">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+    <CustomBuildStep Include="..\..\include_program\app_admin1\resourse\icon\up.bmp">
+      <Filter>Resource Files</Filter>
+    </CustomBuildStep>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\include_program\app_admin1\gui\form_addserver.h">
+      <Filter>gui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin1\gui\form_admin.h">
+      <Filter>gui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin1\gui\form_esdfilter.h">
+      <Filter>gui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin1\gui\form_filter.h">
+      <Filter>gui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin1\gui\form_getstring.h">
+      <Filter>gui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin1\gui\form_import.h">
+      <Filter>gui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin1\gui\form_setvalue.h">
+      <Filter>gui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin1\gui\uiuitil.h">
+      <Filter>gui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin1\gui\viewmodels.h">
+      <Filter>gui</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin1\gui\form_addserver.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin1\gui\form_admin.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin1\gui\form_esdfilter.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin1\gui\form_filter.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin1\gui\form_getstring.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin1\gui\form_import.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin1\gui\form_setvalue.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin1\resourse\mainresource.qrc">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+  </ItemGroup>
+</Project>

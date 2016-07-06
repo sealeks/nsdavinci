@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "service_dvnciopc", "service_dvnciopc.vcproj", "{B49BF9E2-9250-4D12-BB13-2C2EDF914D6C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		vc_iw_db_WIN32_10|Win32 = vc_iw_db_WIN32_10|Win32
+		vc_iw_rl_WIN32|Win32 = vc_iw_rl_WIN32|Win32
+		vc_ms_db_WIN32_12|Win32 = vc_ms_db_WIN32_12|Win32
+		vc_ms_rl_WIN32_12|Win32 = vc_ms_rl_WIN32_12|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B49BF9E2-9250-4D12-BB13-2C2EDF914D6C}.vc_iw_db_WIN32_10|Win32.ActiveCfg = vc_iw_db_WIN32_10|Win32
+		{B49BF9E2-9250-4D12-BB13-2C2EDF914D6C}.vc_iw_db_WIN32_10|Win32.Build.0 = vc_iw_db_WIN32_10|Win32
+		{B49BF9E2-9250-4D12-BB13-2C2EDF914D6C}.vc_iw_rl_WIN32|Win32.ActiveCfg = vc_iw_rl_WIN32|Win32
+		{B49BF9E2-9250-4D12-BB13-2C2EDF914D6C}.vc_iw_rl_WIN32|Win32.Build.0 = vc_iw_rl_WIN32|Win32
+		{B49BF9E2-9250-4D12-BB13-2C2EDF914D6C}.vc_ms_db_WIN32_12|Win32.ActiveCfg = vc_ms_db_WIN32_12|Win32
+		{B49BF9E2-9250-4D12-BB13-2C2EDF914D6C}.vc_ms_db_WIN32_12|Win32.Build.0 = vc_ms_db_WIN32_12|Win32
+		{B49BF9E2-9250-4D12-BB13-2C2EDF914D6C}.vc_ms_rl_WIN32_12|Win32.ActiveCfg = vc_ms_rl_WIN32_12|Win32
+		{B49BF9E2-9250-4D12-BB13-2C2EDF914D6C}.vc_ms_rl_WIN32_12|Win32.Build.0 = vc_ms_rl_WIN32_12|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

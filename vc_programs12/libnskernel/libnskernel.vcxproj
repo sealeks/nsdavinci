@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="vc_ms_dbd_WIN32_12|Win32">
+      <Configuration>vc_ms_dbd_WIN32_12</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="vc_ms_db_WIN32_12|Win32">
+      <Configuration>vc_ms_db_WIN32_12</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="vc_ms_rld_WIN32_12|Win32">
+      <Configuration>vc_ms_rld_WIN32_12</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="vc_ms_rl_WIN32_12|Win32">
+      <Configuration>vc_ms_rl_WIN32_12</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{7786373A-6825-4388-9621-13C84F31C63A}</ProjectGuid>
+    <RootNamespace>libnskernel</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32_12|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32_12|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_rl_WIN32_12|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_db_WIN32_12|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32_12|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32_12|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_rl_WIN32_12|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_db_WIN32_12|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='vc_ms_db_WIN32_12|Win32'">..\..\lib\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='vc_ms_db_WIN32_12|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='vc_ms_rl_WIN32_12|Win32'">..\..\lib\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='vc_ms_rl_WIN32_12|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32_12|Win32'">..\..\lib\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32_12|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32_12|Win32'">..\..\lib\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32_12|Win32'">$(Configuration)\</IntDir>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32_12|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32_12|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32_12|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='vc_ms_db_WIN32_12|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='vc_ms_db_WIN32_12|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='vc_ms_db_WIN32_12|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32_12|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32_12|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32_12|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='vc_ms_rl_WIN32_12|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='vc_ms_rl_WIN32_12|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='vc_ms_rl_WIN32_12|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_db_WIN32_12|Win32'">
+    <ClCompile>
+      <AdditionalOptions>-D_WIN32_WINNT=0x0501   -DDVNCI_DEDUG %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\include;$(BOOST_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_rl_WIN32_12|Win32'">
+    <ClCompile>
+      <AdditionalOptions>-D_WIN32_WINNT=0x0501 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>..\..\include;$(BOOST_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32_12|Win32'">
+    <ClCompile>
+      <AdditionalOptions>-D_WIN32_WINNT=0x0501   -DDVNCI_DEDUG %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\..\include;$(BOOST_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32_12|Win32'">
+    <ClCompile>
+      <AdditionalOptions>-D_WIN32_WINNT=0x0501 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalIncludeDirectories>..\..\include;$(BOOST_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\include\kernel\appath.cpp" />
+    <ClCompile Include="..\..\include\kernel\appath_lin.cpp" />
+    <ClCompile Include="..\..\include\kernel\appath_win.cpp" />
+    <ClCompile Include="..\..\include\kernel\basis_iostream.cpp" />
+    <ClCompile Include="..\..\include\kernel\constdef.cpp" />
+    <ClCompile Include="..\..\include\kernel\driver_blockmodel.cpp" />
+    <ClCompile Include="..\..\include\kernel\driver_detail.cpp" />
+    <ClCompile Include="..\..\include\kernel\expression.cpp" />
+    <ClCompile Include="..\..\include\kernel\index_base.cpp" />
+    <ClCompile Include="..\..\include\kernel\interface_proccesstmpl.cpp" />
+    <ClCompile Include="..\..\include\kernel\mainstruct.cpp" />
+    <ClCompile Include="..\..\include\kernel\memfile.cpp" />
+    <ClCompile Include="..\..\include\kernel\prb_binary_archive.cpp" />
+    <ClCompile Include="..\..\include\kernel\proccesstmpl.cpp" />
+    <ClCompile Include="..\..\include\kernel\rpcioclient.cpp" />
+    <ClCompile Include="..\..\include\kernel\service.cpp" />
+    <ClCompile Include="..\..\include\kernel\serviceapp.cpp" />
+    <ClCompile Include="..\..\include\kernel\short_value.cpp" />
+    <ClCompile Include="..\..\include\kernel\string_base.cpp" />
+    <ClCompile Include="..\..\include\kernel\stringvalue_base.cpp" />
+    <ClCompile Include="..\..\include\kernel\systemutil.cpp" />
+    <ClCompile Include="..\..\include\kernel\utils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\kernel\basis_iostream.h" />
+    <ClInclude Include="..\..\include\kernel\bufferbase_templ.h" />
+    <ClInclude Include="..\..\include\kernel\constdef.h" />
+    <ClInclude Include="..\..\include\kernel\cyclic_table_templ.h" />
+    <ClInclude Include="..\..\include\kernel\driver_blockmodel.h" />
+    <ClInclude Include="..\..\include\kernel\driver_detail.h" />
+    <ClInclude Include="..\..\include\kernel\driver_proccesstmpl.h" />
+    <ClInclude Include="..\..\include\kernel\dvncitype_traits.h" />
+    <ClInclude Include="..\..\include\kernel\error.h" />
+    <ClInclude Include="..\..\include\kernel\expression.h" />
+    <ClInclude Include="..\..\include\kernel\extintf_wraper.h" />
+    <ClInclude Include="..\..\include\kernel\factory.h" />
+    <ClInclude Include="..\..\include\kernel\filebase_templ.h" />
+    <ClInclude Include="..\..\include\kernel\index_base.h" />
+    <ClInclude Include="..\..\include\kernel\interface_proccesstmpl.h" />
+    <ClInclude Include="..\..\include\kernel\mainstruct.h" />
+    <ClInclude Include="..\..\include\kernel\memfile.h" />
+    <ClInclude Include="..\..\include\kernel\prb_binary_archive.h" />
+    <ClInclude Include="..\..\include\kernel\proccesstmpl.h" />
+    <ClInclude Include="..\..\include\kernel\rpcioclient.h" />
+    <ClInclude Include="..\..\include\kernel\rpcmessage.h" />
+    <ClInclude Include="..\..\include\kernel\service.h" />
+    <ClInclude Include="..\..\include\kernel\serviceapp.h" />
+    <ClInclude Include="..\..\include\kernel\short_value.h" />
+    <ClInclude Include="..\..\include\kernel\static_table_templ.h" />
+    <ClInclude Include="..\..\include\kernel\string_base.h" />
+    <ClInclude Include="..\..\include\kernel\stringvalue_base.h" />
+    <ClInclude Include="..\..\include\kernel\system_proccesstmpl.h" />
+    <ClInclude Include="..\..\include\kernel\systemutil.h" />
+    <ClInclude Include="..\..\include\kernel\templ.h" />
+    <ClInclude Include="..\..\include\kernel\utf8.h" />
+    <ClInclude Include="..\..\include\kernel\utils.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

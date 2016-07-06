@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="11.1"
+	Name="libnsadmininterface"
+	ProjectGUID="{76D2AE54-6C05-4588-AD23-8EADA90E93EA}"
+	VCNestedProjectGUID="{710EDEEE-A356-42E2-BBBF-BB098490049A}"
+	VCNestedProjectFileName="libnsadmin.vcproj">
+	<Configurations/>
+	<Files/>
+</VisualStudioProject>

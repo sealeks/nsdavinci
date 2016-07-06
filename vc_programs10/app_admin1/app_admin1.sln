@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "app_admin1", "app_admin1.vcxproj", "{FE9F09F7-2C1F-47FA-88E6-A7BF4F740A1B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Template|Win32 = Template|Win32
+		vc_ms_db_WIN32_10|Win32 = vc_ms_db_WIN32_10|Win32
+		vc_ms_rl_WIN32_10|Win32 = vc_ms_rl_WIN32_10|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FE9F09F7-2C1F-47FA-88E6-A7BF4F740A1B}.Template|Win32.ActiveCfg = Template|Win32
+		{FE9F09F7-2C1F-47FA-88E6-A7BF4F740A1B}.Template|Win32.Build.0 = Template|Win32
+		{FE9F09F7-2C1F-47FA-88E6-A7BF4F740A1B}.vc_ms_db_WIN32_10|Win32.ActiveCfg = vc_ms_db_WIN32_10|Win32
+		{FE9F09F7-2C1F-47FA-88E6-A7BF4F740A1B}.vc_ms_db_WIN32_10|Win32.Build.0 = vc_ms_db_WIN32_10|Win32
+		{FE9F09F7-2C1F-47FA-88E6-A7BF4F740A1B}.vc_ms_rl_WIN32_10|Win32.ActiveCfg = vc_ms_rl_WIN32_10|Win32
+		{FE9F09F7-2C1F-47FA-88E6-A7BF4F740A1B}.vc_ms_rl_WIN32_10|Win32.Build.0 = vc_ms_rl_WIN32_10|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

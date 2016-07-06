@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<VisualStudioProject
+	ProjectType="Intel C++ Project"
+	Version="11.1"
+	Name="libnskernel"
+	ProjectGUID="{4F3ED92B-A529-4899-9421-2AC38BBA8B12}"
+	VCNestedProjectGUID="{7786373A-6825-4388-9621-13C84F31C63A}"
+	VCNestedProjectFileName="libnskernel.vcproj">
+	<Configurations>
+		<Configuration
+			Name="vc_iw_db_WIN32_10|Win32">
+			<Tool
+				Name="CppCmplrTool"
+				EnableParallelDebugChecks="true"
+				EnableExpandedLineNumberInfo="true"/>
+		</Configuration>
+	</Configurations>
+	<Files/>
+</VisualStudioProject>

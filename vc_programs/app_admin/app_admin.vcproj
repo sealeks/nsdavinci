@@ -1,0 +1,1122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>vc_ms_dbd_WIN32</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>vc_ms_rld_WIN32</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="vc_ms_dbd_WIN32|Win32">
+      <Configuration>vc_ms_dbd_WIN32</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="vc_ms_rld_WIN32|Win32">
+      <Configuration>vc_ms_rld_WIN32</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{4EAC6447-8608-4EB8-AAC0-E9A7055D517C}</ProjectGuid>
+    <Keyword>Qt4VSv1.0</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'" />
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">..\..\bin\vc_ms_db_WIN32\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>UNICODE;WIN32;WIN64;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_XML_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml;%(AdditionalIncludeDirectories);$(BOOST_DIR);.\..\..\include;$(QTDIR)\include\QtANGLE</AdditionalIncludeDirectories>
+      <Optimization>Disabled</Optimization>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <AdditionalOptions>-D_WIN32_WINNT=0x0501 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>..\..\bin\vc_ms_db_WIN32\$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;..\..\lib\boost\$(ConfigurationName);..\..\lib\$(ConfigurationName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5OpenGLd.lib;opengl32.lib;glu32.lib;Qt5Widgetsd.lib;Qt5Xmld.lib;libnskernel.lib;libnsadmin.lib;libmeta.lib;libboost_system-vc90-mt-gd-1_56.lib;libboost_date_time-vc90-mt-gd-1_56.lib;libboost_filesystem-vc90-mt-gd-1_56.lib;libboost_iostreams-vc90-mt-gd-1_56.lib;libboost_program_options-vc90-mt-gd-1_56.lib;libboost_regex-vc90-mt-gd-1_56.lib;libboost_thread-vc90-mt-gd-1_56.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>UNICODE;WIN32;WIN64;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_XML_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml;%(AdditionalIncludeDirectories);$(BOOST_DIR);.\..\..\include;$(QTDIR)\include\QtANGLE</AdditionalIncludeDirectories>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <AdditionalOptions>-D_WIN32_WINNT=0x0501 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>..\..\bin\vc_ms_rl_WIN32\$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;..\..\lib\boost\$(ConfigurationName);..\..\lib\$(ConfigurationName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5OpenGL.lib;opengl32.lib;glu32.lib;Qt5Widgets.lib;Qt5Xml.lib;libnskernel.lib;libnsadmin.lib;libmeta.lib;libboost_system-vc90-mt-1_56.lib;libboost_date_time-vc90-mt-1_56.lib;libboost_filesystem-vc90-mt-1_56.lib;libboost_iostreams-vc90-mt-1_56.lib;libboost_program_options-vc90-mt-1_56.lib;libboost_regex-vc90-mt-1_56.lib;libboost_thread-vc90-mt-1_56.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\include_program\app_admin\gui\admin_configer.cpp" />
+    <ClCompile Include="..\..\include_program\app_admin\gui\form_addserver.cpp" />
+    <ClCompile Include="..\..\include_program\app_admin\gui\form_admin.cpp" />
+    <ClCompile Include="..\..\include_program\app_admin\gui\form_esdfilter.cpp" />
+    <ClCompile Include="..\..\include_program\app_admin\gui\form_filter.cpp" />
+    <ClCompile Include="..\..\include_program\app_admin\gui\form_getstring.cpp" />
+    <ClCompile Include="..\..\include_program\app_admin\gui\form_import.cpp" />
+    <ClCompile Include="..\..\include_program\app_admin\gui\form_setvalue.cpp" />
+    <ClCompile Include="..\..\include_program\app_admin\gui\interfaceproccessor.cpp" />
+    <ClCompile Include="..\..\include_program\app_admin\gui\RU_dict.cpp" />
+    <ClCompile Include="..\..\include_program\app_admin\gui\uiuitil.cpp" />
+    <ClCompile Include="..\..\include_program\app_admin\gui\uiwidgetitem.cpp" />
+    <ClCompile Include="..\..\include_program\app_admin\gui\viewmodels.cpp" />
+    <ClCompile Include="..\..\include_program\app_admin\main.cpp" />
+    <ClCompile Include="GeneratedFiles\qrc_mainresource.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_dbd_WIN32\moc_form_addserver.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_dbd_WIN32\moc_form_admin.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_dbd_WIN32\moc_form_esdfilter.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_dbd_WIN32\moc_form_filter.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_dbd_WIN32\moc_form_getstring.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_dbd_WIN32\moc_form_import.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_dbd_WIN32\moc_form_setvalue.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_dbd_WIN32\moc_uiuitil.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_dbd_WIN32\moc_viewmodels.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_rld_WIN32\moc_form_addserver.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_rld_WIN32\moc_form_admin.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_rld_WIN32\moc_form_esdfilter.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_rld_WIN32\moc_form_filter.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_rld_WIN32\moc_form_getstring.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_rld_WIN32\moc_form_import.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_rld_WIN32\moc_form_setvalue.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_rld_WIN32\moc_uiuitil.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\vc_ms_rld_WIN32\moc_viewmodels.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_setvalue.ui">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include_program\app_admin\gui\admin_configer.h" />
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_addserver.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">Moc%27ing form_addserver.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I$(INHERIT)\." "-I$(BOOST_DIR)\." "-I.\..\..\include" "-I$(QTDIR)\include\QtANGLE"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">Moc%27ing form_addserver.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I$(INHERIT)\." "-I$(BOOST_DIR)\." "-I.\..\..\include" "-I$(QTDIR)\include\QtANGLE"</Command>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_admin.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">Moc%27ing form_admin.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I$(INHERIT)\." "-I$(BOOST_DIR)\." "-I.\..\..\include" "-I$(QTDIR)\include\QtANGLE"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">Moc%27ing form_admin.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I$(INHERIT)\." "-I$(BOOST_DIR)\." "-I.\..\..\include" "-I$(QTDIR)\include\QtANGLE"</Command>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_esdfilter.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">Moc%27ing form_esdfilter.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I$(INHERIT)\." "-I$(BOOST_DIR)\." "-I.\..\..\include" "-I$(QTDIR)\include\QtANGLE"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">Moc%27ing form_esdfilter.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I$(INHERIT)\." "-I$(BOOST_DIR)\." "-I.\..\..\include" "-I$(QTDIR)\include\QtANGLE"</Command>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_filter.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">Moc%27ing form_filter.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I$(INHERIT)\." "-I$(BOOST_DIR)\." "-I.\..\..\include" "-I$(QTDIR)\include\QtANGLE"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">Moc%27ing form_filter.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I$(INHERIT)\." "-I$(BOOST_DIR)\." "-I.\..\..\include" "-I$(QTDIR)\include\QtANGLE"</Command>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_getstring.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">Moc%27ing form_getstring.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I$(INHERIT)\." "-I$(BOOST_DIR)\." "-I.\..\..\include" "-I$(QTDIR)\include\QtANGLE"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">Moc%27ing form_getstring.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I$(INHERIT)\." "-I$(BOOST_DIR)\." "-I.\..\..\include" "-I$(QTDIR)\include\QtANGLE"</Command>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_import.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">Moc%27ing form_import.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I$(INHERIT)\." "-I$(BOOST_DIR)\." "-I.\..\..\include" "-I$(QTDIR)\include\QtANGLE"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">Moc%27ing form_import.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I$(INHERIT)\." "-I$(BOOST_DIR)\." "-I.\..\..\include" "-I$(QTDIR)\include\QtANGLE"</Command>
+    </CustomBuild>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_setvalue.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">Moc%27ing form_setvalue.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I$(INHERIT)\." "-I$(BOOST_DIR)\." "-I.\..\..\include" "-I$(QTDIR)\include\QtANGLE"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">Moc%27ing form_setvalue.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I$(INHERIT)\." "-I$(BOOST_DIR)\." "-I.\..\..\include" "-I$(QTDIR)\include\QtANGLE"</Command>
+    </CustomBuild>
+    <ClInclude Include="..\..\include_program\app_admin\gui\interfaceproccessor.h" />
+    <ClInclude Include="..\..\include_program\app_admin\gui\interfacetransaction.h" />
+    <ClInclude Include="..\..\include_program\app_admin\gui\RU_dict.h" />
+    <CustomBuild Include="..\..\include_program\app_admin\gui\uiuitil.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">Moc%27ing uiuitil.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I$(INHERIT)\." "-I$(BOOST_DIR)\." "-I.\..\..\include" "-I$(QTDIR)\include\QtANGLE"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">Moc%27ing uiuitil.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I$(INHERIT)\." "-I$(BOOST_DIR)\." "-I.\..\..\include" "-I$(QTDIR)\include\QtANGLE"</Command>
+    </CustomBuild>
+    <ClInclude Include="..\..\include_program\app_admin\gui\uiwidgetitem.h" />
+    <CustomBuild Include="..\..\include_program\app_admin\gui\viewmodels.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">Moc%27ing viewmodels.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I$(INHERIT)\." "-I$(BOOST_DIR)\." "-I.\..\..\include" "-I$(QTDIR)\include\QtANGLE"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">Moc%27ing viewmodels.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB  "-I.\GeneratedFiles" "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I$(INHERIT)\." "-I$(BOOST_DIR)\." "-I.\..\..\include" "-I$(QTDIR)\include\QtANGLE"</Command>
+    </CustomBuild>
+    <ClInclude Include="GeneratedFiles\ui_form_addserver.h" />
+    <ClInclude Include="GeneratedFiles\ui_form_admin.h" />
+    <ClInclude Include="GeneratedFiles\ui_form_esdfilter.h" />
+    <ClInclude Include="GeneratedFiles\ui_form_filter.h" />
+    <ClInclude Include="GeneratedFiles\ui_form_getstring.h" />
+    <ClInclude Include="GeneratedFiles\ui_form_import.h" />
+    <ClInclude Include="GeneratedFiles\ui_form_setvalue.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_import.ui">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_getstring.ui">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_filter.ui">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_esdfilter.ui">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_admin.ui">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\include_program\app_admin\gui\form_addserver.ui">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\include_program\app_admin\resourse\mainresource.qrc">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">%(FullPath);..\..\include_program\app_admin\resourse\icon\operation_clone.png;..\..\include_program\app_admin\resourse\icon\AppNodef.png;..\..\include_program\app_admin\resourse\icon\AppTestService.png;..\..\include_program\app_admin\resourse\icon\appAdmin.png;..\..\include_program\app_admin\resourse\icon\appAdminService.png;..\..\include_program\app_admin\resourse\icon\appArchService.png;..\..\include_program\app_admin\resourse\icon\appDDEService.png;..\..\include_program\app_admin\resourse\icon\appKoyoService.png;..\..\include_program\app_admin\resourse\icon\appLgkService.png;..\..\include_program\app_admin\resourse\icon\appModbusService.png;..\..\include_program\app_admin\resourse\icon\appNetService.png;..\..\include_program\app_admin\resourse\icon\appOpcService.png;..\..\include_program\app_admin\resourse\icon\appSystemService.png;..\..\include_program\app_admin\resourse\icon\jrnoticenew.png;..\..\include_program\app_admin\resourse\icon\jrnoticekvit.png;..\..\include_program\app_admin\resourse\icon\jrevent.png;..\..\include_program\app_admin\resourse\icon\jrnoticeoff.png;..\..\include_program\app_admin\resourse\icon\jreventoff.png;..\..\include_program\app_admin\resourse\icon\jrevental.png;..\..\include_program\app_admin\resourse\icon\jreventav.png;..\..\include_program\app_admin\resourse\icon\jreventnot.png;..\..\include_program\app_admin\resourse\icon\ntAccessRules.bmp;..\..\include_program\app_admin\resourse\icon\ntClients.bmp;..\..\include_program\app_admin\resourse\icon\ntRules.bmp;..\..\include_program\app_admin\resourse\icon\ntRule.bmp;..\..\include_program\app_admin\resourse\icon\ntOModbus.bmp;..\..\include_program\app_admin\resourse\icon\ntUser.bmp;..\..\include_program\app_admin\resourse\icon\ntUsers.bmp;..\..\include_program\app_admin\resourse\icon\ntOReport.bmp;..\..\include_program\app_admin\resourse\icon\startservice.png;..\..\include_program\app_admin\resourse\icon\stopservice.png;..\..\include_program\app_admin\resourse\icon\ntServicePend.bmp;..\..\include_program\app_admin\resourse\icon\ntOReportCnt.bmp;..\..\include_program\app_admin\resourse\icon\ntServiceOn.bmp;..\..\include_program\app_admin\resourse\icon\ntService.bmp;..\..\include_program\app_admin\resourse\icon\ntServiceNo.bmp;..\..\include_program\app_admin\resourse\icon\ntServiceOff.bmp;..\..\include_program\app_admin\resourse\icon\jron.png;..\..\include_program\app_admin\resourse\icon\jralarmkvit.png;..\..\include_program\app_admin\resourse\icon\jralarmnew.png;..\..\include_program\app_admin\resourse\icon\jralarmoff.png;..\..\include_program\app_admin\resourse\icon\jravarkvit.png;..\..\include_program\app_admin\resourse\icon\jravarnew.png;..\..\include_program\app_admin\resourse\icon\jravaroff.png;..\..\include_program\app_admin\resourse\icon\jrcommand.png;..\..\include_program\app_admin\resourse\icon\jroff.png;..\..\include_program\app_admin\resourse\icon\logwarning.png;..\..\include_program\app_admin\resourse\icon\logerror.png;..\..\include_program\app_admin\resourse\icon\lognotice.png;..\..\include_program\app_admin\resourse\icon\kvit.png;..\..\include_program\app_admin\resourse\icon\agroup_kvit.png;..\..\include_program\app_admin\resourse\icon\group_kvit.png;..\..\include_program\app_admin\resourse\icon\setvalidall.png;..\..\include_program\app_admin\resourse\icon\setinvalidall.png;..\..\include_program\app_admin\resourse\icon\setvalue.png;..\..\include_program\app_admin\resourse\icon\deccounter.png;..\..\include_program\app_admin\resourse\icon\inccounter.png;..\..\include_program\app_admin\resourse\icon\setcommand.png;..\..\include_program\app_admin\resourse\icon\setvalid.png;..\..\include_program\app_admin\resourse\icon\logscreanerror.png;..\..\include_program\app_admin\resourse\icon\logscreanall.png;..\..\include_program\app_admin\resourse\icon\logscreanclear.png;..\..\include_program\app_admin\resourse\icon\addserver.png;..\..\include_program\app_admin\resourse\icon\ntFinder.bmp;..\..\include_program\app_admin\resourse\icon\unmaproject.png;..\..\include_program\app_admin\resourse\icon\addfilter.png;..\..\include_program\app_admin\resourse\icon\addpr.png;..\..\include_program\app_admin\resourse\icon\cascadkind.png;..\..\include_program\app_admin\resourse\icon\okitem.png;..\..\include_program\app_admin\resourse\icon\erroritem.png;..\..\include_program\app_admin\resourse\icon\changeagroup.png;..\..\include_program\app_admin\resourse\icon\changegroup.png;..\..\include_program\app_admin\resourse\icon\connectserver.png;..\..\include_program\app_admin\resourse\icon\delete.png;..\..\include_program\app_admin\resourse\icon\deleteuncheck.png;..\..\include_program\app_admin\resourse\icon\disconnectserver.png;..\..\include_program\app_admin\resourse\icon\export.png;..\..\include_program\app_admin\resourse\icon\import.png;..\..\include_program\app_admin\resourse\icon\linekind.png;..\..\include_program\app_admin\resourse\icon\maproject.png;..\..\include_program\app_admin\resourse\icon\merge.png;..\..\include_program\app_admin\resourse\icon\new.png;..\..\include_program\app_admin\resourse\icon\newproject.png;..\..\include_program\app_admin\resourse\icon\removefilter.png;..\..\include_program\app_admin\resourse\icon\removeserver.png;..\..\include_program\app_admin\resourse\icon\filter.bmp;..\..\include_program\app_admin\resourse\icon\ok_lt.bmp;..\..\include_program\app_admin\resourse\icon\error_lt.bmp;..\..\include_program\app_admin\resourse\icon\errorscreanstateon.bmp;..\..\include_program\app_admin\resourse\icon\errorscreanoff.bmp;..\..\include_program\app_admin\resourse\icon\errorscreanon.bmp;..\..\include_program\app_admin\resourse\icon\errorscreanstateoff.bmp;..\..\include_program\app_admin\resourse\icon\ntActiveAlarmTable.bmp;..\..\include_program\app_admin\resourse\icon\ntAlarmTable.bmp;..\..\include_program\app_admin\resourse\icon\up.bmp;..\..\include_program\app_admin\resourse\icon\cdtGroup.bmp;..\..\include_program\app_admin\resourse\icon\cdtHomeList.bmp;..\..\include_program\app_admin\resourse\icon\cdtMainGroup.bmp;..\..\include_program\app_admin\resourse\icon\cdtMainMessageHeader.bmp;..\..\include_program\app_admin\resourse\icon\cdtMessageHeader.bmp;..\..\include_program\app_admin\resourse\icon\cdtMessageList.bmp;..\..\include_program\app_admin\resourse\icon\cdtmeta.bmp;..\..\include_program\app_admin\resourse\icon\cdtmsgtag.bmp;..\..\include_program\app_admin\resourse\icon\cdtReportArr.bmp;..\..\include_program\app_admin\resourse\icon\cdtReportHeader.bmp;..\..\include_program\app_admin\resourse\icon\cdtReportList.bmp;..\..\include_program\app_admin\resourse\icon\cdttrend.bmp;..\..\include_program\app_admin\resourse\icon\cdtTrendArr.bmp;..\..\include_program\app_admin\resourse\icon\cdtTrendHeader.bmp;..\..\include_program\app_admin\resourse\icon\cdtTrendList.bmp;..\..\include_program\app_admin\resourse\icon\cdtunit.bmp;..\..\include_program\app_admin\resourse\icon\del.bmp;..\..\include_program\app_admin\resourse\icon\down.bmp;..\..\include_program\app_admin\resourse\icon\newtag.bmp;..\..\include_program\app_admin\resourse\icon\ntA.bmp;..\..\include_program\app_admin\resourse\icon\ntAl.bmp;..\..\include_program\app_admin\resourse\icon\ntAT.bmp;..\..\include_program\app_admin\resourse\icon\ntBaseTable.bmp;..\..\include_program\app_admin\resourse\icon\ntByte.bmp;..\..\include_program\app_admin\resourse\icon\ntChar.bmp;..\..\include_program\app_admin\resourse\icon\ntCommandTable.bmp;..\..\include_program\app_admin\resourse\icon\ntDay.bmp;..\..\include_program\app_admin\resourse\icon\ntDec.bmp;..\..\include_program\app_admin\resourse\icon\ntDiscret.bmp;..\..\include_program\app_admin\resourse\icon\ntDT.bmp;..\..\include_program\app_admin\resourse\icon\ntEvent.bmp;..\..\include_program\app_admin\resourse\icon\ntEventAnalog.bmp;..\..\include_program\app_admin\resourse\icon\ntG.bmp;..\..\include_program\app_admin\resourse\icon\ntGG.bmp;..\..\include_program\app_admin\resourse\icon\ntGl.bmp;..\..\include_program\app_admin\resourse\icon\ntGroupTable.bmp;..\..\include_program\app_admin\resourse\icon\ntGT.bmp;..\..\include_program\app_admin\resourse\icon\ntHour.bmp;..\..\include_program\app_admin\resourse\icon\ntInteger.bmp;..\..\include_program\app_admin\resourse\icon\ntLocalServ.bmp;..\..\include_program\app_admin\resourse\icon\ntLocalServNA.bmp;..\..\include_program\app_admin\resourse\icon\ntLogTable.bmp;..\..\include_program\app_admin\resourse\icon\ntLongWord.bmp;..\..\include_program\app_admin\resourse\icon\ntmainRoot.bmp;..\..\include_program\app_admin\resourse\icon\ntMin.bmp;..\..\include_program\app_admin\resourse\icon\ntMin10.bmp;..\..\include_program\app_admin\resourse\icon\ntMin30.bmp;..\..\include_program\app_admin\resourse\icon\ntMonth.bmp;..\..\include_program\app_admin\resourse\icon\ntO.bmp;..\..\include_program\app_admin\resourse\icon\ntOBase.bmp;..\..\include_program\app_admin\resourse\icon\ntOCmd.bmp;..\..\include_program\app_admin\resourse\icon\ntODDE.bmp;..\..\include_program\app_admin\resourse\icon\ntODKoy.bmp;..\..\include_program\app_admin\resourse\icon\ntOll.bmp;..\..\include_program\app_admin\resourse\icon\ntOLogika.bmp;..\..\include_program\app_admin\resourse\icon\ntOnet.bmp;..\..\include_program\app_admin\resourse\icon\ntOOPC.bmp;..\..\include_program\app_admin\resourse\icon\ntOOPCHDA.bmp;..\..\include_program\app_admin\resourse\icon\ntOPoint.bmp;..\..\include_program\app_admin\resourse\icon\ntOServCount.bmp;..\..\include_program\app_admin\resourse\icon\ntOSimple.bmp;..\..\include_program\app_admin\resourse\icon\ntOSpac.bmp;..\..\include_program\app_admin\resourse\icon\ntOSystem.bmp;..\..\include_program\app_admin\resourse\icon\ntOSysVar.bmp;..\..\include_program\app_admin\resourse\icon\ntQvart.bmp;..\..\include_program\app_admin\resourse\icon\ntReal.bmp;..\..\include_program\app_admin\resourse\icon\ntReal48.bmp;..\..\include_program\app_admin\resourse\icon\ntRegTable.bmp;..\..\include_program\app_admin\resourse\icon\ntRemoteServ.bmp;..\..\include_program\app_admin\resourse\icon\ntRemoteServNC.bmp;..\..\include_program\app_admin\resourse\icon\ntRootTable.bmp;..\..\include_program\app_admin\resourse\icon\ntS.bmp;..\..\include_program\app_admin\resourse\icon\ntShortInt.bmp;..\..\include_program\app_admin\resourse\icon\ntSingle.bmp;..\..\include_program\app_admin\resourse\icon\ntSmallInt.bmp;..\..\include_program\app_admin\resourse\icon\ntST.bmp;..\..\include_program\app_admin\resourse\icon\ntT.bmp;..\..\include_program\app_admin\resourse\icon\ntText.bmp;..\..\include_program\app_admin\resourse\icon\ntTl.bmp;..\..\include_program\app_admin\resourse\icon\ntTT.bmp;..\..\include_program\app_admin\resourse\icon\ntValChTable.bmp;..\..\include_program\app_admin\resourse\icon\ntWord.bmp;..\..\include_program\app_admin\resourse\icon\ntYear.bmp;..\..\include_program\app_admin\resourse\icon\PrjMain.bmp;..\..\include_program\app_admin\resourse\icon\PrjMainold.bmp;..\..\include_program\app_admin\resourse\icon\PrjSome.bmp;..\..\include_program\app_admin\resourse\icon\PrjSomeold.bmp;..\..\include_program\app_admin\resourse\icon\PrjSoms.bmp;..\..\include_program\app_admin\resourse\icon\reload.bmp;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">Rcc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">.\GeneratedFiles\qrc_%(Filename).cpp;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">"$(QTDIR)\bin\rcc.exe" -name "%(Filename)" -no-compress "%(FullPath)" -o .\GeneratedFiles\qrc_%(Filename).cpp</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">%(FullPath);..\..\include_program\app_admin\resourse\icon\operation_clone.png;..\..\include_program\app_admin\resourse\icon\AppNodef.png;..\..\include_program\app_admin\resourse\icon\AppTestService.png;..\..\include_program\app_admin\resourse\icon\appAdmin.png;..\..\include_program\app_admin\resourse\icon\appAdminService.png;..\..\include_program\app_admin\resourse\icon\appArchService.png;..\..\include_program\app_admin\resourse\icon\appDDEService.png;..\..\include_program\app_admin\resourse\icon\appKoyoService.png;..\..\include_program\app_admin\resourse\icon\appLgkService.png;..\..\include_program\app_admin\resourse\icon\appModbusService.png;..\..\include_program\app_admin\resourse\icon\appNetService.png;..\..\include_program\app_admin\resourse\icon\appOpcService.png;..\..\include_program\app_admin\resourse\icon\appSystemService.png;..\..\include_program\app_admin\resourse\icon\jrnoticenew.png;..\..\include_program\app_admin\resourse\icon\jrnoticekvit.png;..\..\include_program\app_admin\resourse\icon\jrevent.png;..\..\include_program\app_admin\resourse\icon\jrnoticeoff.png;..\..\include_program\app_admin\resourse\icon\jreventoff.png;..\..\include_program\app_admin\resourse\icon\jrevental.png;..\..\include_program\app_admin\resourse\icon\jreventav.png;..\..\include_program\app_admin\resourse\icon\jreventnot.png;..\..\include_program\app_admin\resourse\icon\ntAccessRules.bmp;..\..\include_program\app_admin\resourse\icon\ntClients.bmp;..\..\include_program\app_admin\resourse\icon\ntRules.bmp;..\..\include_program\app_admin\resourse\icon\ntRule.bmp;..\..\include_program\app_admin\resourse\icon\ntOModbus.bmp;..\..\include_program\app_admin\resourse\icon\ntUser.bmp;..\..\include_program\app_admin\resourse\icon\ntUsers.bmp;..\..\include_program\app_admin\resourse\icon\ntOReport.bmp;..\..\include_program\app_admin\resourse\icon\startservice.png;..\..\include_program\app_admin\resourse\icon\stopservice.png;..\..\include_program\app_admin\resourse\icon\ntServicePend.bmp;..\..\include_program\app_admin\resourse\icon\ntOReportCnt.bmp;..\..\include_program\app_admin\resourse\icon\ntServiceOn.bmp;..\..\include_program\app_admin\resourse\icon\ntService.bmp;..\..\include_program\app_admin\resourse\icon\ntServiceNo.bmp;..\..\include_program\app_admin\resourse\icon\ntServiceOff.bmp;..\..\include_program\app_admin\resourse\icon\jron.png;..\..\include_program\app_admin\resourse\icon\jralarmkvit.png;..\..\include_program\app_admin\resourse\icon\jralarmnew.png;..\..\include_program\app_admin\resourse\icon\jralarmoff.png;..\..\include_program\app_admin\resourse\icon\jravarkvit.png;..\..\include_program\app_admin\resourse\icon\jravarnew.png;..\..\include_program\app_admin\resourse\icon\jravaroff.png;..\..\include_program\app_admin\resourse\icon\jrcommand.png;..\..\include_program\app_admin\resourse\icon\jroff.png;..\..\include_program\app_admin\resourse\icon\logwarning.png;..\..\include_program\app_admin\resourse\icon\logerror.png;..\..\include_program\app_admin\resourse\icon\lognotice.png;..\..\include_program\app_admin\resourse\icon\kvit.png;..\..\include_program\app_admin\resourse\icon\agroup_kvit.png;..\..\include_program\app_admin\resourse\icon\group_kvit.png;..\..\include_program\app_admin\resourse\icon\setvalidall.png;..\..\include_program\app_admin\resourse\icon\setinvalidall.png;..\..\include_program\app_admin\resourse\icon\setvalue.png;..\..\include_program\app_admin\resourse\icon\deccounter.png;..\..\include_program\app_admin\resourse\icon\inccounter.png;..\..\include_program\app_admin\resourse\icon\setcommand.png;..\..\include_program\app_admin\resourse\icon\setvalid.png;..\..\include_program\app_admin\resourse\icon\logscreanerror.png;..\..\include_program\app_admin\resourse\icon\logscreanall.png;..\..\include_program\app_admin\resourse\icon\logscreanclear.png;..\..\include_program\app_admin\resourse\icon\addserver.png;..\..\include_program\app_admin\resourse\icon\ntFinder.bmp;..\..\include_program\app_admin\resourse\icon\unmaproject.png;..\..\include_program\app_admin\resourse\icon\addfilter.png;..\..\include_program\app_admin\resourse\icon\addpr.png;..\..\include_program\app_admin\resourse\icon\cascadkind.png;..\..\include_program\app_admin\resourse\icon\okitem.png;..\..\include_program\app_admin\resourse\icon\erroritem.png;..\..\include_program\app_admin\resourse\icon\changeagroup.png;..\..\include_program\app_admin\resourse\icon\changegroup.png;..\..\include_program\app_admin\resourse\icon\connectserver.png;..\..\include_program\app_admin\resourse\icon\delete.png;..\..\include_program\app_admin\resourse\icon\deleteuncheck.png;..\..\include_program\app_admin\resourse\icon\disconnectserver.png;..\..\include_program\app_admin\resourse\icon\export.png;..\..\include_program\app_admin\resourse\icon\import.png;..\..\include_program\app_admin\resourse\icon\linekind.png;..\..\include_program\app_admin\resourse\icon\maproject.png;..\..\include_program\app_admin\resourse\icon\merge.png;..\..\include_program\app_admin\resourse\icon\new.png;..\..\include_program\app_admin\resourse\icon\newproject.png;..\..\include_program\app_admin\resourse\icon\removefilter.png;..\..\include_program\app_admin\resourse\icon\removeserver.png;..\..\include_program\app_admin\resourse\icon\filter.bmp;..\..\include_program\app_admin\resourse\icon\ok_lt.bmp;..\..\include_program\app_admin\resourse\icon\error_lt.bmp;..\..\include_program\app_admin\resourse\icon\errorscreanstateon.bmp;..\..\include_program\app_admin\resourse\icon\errorscreanoff.bmp;..\..\include_program\app_admin\resourse\icon\errorscreanon.bmp;..\..\include_program\app_admin\resourse\icon\errorscreanstateoff.bmp;..\..\include_program\app_admin\resourse\icon\ntActiveAlarmTable.bmp;..\..\include_program\app_admin\resourse\icon\ntAlarmTable.bmp;..\..\include_program\app_admin\resourse\icon\up.bmp;..\..\include_program\app_admin\resourse\icon\cdtGroup.bmp;..\..\include_program\app_admin\resourse\icon\cdtHomeList.bmp;..\..\include_program\app_admin\resourse\icon\cdtMainGroup.bmp;..\..\include_program\app_admin\resourse\icon\cdtMainMessageHeader.bmp;..\..\include_program\app_admin\resourse\icon\cdtMessageHeader.bmp;..\..\include_program\app_admin\resourse\icon\cdtMessageList.bmp;..\..\include_program\app_admin\resourse\icon\cdtmeta.bmp;..\..\include_program\app_admin\resourse\icon\cdtmsgtag.bmp;..\..\include_program\app_admin\resourse\icon\cdtReportArr.bmp;..\..\include_program\app_admin\resourse\icon\cdtReportHeader.bmp;..\..\include_program\app_admin\resourse\icon\cdtReportList.bmp;..\..\include_program\app_admin\resourse\icon\cdttrend.bmp;..\..\include_program\app_admin\resourse\icon\cdtTrendArr.bmp;..\..\include_program\app_admin\resourse\icon\cdtTrendHeader.bmp;..\..\include_program\app_admin\resourse\icon\cdtTrendList.bmp;..\..\include_program\app_admin\resourse\icon\cdtunit.bmp;..\..\include_program\app_admin\resourse\icon\del.bmp;..\..\include_program\app_admin\resourse\icon\down.bmp;..\..\include_program\app_admin\resourse\icon\newtag.bmp;..\..\include_program\app_admin\resourse\icon\ntA.bmp;..\..\include_program\app_admin\resourse\icon\ntAl.bmp;..\..\include_program\app_admin\resourse\icon\ntAT.bmp;..\..\include_program\app_admin\resourse\icon\ntBaseTable.bmp;..\..\include_program\app_admin\resourse\icon\ntByte.bmp;..\..\include_program\app_admin\resourse\icon\ntChar.bmp;..\..\include_program\app_admin\resourse\icon\ntCommandTable.bmp;..\..\include_program\app_admin\resourse\icon\ntDay.bmp;..\..\include_program\app_admin\resourse\icon\ntDec.bmp;..\..\include_program\app_admin\resourse\icon\ntDiscret.bmp;..\..\include_program\app_admin\resourse\icon\ntDT.bmp;..\..\include_program\app_admin\resourse\icon\ntEvent.bmp;..\..\include_program\app_admin\resourse\icon\ntEventAnalog.bmp;..\..\include_program\app_admin\resourse\icon\ntG.bmp;..\..\include_program\app_admin\resourse\icon\ntGG.bmp;..\..\include_program\app_admin\resourse\icon\ntGl.bmp;..\..\include_program\app_admin\resourse\icon\ntGroupTable.bmp;..\..\include_program\app_admin\resourse\icon\ntGT.bmp;..\..\include_program\app_admin\resourse\icon\ntHour.bmp;..\..\include_program\app_admin\resourse\icon\ntInteger.bmp;..\..\include_program\app_admin\resourse\icon\ntLocalServ.bmp;..\..\include_program\app_admin\resourse\icon\ntLocalServNA.bmp;..\..\include_program\app_admin\resourse\icon\ntLogTable.bmp;..\..\include_program\app_admin\resourse\icon\ntLongWord.bmp;..\..\include_program\app_admin\resourse\icon\ntmainRoot.bmp;..\..\include_program\app_admin\resourse\icon\ntMin.bmp;..\..\include_program\app_admin\resourse\icon\ntMin10.bmp;..\..\include_program\app_admin\resourse\icon\ntMin30.bmp;..\..\include_program\app_admin\resourse\icon\ntMonth.bmp;..\..\include_program\app_admin\resourse\icon\ntO.bmp;..\..\include_program\app_admin\resourse\icon\ntOBase.bmp;..\..\include_program\app_admin\resourse\icon\ntOCmd.bmp;..\..\include_program\app_admin\resourse\icon\ntODDE.bmp;..\..\include_program\app_admin\resourse\icon\ntODKoy.bmp;..\..\include_program\app_admin\resourse\icon\ntOll.bmp;..\..\include_program\app_admin\resourse\icon\ntOLogika.bmp;..\..\include_program\app_admin\resourse\icon\ntOnet.bmp;..\..\include_program\app_admin\resourse\icon\ntOOPC.bmp;..\..\include_program\app_admin\resourse\icon\ntOOPCHDA.bmp;..\..\include_program\app_admin\resourse\icon\ntOPoint.bmp;..\..\include_program\app_admin\resourse\icon\ntOServCount.bmp;..\..\include_program\app_admin\resourse\icon\ntOSimple.bmp;..\..\include_program\app_admin\resourse\icon\ntOSpac.bmp;..\..\include_program\app_admin\resourse\icon\ntOSystem.bmp;..\..\include_program\app_admin\resourse\icon\ntOSysVar.bmp;..\..\include_program\app_admin\resourse\icon\ntQvart.bmp;..\..\include_program\app_admin\resourse\icon\ntReal.bmp;..\..\include_program\app_admin\resourse\icon\ntReal48.bmp;..\..\include_program\app_admin\resourse\icon\ntRegTable.bmp;..\..\include_program\app_admin\resourse\icon\ntRemoteServ.bmp;..\..\include_program\app_admin\resourse\icon\ntRemoteServNC.bmp;..\..\include_program\app_admin\resourse\icon\ntRootTable.bmp;..\..\include_program\app_admin\resourse\icon\ntS.bmp;..\..\include_program\app_admin\resourse\icon\ntShortInt.bmp;..\..\include_program\app_admin\resourse\icon\ntSingle.bmp;..\..\include_program\app_admin\resourse\icon\ntSmallInt.bmp;..\..\include_program\app_admin\resourse\icon\ntST.bmp;..\..\include_program\app_admin\resourse\icon\ntT.bmp;..\..\include_program\app_admin\resourse\icon\ntText.bmp;..\..\include_program\app_admin\resourse\icon\ntTl.bmp;..\..\include_program\app_admin\resourse\icon\ntTT.bmp;..\..\include_program\app_admin\resourse\icon\ntValChTable.bmp;..\..\include_program\app_admin\resourse\icon\ntWord.bmp;..\..\include_program\app_admin\resourse\icon\ntYear.bmp;..\..\include_program\app_admin\resourse\icon\PrjMain.bmp;..\..\include_program\app_admin\resourse\icon\PrjMainold.bmp;..\..\include_program\app_admin\resourse\icon\PrjSome.bmp;..\..\include_program\app_admin\resourse\icon\PrjSomeold.bmp;..\..\include_program\app_admin\resourse\icon\PrjSoms.bmp;..\..\include_program\app_admin\resourse\icon\reload.bmp;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">Rcc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">.\GeneratedFiles\qrc_%(Filename).cpp;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">"$(QTDIR)\bin\rcc.exe" -name "%(Filename)" -no-compress "%(FullPath)" -o .\GeneratedFiles\qrc_%(Filename).cpp</Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\include_program\app_admin\resourse\icon\addfilter.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\addpr.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\addserver.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\agroup_kvit.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\appAdmin.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\appAdminService.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\appArchService.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\appDDEService.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\appKoyoService.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\appLgkService.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\appModbusService.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\appNetService.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\AppNodef.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\appOpcService.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\appSystemService.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\AppTestService.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cascadkind.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtGroup.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtHomeList.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtMainGroup.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtMainMessageHeader.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtMessageHeader.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtMessageList.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtmeta.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtmsgtag.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtReportArr.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtReportHeader.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtReportList.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdttrend.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtTrendArr.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtTrendHeader.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtTrendList.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\cdtunit.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\changeagroup.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\changegroup.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\connectserver.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\deccounter.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\del.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\delete.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\deleteuncheck.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\disconnectserver.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\down.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\erroritem.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\errorscreanoff.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\errorscreanon.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\errorscreanstateoff.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\errorscreanstateon.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\error_lt.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\export.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\filter.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\group_kvit.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\import.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\inccounter.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jralarmkvit.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jralarmnew.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jralarmoff.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jravarkvit.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jravarnew.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jravaroff.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jrcommand.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jrevent.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jrevental.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jreventav.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jreventnot.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jreventoff.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jrnoticekvit.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jrnoticenew.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jrnoticeoff.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jroff.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\jron.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\kvit.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\linekind.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\logerror.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\lognotice.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\logscreanall.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\logscreanclear.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\logscreanerror.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\logwarning.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\maproject.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\merge.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\new.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\newproject.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\newtag.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntA.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntAccessRules.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntActiveAlarmTable.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntAl.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntAlarmTable.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntAT.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntBaseTable.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntByte.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntChar.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntClients.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntCommandTable.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntDay.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntDec.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntDiscret.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntDT.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntEvent.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntEventAnalog.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntFinder.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntG.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntGG.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntGl.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntGroupTable.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntGT.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntHour.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntInteger.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntLocalServ.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntLocalServNA.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntLogTable.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntLongWord.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntmainRoot.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntMin.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntMin10.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntMin30.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntMonth.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntO.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOBase.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOCmd.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntODDE.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntODKoy.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOll.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOLogika.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOModbus.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOnet.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOOPC.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOOPCHDA.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOPoint.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOReport.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOReportCnt.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOServCount.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOSimple.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOSpac.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOSystem.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntOSysVar.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntQvart.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntReal.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntReal48.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntRegTable.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntRemoteServ.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntRemoteServNC.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntRootTable.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntRule.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntRules.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntS.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntService.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntServiceNo.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntServiceOff.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntServiceOn.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntServicePend.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntShortInt.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntSingle.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntSmallInt.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntST.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntT.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntText.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntTl.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntTT.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntUser.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntUsers.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntValChTable.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntWord.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ntYear.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\okitem.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\ok_lt.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\operation_clone.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\PrjMain.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\PrjMainold.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\PrjSome.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\PrjSomeold.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\PrjSoms.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\reload.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\removefilter.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\removeserver.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\setcommand.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\setinvalidall.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\setvalid.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\setvalidall.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\setvalue.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\startservice.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\stopservice.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\unmaproject.png">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\include_program\app_admin\resourse\icon\up.bmp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_dbd_WIN32|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='vc_ms_rld_WIN32|Win32'">true</ExcludedFromBuild>
+    </None>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties UicDir=".\GeneratedFiles" MocDir=".\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir=".\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" Qt5Version_x0020_Win32="msvc2010" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
