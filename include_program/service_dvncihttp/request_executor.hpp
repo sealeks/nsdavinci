@@ -118,6 +118,7 @@ namespace http {
         typedef boost::uint64_t sessionid_type;
         typedef dvnci::short_value value_type;
         typedef std::set<std::string > tagset_type;
+        typedef std::vector<std::string > executevect_type;        
         typedef std::map<std::string, value_type> valuemap_type;
 
         class http_session :

@@ -49,5 +49,6 @@ webkitadd/
 *.exe
 *.ncb
 *.sdf
+*.opensdf
 BuildLog.htm
 Makefile

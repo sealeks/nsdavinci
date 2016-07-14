@@ -30,7 +30,11 @@
  
      2.2 remove tags from request
  
-              { "session" : "RESPID" , remove-tag : [... remove tags list...] }         ->            
+              { "session" : "RESPID" , remove-tag : [... remove tags list...] }         ->     
+ 
+     2.3  single execute expression in request
+ 
+              { "session" : "RESPID" , add-execute : [... added executes list...] }         ->         
  
  
  */
@@ -48,14 +52,16 @@ namespace http {
         const operationid_type INIT_REQUEST = 2;
         const operationid_type INIT_RESPONSE = 3;
         const operationid_type ADDTAG_REQUEST = 4;
-        const operationid_type REMOVETAG_REQUEST = 5;
-        const operationid_type UPDATE_REQUEST = 6;
-        const operationid_type UPDATE_RESPONSE = 7;
+        const operationid_type ADDEXECUTE_REQUEST = 5;        
+        const operationid_type REMOVETAG_REQUEST = 6;
+        const operationid_type UPDATE_REQUEST = 7;
+        const operationid_type UPDATE_RESPONSE = 8;
 
         const std::string& SESSION_REQUEST_S = "session";
         const std::string& INIT_REQUEST_S = "init-req";
         const std::string& INIT_RESPONSE_S = "init-resp";
         const std::string& ADDTAG_REQUEST_S = "add-tags";
+        const std::string& ADDEXECUTE_REQUEST_S = "add-execute";        
         const std::string& REMOVETAG_REQUEST_S = "remove-tags";
         const std::string& UPDATE_REQUEST_S = "get-update";
         const std::string& UPDATE_RESPONSE_S = "update-response";
@@ -66,6 +72,7 @@ namespace http {
             rslt.insert(operationpair(INIT_REQUEST_S, INIT_REQUEST));
             rslt.insert(operationpair(INIT_RESPONSE_S, INIT_RESPONSE));
             rslt.insert(operationpair(ADDTAG_REQUEST_S, ADDTAG_REQUEST));
+            rslt.insert(operationpair(ADDEXECUTE_REQUEST_S, ADDEXECUTE_REQUEST));            
             rslt.insert(operationpair(REMOVETAG_REQUEST_S, REMOVETAG_REQUEST));
             rslt.insert(operationpair(UPDATE_REQUEST_S, UPDATE_REQUEST));
             rslt.insert(operationpair(UPDATE_RESPONSE_S, UPDATE_RESPONSE));
@@ -90,6 +97,12 @@ namespace http {
                 tgs.insert(it->second.get_value<std::string>());
             return !tgs.empty();
         }
+        
+        static bool get_executes_list(const boost::property_tree::ptree& req, executevect_type& excs) {
+            for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it)
+                excs.push_back(it->second.get_value<std::string>());
+            return !excs.empty();
+        }              
 
         static ptree::ptree add_tag_value(const dvnci::short_value& val) {
             ptree::ptree result;
@@ -225,6 +238,16 @@ namespace http {
                     break;
 
                 }
+                case ADDEXECUTE_REQUEST:
+                {
+                    executevect_type excs;
+                    /*if (*/get_executes_list(req, excs);/*)*/
+                        //addtags(tgs);
+                    resp.put(SESSION_REQUEST_S, id_);
+                    result = reply::ok;
+                    break;
+
+                }                
                 case REMOVETAG_REQUEST:
                 {
                     tagset_type tgs;
