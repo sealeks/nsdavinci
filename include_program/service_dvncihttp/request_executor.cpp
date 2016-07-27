@@ -14,6 +14,34 @@
 #include "request_executor.hpp"
 
 /*
+  $$(expr [,handler])   ?!
+ $$check(expr [,handler])  ?!
+ $$error(expr [,handler])   ?!
+ $$users(handler)  ?!
+ $$registuser(handler, user, password )   ?!
+ $$unregistuser(handler)   ?!
+ $$adduser(handler, user, password, access)   ?!
+ $$removeuser(handler, user, password)   ?!
+ $$changeuserpassword(handler, user, oldpassword, newpassword)   ?!
+ $$changeuseraccess(handler, user, access)   ?!
+ $$exit()
+ $$writefile()
+ $$filelist([ext]) !!!!
+ $$fileexists((file|dir))  !!!!
+ $$kill()
+ $$editable()
+ $$runtime()
+ $$global()
+ element.onalarm = handler  - delete
+ element.ontrend = handler - delete
+ addExpressionListener(handler, expr)
+ removeExpressionListener(handler)
+ addAlarmsListener(handler[, agroup, group])
+ removeAlarmsListener(handler)
+ addTrendsListener(handler, taglist, period)
+ removTrendsListener(handler)
+ 
+ 
  Type request:
            
  1. init
@@ -158,8 +186,8 @@ namespace http {
         //  http_base_listener
         ////////////////////////////////////////////////////////         
 
-        http_expression_listener::http_expression_listener(const std::string& exp, http_session_ptr sess) :
-        dvnci::expression_listener(), expr(exp), session(sess) {
+        http_expression_listener::http_expression_listener(const std::string& exp, http_session_ptr sess, bool single, bool test) :
+        dvnci::expression_listener(single, test), expr(exp), session(sess) {
         }
 
         void http_expression_listener::event(const dvnci::short_value& val) {
@@ -185,12 +213,6 @@ namespace http {
         void http_session::addtags(const tagset_type& vl) {
             http_executor_ptr inf = intf();
             std::cout << "Session id = " << id_ <<  " add tags count is " << vl.size() << std::endl;
-            /*for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
-                if (it == vl.begin())
-                    std::cout << *it;
-                else
-                    std::cout << ", " << *it;
-            }*/
             if (inf) {
                 for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
                     dvnci::expression_listener_ptr exrptr = dvnci::expression_listener_ptr(new http_expression_listener(*it, shared_from_this()));
@@ -199,16 +221,23 @@ namespace http {
             }
             std::cout << std::endl;
         }
+        
+        void http_session::addexecutes(const executevect_type& vl) {    
+            http_executor_ptr inf = intf();
+            std::cout << "Session id = " << id_ <<  " add executes count is " << vl.size() << std::endl;
+            if (inf) {
+                for (executevect_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
+                     std::cout << "executes = " << *it << std::endl;
+                    dvnci::expression_listener_ptr exrptr = dvnci::expression_listener_ptr(new http_expression_listener(*it, shared_from_this(), true));
+                    inf->regist_expr_listener(*it, exrptr);
+                }
+            }
+            std::cout << std::endl;            
+        }    
 
         void http_session::removetags(const tagset_type& vl) {
             http_executor_ptr inf = intf();
             std::cout << "Session id = " << id_ <<  " remove  tags count is " << vl.size() << std::endl;
-            /*for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
-                if (it == vl.begin())
-                    std::cout << *it;
-                else
-                    std::cout << ", " << *it;
-            }*/
             std::cout << std::endl;
             if (inf) {
                 for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
@@ -241,8 +270,8 @@ namespace http {
                 case ADDEXECUTE_REQUEST:
                 {
                     executevect_type excs;
-                    /*if (*/get_executes_list(req, excs);/*)*/
-                        //addtags(tgs);
+                    if (get_executes_list(req, excs))
+                        addexecutes(excs);
                     resp.put(SESSION_REQUEST_S, id_);
                     result = reply::ok;
                     break;

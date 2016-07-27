@@ -93,7 +93,7 @@ namespace http {
 
         public:
 
-            http_expression_listener(const std::string& exp, http_session_ptr sess);
+            http_expression_listener(const std::string& exp, http_session_ptr sess, bool single = false, bool test = false);
 
             virtual ~http_expression_listener() {
             }
@@ -150,6 +150,8 @@ namespace http {
             }
 
             void addtags(const tagset_type& vl);
+
+            void addexecutes(const executevect_type& vl);            
 
             void removetags(const tagset_type& vl);
 
