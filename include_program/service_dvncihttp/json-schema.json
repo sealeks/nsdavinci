@@ -1,8 +1,24 @@
 {
-   "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "object",
-  "properties": {
-    "init-req": "integer",
-    "init-resp" : "integer",
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "init-req": {
+            "type": "integer"
+        },
+        "init-resp": {
+            "type": "integer"
+        },
+        "type": "object",
+        "properties": {
+            "session": {
+                "type": "integer"
+            },
+            "add-tag": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            }
+        }
     }
 }
