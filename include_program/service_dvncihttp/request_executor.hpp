@@ -2,7 +2,7 @@
 // request_handler.hpp
 // ~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2014 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c) Author: Serg Alexeev sealeks@mail.ru
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -130,7 +130,7 @@ namespace http {
 
 
         ////////////////////////////////////////////////////////
-        //  http_base_listener
+        //  http_expression_listener
         ////////////////////////////////////////////////////////         
 
         class http_expression_listener : public dvnci::expression_listener {
@@ -151,6 +151,34 @@ namespace http {
             entity_atom expr;
             http_session_ptr session;
         };
+        
+        
+        
+        
+        
+        ////////////////////////////////////////////////////////
+        //   http_registrate_listener
+        ////////////////////////////////////////////////////////              
+        class http_registrate_listener : public dvnci::registrate_listener {
+
+        public:
+
+            http_registrate_listener(http_session_ptr sess, const std::string& id, int type,
+                    const std::string& user = "", const std::string& password = "", const std::string& newpassword = "");
+
+
+            virtual void event(const dvnci::ns_error& val) ;
+            
+            std::string id() const {
+                return operid_;
+            }
+
+        private:
+            http_session_ptr session;
+            std::string operid_;
+
+        };
+    
 
 
 
@@ -201,6 +229,8 @@ namespace http {
             void addexecutes(const executevect_type& vl);            
 
             void removetags(const tagset_type& vl);
+            
+            void registrate_oper_user(const std::string& id, int type, const std::string& user = "", const std::string& pass="", const std::string& pass2="");        
 
             void call();
 

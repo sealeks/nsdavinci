@@ -2,7 +2,7 @@
 // request_handler.cpp
 // ~~~~~~~~~~~~~~~~~~~
 //
-// Copyright (c) 2003-2014 Christopher M. Kohlhoff (chris at kohlhoff dot com)
+// Copyright (c)  Author: Serg Alexeev sealeks@mail.ru
 //
 // Distributed under the Boost Software License, Version 1.0. (See accompanying
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -84,6 +84,10 @@ namespace http {
         const operationid_type REMOVETAG_REQUEST = 6;
         const operationid_type UPDATE_REQUEST = 7;
         const operationid_type UPDATE_RESPONSE = 8;
+        const operationid_type REGISTRATEUSER_REQUEST = 9;   
+        const operationid_type REGISTRATEUSER_RESPONSE = 10;         
+        const operationid_type UNREGISTRATEUSER_REQUEST = 11;   
+        const operationid_type UNREGISTRATEUSER_RESPONSE = 12;          
 
         const std::string& SESSION_REQUEST_S = "session";
         const std::string& INIT_REQUEST_S = "init-req";
@@ -92,7 +96,11 @@ namespace http {
         const std::string& ADDEXECUTE_REQUEST_S = "add-execute";        
         const std::string& REMOVETAG_REQUEST_S = "remove-tags";
         const std::string& UPDATE_REQUEST_S = "get-update";
-        const std::string& UPDATE_RESPONSE_S = "update-response";
+        const std::string& UPDATE_RESPONSE_S = "update-response";        
+        const std::string& REGISTRATEUSER_REQUEST_S = "registrate-request";   
+        const std::string& REGISTRATEUSER_RESPONSE_S = "registrate-response";         
+        const std::string& UNREGISTRATEUSER_REQUEST_S = "unregistrate-request";    
+        const std::string& UNREGISTRATEUSER_RESPONSE_S = "unregistrate-response";                  
 
         operationmap get_operationid_map_int() {
             operationmap rslt;
@@ -104,6 +112,10 @@ namespace http {
             rslt.insert(operationpair(REMOVETAG_REQUEST_S, REMOVETAG_REQUEST));
             rslt.insert(operationpair(UPDATE_REQUEST_S, UPDATE_REQUEST));
             rslt.insert(operationpair(UPDATE_RESPONSE_S, UPDATE_RESPONSE));
+            rslt.insert(operationpair(REGISTRATEUSER_REQUEST_S, REGISTRATEUSER_REQUEST));
+            rslt.insert(operationpair(REGISTRATEUSER_RESPONSE_S, REGISTRATEUSER_RESPONSE));    
+            rslt.insert(operationpair(UNREGISTRATEUSER_REQUEST_S, UNREGISTRATEUSER_REQUEST));
+            rslt.insert(operationpair(UNREGISTRATEUSER_RESPONSE_S, UNREGISTRATEUSER_RESPONSE));            
             return rslt;
         }
 
@@ -141,13 +153,18 @@ namespace http {
                 }
             }
             return !excs.empty();
-        }              
+        }
 
         static ptree::ptree add_tag_value(const dvnci::short_value& val) {
             ptree::ptree result;
-            result.put("value", val.value<std::string>());
-            result.put("type", dvnci::to_str(val.type()));
-            result.put("valid", dvnci::to_str(val.valid()));
+            if (!val.error()) {
+                result.put("value", val.value<std::string>());
+                result.put("type", dvnci::to_str(val.type()));
+                result.put("valid", dvnci::to_str(val.valid()));
+                //result.put("time", dvnci::to_str(val.time()));
+            } else {
+                result.put("error", dvnci::to_str(val.error()));
+            }
             return result;
         }
 
@@ -242,7 +259,20 @@ namespace http {
         }
 
 
+        ////////////////////////////////////////////////////////
+        //   http_registrate_listener
+        ////////////////////////////////////////////////////////              
 
+        http_registrate_listener::http_registrate_listener(http_session_ptr sess, const std::string& id, int type,
+                const std::string& user, const std::string& password, const std::string& newpassword)
+        : dvnci::registrate_listener(type, user, password, newpassword), session(sess), operid_(id) {
+        };
+
+        void http_registrate_listener::event(const dvnci::ns_error& val) {
+            //needupdate(true);
+            //value_ = val;
+            //return true;
+        }
 
 
         ////////////////////////////////////////////////////////
@@ -257,7 +287,7 @@ namespace http {
 
         void http_session::addtags(const tagset_type& vl) {
             http_executor_ptr inf = intf();
-            std::cout << "Session id = " << id_ <<  " add tags count is " << vl.size() << std::endl;
+            //std::cout << "Session id = " << id_ <<  " add tags count is " << vl.size() << std::endl;
             if (inf) {
                 for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
                     dvnci::expression_listener_ptr exrptr = dvnci::expression_listener_ptr(new http_expression_listener(*it, shared_from_this()));
@@ -269,10 +299,10 @@ namespace http {
         
         void http_session::addexecutes(const executevect_type& vl) {    
             http_executor_ptr inf = intf();
-            std::cout << "Session id = " << id_ <<  " add executes count is " << vl.size() << std::endl;
+            //std::cout << "Session id = " << id_ <<  " add executes count is " << vl.size() << std::endl;
             if (inf) {
                 for (executevect_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
-                     std::cout << "executes = " << it->expr() << std::endl;
+                     //std::cout << "executes = " << it->expr() << std::endl;
                     dvnci::expression_listener_ptr exrptr = dvnci::expression_listener_ptr(new http_expression_listener(*it, shared_from_this(), true));
                     inf->regist_expr_listener(it->expr(), exrptr);
                 }
@@ -282,14 +312,24 @@ namespace http {
 
         void http_session::removetags(const tagset_type& vl) {
             http_executor_ptr inf = intf();
-            std::cout << "Session id = " << id_ <<  " remove  tags count is " << vl.size() << std::endl;
-            std::cout << std::endl;
+            //std::cout << "Session id = " << id_ <<  " remove  tags count is " << vl.size() << std::endl;
+            //std::cout << std::endl;
             if (inf) {
                 for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
                     //inf->
                 }
             }
         }
+
+        void http_session::registrate_oper_user(const std::string& id, int type, const std::string& user, const std::string& pass, const std::string& pass2) {
+            http_executor_ptr inf = intf();
+            if (inf) {
+                    dvnci::registrate_listener_ptr regptr = dvnci::registrate_listener_ptr(new http_registrate_listener(shared_from_this(), id, type, user, pass, pass2));
+                    inf->regist_registrate_listener(regptr);                
+            }
+        }
+
+
 
         reply::status_type http_session::proccess_request(operationid_type oper, const ptree::ptree& req, ptree::ptree& resp) {
             reply::status_type result = reply::none;
@@ -331,6 +371,22 @@ namespace http {
                     result = reply::ok;
                     break;
                 }
+                case REGISTRATEUSER_REQUEST:
+                {
+                    std::string user = req.get<std::string>("user");
+                    std::string password = req.get<std::string>("password");
+                    registrate_oper_user("id",  dvnci::registrate_listener::REGIST, user, password);
+                    resp.put(SESSION_REQUEST_S, id_);
+                    result = reply::ok;
+                    break;                    
+                }
+                case UNREGISTRATEUSER_REQUEST:
+                {  
+                    registrate_oper_user("id",  dvnci::registrate_listener::UNREGIST);
+                    resp.put(SESSION_REQUEST_S, id_);
+                    result = reply::ok;
+                    break;                                         
+                }                
                 default:
                 {
 
@@ -394,8 +450,8 @@ namespace http {
                 while (it != session_map.end()) {
                     if (it->second->expired()) {
                         http_session_map::iterator fit = it;
-                        std::cout << "session id=" << it->first << 
-                                " expired. Session count is " << (session_map.size() - 1) << std::endl;
+                        //std::cout << "session id=" << it->first << 
+                               // " expired. Session count is " << (session_map.size() - 1) << std::endl;
                         it++;
                         session_map.erase(fit);
                     } else
@@ -446,8 +502,8 @@ namespace http {
                             sid=sess->id();
                             resp.put(INIT_RESPONSE_S, sid);
                             result = reply::ok;
-                            std::cout << "New session id=" << sid << 
-                                " was created. Sessins count is " << session_map.size()  << std::endl;
+                            //std::cout << "New session id=" << sid << 
+                                //" was created. Sessins count is " << session_map.size()  << std::endl;
                         }
                         break;
                     }
