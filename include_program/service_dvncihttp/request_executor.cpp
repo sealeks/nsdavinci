@@ -121,14 +121,25 @@ namespace http {
         }
 
         static bool get_tags_list(const boost::property_tree::ptree& req, tagset_type& tgs) {
-            for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it)
-                tgs.insert(it->second.get_value<std::string>());
+            for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
+                std::string item_expr = it->second.get_value<std::string>();
+                if (!item_expr.empty())
+                    tgs.insert(entity_atom(item_expr));
+            }
             return !tgs.empty();
         }
-        
+
         static bool get_executes_list(const boost::property_tree::ptree& req, executevect_type& excs) {
-            for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it)
-                excs.push_back(it->second.get_value<std::string>());
+            for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
+                std::string item_id = it->second.get<std::string>("id");
+                std::string item_expr = it->second.get<std::string>("expr");
+                if (!item_expr.empty()) {
+                    if (!item_id.empty())
+                        excs.push_back(entity_atom(item_id, item_expr));
+                    //else
+                        //excs.push_back(entity_atom(item_expr));
+                }
+            }
             return !excs.empty();
         }              
 
@@ -143,20 +154,34 @@ namespace http {
         static void update_tags_value(http_session_ptr session, ptree::ptree& resp) {
             if (!session->updatelist().empty()) {
                 ptree::ptree result;
+                bool has_exec = false;
                 for (valuemap_type::const_iterator it = session->updatelist().begin(); it != session->updatelist().end(); ++it) {
-                    result.add_child(it->first, add_tag_value(it->second));
+                    if (it->first.validid())
+                        has_exec = true;
+                    else
+                        result.add_child(it->first.expr(), add_tag_value(it->second));
                 }
                 resp.add_child("update-value", result);
+                result.clear();
+                if (has_exec) {
+                    for (valuemap_type::const_iterator it = session->updatelist().begin(); it != session->updatelist().end(); ++it) {
+                        if (it->first.validid()) {
+                          result.add_child(it->first.id(), add_tag_value(it->second));
+                        }
+                    }
+                    resp.add_child("execute-value", result);
+                }
                 session->updatelist().clear();
             }
         }
 
+        
 
 
         ////////////////////////////////////////////////////////
         //  http_terminated_thread
         ////////////////////////////////////////////////////////          
-
+        
         http_executor_ptr build_http_executor() {
             dvnci::fspath basepath = dvnci::getlocalbasepath();
             dvnci::tagsbase_ptr kintf = dvnci::krnl::factory::build(basepath, 0);
@@ -181,6 +206,22 @@ namespace http {
             return http_session_ptr();
         }
 
+        
+        
+
+        ////////////////////////////////////////////////////////
+        //  entity_atom
+        ////////////////////////////////////////////////////////             
+        
+        bool operator<(const entity_atom& ls, const entity_atom& rs){
+            return (ls.id_+"-"+ls.expr_) < (rs.id_+"-"+rs.expr_);
+        }
+        
+        bool operator==(const entity_atom& ls, const entity_atom& rs){
+            return (ls.id_+"-"+ls.expr_) == (rs.id_+"-"+rs.expr_);
+        }                  
+        
+        
 
         ////////////////////////////////////////////////////////
         //  http_base_listener
@@ -189,6 +230,10 @@ namespace http {
         http_expression_listener::http_expression_listener(const std::string& exp, http_session_ptr sess, bool single, bool test) :
         dvnci::expression_listener(single, test), expr(exp), session(sess) {
         }
+        
+        http_expression_listener::http_expression_listener(const entity_atom& exp, http_session_ptr sess, bool single, bool test) :
+        dvnci::expression_listener(single, test), expr(exp), session(sess) {
+        }        
 
         void http_expression_listener::event(const dvnci::short_value& val) {
             if (session) {
@@ -216,7 +261,7 @@ namespace http {
             if (inf) {
                 for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
                     dvnci::expression_listener_ptr exrptr = dvnci::expression_listener_ptr(new http_expression_listener(*it, shared_from_this()));
-                    inf->regist_expr_listener(*it, exrptr);
+                    inf->regist_expr_listener(it->expr(), exrptr);
                 }
             }
             std::cout << std::endl;
@@ -227,9 +272,9 @@ namespace http {
             std::cout << "Session id = " << id_ <<  " add executes count is " << vl.size() << std::endl;
             if (inf) {
                 for (executevect_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
-                     std::cout << "executes = " << *it << std::endl;
+                     std::cout << "executes = " << it->expr() << std::endl;
                     dvnci::expression_listener_ptr exrptr = dvnci::expression_listener_ptr(new http_expression_listener(*it, shared_from_this(), true));
-                    inf->regist_expr_listener(*it, exrptr);
+                    inf->regist_expr_listener(it->expr(), exrptr);
                 }
             }
             std::cout << std::endl;            

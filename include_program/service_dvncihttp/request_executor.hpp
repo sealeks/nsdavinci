@@ -82,7 +82,51 @@ namespace http {
 
         http_terminated_thread_ptr build_http_execthread();
 
+        
+        
 
+        ////////////////////////////////////////////////////////
+        //  entity_atom
+        ////////////////////////////////////////////////////////     
+        
+        struct entity_atom {
+
+            entity_atom(const std::string& exp) :
+            expr_(exp) {
+            }
+
+            entity_atom(const std::string& i, const std::string& exp) :
+            id_(i),
+            expr_(exp) {
+            }     
+
+            entity_atom(int i, const std::string& exp) :
+            id_(dvnci::to_str(i)),
+            expr_(exp) {
+            }               
+
+            const std::string& id() const {
+                return id_.empty() ? expr_ : id_;
+            }
+
+            const std::string& expr() const {
+                return expr_;
+            }
+            
+            bool validid() const {
+                return !id_.empty();
+            }           
+
+            friend bool operator<(const entity_atom& ls, const entity_atom& rs);
+
+            friend bool operator==(const entity_atom& ls, const entity_atom& rs); 
+
+        private:
+
+            std::string id_;
+            std::string expr_;
+        };
+          
 
 
         ////////////////////////////////////////////////////////
@@ -94,6 +138,9 @@ namespace http {
         public:
 
             http_expression_listener(const std::string& exp, http_session_ptr sess, bool single = false, bool test = false);
+            
+            http_expression_listener(const entity_atom& exp, http_session_ptr sess, bool single = false, bool test = false);            
+            
 
             virtual ~http_expression_listener() {
             }
@@ -101,7 +148,7 @@ namespace http {
             virtual void event(const dvnci::short_value& val);
 
         private:
-            std::string expr;
+            entity_atom expr;
             http_session_ptr session;
         };
 
@@ -110,16 +157,16 @@ namespace http {
         ////////////////////////////////////////////////////////
         //  http_session
         ////////////////////////////////////////////////////////       
-
+        
          const std::size_t MIN_SESSION_LT=60;        
          const std::size_t DEFAULT_SESSION_LT=600;
          const std::size_t MAX_SESSION_LT=3600;   
 
         typedef boost::uint64_t sessionid_type;
         typedef dvnci::short_value value_type;
-        typedef std::set<std::string > tagset_type;
-        typedef std::vector<std::string > executevect_type;        
-        typedef std::map<std::string, value_type> valuemap_type;
+        typedef std::set<entity_atom > tagset_type;
+        typedef std::vector<entity_atom > executevect_type;        
+        typedef std::map<entity_atom, value_type> valuemap_type;
 
         class http_session :
         public boost::enable_shared_from_this<http_session> {
