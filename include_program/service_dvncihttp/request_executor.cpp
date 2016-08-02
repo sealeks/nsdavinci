@@ -439,7 +439,8 @@ namespace http {
                     std::string operid = req.get<std::string>("id", "");
                     std::string user = req.get<std::string>("user","");
                     std::string password = req.get<std::string>("password","");
-                    registrate_oper_user(operid,  dvnci::registrate_listener::ADDUSER, user, password);
+                    std::string access = req.get<std::string>("access", "");
+                    registrate_oper_user(operid,  dvnci::registrate_listener::ADDUSER, user, password, access);
                     resp.put(SESSION_REQUEST_S, id_);
                     result = reply::ok;
                     break;                    
