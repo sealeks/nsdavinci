@@ -87,7 +87,15 @@ namespace http {
         const operationid_type REGISTRATEUSER_REQUEST = 9;   
         const operationid_type REGISTRATEUSER_RESPONSE = 10;         
         const operationid_type UNREGISTRATEUSER_REQUEST = 11;   
-        const operationid_type UNREGISTRATEUSER_RESPONSE = 12;          
+        const operationid_type UNREGISTRATEUSER_RESPONSE = 12;         
+        const operationid_type ADDUSER_REQUEST = 13;   
+        const operationid_type ADDUSER_RESPONSE = 14;        
+        const operationid_type REMOVEUSER_REQUEST = 15;   
+        const operationid_type REMOVEUSER_RESPONSE = 16;   
+        const operationid_type CHANGEPASSWORD_REQUEST = 17;   
+        const operationid_type CHANGEPASSWORD_RESPONSE =18;        
+        const operationid_type CHANGEACCESS_REQUEST = 19;   
+        const operationid_type CHANGEACCESS_RESPONSE =20;        
 
         const std::string& SESSION_REQUEST_S = "session";
         const std::string& INIT_REQUEST_S = "init-req";
@@ -100,7 +108,15 @@ namespace http {
         const std::string& REGISTRATEUSER_REQUEST_S = "registrate-request";   
         const std::string& REGISTRATEUSER_RESPONSE_S = "registrate-response";         
         const std::string& UNREGISTRATEUSER_REQUEST_S = "unregistrate-request";    
-        const std::string& UNREGISTRATEUSER_RESPONSE_S = "unregistrate-response";                  
+        const std::string& UNREGISTRATEUSER_RESPONSE_S = "unregistrate-response";   
+        const std::string& ADDUSER_REQUEST_S = "adduser-request";   
+        const std::string& ADDUSER_RESPONSE_S = "adduser-response";        
+        const std::string& REMOVEUSER_REQUEST_S = "removeuser-request";   
+        const std::string& REMOVEUSER_RESPONSE_S = "removeuser-response";   
+        const std::string& CHANGEPASSWORD_REQUEST_S = "changepassword-request";   
+        const std::string& CHANGEPASSWORD_RESPONSE_S = "changepassword-response";   
+        const std::string& CHANGEACCESS_REQUEST_S = "changeaccess-request";   
+        const std::string& CHANGEACCESS_RESPONSE_S = "changeaccess-response";        
 
         operationmap get_operationid_map_int() {
             operationmap rslt;
@@ -116,6 +132,14 @@ namespace http {
             rslt.insert(operationpair(REGISTRATEUSER_RESPONSE_S, REGISTRATEUSER_RESPONSE));    
             rslt.insert(operationpair(UNREGISTRATEUSER_REQUEST_S, UNREGISTRATEUSER_REQUEST));
             rslt.insert(operationpair(UNREGISTRATEUSER_RESPONSE_S, UNREGISTRATEUSER_RESPONSE));            
+            rslt.insert(operationpair(ADDUSER_REQUEST_S, ADDUSER_REQUEST));
+            rslt.insert(operationpair(ADDUSER_RESPONSE_S, ADDUSER_RESPONSE));        
+            rslt.insert(operationpair(REMOVEUSER_REQUEST_S, REMOVEUSER_REQUEST));
+            rslt.insert(operationpair(REMOVEUSER_RESPONSE_S, REMOVEUSER_RESPONSE));  
+            rslt.insert(operationpair(CHANGEPASSWORD_REQUEST_S, CHANGEPASSWORD_REQUEST));
+            rslt.insert(operationpair(CHANGEPASSWORD_RESPONSE_S, CHANGEPASSWORD_RESPONSE));         
+            rslt.insert(operationpair(CHANGEACCESS_REQUEST_S, CHANGEACCESS_REQUEST));
+            rslt.insert(operationpair(CHANGEACCESS_RESPONSE_S, CHANGEACCESS_RESPONSE));            
             return rslt;
         }
 
@@ -143,8 +167,8 @@ namespace http {
 
         static bool get_executes_list(const boost::property_tree::ptree& req, executevect_type& excs) {
             for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
-                std::string item_id = it->second.get<std::string>("id");
-                std::string item_expr = it->second.get<std::string>("expr");
+                std::string item_id = it->second.get<std::string>("id", "");
+                std::string item_expr = it->second.get<std::string>("expr", "");
                 if (!item_expr.empty()) {
                     if (!item_id.empty())
                         excs.push_back(entity_atom(item_id, item_expr));
@@ -168,7 +192,31 @@ namespace http {
             return result;
         }
 
-        static void update_tags_value(http_session_ptr session, ptree::ptree& resp) {
+        static void update_all_value(http_session_ptr session, ptree::ptree& resp) {
+            if (!session->registrateoper().empty()) {
+                for (registratemap_type::const_iterator it = session->registrateoper().begin(); it != session->registrateoper().end(); ++it) {
+                    ptree::ptree result;
+                    result.put(it->first, dvnci::to_str(it->second.error));
+                    switch (it->second.type) {
+                        case dvnci::registrate_listener::REGIST: resp.add_child(REGISTRATEUSER_RESPONSE_S, result);
+                            break;
+                        case dvnci::registrate_listener::UNREGIST: resp.add_child(UNREGISTRATEUSER_RESPONSE_S, result);
+                            break;
+                        case dvnci::registrate_listener::ADDUSER: resp.add_child(ADDUSER_RESPONSE_S, result);
+                            break;
+                        case dvnci::registrate_listener::REMOVEUSER: resp.add_child(REMOVEUSER_RESPONSE_S, result);
+                            break;
+                        case dvnci::registrate_listener::CHANGEPASS: resp.add_child(CHANGEPASSWORD_RESPONSE_S, result);
+                            break;
+                        case dvnci::registrate_listener::CHANGEACCESS: resp.add_child(CHANGEACCESS_RESPONSE_S, result);
+                            break;
+                        default:
+                        {
+                        }
+                    }
+                }
+                session->registrateoper().clear();
+            }
             if (!session->updatelist().empty()) {
                 ptree::ptree result;
                 bool has_exec = false;
@@ -269,9 +317,10 @@ namespace http {
         };
 
         void http_registrate_listener::event(const dvnci::ns_error& val) {
-            //needupdate(true);
-            //value_ = val;
-            //return true;
+            if (session) {
+                session->registrateoper().insert(
+                registratemap_type::value_type(id(), registrate_struct(val, type())));
+            }
         }
 
 
@@ -287,7 +336,6 @@ namespace http {
 
         void http_session::addtags(const tagset_type& vl) {
             http_executor_ptr inf = intf();
-            //std::cout << "Session id = " << id_ <<  " add tags count is " << vl.size() << std::endl;
             if (inf) {
                 for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
                     dvnci::expression_listener_ptr exrptr = dvnci::expression_listener_ptr(new http_expression_listener(*it, shared_from_this()));
@@ -299,10 +347,8 @@ namespace http {
         
         void http_session::addexecutes(const executevect_type& vl) {    
             http_executor_ptr inf = intf();
-            //std::cout << "Session id = " << id_ <<  " add executes count is " << vl.size() << std::endl;
             if (inf) {
                 for (executevect_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
-                     //std::cout << "executes = " << it->expr() << std::endl;
                     dvnci::expression_listener_ptr exrptr = dvnci::expression_listener_ptr(new http_expression_listener(*it, shared_from_this(), true));
                     inf->regist_expr_listener(it->expr(), exrptr);
                 }
@@ -312,8 +358,6 @@ namespace http {
 
         void http_session::removetags(const tagset_type& vl) {
             http_executor_ptr inf = intf();
-            //std::cout << "Session id = " << id_ <<  " remove  tags count is " << vl.size() << std::endl;
-            //std::cout << std::endl;
             if (inf) {
                 for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
                     //inf->
@@ -338,7 +382,7 @@ namespace http {
                 case UPDATE_REQUEST:
                 {
                     resp.put(SESSION_REQUEST_S, id_);
-                    update_tags_value(shared_from_this(), resp);
+                    update_all_value(shared_from_this(), resp);
                     result = reply::ok;
                     break;
                 }
@@ -373,20 +417,65 @@ namespace http {
                 }
                 case REGISTRATEUSER_REQUEST:
                 {
-                    std::string user = req.get<std::string>("user");
-                    std::string password = req.get<std::string>("password");
-                    registrate_oper_user("id",  dvnci::registrate_listener::REGIST, user, password);
+                    std::string operid = req.get<std::string>("id", "");                 
+                    std::string user = req.get<std::string>("user","");
+                    std::string password = req.get<std::string>("password","");
+                    registrate_oper_user(operid,  dvnci::registrate_listener::REGIST, user, password);
                     resp.put(SESSION_REQUEST_S, id_);
                     result = reply::ok;
                     break;                    
                 }
                 case UNREGISTRATEUSER_REQUEST:
                 {  
-                    registrate_oper_user("id",  dvnci::registrate_listener::UNREGIST);
+                    std::string operid = req.get<std::string>("id", "");
+                    std::string user = req.get<std::string>("user","");  
+                    registrate_oper_user(operid,  dvnci::registrate_listener::UNREGIST);
                     resp.put(SESSION_REQUEST_S, id_);
                     result = reply::ok;
                     break;                                         
-                }                
+                }
+                case ADDUSER_REQUEST:
+                {
+                    std::string operid = req.get<std::string>("id", "");
+                    std::string user = req.get<std::string>("user","");
+                    std::string password = req.get<std::string>("password","");
+                    registrate_oper_user(operid,  dvnci::registrate_listener::ADDUSER, user, password);
+                    resp.put(SESSION_REQUEST_S, id_);
+                    result = reply::ok;
+                    break;                    
+                }             
+                case REMOVEUSER_REQUEST:
+                {
+                    std::string operid = req.get<std::string>("id", "");
+                    std::string user = req.get<std::string>("user","");
+                    std::string password = req.get<std::string>("password","");
+                    registrate_oper_user(operid,  dvnci::registrate_listener::REMOVEUSER, user,password);
+                    resp.put(SESSION_REQUEST_S, id_);
+                    result = reply::ok;
+                    break;
+                }
+                case CHANGEPASSWORD_REQUEST:
+                {
+                    std::string operid = req.get<std::string>("id", "");
+                    std::string user = req.get<std::string>("user","");
+                    std::string passwordold = req.get<std::string>("passwordold","");
+                    std::string passwordnew = req.get<std::string>("passwordnew","");
+                    registrate_oper_user(operid, dvnci::registrate_listener::CHANGEPASS, user, passwordold, passwordnew);
+                    resp.put(SESSION_REQUEST_S, id_);
+                    result = reply::ok;
+                    break;
+                }
+                case CHANGEACCESS_REQUEST:
+                {
+                    std::string operid = req.get<std::string>("id", "");
+                    std::string user = req.get<std::string>("user","");
+                    std::string password = req.get<std::string>("password","");
+                    std::string access = req.get<std::string>("access","");
+                    registrate_oper_user(operid, dvnci::registrate_listener::CHANGEACCESS, user, password, access);
+                    resp.put(SESSION_REQUEST_S, id_);
+                    result = reply::ok;
+                    break;
+                }                 
                 default:
                 {
 
@@ -444,14 +533,11 @@ namespace http {
 
         void http_session_manager::check() {
             THD_EXCLUSIVE_LOCK(mtx);
-            //std::cout << "check" << std::endl;
             if (!session_map.empty()) {
                 http_session_map::iterator it = session_map.begin();
                 while (it != session_map.end()) {
                     if (it->second->expired()) {
                         http_session_map::iterator fit = it;
-                        //std::cout << "session id=" << it->first << 
-                               // " expired. Session count is " << (session_map.size() - 1) << std::endl;
                         it++;
                         session_map.erase(fit);
                     } else

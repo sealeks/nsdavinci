@@ -158,7 +158,8 @@ namespace http {
         
         ////////////////////////////////////////////////////////
         //   http_registrate_listener
-        ////////////////////////////////////////////////////////              
+        ////////////////////////////////////////////////////////          
+        
         class http_registrate_listener : public dvnci::registrate_listener {
 
         public:
@@ -178,7 +179,19 @@ namespace http {
             std::string operid_;
 
         };
-    
+
+        //////////////////////////////////////////////////////////////////////
+
+        struct registrate_struct {
+
+            registrate_struct(dvnci::ns_error err, int tp) :
+            error(err), type(tp) {
+            }
+
+            dvnci::ns_error error;
+            int type;
+        };
+
 
 
 
@@ -195,6 +208,7 @@ namespace http {
         typedef std::set<entity_atom > tagset_type;
         typedef std::vector<entity_atom > executevect_type;        
         typedef std::map<entity_atom, value_type> valuemap_type;
+        typedef std::map<std::string, registrate_struct> registratemap_type;        
 
         class http_session :
         public boost::enable_shared_from_this<http_session> {
@@ -222,6 +236,10 @@ namespace http {
 
             tagset_type& errortag() {
                 return errortag_;
+            }
+            
+            registratemap_type& registrateoper(){
+                return registrateoper_;
             }
 
             void addtags(const tagset_type& vl);
@@ -253,6 +271,7 @@ namespace http {
 
             valuemap_type updatelist_;
             tagset_type errortag_;
+            registratemap_type registrateoper_;
             
 
         };

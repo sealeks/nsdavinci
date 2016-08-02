@@ -126,7 +126,7 @@ namespace http {
                     rep.headers[0].name = "Content-Length";
                     rep.headers[0].value = boost::lexical_cast<std::string>(rep.content.size());
                     rep.headers[1].name = "Content-Type";
-                    rep.headers[1].value = "application/json";
+                    rep.headers[1].value = "application/json;  charset=UTF-8";
                     return reply::ok;
 
                 }
