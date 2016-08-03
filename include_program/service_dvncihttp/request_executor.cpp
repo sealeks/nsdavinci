@@ -80,30 +80,36 @@ namespace http {
         const operationid_type INIT_REQUEST = 2;
         const operationid_type INIT_RESPONSE = 3;
         const operationid_type ADDTAG_REQUEST = 4;
-        const operationid_type ADDEXECUTE_REQUEST = 5;        
-        const operationid_type REMOVETAG_REQUEST = 6;
-        const operationid_type UPDATE_REQUEST = 7;
-        const operationid_type UPDATE_RESPONSE = 8;
-        const operationid_type REGISTRATEUSER_REQUEST = 9;   
-        const operationid_type REGISTRATEUSER_RESPONSE = 10;         
-        const operationid_type UNREGISTRATEUSER_REQUEST = 11;   
-        const operationid_type UNREGISTRATEUSER_RESPONSE = 12;         
-        const operationid_type ADDUSER_REQUEST = 13;   
-        const operationid_type ADDUSER_RESPONSE = 14;        
-        const operationid_type REMOVEUSER_REQUEST = 15;   
-        const operationid_type REMOVEUSER_RESPONSE = 16;   
-        const operationid_type CHANGEPASSWORD_REQUEST = 17;   
-        const operationid_type CHANGEPASSWORD_RESPONSE =18;        
-        const operationid_type CHANGEACCESS_REQUEST = 19;   
-        const operationid_type CHANGEACCESS_RESPONSE =20;        
+        const operationid_type ADDTAG_RESPONSE = 5;        
+        const operationid_type ADDEXECUTE_REQUEST = 6;        
+        const operationid_type ADDEXECUTE_RESPONSE = 7;        
+        const operationid_type REMOVETAG_REQUEST = 8;
+        const operationid_type REMOVETAG_RESPONSE = 9;        
+        const operationid_type UPDATE_REQUEST = 10;
+        const operationid_type UPDATE_RESPONSE = 11;
+        const operationid_type REGISTRATEUSER_REQUEST = 12;   
+        const operationid_type REGISTRATEUSER_RESPONSE = 13;         
+        const operationid_type UNREGISTRATEUSER_REQUEST = 14;   
+        const operationid_type UNREGISTRATEUSER_RESPONSE = 15;         
+        const operationid_type ADDUSER_REQUEST = 16;   
+        const operationid_type ADDUSER_RESPONSE = 17;        
+        const operationid_type REMOVEUSER_REQUEST = 18;   
+        const operationid_type REMOVEUSER_RESPONSE = 19;   
+        const operationid_type CHANGEPASSWORD_REQUEST = 20;   
+        const operationid_type CHANGEPASSWORD_RESPONSE =21;        
+        const operationid_type CHANGEACCESS_REQUEST = 22;   
+        const operationid_type CHANGEACCESS_RESPONSE =23;        
 
         const std::string& SESSION_REQUEST_S = "session";
         const std::string& INIT_REQUEST_S = "init-req";
         const std::string& INIT_RESPONSE_S = "init-resp";
-        const std::string& ADDTAG_REQUEST_S = "add-tags";
-        const std::string& ADDEXECUTE_REQUEST_S = "add-execute";        
-        const std::string& REMOVETAG_REQUEST_S = "remove-tags";
-        const std::string& UPDATE_REQUEST_S = "get-update";
+        const std::string& ADDTAG_REQUEST_S = "addtags-request";
+        const std::string& ADDTAG_RESPONSE_S = "addtags-response";        
+        const std::string& ADDEXECUTE_REQUEST_S = "executeexpressions-request";        
+        const std::string& ADDEXECUTE_RESPONSE_S = "executeexpressions-response";        
+        const std::string& REMOVETAG_REQUEST_S = "removetags-request";
+        const std::string& REMOVETAG_RESPONSE_S = "removetags-response";        
+        const std::string& UPDATE_REQUEST_S = "update-request";
         const std::string& UPDATE_RESPONSE_S = "update-response";        
         const std::string& REGISTRATEUSER_REQUEST_S = "registrate-request";   
         const std::string& REGISTRATEUSER_RESPONSE_S = "registrate-response";         
@@ -124,8 +130,11 @@ namespace http {
             rslt.insert(operationpair(INIT_REQUEST_S, INIT_REQUEST));
             rslt.insert(operationpair(INIT_RESPONSE_S, INIT_RESPONSE));
             rslt.insert(operationpair(ADDTAG_REQUEST_S, ADDTAG_REQUEST));
-            rslt.insert(operationpair(ADDEXECUTE_REQUEST_S, ADDEXECUTE_REQUEST));            
+            rslt.insert(operationpair(ADDTAG_RESPONSE_S, ADDTAG_RESPONSE));            
+            rslt.insert(operationpair(ADDEXECUTE_REQUEST_S, ADDEXECUTE_REQUEST));        
+            rslt.insert(operationpair(ADDEXECUTE_RESPONSE_S, ADDEXECUTE_RESPONSE));             
             rslt.insert(operationpair(REMOVETAG_REQUEST_S, REMOVETAG_REQUEST));
+            rslt.insert(operationpair(REMOVETAG_RESPONSE_S, REMOVETAG_RESPONSE));            
             rslt.insert(operationpair(UPDATE_REQUEST_S, UPDATE_REQUEST));
             rslt.insert(operationpair(UPDATE_RESPONSE_S, UPDATE_RESPONSE));
             rslt.insert(operationpair(REGISTRATEUSER_REQUEST_S, REGISTRATEUSER_REQUEST));
@@ -167,8 +176,8 @@ namespace http {
 
         static bool get_executes_list(const boost::property_tree::ptree& req, executevect_type& excs) {
             for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
-                std::string item_id = it->second.get<std::string>("id", "");
-                std::string item_expr = it->second.get<std::string>("expr", "");
+                std::string item_id = it->first;
+                std::string item_expr = it->second.get_value<std::string>();
                 if (!item_expr.empty()) {
                     if (!item_id.empty())
                         excs.push_back(entity_atom(item_id, item_expr));
@@ -226,7 +235,7 @@ namespace http {
                     else
                         result.add_child(it->first.expr(), add_tag_value(it->second));
                 }
-                resp.add_child("update-value", result);
+                resp.add_child(UPDATE_RESPONSE_S, result);
                 result.clear();
                 if (has_exec) {
                     for (valuemap_type::const_iterator it = session->updatelist().begin(); it != session->updatelist().end(); ++it) {
@@ -234,7 +243,7 @@ namespace http {
                           result.add_child(it->first.id(), add_tag_value(it->second));
                         }
                     }
-                    resp.add_child("execute-value", result);
+                    resp.add_child( ADDEXECUTE_RESPONSE_S, result);
                 }
                 session->updatelist().clear();
             }
