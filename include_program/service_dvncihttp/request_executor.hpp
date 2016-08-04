@@ -238,8 +238,8 @@ namespace http {
                 return errortag_;
             }
             
-            registratemap_type& registrateoper(){
-                return registrateoper_;
+            registratemap_type& regaction(){
+                return regaction_;
             }
 
             void addtags(const tagset_type& vl);
@@ -247,8 +247,6 @@ namespace http {
             void addexecutes(const executevect_type& vl);            
 
             void removetags(const tagset_type& vl);
-            
-            void registrate_oper_user(const std::string& id, int type, const std::string& user = "", const std::string& pass="", const std::string& pass2="");        
 
             void call();
 
@@ -261,6 +259,9 @@ namespace http {
         protected:
 
             http_executor_ptr intf();
+                    
+            void registrate_operation(operationid_type oper, const boost::property_tree::ptree& req);
+            
 
         private:
             sessionid_type id_;
@@ -271,7 +272,7 @@ namespace http {
 
             valuemap_type updatelist_;
             tagset_type errortag_;
-            registratemap_type registrateoper_;
+            registratemap_type regaction_;
             
 
         };

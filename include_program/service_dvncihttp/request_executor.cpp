@@ -167,9 +167,10 @@ namespace http {
 
         static bool get_tags_list(const boost::property_tree::ptree& req, tagset_type& tgs) {
             for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
-                std::string item_expr = it->second.get_value<std::string>();
-                if (!item_expr.empty())
-                    tgs.insert(entity_atom(item_expr));
+                std::string item_id = it->first;
+                std::string item_tag = it->second.get_value<std::string>();
+                if (!item_tag.empty())
+                    tgs.insert(entity_atom(item_tag));
             }
             return !tgs.empty();
         }
@@ -181,12 +182,10 @@ namespace http {
                 if (!item_expr.empty()) {
                     if (!item_id.empty())
                         excs.push_back(entity_atom(item_id, item_expr));
-                    //else
-                        //excs.push_back(entity_atom(item_expr));
                 }
             }
             return !excs.empty();
-        }
+        }       
 
         static ptree::ptree add_tag_value(const dvnci::short_value& val) {
             ptree::ptree result;
@@ -202,8 +201,8 @@ namespace http {
         }
 
         static void update_all_value(http_session_ptr session, ptree::ptree& resp) {
-            if (!session->registrateoper().empty()) {
-                for (registratemap_type::const_iterator it = session->registrateoper().begin(); it != session->registrateoper().end(); ++it) {
+            if (!session->regaction().empty()) {
+                for (registratemap_type::const_iterator it = session->regaction().begin(); it != session->regaction().end(); ++it) {
                     ptree::ptree result;
                     result.put(it->first, dvnci::to_str(it->second.error));
                     switch (it->second.type) {
@@ -224,7 +223,7 @@ namespace http {
                         }
                     }
                 }
-                session->registrateoper().clear();
+                session->regaction().clear();
             }
             if (!session->updatelist().empty()) {
                 ptree::ptree result;
@@ -327,7 +326,7 @@ namespace http {
 
         void http_registrate_listener::event(const dvnci::ns_error& val) {
             if (session) {
-                session->registrateoper().insert(
+                session->regaction().insert(
                 registratemap_type::value_type(id(), registrate_struct(val, type())));
             }
         }
@@ -374,15 +373,71 @@ namespace http {
             }
         }
 
-        void http_session::registrate_oper_user(const std::string& id, int type, const std::string& user, const std::string& pass, const std::string& pass2) {
+        void http_session::registrate_operation(operationid_type oper, const ptree::ptree& req) {
             http_executor_ptr inf = intf();
             if (inf) {
-                    dvnci::registrate_listener_ptr regptr = dvnci::registrate_listener_ptr(new http_registrate_listener(shared_from_this(), id, type, user, pass, pass2));
-                    inf->regist_registrate_listener(regptr);                
+                for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
+                    std::string item_id = it->first;
+                    std::string arg1 = "";
+                    std::string arg2 = "";
+                    std::string arg3 = "";
+                    int type = dvnci::registrate_listener::REGIST;
+                    switch (oper) {
+                        case REGISTRATEUSER_REQUEST:
+                        {
+                            arg1 = it->second.get<std::string>("user", "");
+                            arg2 = it->second.get<std::string>("password", "");
+                            type = dvnci::registrate_listener::REGIST;
+                            break;
+                        }
+                        case UNREGISTRATEUSER_REQUEST:
+                        {
+                            arg1 = it->second.get<std::string>("user", "");
+                            type = dvnci::registrate_listener::UNREGIST;
+                            break;
+                        }
+                        case ADDUSER_REQUEST:
+                        {
+                            arg1 = it->second.get<std::string>("user", "");
+                            arg2 = it->second.get<std::string>("password", "");
+                            arg3 = it->second.get<std::string>("access", "");
+                            type = dvnci::registrate_listener::ADDUSER;
+                            break;
+                        }
+                        case REMOVEUSER_REQUEST:
+                        {
+                            arg1 = it->second.get<std::string>("user", "");
+                            arg2 = it->second.get<std::string>("password", "");
+                            type = dvnci::registrate_listener::REMOVEUSER;
+                            break;
+                        }
+                        case CHANGEPASSWORD_REQUEST:
+                        {
+                            arg1 = it->second.get<std::string>("user", "");
+                            arg2 = it->second.get<std::string>("passwordold", "");
+                            arg3 = it->second.get<std::string>("passwordnew", "");
+                            type = dvnci::registrate_listener::CHANGEPASS;
+                            break;
+                        }
+                        case CHANGEACCESS_REQUEST:
+                        {
+                            arg1 = it->second.get<std::string>("user", "");
+                            arg2 = it->second.get<std::string>("password", "");
+                            arg3 = it->second.get<std::string>("access", "");
+                            type = dvnci::registrate_listener::CHANGEACCESS;
+                            break;
+                        }
+                        default:
+                        {
+
+                        }
+                    }
+                    dvnci::registrate_listener_ptr regptr = dvnci::registrate_listener_ptr(
+                            new http_registrate_listener(shared_from_this(), item_id, type, arg1, arg2, arg3));
+                    inf->regist_registrate_listener(regptr);
+                }
             }
         }
-
-
 
         reply::status_type http_session::proccess_request(operationid_type oper, const ptree::ptree& req, ptree::ptree& resp) {
             reply::status_type result = reply::none;
@@ -425,63 +480,13 @@ namespace http {
                     break;
                 }
                 case REGISTRATEUSER_REQUEST:
-                {
-                    std::string operid = req.get<std::string>("id", "");                 
-                    std::string user = req.get<std::string>("user","");
-                    std::string password = req.get<std::string>("password","");
-                    registrate_oper_user(operid,  dvnci::registrate_listener::REGIST, user, password);
-                    resp.put(SESSION_REQUEST_S, id_);
-                    result = reply::ok;
-                    break;                    
-                }
                 case UNREGISTRATEUSER_REQUEST:
-                {  
-                    std::string operid = req.get<std::string>("id", "");
-                    std::string user = req.get<std::string>("user","");  
-                    registrate_oper_user(operid,  dvnci::registrate_listener::UNREGIST);
-                    resp.put(SESSION_REQUEST_S, id_);
-                    result = reply::ok;
-                    break;                                         
-                }
-                case ADDUSER_REQUEST:
-                {
-                    std::string operid = req.get<std::string>("id", "");
-                    std::string user = req.get<std::string>("user","");
-                    std::string password = req.get<std::string>("password","");
-                    std::string access = req.get<std::string>("access", "");
-                    registrate_oper_user(operid,  dvnci::registrate_listener::ADDUSER, user, password, access);
-                    resp.put(SESSION_REQUEST_S, id_);
-                    result = reply::ok;
-                    break;                    
-                }             
-                case REMOVEUSER_REQUEST:
-                {
-                    std::string operid = req.get<std::string>("id", "");
-                    std::string user = req.get<std::string>("user","");
-                    std::string password = req.get<std::string>("password","");
-                    registrate_oper_user(operid,  dvnci::registrate_listener::REMOVEUSER, user,password);
-                    resp.put(SESSION_REQUEST_S, id_);
-                    result = reply::ok;
-                    break;
-                }
-                case CHANGEPASSWORD_REQUEST:
-                {
-                    std::string operid = req.get<std::string>("id", "");
-                    std::string user = req.get<std::string>("user","");
-                    std::string passwordold = req.get<std::string>("passwordold","");
-                    std::string passwordnew = req.get<std::string>("passwordnew","");
-                    registrate_oper_user(operid, dvnci::registrate_listener::CHANGEPASS, user, passwordold, passwordnew);
-                    resp.put(SESSION_REQUEST_S, id_);
-                    result = reply::ok;
-                    break;
-                }
+                case ADDUSER_REQUEST:                     
+                case REMOVEUSER_REQUEST:              
+                case CHANGEPASSWORD_REQUEST:               
                 case CHANGEACCESS_REQUEST:
                 {
-                    std::string operid = req.get<std::string>("id", "");
-                    std::string user = req.get<std::string>("user","");
-                    std::string password = req.get<std::string>("password","");
-                    std::string access = req.get<std::string>("access","");
-                    registrate_oper_user(operid, dvnci::registrate_listener::CHANGEACCESS, user, password, access);
+                    registrate_operation(oper, req);
                     resp.put(SESSION_REQUEST_S, id_);
                     result = reply::ok;
                     break;
