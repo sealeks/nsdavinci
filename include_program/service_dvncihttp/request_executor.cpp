@@ -80,49 +80,53 @@ namespace http {
         const operationid_type INIT_REQUEST = 2;
         const operationid_type INIT_RESPONSE = 3;
         const operationid_type ADDTAG_REQUEST = 4;
-        const operationid_type ADDTAG_RESPONSE = 5;        
-        const operationid_type ADDEXECUTE_REQUEST = 6;        
-        const operationid_type ADDEXECUTE_RESPONSE = 7;        
+        const operationid_type ADDTAG_RESPONSE = 5;
+        const operationid_type ADDEXECUTE_REQUEST = 6;
+        const operationid_type ADDEXECUTE_RESPONSE = 7;
         const operationid_type REMOVETAG_REQUEST = 8;
-        const operationid_type REMOVETAG_RESPONSE = 9;        
+        const operationid_type REMOVETAG_RESPONSE = 9;
         const operationid_type UPDATE_REQUEST = 10;
         const operationid_type UPDATE_RESPONSE = 11;
-        const operationid_type REGISTRATEUSER_REQUEST = 12;   
-        const operationid_type REGISTRATEUSER_RESPONSE = 13;         
-        const operationid_type UNREGISTRATEUSER_REQUEST = 14;   
-        const operationid_type UNREGISTRATEUSER_RESPONSE = 15;         
-        const operationid_type ADDUSER_REQUEST = 16;   
-        const operationid_type ADDUSER_RESPONSE = 17;        
-        const operationid_type REMOVEUSER_REQUEST = 18;   
-        const operationid_type REMOVEUSER_RESPONSE = 19;   
-        const operationid_type CHANGEPASSWORD_REQUEST = 20;   
-        const operationid_type CHANGEPASSWORD_RESPONSE =21;        
-        const operationid_type CHANGEACCESS_REQUEST = 22;   
-        const operationid_type CHANGEACCESS_RESPONSE =23;        
+        const operationid_type REGISTRATEUSER_REQUEST = 12;
+        const operationid_type REGISTRATEUSER_RESPONSE = 13;
+        const operationid_type UNREGISTRATEUSER_REQUEST = 14;
+        const operationid_type UNREGISTRATEUSER_RESPONSE = 15;
+        const operationid_type ADDUSER_REQUEST = 16;
+        const operationid_type ADDUSER_RESPONSE = 17;
+        const operationid_type REMOVEUSER_REQUEST = 18;
+        const operationid_type REMOVEUSER_RESPONSE = 19;
+        const operationid_type CHANGEPASSWORD_REQUEST = 20;
+        const operationid_type CHANGEPASSWORD_RESPONSE = 21;
+        const operationid_type CHANGEACCESS_REQUEST = 22;
+        const operationid_type CHANGEACCESS_RESPONSE = 23;
+        const operationid_type ENTITIESINFO_REQUEST = 24;
+        const operationid_type ENTITIESINFO_RESPONSE = 25;
 
         const std::string& SESSION_REQUEST_S = "session";
         const std::string& INIT_REQUEST_S = "init-req";
         const std::string& INIT_RESPONSE_S = "init-resp";
         const std::string& ADDTAG_REQUEST_S = "addtags-request";
-        const std::string& ADDTAG_RESPONSE_S = "addtags-response";        
-        const std::string& ADDEXECUTE_REQUEST_S = "executeexpressions-request";        
-        const std::string& ADDEXECUTE_RESPONSE_S = "executeexpressions-response";        
+        const std::string& ADDTAG_RESPONSE_S = "addtags-response";
+        const std::string& ADDEXECUTE_REQUEST_S = "executeexpressions-request";
+        const std::string& ADDEXECUTE_RESPONSE_S = "executeexpressions-response";
         const std::string& REMOVETAG_REQUEST_S = "removetags-request";
-        const std::string& REMOVETAG_RESPONSE_S = "removetags-response";        
+        const std::string& REMOVETAG_RESPONSE_S = "removetags-response";
         const std::string& UPDATE_REQUEST_S = "update-request";
-        const std::string& UPDATE_RESPONSE_S = "update-response";        
-        const std::string& REGISTRATEUSER_REQUEST_S = "registrate-request";   
-        const std::string& REGISTRATEUSER_RESPONSE_S = "registrate-response";         
-        const std::string& UNREGISTRATEUSER_REQUEST_S = "unregistrate-request";    
-        const std::string& UNREGISTRATEUSER_RESPONSE_S = "unregistrate-response";   
-        const std::string& ADDUSER_REQUEST_S = "adduser-request";   
-        const std::string& ADDUSER_RESPONSE_S = "adduser-response";        
-        const std::string& REMOVEUSER_REQUEST_S = "removeuser-request";   
-        const std::string& REMOVEUSER_RESPONSE_S = "removeuser-response";   
-        const std::string& CHANGEPASSWORD_REQUEST_S = "changepassword-request";   
-        const std::string& CHANGEPASSWORD_RESPONSE_S = "changepassword-response";   
-        const std::string& CHANGEACCESS_REQUEST_S = "changeaccess-request";   
-        const std::string& CHANGEACCESS_RESPONSE_S = "changeaccess-response";        
+        const std::string& UPDATE_RESPONSE_S = "update-response";
+        const std::string& REGISTRATEUSER_REQUEST_S = "registrate-request";
+        const std::string& REGISTRATEUSER_RESPONSE_S = "registrate-response";
+        const std::string& UNREGISTRATEUSER_REQUEST_S = "unregistrate-request";
+        const std::string& UNREGISTRATEUSER_RESPONSE_S = "unregistrate-response";
+        const std::string& ADDUSER_REQUEST_S = "adduser-request";
+        const std::string& ADDUSER_RESPONSE_S = "adduser-response";
+        const std::string& REMOVEUSER_REQUEST_S = "removeuser-request";
+        const std::string& REMOVEUSER_RESPONSE_S = "removeuser-response";
+        const std::string& CHANGEPASSWORD_REQUEST_S = "changepassword-request";
+        const std::string& CHANGEPASSWORD_RESPONSE_S = "changepassword-response";
+        const std::string& CHANGEACCESS_REQUEST_S = "changeaccess-request";
+        const std::string& CHANGEACCESS_RESPONSE_S = "changeaccess-response";
+        const std::string& ENTITIESINFO_REQUEST_S = "entities-request";
+        const std::string& ENTITIESINFO_RESPONSE_S = "entities-response";
 
         operationmap get_operationid_map_int() {
             operationmap rslt;
@@ -130,25 +134,27 @@ namespace http {
             rslt.insert(operationpair(INIT_REQUEST_S, INIT_REQUEST));
             rslt.insert(operationpair(INIT_RESPONSE_S, INIT_RESPONSE));
             rslt.insert(operationpair(ADDTAG_REQUEST_S, ADDTAG_REQUEST));
-            rslt.insert(operationpair(ADDTAG_RESPONSE_S, ADDTAG_RESPONSE));            
-            rslt.insert(operationpair(ADDEXECUTE_REQUEST_S, ADDEXECUTE_REQUEST));        
-            rslt.insert(operationpair(ADDEXECUTE_RESPONSE_S, ADDEXECUTE_RESPONSE));             
+            rslt.insert(operationpair(ADDTAG_RESPONSE_S, ADDTAG_RESPONSE));
+            rslt.insert(operationpair(ADDEXECUTE_REQUEST_S, ADDEXECUTE_REQUEST));
+            rslt.insert(operationpair(ADDEXECUTE_RESPONSE_S, ADDEXECUTE_RESPONSE));
             rslt.insert(operationpair(REMOVETAG_REQUEST_S, REMOVETAG_REQUEST));
-            rslt.insert(operationpair(REMOVETAG_RESPONSE_S, REMOVETAG_RESPONSE));            
+            rslt.insert(operationpair(REMOVETAG_RESPONSE_S, REMOVETAG_RESPONSE));
             rslt.insert(operationpair(UPDATE_REQUEST_S, UPDATE_REQUEST));
             rslt.insert(operationpair(UPDATE_RESPONSE_S, UPDATE_RESPONSE));
             rslt.insert(operationpair(REGISTRATEUSER_REQUEST_S, REGISTRATEUSER_REQUEST));
-            rslt.insert(operationpair(REGISTRATEUSER_RESPONSE_S, REGISTRATEUSER_RESPONSE));    
+            rslt.insert(operationpair(REGISTRATEUSER_RESPONSE_S, REGISTRATEUSER_RESPONSE));
             rslt.insert(operationpair(UNREGISTRATEUSER_REQUEST_S, UNREGISTRATEUSER_REQUEST));
-            rslt.insert(operationpair(UNREGISTRATEUSER_RESPONSE_S, UNREGISTRATEUSER_RESPONSE));            
+            rslt.insert(operationpair(UNREGISTRATEUSER_RESPONSE_S, UNREGISTRATEUSER_RESPONSE));
             rslt.insert(operationpair(ADDUSER_REQUEST_S, ADDUSER_REQUEST));
-            rslt.insert(operationpair(ADDUSER_RESPONSE_S, ADDUSER_RESPONSE));        
+            rslt.insert(operationpair(ADDUSER_RESPONSE_S, ADDUSER_RESPONSE));
             rslt.insert(operationpair(REMOVEUSER_REQUEST_S, REMOVEUSER_REQUEST));
-            rslt.insert(operationpair(REMOVEUSER_RESPONSE_S, REMOVEUSER_RESPONSE));  
+            rslt.insert(operationpair(REMOVEUSER_RESPONSE_S, REMOVEUSER_RESPONSE));
             rslt.insert(operationpair(CHANGEPASSWORD_REQUEST_S, CHANGEPASSWORD_REQUEST));
-            rslt.insert(operationpair(CHANGEPASSWORD_RESPONSE_S, CHANGEPASSWORD_RESPONSE));         
+            rslt.insert(operationpair(CHANGEPASSWORD_RESPONSE_S, CHANGEPASSWORD_RESPONSE));
             rslt.insert(operationpair(CHANGEACCESS_REQUEST_S, CHANGEACCESS_REQUEST));
-            rslt.insert(operationpair(CHANGEACCESS_RESPONSE_S, CHANGEACCESS_RESPONSE));            
+            rslt.insert(operationpair(CHANGEACCESS_RESPONSE_S, CHANGEACCESS_RESPONSE));
+            rslt.insert(operationpair(ENTITIESINFO_REQUEST_S, ENTITIESINFO_REQUEST));
+            rslt.insert(operationpair(ENTITIESINFO_RESPONSE_S, ENTITIESINFO_RESPONSE));
             return rslt;
         }
 
@@ -185,9 +191,9 @@ namespace http {
                 }
             }
             return !excs.empty();
-        }       
+        }
 
-        static ptree::ptree add_tag_value(const dvnci::short_value& val) {
+        static ptree::ptree add_tag_value(const short_value& val) {
             ptree::ptree result;
             if (!val.error()) {
                 result.put("value", val.value<std::string>());
@@ -200,11 +206,24 @@ namespace http {
             return result;
         }
 
+        static ptree::ptree add_entity_info(const iteminfo_map& val) {
+            ptree::ptree result;
+            for (iteminfo_map::const_iterator it = val.begin(); it != val.end(); ++it) {
+                ptree::ptree subresult;
+                subresult.put("name", it->second.name());
+                subresult.put("type", dvnci::to_str(it->second.typeex().operator  dvnci::num64()));
+                result.add_child(dvnci::to_str(it->first), subresult);
+            }
+            return result;
+        }        
+
         static void update_all_value(http_session_ptr session, ptree::ptree& resp) {
             if (!session->regaction().empty()) {
                 for (registratemap_type::const_iterator it = session->regaction().begin(); it != session->regaction().end(); ++it) {
                     ptree::ptree result;
-                    result.put(it->first, dvnci::to_str(it->second.error));
+                    ptree::ptree subresult;
+                    subresult.put("error", dvnci::to_str(it->second.error));
+                    result.add_child(it->first, subresult);
                     switch (it->second.type) {
                         case dvnci::registrate_listener::REGIST: resp.add_child(REGISTRATEUSER_RESPONSE_S, result);
                             break;
@@ -239,22 +258,30 @@ namespace http {
                 if (has_exec) {
                     for (valuemap_type::const_iterator it = session->updatelist().begin(); it != session->updatelist().end(); ++it) {
                         if (it->first.validid()) {
-                          result.add_child(it->first.id(), add_tag_value(it->second));
+                            result.add_child(it->first.id(), add_tag_value(it->second));
                         }
                     }
-                    resp.add_child( ADDEXECUTE_RESPONSE_S, result);
+                    resp.add_child(ADDEXECUTE_RESPONSE_S, result);
                 }
                 session->updatelist().clear();
             }
+            if (!session->entetyinfo().empty()) {
+                ptree::ptree result;
+                for (entetyinfomap_type::const_iterator it = session->entetyinfo().begin(); it != session->entetyinfo().end(); ++it) {
+                    result.add_child(it->first, add_entity_info(it->second));
+                }
+                resp.add_child(ENTITIESINFO_RESPONSE_S, result);
+                session->entetyinfo().clear();
+            }
         }
 
-        
+
 
 
         ////////////////////////////////////////////////////////
         //  http_terminated_thread
         ////////////////////////////////////////////////////////          
-        
+
         http_executor_ptr build_http_executor() {
             dvnci::fspath basepath = dvnci::getlocalbasepath();
             dvnci::tagsbase_ptr kintf = dvnci::krnl::factory::build(basepath, 0);
@@ -279,22 +306,22 @@ namespace http {
             return http_session_ptr();
         }
 
-        
-        
+
+
 
         ////////////////////////////////////////////////////////
         //  entity_atom
         ////////////////////////////////////////////////////////             
-        
-        bool operator<(const entity_atom& ls, const entity_atom& rs){
-            return (ls.id_+"-"+ls.expr_) < (rs.id_+"-"+rs.expr_);
+
+        bool operator<(const entity_atom& ls, const entity_atom& rs) {
+            return (ls.id_ + "-" + ls.expr_) < (rs.id_ + "-" + rs.expr_);
         }
-        
-        bool operator==(const entity_atom& ls, const entity_atom& rs){
-            return (ls.id_+"-"+ls.expr_) == (rs.id_+"-"+rs.expr_);
-        }                  
-        
-        
+
+        bool operator==(const entity_atom& ls, const entity_atom& rs) {
+            return (ls.id_ + "-" + ls.expr_) == (rs.id_ + "-" + rs.expr_);
+        }
+
+
 
         ////////////////////////////////////////////////////////
         //  http_base_listener
@@ -303,12 +330,12 @@ namespace http {
         http_expression_listener::http_expression_listener(const std::string& exp, http_session_ptr sess, bool single, bool test) :
         dvnci::expression_listener(single, test), expr(exp), session(sess) {
         }
-        
+
         http_expression_listener::http_expression_listener(const entity_atom& exp, http_session_ptr sess, bool single, bool test) :
         dvnci::expression_listener(single, test), expr(exp), session(sess) {
-        }        
+        }
 
-        void http_expression_listener::event(const dvnci::short_value& val) {
+        void http_expression_listener::event(const short_value& val) {
             if (session) {
                 session->updatelist()[expr] = val;
             }
@@ -324,10 +351,28 @@ namespace http {
         : dvnci::registrate_listener(type, user, password, newpassword), session(sess), operid_(id) {
         };
 
-        void http_registrate_listener::event(const dvnci::ns_error& val) {
+        void http_registrate_listener::event(const ns_error& val) {
             if (session) {
                 session->regaction().insert(
-                registratemap_type::value_type(id(), registrate_struct(val, type())));
+                        registratemap_type::value_type(id(), registrate_struct(val, type())));
+            }
+        }
+
+
+
+        ////////////////////////////////////////////////////////
+        //   http_entety_listener
+        ////////////////////////////////////////////////////////   
+
+        http_entety_listener::http_entety_listener(http_session_ptr sess, const std::string& id,
+                nodetype enttp, indx parentid, const std::string& filter)
+        : dvnci::entety_listener(enttp, parentid, filter), session(sess), operid_(id) {
+        };
+
+        void http_entety_listener::event(const iteminfo_map & val) {
+            if (session) {
+                session->entetyinfo().insert(
+                        entetyinfomap_type::value_type(id(), val));
             }
         }
 
@@ -335,12 +380,12 @@ namespace http {
         ////////////////////////////////////////////////////////
         //  http_session
         ////////////////////////////////////////////////////////           
-        
-         http_session::http_session(sessionid_type id, http_terminated_thread_ptr th_, std::size_t ltm) :
-            id_(id), session_livetm_(MIN_SESSION_LT > ltm ?  
-                MIN_SESSION_LT : (MAX_SESSION_LT < ltm ?  MAX_SESSION_LT  : ltm)), 
-                 th(th_), mtx_(), dt_(dvnci::now()) {
-            }        
+
+        http_session::http_session(sessionid_type id, http_terminated_thread_ptr th_, std::size_t ltm) :
+        id_(id), session_livetm_(MIN_SESSION_LT > ltm ?
+        MIN_SESSION_LT : (MAX_SESSION_LT < ltm ? MAX_SESSION_LT : ltm)),
+        th(th_), mtx_(), dt_(dvnci::now()) {
+        }
 
         void http_session::addtags(const tagset_type& vl) {
             http_executor_ptr inf = intf();
@@ -352,8 +397,8 @@ namespace http {
             }
             std::cout << std::endl;
         }
-        
-        void http_session::addexecutes(const executevect_type& vl) {    
+
+        void http_session::addexecutes(const executevect_type& vl) {
             http_executor_ptr inf = intf();
             if (inf) {
                 for (executevect_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
@@ -361,8 +406,8 @@ namespace http {
                     inf->regist_expr_listener(it->expr(), exrptr);
                 }
             }
-            std::cout << std::endl;            
-        }    
+            std::cout << std::endl;
+        }
 
         void http_session::removetags(const tagset_type& vl) {
             http_executor_ptr inf = intf();
@@ -429,12 +474,28 @@ namespace http {
                         }
                         default:
                         {
-
                         }
                     }
                     dvnci::registrate_listener_ptr regptr = dvnci::registrate_listener_ptr(
                             new http_registrate_listener(shared_from_this(), item_id, type, arg1, arg2, arg3));
                     inf->regist_registrate_listener(regptr);
+                }
+            }
+        }
+
+        void http_session::enities_operation(const boost::property_tree::ptree& req) {
+            http_executor_ptr inf = intf();
+            if (inf) {
+                for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
+                    std::string item_id = it->first;
+                    nodetype type = it->second.get<nodetype>("type", 0);
+                    indx index = it->second.get<indx>("indx", dvnci::npos);
+                    std::string filter = it->second.get<std::string>("filter", "");
+                    if (type) {
+                        dvnci::entety_listener_ptr entptr = dvnci::entety_listener_ptr(
+                                new http_entety_listener(shared_from_this(), item_id, type, index, filter));
+                        inf->regist_entety_listener(entptr);
+                    }
                 }
             }
         }
@@ -469,7 +530,7 @@ namespace http {
                     result = reply::ok;
                     break;
 
-                }                
+                }
                 case REMOVETAG_REQUEST:
                 {
                     tagset_type tgs;
@@ -481,16 +542,23 @@ namespace http {
                 }
                 case REGISTRATEUSER_REQUEST:
                 case UNREGISTRATEUSER_REQUEST:
-                case ADDUSER_REQUEST:                     
-                case REMOVEUSER_REQUEST:              
-                case CHANGEPASSWORD_REQUEST:               
+                case ADDUSER_REQUEST:
+                case REMOVEUSER_REQUEST:
+                case CHANGEPASSWORD_REQUEST:
                 case CHANGEACCESS_REQUEST:
                 {
                     registrate_operation(oper, req);
                     resp.put(SESSION_REQUEST_S, id_);
                     result = reply::ok;
                     break;
-                }                 
+                }
+                case ENTITIESINFO_REQUEST:
+                {
+                    enities_operation(req);
+                    resp.put(SESSION_REQUEST_S, id_);
+                    result = reply::ok;
+                    break;
+                }
                 default:
                 {
 
@@ -505,18 +573,17 @@ namespace http {
                 th->intf()->call();
         }
 
-        std::size_t http_session::session_livetm() const  {
+        std::size_t http_session::session_livetm() const {
             return session_livetm_;
         }
-                        
 
         bool http_session::expired() const {
-            return std::abs(dvnci::secondsbetween(dt_,  dvnci::now()) > session_livetm());
+            return std::abs(dvnci::secondsbetween(dt_, dvnci::now()) > session_livetm());
         }
 
         void http_session::updtate_time() {
             dt_ = dvnci::now();
-        }   
+        }
 
         http_executor_ptr http_session::intf() {
             return th ? (th->intf()) : http_executor_ptr();
@@ -573,7 +640,7 @@ namespace http {
             ss << req;
 
             //THD_EXCLUSIVE_LOCK(mtx);
-            
+
             ptree::json_parser::read_json(ss, req_tree);
 
             if (result = proccess_request(req_tree, resp_tree)) {
@@ -600,11 +667,11 @@ namespace http {
                     {
                         //THD_EXCLUSIVE_LOCK(mtx);
                         if (sess = create()) {
-                            sid=sess->id();
+                            sid = sess->id();
                             resp.put(INIT_RESPONSE_S, sid);
                             result = reply::ok;
                             //std::cout << "New session id=" << sid << 
-                                //" was created. Sessins count is " << session_map.size()  << std::endl;
+                            //" was created. Sessins count is " << session_map.size()  << std::endl;
                         }
                         break;
                     }
@@ -617,11 +684,10 @@ namespace http {
                         }
                         if (sess) {
                             //std::cout << "hook session id=" << sid << 
-                                //" was created. << std::endl;
+                            //" was created. << std::endl;
                             sess->updtate_time();
                             sess->call();
-                        }
-                        else
+                        } else
                             return reply::request_timeout;
                         break;
                     }

@@ -43,7 +43,15 @@ namespace http {
 
         class http_session;
         typedef boost::shared_ptr<http_session> http_session_ptr;
+        
+        using dvnci::ns_error;
+        using dvnci::nodetype;
+        using dvnci::indx;
+        using dvnci::iteminfo_map;        
+        using dvnci::name_with_type;
+        using dvnci::short_value;
 
+        
         ////////////////////////////////////////////////////////
         //  http_terminated_thread
         ////////////////////////////////////////////////////////        
@@ -145,7 +153,7 @@ namespace http {
             virtual ~http_expression_listener() {
             }
 
-            virtual void event(const dvnci::short_value& val);
+            virtual void event(const short_value& val);
 
         private:
             entity_atom expr;
@@ -168,7 +176,7 @@ namespace http {
                     const std::string& user = "", const std::string& password = "", const std::string& newpassword = "");
 
 
-            virtual void event(const dvnci::ns_error& val) ;
+            virtual void event(const ns_error& val) ;
             
             std::string id() const {
                 return operid_;
@@ -184,16 +192,42 @@ namespace http {
 
         struct registrate_struct {
 
-            registrate_struct(dvnci::ns_error err, int tp) :
+            registrate_struct(ns_error err, int tp) :
             error(err), type(tp) {
             }
 
-            dvnci::ns_error error;
+            ns_error error;
             int type;
         };
 
+        
+        
+        
 
+        ////////////////////////////////////////////////////////
+        //   http_entety_listener
+        ////////////////////////////////////////////////////////         
 
+        class http_entety_listener : public dvnci::entety_listener {
+
+        public:
+
+            http_entety_listener(http_session_ptr sess, const std::string& id,
+                    nodetype enttp, indx parentid = dvnci::npos, const std::string& filter = "");
+
+            virtual void event(const iteminfo_map & val);
+
+            std::string id() const {
+                return operid_;
+            }
+
+        private:
+            http_session_ptr session;
+            std::string operid_;
+        };
+        
+        
+        
 
         ////////////////////////////////////////////////////////
         //  http_session
@@ -204,11 +238,12 @@ namespace http {
          const std::size_t MAX_SESSION_LT=3600;   
 
         typedef boost::uint64_t sessionid_type;
-        typedef dvnci::short_value value_type;
+        typedef short_value value_type;
         typedef std::set<entity_atom > tagset_type;
         typedef std::vector<entity_atom > executevect_type;        
         typedef std::map<entity_atom, value_type> valuemap_type;
         typedef std::map<std::string, registrate_struct> registratemap_type;        
+        typedef std::map<std::string, iteminfo_map> entetyinfomap_type;         
 
         class http_session :
         public boost::enable_shared_from_this<http_session> {
@@ -242,6 +277,10 @@ namespace http {
                 return regaction_;
             }
 
+            entetyinfomap_type& entetyinfo() {
+                return entetyinfo_;
+            }            
+
             void addtags(const tagset_type& vl);
 
             void addexecutes(const executevect_type& vl);            
@@ -262,7 +301,8 @@ namespace http {
                     
             void registrate_operation(operationid_type oper, const boost::property_tree::ptree& req);
             
-
+            void enities_operation(const boost::property_tree::ptree& req);
+            
         private:
             sessionid_type id_;
             std::size_t session_livetm_;            
@@ -273,6 +313,7 @@ namespace http {
             valuemap_type updatelist_;
             tagset_type errortag_;
             registratemap_type regaction_;
+            entetyinfomap_type entetyinfo_;
             
 
         };
