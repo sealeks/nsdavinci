@@ -46,11 +46,37 @@ namespace http {
         
         using dvnci::ns_error;
         using dvnci::nodetype;
-        using dvnci::indx;
-        using dvnci::iteminfo_map;        
-        using dvnci::name_with_type;
+        using dvnci::indx;        
         using dvnci::short_value;
 
+        using dvnci::expression_listener;
+        using dvnci::expression_listener_ptr;        
+        
+        using dvnci::registrate_listener;
+        using dvnci::registrate_listener_ptr;       
+        
+        using dvnci::entety_listener;
+        using dvnci::entety_listener_ptr;   
+        using dvnci::iteminfo_map;
+        using dvnci::name_with_type;        
+        typedef std::map<std::string, iteminfo_map> entetyinfomap_type;        
+        
+        using dvnci::trend_listener;        
+        using dvnci::trend_listener_ptr;  
+        using dvnci::short_values_table;
+        using dvnci::str_vect;
+        using dvnci::num64;
+        typedef std::map<std::string, short_values_table> short_values_map_type;     
+        typedef std::map<std::string, trend_listener_ptr>  trend_listener_map_type;         
+
+        using dvnci::alarms_listener;        
+        using dvnci::alarms_listener_ptr;     
+        
+        using dvnci::journal_listener;        
+        using dvnci::journal_listener_ptr;        
+        
+        using dvnci::debug_listener;        
+        using dvnci::debug_listener_ptr;         
         
         ////////////////////////////////////////////////////////
         //  http_terminated_thread
@@ -141,7 +167,7 @@ namespace http {
         //  http_expression_listener
         ////////////////////////////////////////////////////////         
 
-        class http_expression_listener : public dvnci::expression_listener {
+        class http_expression_listener : public expression_listener {
 
         public:
 
@@ -168,7 +194,7 @@ namespace http {
         //   http_registrate_listener
         ////////////////////////////////////////////////////////          
         
-        class http_registrate_listener : public dvnci::registrate_listener {
+        class http_registrate_listener : public registrate_listener {
 
         public:
 
@@ -208,7 +234,7 @@ namespace http {
         //   http_entety_listener
         ////////////////////////////////////////////////////////         
 
-        class http_entety_listener : public dvnci::entety_listener {
+        class http_entety_listener : public entety_listener {
 
         public:
 
@@ -228,6 +254,28 @@ namespace http {
         
         
         
+        ////////////////////////////////////////////////////////
+        //   http_trend_listener
+        ////////////////////////////////////////////////////////         
+
+        class http_trend_listener : public trend_listener {
+
+        public:
+
+            http_trend_listener(http_session_ptr sess, const std::string& id,
+                    const str_vect& tgs, num64 histmilisec = 0);
+
+            virtual void event(const short_values_table & val);
+
+            std::string id() const {
+                return operid_;
+            }
+
+        private:
+            http_session_ptr session;
+            std::string operid_;
+        };        
+        
 
         ////////////////////////////////////////////////////////
         //  http_session
@@ -243,7 +291,7 @@ namespace http {
         typedef std::vector<entity_atom > executevect_type;        
         typedef std::map<entity_atom, value_type> valuemap_type;
         typedef std::map<std::string, registrate_struct> registratemap_type;        
-        typedef std::map<std::string, iteminfo_map> entetyinfomap_type;         
+         
 
         class http_session :
         public boost::enable_shared_from_this<http_session> {
@@ -280,6 +328,10 @@ namespace http {
             entetyinfomap_type& entetyinfo() {
                 return entetyinfo_;
             }            
+            
+            short_values_map_type& trends() {
+                return trends_;
+            }                   
 
             void addtags(const tagset_type& vl);
 
@@ -303,6 +355,26 @@ namespace http {
             
             void enities_operation(const boost::property_tree::ptree& req);
             
+            void addtrend_operation(const boost::property_tree::ptree& req);   
+            
+            void removetrend_operation(const boost::property_tree::ptree& req);               
+            
+            void addalarms_operation(const boost::property_tree::ptree& req);   
+            
+            void removealarms_operation(const boost::property_tree::ptree& req);              
+            
+            void adddebug_operation(const boost::property_tree::ptree& req);   
+            
+            void removedebug_operation(const boost::property_tree::ptree& req);             
+            
+            void addjournal_operation(const boost::property_tree::ptree& req);  
+            
+            void removejournal_operation(const boost::property_tree::ptree& req);                    
+            
+            trend_listener_map_type& trendlisteners() {
+                return trendlisteners_;
+            }            
+            
         private:
             sessionid_type id_;
             std::size_t session_livetm_;            
@@ -314,7 +386,8 @@ namespace http {
             tagset_type errortag_;
             registratemap_type regaction_;
             entetyinfomap_type entetyinfo_;
-            
+            short_values_map_type trends_;
+            trend_listener_map_type trendlisteners_;
 
         };
 

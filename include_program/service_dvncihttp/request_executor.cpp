@@ -74,17 +74,15 @@ namespace http {
 
         namespace ptree = boost::property_tree;
 
-
-
         const operationid_type SESSION_REQUEST = 1;
         const operationid_type INIT_REQUEST = 2;
         const operationid_type INIT_RESPONSE = 3;
         const operationid_type ADDTAG_REQUEST = 4;
         const operationid_type ADDTAG_RESPONSE = 5;
-        const operationid_type ADDEXECUTE_REQUEST = 6;
-        const operationid_type ADDEXECUTE_RESPONSE = 7;
-        const operationid_type REMOVETAG_REQUEST = 8;
-        const operationid_type REMOVETAG_RESPONSE = 9;
+        const operationid_type REMOVETAG_REQUEST = 6;
+        const operationid_type REMOVETAG_RESPONSE = 7;        
+        const operationid_type ADDEXECUTE_REQUEST = 8;
+        const operationid_type ADDEXECUTE_RESPONSE = 9;
         const operationid_type UPDATE_REQUEST = 10;
         const operationid_type UPDATE_RESPONSE = 11;
         const operationid_type REGISTRATEUSER_REQUEST = 12;
@@ -101,6 +99,22 @@ namespace http {
         const operationid_type CHANGEACCESS_RESPONSE = 23;
         const operationid_type ENTITIESINFO_REQUEST = 24;
         const operationid_type ENTITIESINFO_RESPONSE = 25;
+        const operationid_type ADDTREND_REQUEST = 26;
+        const operationid_type ADDTREND_RESPONSE = 27;     
+        const operationid_type REMOVETREND_REQUEST = 28;
+        const operationid_type REMOVETREND_RESPONSE = 29;             
+        const operationid_type ADDALARMS_REQUEST = 30;
+        const operationid_type ADDALARMS_RESPONSE = 31;   
+        const operationid_type REMOVEALARMS_REQUEST = 32;
+        const operationid_type REMOVEALARMS_RESPONSE = 33;         
+        const operationid_type ADDDEBUG_REQUEST = 34;
+        const operationid_type ADDDEBUG_RESPONSE = 35;  
+        const operationid_type REMOVEDEBUG_REQUEST = 36;
+        const operationid_type REMOVEDEBUG_RESPONSE = 37;          
+        const operationid_type ADDJOURNAL_REQUEST = 38;
+        const operationid_type ADDJOURNAL_RESPONSE = 39;    
+        const operationid_type REMOVEJOURNAL_REQUEST = 40;
+        const operationid_type REMOVEJOURNAL_RESPONSE = 41;          
 
         const std::string& SESSION_REQUEST_S = "session";
         const std::string& INIT_REQUEST_S = "init-req";
@@ -127,6 +141,23 @@ namespace http {
         const std::string& CHANGEACCESS_RESPONSE_S = "changeaccess-response";
         const std::string& ENTITIESINFO_REQUEST_S = "entities-request";
         const std::string& ENTITIESINFO_RESPONSE_S = "entities-response";
+        const std::string& ADDTREND_REQUEST_S = "addtrend-request";
+        const std::string& ADDTREND_RESPONSE_S = "addtrend-response";       
+        const std::string& REMOVETREND_REQUEST_S = "removetrend-request";
+        const std::string& REMOVETREND_RESPONSE_S = "removetrend-response";           
+        const std::string& ADDALARMS_REQUEST_S = "addalarms-request";
+        const std::string& ADDALARMS_RESPONSE_S = "addalarms-response";      
+        const std::string& REMOVEALARMS_REQUEST_S = "removealarms-request";
+        const std::string& REMOVEALARMS_RESPONSE_S = "removealarms-response";         
+        const std::string& ADDDEBUG_REQUEST_S = "adddebug-request";
+        const std::string& ADDDEBUG_RESPONSE_S = "adddebug-response";     
+        const std::string& REMOVEDEBUG_REQUEST_S = "removedebug-request";
+        const std::string& REMOVEDEBUG_RESPONSE_S = "removedebug-response";         
+        const std::string& ADDJOURNAL_REQUEST_S = "addjournal-request";
+        const std::string& ADDJOURNAL_RESPONSE_S = "addjournal-response";        
+        const std::string& REMOVEJOURNAL_REQUEST_S = "removejournal-request";
+        const std::string& REMOVEJOURNAL_RESPONSE_S = "removejournal-response";           
+        
 
         operationmap get_operationid_map_int() {
             operationmap rslt;
@@ -155,6 +186,22 @@ namespace http {
             rslt.insert(operationpair(CHANGEACCESS_RESPONSE_S, CHANGEACCESS_RESPONSE));
             rslt.insert(operationpair(ENTITIESINFO_REQUEST_S, ENTITIESINFO_REQUEST));
             rslt.insert(operationpair(ENTITIESINFO_RESPONSE_S, ENTITIESINFO_RESPONSE));
+            rslt.insert(operationpair(ADDTREND_REQUEST_S, ADDTREND_REQUEST));
+            rslt.insert(operationpair(ADDTREND_RESPONSE_S, ADDTREND_RESPONSE));            
+            rslt.insert(operationpair(REMOVETREND_REQUEST_S, REMOVETREND_REQUEST));            
+            rslt.insert(operationpair(REMOVETREND_RESPONSE_S, REMOVETREND_RESPONSE));                 
+            rslt.insert(operationpair(ADDALARMS_REQUEST_S, ADDALARMS_REQUEST));
+            rslt.insert(operationpair(ADDALARMS_RESPONSE_S, ADDALARMS_RESPONSE));            
+            rslt.insert(operationpair(REMOVEALARMS_REQUEST_S, REMOVEALARMS_REQUEST));            
+            rslt.insert(operationpair(REMOVEALARMS_RESPONSE_S, REMOVEALARMS_RESPONSE));     
+            rslt.insert(operationpair(ADDDEBUG_REQUEST_S, ADDDEBUG_REQUEST));
+            rslt.insert(operationpair(ADDDEBUG_RESPONSE_S, ADDDEBUG_RESPONSE));            
+            rslt.insert(operationpair(REMOVEDEBUG_REQUEST_S, REMOVEDEBUG_REQUEST));            
+            rslt.insert(operationpair(REMOVEDEBUG_RESPONSE_S, REMOVEDEBUG_RESPONSE));           
+            rslt.insert(operationpair(ADDJOURNAL_REQUEST_S, ADDJOURNAL_REQUEST));
+            rslt.insert(operationpair(ADDJOURNAL_RESPONSE_S, ADDJOURNAL_RESPONSE));            
+            rslt.insert(operationpair(REMOVEJOURNAL_REQUEST_S, REMOVEJOURNAL_REQUEST));            
+            rslt.insert(operationpair(REMOVEJOURNAL_RESPONSE_S, REMOVEJOURNAL_RESPONSE));            
             return rslt;
         }
 
@@ -180,6 +227,15 @@ namespace http {
             }
             return !tgs.empty();
         }
+        
+        static bool get_tags_list(const boost::property_tree::ptree& req, str_vect& tgs) {
+            for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
+                std::string item_tag = it->second.get_value<std::string>();
+                if (!item_tag.empty())
+                    tgs.push_back(item_tag);
+            }
+            return !tgs.empty();
+        }        
 
         static bool get_executes_list(const boost::property_tree::ptree& req, executevect_type& excs) {
             for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
@@ -215,7 +271,38 @@ namespace http {
                 result.add_child(dvnci::to_str(it->first), subresult);
             }
             return result;
-        }        
+        }  
+        
+        static ptree::ptree add_trend_value(const dvnci::short_value_vect& val) {
+            ptree::ptree result;
+            for (dvnci::short_value_vect::const_iterator it = val.begin(); it != val.end(); ++it) {
+                ptree::ptree subresult, arr1, arr2;
+                arr1.put("", dvnci::datetime_to_epoch_msc(it->time()));
+                if (it->valid() < 100)
+                    arr2.put("", "null");
+                else
+                    arr2.put("", it->value<double>());
+                subresult.push_back(std::pair<std::string, ptree::ptree>("", arr1));          
+                subresult.push_back(std::pair<std::string, ptree::ptree>("", arr2));                   
+                result.push_back(std::pair<std::string, ptree::ptree>("", subresult));
+            }
+            return result;
+        }  
+        
+        static ptree::ptree add_trends_value(const short_values_table& val) {
+            ptree::ptree result;
+            int i = 0;
+            for (short_values_table::const_iterator it = val.begin(); it != val.end(); ++it) {
+                result.put("start", it->first.second == 1 ? "true" : "false");
+                result.put("tag", it->first.first);
+                result.put("id", i++);
+                if (it->first.second > 1)
+                    result.put("error", "true");
+                else 
+                    result.add_child("data", add_trend_value(it->second));
+            }
+            return result;
+        }
 
         static void update_all_value(http_session_ptr session, ptree::ptree& resp) {
             if (!session->regaction().empty()) {
@@ -225,17 +312,17 @@ namespace http {
                     subresult.put("error", dvnci::to_str(it->second.error));
                     result.add_child(it->first, subresult);
                     switch (it->second.type) {
-                        case dvnci::registrate_listener::REGIST: resp.add_child(REGISTRATEUSER_RESPONSE_S, result);
+                        case registrate_listener::REGIST: resp.add_child(REGISTRATEUSER_RESPONSE_S, result);
                             break;
-                        case dvnci::registrate_listener::UNREGIST: resp.add_child(UNREGISTRATEUSER_RESPONSE_S, result);
+                        case registrate_listener::UNREGIST: resp.add_child(UNREGISTRATEUSER_RESPONSE_S, result);
                             break;
-                        case dvnci::registrate_listener::ADDUSER: resp.add_child(ADDUSER_RESPONSE_S, result);
+                        case registrate_listener::ADDUSER: resp.add_child(ADDUSER_RESPONSE_S, result);
                             break;
-                        case dvnci::registrate_listener::REMOVEUSER: resp.add_child(REMOVEUSER_RESPONSE_S, result);
+                        case registrate_listener::REMOVEUSER: resp.add_child(REMOVEUSER_RESPONSE_S, result);
                             break;
-                        case dvnci::registrate_listener::CHANGEPASS: resp.add_child(CHANGEPASSWORD_RESPONSE_S, result);
+                        case registrate_listener::CHANGEPASS: resp.add_child(CHANGEPASSWORD_RESPONSE_S, result);
                             break;
-                        case dvnci::registrate_listener::CHANGEACCESS: resp.add_child(CHANGEACCESS_RESPONSE_S, result);
+                        case registrate_listener::CHANGEACCESS: resp.add_child(CHANGEACCESS_RESPONSE_S, result);
                             break;
                         default:
                         {
@@ -273,6 +360,14 @@ namespace http {
                 resp.add_child(ENTITIESINFO_RESPONSE_S, result);
                 session->entetyinfo().clear();
             }
+            if (!session->trends().empty()) {
+                ptree::ptree result;
+                for (short_values_map_type::const_iterator it = session->trends().begin(); it != session->trends().end(); ++it) {
+                    result.add_child(it->first, add_trends_value(it->second));
+                }
+                resp.add_child(ADDTREND_RESPONSE_S, result);
+                session->trends().clear();
+            }            
         }
 
 
@@ -328,11 +423,11 @@ namespace http {
         ////////////////////////////////////////////////////////         
 
         http_expression_listener::http_expression_listener(const std::string& exp, http_session_ptr sess, bool single, bool test) :
-        dvnci::expression_listener(single, test), expr(exp), session(sess) {
+        expression_listener(single, test), expr(exp), session(sess) {
         }
 
         http_expression_listener::http_expression_listener(const entity_atom& exp, http_session_ptr sess, bool single, bool test) :
-        dvnci::expression_listener(single, test), expr(exp), session(sess) {
+        expression_listener(single, test), expr(exp), session(sess) {
         }
 
         void http_expression_listener::event(const short_value& val) {
@@ -348,7 +443,7 @@ namespace http {
 
         http_registrate_listener::http_registrate_listener(http_session_ptr sess, const std::string& id, int type,
                 const std::string& user, const std::string& password, const std::string& newpassword)
-        : dvnci::registrate_listener(type, user, password, newpassword), session(sess), operid_(id) {
+        : registrate_listener(type, user, password, newpassword), session(sess), operid_(id) {
         };
 
         void http_registrate_listener::event(const ns_error& val) {
@@ -366,7 +461,7 @@ namespace http {
 
         http_entety_listener::http_entety_listener(http_session_ptr sess, const std::string& id,
                 nodetype enttp, indx parentid, const std::string& filter)
-        : dvnci::entety_listener(enttp, parentid, filter), session(sess), operid_(id) {
+        : entety_listener(enttp, parentid, filter), session(sess), operid_(id) {
         };
 
         void http_entety_listener::event(const iteminfo_map & val) {
@@ -375,6 +470,22 @@ namespace http {
                         entetyinfomap_type::value_type(id(), val));
             }
         }
+        
+         ////////////////////////////////////////////////////////
+        //   http_trend_listener
+        ////////////////////////////////////////////////////////         
+
+        http_trend_listener::http_trend_listener(http_session_ptr sess, const std::string& id,
+                const str_vect& tgs, num64 histmilisec)
+        : trend_listener(tgs, histmilisec), session(sess), operid_(id) {
+        };
+
+        void http_trend_listener::event(const short_values_table & val) {
+            if (session) {
+                session->trends().insert(
+                        short_values_map_type::value_type(id(), val));
+            }
+        }  
 
 
         ////////////////////////////////////////////////////////
@@ -391,7 +502,7 @@ namespace http {
             http_executor_ptr inf = intf();
             if (inf) {
                 for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
-                    dvnci::expression_listener_ptr exrptr = dvnci::expression_listener_ptr(new http_expression_listener(*it, shared_from_this()));
+                    expression_listener_ptr exrptr = expression_listener_ptr(new http_expression_listener(*it, shared_from_this()));
                     inf->regist_expr_listener(it->expr(), exrptr);
                 }
             }
@@ -402,7 +513,7 @@ namespace http {
             http_executor_ptr inf = intf();
             if (inf) {
                 for (executevect_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
-                    dvnci::expression_listener_ptr exrptr = dvnci::expression_listener_ptr(new http_expression_listener(*it, shared_from_this(), true));
+                    expression_listener_ptr exrptr = expression_listener_ptr(new http_expression_listener(*it, shared_from_this(), true));
                     inf->regist_expr_listener(it->expr(), exrptr);
                 }
             }
@@ -426,19 +537,19 @@ namespace http {
                     std::string arg1 = "";
                     std::string arg2 = "";
                     std::string arg3 = "";
-                    int type = dvnci::registrate_listener::REGIST;
+                    int type = registrate_listener::REGIST;
                     switch (oper) {
                         case REGISTRATEUSER_REQUEST:
                         {
                             arg1 = it->second.get<std::string>("user", "");
                             arg2 = it->second.get<std::string>("password", "");
-                            type = dvnci::registrate_listener::REGIST;
+                            type = registrate_listener::REGIST;
                             break;
                         }
                         case UNREGISTRATEUSER_REQUEST:
                         {
                             arg1 = it->second.get<std::string>("user", "");
-                            type = dvnci::registrate_listener::UNREGIST;
+                            type = registrate_listener::UNREGIST;
                             break;
                         }
                         case ADDUSER_REQUEST:
@@ -446,14 +557,14 @@ namespace http {
                             arg1 = it->second.get<std::string>("user", "");
                             arg2 = it->second.get<std::string>("password", "");
                             arg3 = it->second.get<std::string>("access", "");
-                            type = dvnci::registrate_listener::ADDUSER;
+                            type = registrate_listener::ADDUSER;
                             break;
                         }
                         case REMOVEUSER_REQUEST:
                         {
                             arg1 = it->second.get<std::string>("user", "");
                             arg2 = it->second.get<std::string>("password", "");
-                            type = dvnci::registrate_listener::REMOVEUSER;
+                            type = registrate_listener::REMOVEUSER;
                             break;
                         }
                         case CHANGEPASSWORD_REQUEST:
@@ -461,7 +572,7 @@ namespace http {
                             arg1 = it->second.get<std::string>("user", "");
                             arg2 = it->second.get<std::string>("passwordold", "");
                             arg3 = it->second.get<std::string>("passwordnew", "");
-                            type = dvnci::registrate_listener::CHANGEPASS;
+                            type = registrate_listener::CHANGEPASS;
                             break;
                         }
                         case CHANGEACCESS_REQUEST:
@@ -469,14 +580,14 @@ namespace http {
                             arg1 = it->second.get<std::string>("user", "");
                             arg2 = it->second.get<std::string>("password", "");
                             arg3 = it->second.get<std::string>("access", "");
-                            type = dvnci::registrate_listener::CHANGEACCESS;
+                            type = registrate_listener::CHANGEACCESS;
                             break;
                         }
                         default:
                         {
                         }
                     }
-                    dvnci::registrate_listener_ptr regptr = dvnci::registrate_listener_ptr(
+                    registrate_listener_ptr regptr = registrate_listener_ptr(
                             new http_registrate_listener(shared_from_this(), item_id, type, arg1, arg2, arg3));
                     inf->regist_registrate_listener(regptr);
                 }
@@ -492,13 +603,99 @@ namespace http {
                     indx index = it->second.get<indx>("indx", dvnci::npos);
                     std::string filter = it->second.get<std::string>("filter", "");
                     if (type) {
-                        dvnci::entety_listener_ptr entptr = dvnci::entety_listener_ptr(
+                        entety_listener_ptr entptr = entety_listener_ptr(
                                 new http_entety_listener(shared_from_this(), item_id, type, index, filter));
                         inf->regist_entety_listener(entptr);
                     }
                 }
             }
         }
+
+        void http_session::addtrend_operation(const boost::property_tree::ptree& req) {
+            http_executor_ptr inf = intf();
+            if (inf) {
+                for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
+                    std::string item_id = it->first;
+                    num64 period = it->second.get<num64>("period", 0);
+                    str_vect tgs;
+                    std::string tg = it->second.get<std::string>("tag", "");
+                    if (tg.empty())
+                        std::string tg = it->second.get<std::string>("taglist", "");
+                    if (tg.empty())
+                        get_tags_list(it->second.get_child_optional("taglist").get(), tgs);
+                    else
+                        tgs.push_back(tg);
+                    if (!tgs.empty()) {
+                        trend_listener_ptr trendptr = trend_listener_ptr(
+                                new http_trend_listener(shared_from_this(), item_id, tgs,period));
+                        inf->regist_trend_listener(trendptr);          
+                        trendlisteners().insert(trend_listener_map_type::value_type(item_id, trendptr));
+                    }
+                }
+            }
+        }
+        
+        void http_session::removetrend_operation(const boost::property_tree::ptree& req) {
+            http_executor_ptr inf = intf();
+            if (inf) {
+                for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
+                    std::string item_id = it->first;
+                    trend_listener_map_type::iterator fit=trendlisteners().find(item_id);
+                    if (fit!=trendlisteners().end()){
+                        inf->unregist_trend_listener(fit->second); 
+                        trendlisteners().erase(fit);                    
+                    }
+                }
+            }
+        }        
+
+        void http_session::addalarms_operation(const boost::property_tree::ptree& req) {
+            http_executor_ptr inf = intf();
+            if (inf) {
+                for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
+                }
+            }
+        }
+        
+        void http_session::removealarms_operation(const boost::property_tree::ptree& req) {
+            http_executor_ptr inf = intf();
+            if (inf) {
+                for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
+                }
+            }
+        }        
+
+        void http_session::adddebug_operation(const boost::property_tree::ptree& req) {
+            http_executor_ptr inf = intf();
+            if (inf) {
+                for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
+                }
+            }
+        }
+        
+        void http_session::removedebug_operation(const boost::property_tree::ptree& req) {
+            http_executor_ptr inf = intf();
+            if (inf) {
+                for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
+                }
+            }
+        }        
+
+        void http_session::addjournal_operation(const boost::property_tree::ptree& req) {
+            http_executor_ptr inf = intf();
+            if (inf) {
+                for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
+                }
+            }
+        }     
+        
+        void http_session::removejournal_operation(const boost::property_tree::ptree& req) {
+            http_executor_ptr inf = intf();
+            if (inf) {
+                for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
+                }
+            }
+        }          
 
         reply::status_type http_session::proccess_request(operationid_type oper, const ptree::ptree& req, ptree::ptree& resp) {
             reply::status_type result = reply::none;
@@ -559,6 +756,63 @@ namespace http {
                     result = reply::ok;
                     break;
                 }
+                case ADDTREND_REQUEST:
+                {
+                    addtrend_operation(req);
+                    resp.put(SESSION_REQUEST_S, id_);
+                    result = reply::ok;
+                    break;
+                }             
+                case REMOVETREND_REQUEST:
+                {
+                    removetrend_operation(req);
+                    resp.put(SESSION_REQUEST_S, id_);
+                    result = reply::ok;
+                    break;
+                }                    
+                case ADDALARMS_REQUEST:
+                {
+                    addalarms_operation(req);
+                    resp.put(SESSION_REQUEST_S, id_);
+                    result = reply::ok;
+                    break;
+                }                      
+                case REMOVEALARMS_REQUEST:
+                {
+                    removealarms_operation(req);
+                    resp.put(SESSION_REQUEST_S, id_);
+                    result = reply::ok;
+                    break;
+                }                  
+                case ADDDEBUG_REQUEST:
+                {
+                    adddebug_operation(req);
+                    resp.put(SESSION_REQUEST_S, id_);
+                    result = reply::ok;
+                    break;
+                }                
+                case REMOVEDEBUG_REQUEST:
+                {
+                    removedebug_operation(req);
+                    resp.put(SESSION_REQUEST_S, id_);
+                    result = reply::ok;
+                    break;
+                }                     
+                
+                case ADDJOURNAL_REQUEST:
+                {
+                    addjournal_operation(req);
+                    resp.put(SESSION_REQUEST_S, id_);
+                    result = reply::ok;
+                    break;
+                }               
+                case REMOVEJOURNAL_REQUEST:
+                {
+                    removejournal_operation(req);
+                    resp.put(SESSION_REQUEST_S, id_);
+                    result = reply::ok;
+                    break;
+                }                   
                 default:
                 {
 
