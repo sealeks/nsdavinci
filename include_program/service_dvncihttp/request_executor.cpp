@@ -114,7 +114,8 @@ namespace http {
         const operationid_type ADDJOURNAL_REQUEST = 38;
         const operationid_type ADDJOURNAL_RESPONSE = 39;    
         const operationid_type REMOVEJOURNAL_REQUEST = 40;
-        const operationid_type REMOVEJOURNAL_RESPONSE = 41;          
+        const operationid_type REMOVEJOURNAL_RESPONSE = 41;       
+        const operationid_type REMOVE_RESPONSE = 42;         
 
         const std::string& SESSION_REQUEST_S = "session";
         const std::string& INIT_REQUEST_S = "init-req";
@@ -157,6 +158,7 @@ namespace http {
         const std::string& ADDJOURNAL_RESPONSE_S = "addjournal-response";        
         const std::string& REMOVEJOURNAL_REQUEST_S = "removejournal-request";
         const std::string& REMOVEJOURNAL_RESPONSE_S = "removejournal-response";           
+        const std::string& REMOVE_RESPONSE_S = "remove-response";         
         
 
         operationmap get_operationid_map_int() {
@@ -201,7 +203,8 @@ namespace http {
             rslt.insert(operationpair(ADDJOURNAL_REQUEST_S, ADDJOURNAL_REQUEST));
             rslt.insert(operationpair(ADDJOURNAL_RESPONSE_S, ADDJOURNAL_RESPONSE));            
             rslt.insert(operationpair(REMOVEJOURNAL_REQUEST_S, REMOVEJOURNAL_REQUEST));            
-            rslt.insert(operationpair(REMOVEJOURNAL_RESPONSE_S, REMOVEJOURNAL_RESPONSE));            
+            rslt.insert(operationpair(REMOVEJOURNAL_RESPONSE_S, REMOVEJOURNAL_RESPONSE));          
+            rslt.insert(operationpair(REMOVE_RESPONSE_S, REMOVE_RESPONSE));               
             return rslt;
         }
 
@@ -223,13 +226,13 @@ namespace http {
                 std::string item_id = it->first;
                 std::string item_tag = it->second.get_value<std::string>();
                 if (!item_tag.empty())
-                    tgs.insert(entity_atom(item_tag));
+                    tgs.insert(entity_atom(item_id, item_tag,false));
             }
             return !tgs.empty();
         }
         
         static bool get_tags_list(const boost::property_tree::ptree& req, str_vect& tgs) {
-            for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {
+            for (ptree::ptree::const_iterator it = req.begin(); it != req.end(); ++it) {             
                 std::string item_tag = it->second.get_value<std::string>();
                 if (!item_tag.empty())
                     tgs.push_back(item_tag);
@@ -243,7 +246,7 @@ namespace http {
                 std::string item_expr = it->second.get_value<std::string>();
                 if (!item_expr.empty()) {
                     if (!item_id.empty())
-                        excs.push_back(entity_atom(item_id, item_expr));
+                        excs.push_back(entity_atom(item_id, item_expr, true));
                 }
             }
             return !excs.empty();
@@ -291,11 +294,9 @@ namespace http {
         
         static ptree::ptree add_trends_value(const short_values_table& val) {
             ptree::ptree result;
-            int i = 0;
             for (short_values_table::const_iterator it = val.begin(); it != val.end(); ++it) {
                 result.put("start", it->first.second == 1 ? "true" : "false");
                 result.put("tag", it->first.first);
-                result.put("id", i++);
                 if (it->first.second > 1)
                     result.put("error", "true");
                 else 
@@ -335,7 +336,7 @@ namespace http {
                 ptree::ptree result;
                 bool has_exec = false;
                 for (valuemap_type::const_iterator it = session->updatelist().begin(); it != session->updatelist().end(); ++it) {
-                    if (it->first.validid())
+                    if (it->first.single())
                         has_exec = true;
                     else
                         result.add_child(it->first.expr(), add_tag_value(it->second));
@@ -344,7 +345,7 @@ namespace http {
                 result.clear();
                 if (has_exec) {
                     for (valuemap_type::const_iterator it = session->updatelist().begin(); it != session->updatelist().end(); ++it) {
-                        if (it->first.validid()) {
+                        if (it->first.single()) {
                             result.add_child(it->first.id(), add_tag_value(it->second));
                         }
                     }
@@ -367,7 +368,17 @@ namespace http {
                 }
                 resp.add_child(ADDTREND_RESPONSE_S, result);
                 session->trends().clear();
-            }            
+            }
+            if (!session->removesessionid().empty()) {
+                ptree::ptree result;
+                for (removesessionid_type::const_iterator it = session->removesessionid().begin(); it != session->removesessionid().end(); ++it) {
+                    ptree::ptree subresult;
+                    subresult.put("error",it->second);
+                    result.add_child(it->first, subresult);
+                }
+                resp.add_child(REMOVE_RESPONSE_S, result);
+                session->removesessionid().clear();
+            }
         }
 
 
@@ -422,9 +433,6 @@ namespace http {
         //  http_base_listener
         ////////////////////////////////////////////////////////         
 
-        http_expression_listener::http_expression_listener(const std::string& exp, http_session_ptr sess, bool single, bool test) :
-        expression_listener(single, test), expr(exp), session(sess) {
-        }
 
         http_expression_listener::http_expression_listener(const entity_atom& exp, http_session_ptr sess, bool single, bool test) :
         expression_listener(single, test), expr(exp), session(sess) {
@@ -504,9 +512,9 @@ namespace http {
                 for (tagset_type::const_iterator it = vl.begin(); it != vl.end(); ++it) {
                     expression_listener_ptr exrptr = expression_listener_ptr(new http_expression_listener(*it, shared_from_this()));
                     inf->regist_expr_listener(it->expr(), exrptr);
+                    expressionlisteners().insert(expression_listener_map_type::value_type(it->id(), exrptr));
                 }
             }
-            std::cout << std::endl;
         }
 
         void http_session::addexecutes(const executevect_type& vl) {
@@ -643,8 +651,11 @@ namespace http {
                     trend_listener_map_type::iterator fit=trendlisteners().find(item_id);
                     if (fit!=trendlisteners().end()){
                         inf->unregist_trend_listener(fit->second); 
-                        trendlisteners().erase(fit);                    
+                        trendlisteners().erase(fit);       
+                        removesessionid().insert(removesessionid_type::value_type(item_id,0));
                     }
+                    else
+                        removesessionid().insert(removesessionid_type::value_type(item_id, 1));
                 }
             }
         }        

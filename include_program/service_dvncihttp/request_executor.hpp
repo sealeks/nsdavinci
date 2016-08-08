@@ -50,7 +50,8 @@ namespace http {
         using dvnci::short_value;
 
         using dvnci::expression_listener;
-        using dvnci::expression_listener_ptr;        
+        using dvnci::expression_listener_ptr;     
+        typedef std::map<std::string, expression_listener_ptr>  expression_listener_map_type;          
         
         using dvnci::registrate_listener;
         using dvnci::registrate_listener_ptr;       
@@ -125,30 +126,28 @@ namespace http {
         
         struct entity_atom {
 
-            entity_atom(const std::string& exp) :
-            expr_(exp) {
+            entity_atom(const std::string& i, const std::string& exp, bool sngl = false) :
+            id_(i),
+            expr_(exp),
+            single_(sngl) {
             }
 
-            entity_atom(const std::string& i, const std::string& exp) :
-            id_(i),
-            expr_(exp) {
-            }     
-
-            entity_atom(int i, const std::string& exp) :
+            entity_atom(int i, const std::string& exp, bool sngl = false) :
             id_(dvnci::to_str(i)),
-            expr_(exp) {
+            expr_(exp),
+            single_(sngl) {
             }               
 
             const std::string& id() const {
-                return id_.empty() ? expr_ : id_;
+                return id_;
             }
 
             const std::string& expr() const {
                 return expr_;
             }
             
-            bool validid() const {
-                return !id_.empty();
+            bool single() const {
+                return single_;
             }           
 
             friend bool operator<(const entity_atom& ls, const entity_atom& rs);
@@ -159,6 +158,7 @@ namespace http {
 
             std::string id_;
             std::string expr_;
+            bool single_;
         };
           
 
@@ -170,8 +170,6 @@ namespace http {
         class http_expression_listener : public expression_listener {
 
         public:
-
-            http_expression_listener(const std::string& exp, http_session_ptr sess, bool single = false, bool test = false);
             
             http_expression_listener(const entity_atom& exp, http_session_ptr sess, bool single = false, bool test = false);            
             
@@ -291,7 +289,7 @@ namespace http {
         typedef std::vector<entity_atom > executevect_type;        
         typedef std::map<entity_atom, value_type> valuemap_type;
         typedef std::map<std::string, registrate_struct> registratemap_type;        
-         
+        typedef std::map<std::string, ns_error> removesessionid_type;         
 
         class http_session :
         public boost::enable_shared_from_this<http_session> {
@@ -332,6 +330,10 @@ namespace http {
             short_values_map_type& trends() {
                 return trends_;
             }                   
+            
+            removesessionid_type& removesessionid(){
+                return removesessionid_;                
+            }                       
 
             void addtags(const tagset_type& vl);
 
@@ -369,7 +371,11 @@ namespace http {
             
             void addjournal_operation(const boost::property_tree::ptree& req);  
             
-            void removejournal_operation(const boost::property_tree::ptree& req);                    
+            void removejournal_operation(const boost::property_tree::ptree& req);                               
+            
+            expression_listener_map_type& expressionlisteners(){
+                return expressionlisteners_;
+            }        
             
             trend_listener_map_type& trendlisteners() {
                 return trendlisteners_;
@@ -382,6 +388,8 @@ namespace http {
             boost::mutex mtx_;
             dvnci::datetime dt_;
 
+            removesessionid_type removesessionid_;
+            expression_listener_map_type expressionlisteners_;
             valuemap_type updatelist_;
             tagset_type errortag_;
             registratemap_type regaction_;
