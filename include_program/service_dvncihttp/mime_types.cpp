@@ -27,6 +27,7 @@ namespace http {
                 { "js", "text/javascript"},
                 { "css", "text/css"},
                 { "xsl", "application/xml"},
+                { "svg", "image/svg+xml"},                
                 { 0, 0} // Marks end of list.
             };
 
