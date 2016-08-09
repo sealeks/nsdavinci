@@ -77,87 +77,129 @@ namespace http {
         const operationid_type SESSION_REQUEST = 1;
         const operationid_type INIT_REQUEST = 2;
         const operationid_type INIT_RESPONSE = 3;
-        const operationid_type ADDTAG_REQUEST = 4;
-        const operationid_type ADDTAG_RESPONSE = 5;
-        const operationid_type REMOVETAG_REQUEST = 6;
-        const operationid_type REMOVETAG_RESPONSE = 7;        
-        const operationid_type ADDEXECUTE_REQUEST = 8;
-        const operationid_type ADDEXECUTE_RESPONSE = 9;
-        const operationid_type UPDATE_REQUEST = 10;
-        const operationid_type UPDATE_RESPONSE = 11;
-        const operationid_type REGISTRATEUSER_REQUEST = 12;
-        const operationid_type REGISTRATEUSER_RESPONSE = 13;
-        const operationid_type UNREGISTRATEUSER_REQUEST = 14;
-        const operationid_type UNREGISTRATEUSER_RESPONSE = 15;
-        const operationid_type ADDUSER_REQUEST = 16;
-        const operationid_type ADDUSER_RESPONSE = 17;
-        const operationid_type REMOVEUSER_REQUEST = 18;
-        const operationid_type REMOVEUSER_RESPONSE = 19;
-        const operationid_type CHANGEPASSWORD_REQUEST = 20;
-        const operationid_type CHANGEPASSWORD_RESPONSE = 21;
-        const operationid_type CHANGEACCESS_REQUEST = 22;
-        const operationid_type CHANGEACCESS_RESPONSE = 23;
-        const operationid_type ENTITIESINFO_REQUEST = 24;
-        const operationid_type ENTITIESINFO_RESPONSE = 25;
-        const operationid_type ADDTREND_REQUEST = 26;
-        const operationid_type ADDTREND_RESPONSE = 27;     
-        const operationid_type REMOVETREND_REQUEST = 28;
-        const operationid_type REMOVETREND_RESPONSE = 29;             
-        const operationid_type ADDALARMS_REQUEST = 30;
-        const operationid_type ADDALARMS_RESPONSE = 31;   
-        const operationid_type REMOVEALARMS_REQUEST = 32;
-        const operationid_type REMOVEALARMS_RESPONSE = 33;         
-        const operationid_type ADDDEBUG_REQUEST = 34;
-        const operationid_type ADDDEBUG_RESPONSE = 35;  
-        const operationid_type REMOVEDEBUG_REQUEST = 36;
-        const operationid_type REMOVEDEBUG_RESPONSE = 37;          
-        const operationid_type ADDJOURNAL_REQUEST = 38;
-        const operationid_type ADDJOURNAL_RESPONSE = 39;    
-        const operationid_type REMOVEJOURNAL_REQUEST = 40;
-        const operationid_type REMOVEJOURNAL_RESPONSE = 41;       
-        const operationid_type REMOVE_RESPONSE = 42;         
+        const operationid_type UNINIT_REQUEST = 4;
+        const operationid_type UNINIT_RESPONSE = 5;   
+        const operationid_type UPDATE_REQUEST = 6;        
+        
+        const operationid_type ADDTAG_REQUEST = 7;
+        const operationid_type ADDTAG_RESPONSE = 8;
+        const operationid_type UPDATETAG_RESPONSE = 9;        
+        const operationid_type REMOVETAG_REQUEST = 10;
+        const operationid_type REMOVETAG_RESPONSE = 11;     
+        
+        const operationid_type EXECUTE_REQUEST = 12;
+        const operationid_type EXECUTE_RESPONSE = 13;
+
+
+        const operationid_type REGISTRATEUSER_REQUEST = 14;
+        const operationid_type REGISTRATEUSER_RESPONSE = 15;
+        
+        const operationid_type UNREGISTRATEUSER_REQUEST = 16;
+        const operationid_type UNREGISTRATEUSER_RESPONSE = 17;
+        
+        const operationid_type ADDUSER_REQUEST = 18;
+        const operationid_type ADDUSER_RESPONSE = 19;
+        
+        const operationid_type REMOVEUSER_REQUEST = 20;
+        const operationid_type REMOVEUSER_RESPONSE = 21;
+        
+        const operationid_type CHANGEPASSWORD_REQUEST = 22;
+        const operationid_type CHANGEPASSWORD_RESPONSE = 23;
+        
+        const operationid_type CHANGEACCESS_REQUEST = 24;
+        const operationid_type CHANGEACCESS_RESPONSE = 25;
+        
+        const operationid_type ENTITIESINFO_REQUEST = 26;
+        const operationid_type ENTITIESINFO_RESPONSE = 27;
+        
+        const operationid_type ADDTREND_REQUEST = 28;
+        const operationid_type ADDTREND_RESPONSE = 29;     
+        const operationid_type UPDATETREND_RESPONSE = 30;        
+        const operationid_type REMOVETREND_REQUEST = 31;
+        const operationid_type REMOVETREND_RESPONSE = 32;   
+        
+        const operationid_type ADDALARMS_REQUEST = 33;
+        const operationid_type ADDALARMS_RESPONSE = 34;   
+        const operationid_type UPDATEALARMS_RESPONSE = 35;        
+        const operationid_type REMOVEALARMS_REQUEST = 36;
+        const operationid_type REMOVEALARMS_RESPONSE = 37;        
+        
+        const operationid_type ADDDEBUG_REQUEST = 38;
+        const operationid_type ADDDEBUG_RESPONSE = 39;  
+        const operationid_type UPDATEDEBUG_RESPONSE = 40;         
+        const operationid_type REMOVEDEBUG_REQUEST = 41;
+        const operationid_type REMOVEDEBUG_RESPONSE = 42;          
+        
+        const operationid_type ADDJOURNAL_REQUEST = 43;
+        const operationid_type ADDJOURNAL_RESPONSE = 44;    
+        const operationid_type UPDATEJOURNAL_RESPONSE = 45;          
+        const operationid_type REMOVEJOURNAL_REQUEST = 46;
+        const operationid_type REMOVEJOURNAL_RESPONSE = 47;      
+        
+        const operationid_type REMOVE_RESPONSE = 48;         
 
         const std::string& SESSION_REQUEST_S = "session";
-        const std::string& INIT_REQUEST_S = "init-req";
-        const std::string& INIT_RESPONSE_S = "init-resp";
+        const std::string& INIT_REQUEST_S = "init-request";
+        const std::string& INIT_RESPONSE_S = "init-response";
+        const std::string& UNINIT_REQUEST_S = "uninit-request";
+        const std::string& UNINIT_RESPONSE_S = "uninit-response";      
+        const std::string& UPDATE_REQUEST_S = "update-request";        
+        
         const std::string& ADDTAG_REQUEST_S = "addtags-request";
         const std::string& ADDTAG_RESPONSE_S = "addtags-response";
-        const std::string& ADDEXECUTE_REQUEST_S = "executeexpressions-request";
-        const std::string& ADDEXECUTE_RESPONSE_S = "executeexpressions-response";
+        const std::string& UPDATETAG_RESPONSE_S = "updatetags-response";        
         const std::string& REMOVETAG_REQUEST_S = "removetags-request";
-        const std::string& REMOVETAG_RESPONSE_S = "removetags-response";
-        const std::string& UPDATE_REQUEST_S = "update-request";
-        const std::string& UPDATE_RESPONSE_S = "update-response";
+        const std::string& REMOVETAG_RESPONSE_S = "removetags-response";        
+        
+        const std::string& EXECUTE_REQUEST_S = "executeexpressions-request";
+        const std::string& EXECUTE_RESPONSE_S = "executeexpressions-response";
+
+
         const std::string& REGISTRATEUSER_REQUEST_S = "registrate-request";
         const std::string& REGISTRATEUSER_RESPONSE_S = "registrate-response";
+        
         const std::string& UNREGISTRATEUSER_REQUEST_S = "unregistrate-request";
         const std::string& UNREGISTRATEUSER_RESPONSE_S = "unregistrate-response";
+        
         const std::string& ADDUSER_REQUEST_S = "adduser-request";
         const std::string& ADDUSER_RESPONSE_S = "adduser-response";
+        
         const std::string& REMOVEUSER_REQUEST_S = "removeuser-request";
         const std::string& REMOVEUSER_RESPONSE_S = "removeuser-response";
+        
         const std::string& CHANGEPASSWORD_REQUEST_S = "changepassword-request";
         const std::string& CHANGEPASSWORD_RESPONSE_S = "changepassword-response";
+        
         const std::string& CHANGEACCESS_REQUEST_S = "changeaccess-request";
         const std::string& CHANGEACCESS_RESPONSE_S = "changeaccess-response";
+        
         const std::string& ENTITIESINFO_REQUEST_S = "entities-request";
         const std::string& ENTITIESINFO_RESPONSE_S = "entities-response";
+        
         const std::string& ADDTREND_REQUEST_S = "addtrend-request";
         const std::string& ADDTREND_RESPONSE_S = "addtrend-response";       
+        const std::string& UPDATETREND_RESPONSE_S = "updatetrend-response";         
         const std::string& REMOVETREND_REQUEST_S = "removetrend-request";
         const std::string& REMOVETREND_RESPONSE_S = "removetrend-response";           
+        
         const std::string& ADDALARMS_REQUEST_S = "addalarms-request";
         const std::string& ADDALARMS_RESPONSE_S = "addalarms-response";      
+        const std::string& UPDATEALARMS_RESPONSE_S = "updatealarms-response";         
         const std::string& REMOVEALARMS_REQUEST_S = "removealarms-request";
-        const std::string& REMOVEALARMS_RESPONSE_S = "removealarms-response";         
+        const std::string& REMOVEALARMS_RESPONSE_S = "removealarms-response";      
+        
         const std::string& ADDDEBUG_REQUEST_S = "adddebug-request";
         const std::string& ADDDEBUG_RESPONSE_S = "adddebug-response";     
+        const std::string& UPDATEDEBUG_RESPONSE_S = "updatedebug-response";          
         const std::string& REMOVEDEBUG_REQUEST_S = "removedebug-request";
-        const std::string& REMOVEDEBUG_RESPONSE_S = "removedebug-response";         
+        const std::string& REMOVEDEBUG_RESPONSE_S = "removedebug-response";    
+        
         const std::string& ADDJOURNAL_REQUEST_S = "addjournal-request";
         const std::string& ADDJOURNAL_RESPONSE_S = "addjournal-response";        
+        const std::string& UPDATEJOURNAL_RESPONSE_S = "updatejournal-response";        
         const std::string& REMOVEJOURNAL_REQUEST_S = "removejournal-request";
-        const std::string& REMOVEJOURNAL_RESPONSE_S = "removejournal-response";           
+        const std::string& REMOVEJOURNAL_RESPONSE_S = "removejournal-response";     
+        
         const std::string& REMOVE_RESPONSE_S = "remove-response";         
         
 
@@ -166,44 +208,64 @@ namespace http {
             rslt.insert(operationpair(SESSION_REQUEST_S, SESSION_REQUEST));
             rslt.insert(operationpair(INIT_REQUEST_S, INIT_REQUEST));
             rslt.insert(operationpair(INIT_RESPONSE_S, INIT_RESPONSE));
+            rslt.insert(operationpair(UNINIT_REQUEST_S, UNINIT_REQUEST));
+            rslt.insert(operationpair(UNINIT_RESPONSE_S, UNINIT_RESPONSE));  
+            rslt.insert(operationpair(UPDATE_REQUEST_S, UPDATE_REQUEST));            
+            
             rslt.insert(operationpair(ADDTAG_REQUEST_S, ADDTAG_REQUEST));
             rslt.insert(operationpair(ADDTAG_RESPONSE_S, ADDTAG_RESPONSE));
-            rslt.insert(operationpair(ADDEXECUTE_REQUEST_S, ADDEXECUTE_REQUEST));
-            rslt.insert(operationpair(ADDEXECUTE_RESPONSE_S, ADDEXECUTE_RESPONSE));
+            rslt.insert(operationpair(UPDATETAG_RESPONSE_S, UPDATETAG_RESPONSE));            
             rslt.insert(operationpair(REMOVETAG_REQUEST_S, REMOVETAG_REQUEST));
             rslt.insert(operationpair(REMOVETAG_RESPONSE_S, REMOVETAG_RESPONSE));
-            rslt.insert(operationpair(UPDATE_REQUEST_S, UPDATE_REQUEST));
-            rslt.insert(operationpair(UPDATE_RESPONSE_S, UPDATE_RESPONSE));
+
+            rslt.insert(operationpair(EXECUTE_REQUEST_S, EXECUTE_REQUEST));
+            rslt.insert(operationpair(EXECUTE_RESPONSE_S, EXECUTE_RESPONSE));
+            
             rslt.insert(operationpair(REGISTRATEUSER_REQUEST_S, REGISTRATEUSER_REQUEST));
             rslt.insert(operationpair(REGISTRATEUSER_RESPONSE_S, REGISTRATEUSER_RESPONSE));
+            
             rslt.insert(operationpair(UNREGISTRATEUSER_REQUEST_S, UNREGISTRATEUSER_REQUEST));
             rslt.insert(operationpair(UNREGISTRATEUSER_RESPONSE_S, UNREGISTRATEUSER_RESPONSE));
+            
             rslt.insert(operationpair(ADDUSER_REQUEST_S, ADDUSER_REQUEST));
             rslt.insert(operationpair(ADDUSER_RESPONSE_S, ADDUSER_RESPONSE));
+            
             rslt.insert(operationpair(REMOVEUSER_REQUEST_S, REMOVEUSER_REQUEST));
             rslt.insert(operationpair(REMOVEUSER_RESPONSE_S, REMOVEUSER_RESPONSE));
+            
             rslt.insert(operationpair(CHANGEPASSWORD_REQUEST_S, CHANGEPASSWORD_REQUEST));
             rslt.insert(operationpair(CHANGEPASSWORD_RESPONSE_S, CHANGEPASSWORD_RESPONSE));
+            
             rslt.insert(operationpair(CHANGEACCESS_REQUEST_S, CHANGEACCESS_REQUEST));
             rslt.insert(operationpair(CHANGEACCESS_RESPONSE_S, CHANGEACCESS_RESPONSE));
+            
             rslt.insert(operationpair(ENTITIESINFO_REQUEST_S, ENTITIESINFO_REQUEST));
             rslt.insert(operationpair(ENTITIESINFO_RESPONSE_S, ENTITIESINFO_RESPONSE));
+            
             rslt.insert(operationpair(ADDTREND_REQUEST_S, ADDTREND_REQUEST));
-            rslt.insert(operationpair(ADDTREND_RESPONSE_S, ADDTREND_RESPONSE));            
+            rslt.insert(operationpair(ADDTREND_RESPONSE_S, ADDTREND_RESPONSE));       
+            rslt.insert(operationpair(UPDATETREND_RESPONSE_S, UPDATETREND_RESPONSE));            
             rslt.insert(operationpair(REMOVETREND_REQUEST_S, REMOVETREND_REQUEST));            
             rslt.insert(operationpair(REMOVETREND_RESPONSE_S, REMOVETREND_RESPONSE));                 
+            
             rslt.insert(operationpair(ADDALARMS_REQUEST_S, ADDALARMS_REQUEST));
             rslt.insert(operationpair(ADDALARMS_RESPONSE_S, ADDALARMS_RESPONSE));            
+            rslt.insert(operationpair(UPDATEALARMS_RESPONSE_S, UPDATEALARMS_RESPONSE));              
             rslt.insert(operationpair(REMOVEALARMS_REQUEST_S, REMOVEALARMS_REQUEST));            
             rslt.insert(operationpair(REMOVEALARMS_RESPONSE_S, REMOVEALARMS_RESPONSE));     
+            
             rslt.insert(operationpair(ADDDEBUG_REQUEST_S, ADDDEBUG_REQUEST));
-            rslt.insert(operationpair(ADDDEBUG_RESPONSE_S, ADDDEBUG_RESPONSE));            
+            rslt.insert(operationpair(ADDDEBUG_RESPONSE_S, ADDDEBUG_RESPONSE));       
+            rslt.insert(operationpair(UPDATEDEBUG_RESPONSE_S, UPDATEDEBUG_RESPONSE));            
             rslt.insert(operationpair(REMOVEDEBUG_REQUEST_S, REMOVEDEBUG_REQUEST));            
-            rslt.insert(operationpair(REMOVEDEBUG_RESPONSE_S, REMOVEDEBUG_RESPONSE));           
+            rslt.insert(operationpair(REMOVEDEBUG_RESPONSE_S, REMOVEDEBUG_RESPONSE));       
+            
             rslt.insert(operationpair(ADDJOURNAL_REQUEST_S, ADDJOURNAL_REQUEST));
-            rslt.insert(operationpair(ADDJOURNAL_RESPONSE_S, ADDJOURNAL_RESPONSE));            
+            rslt.insert(operationpair(ADDJOURNAL_RESPONSE_S, ADDJOURNAL_RESPONSE));       
+            rslt.insert(operationpair(UPDATEJOURNAL_RESPONSE_S, UPDATEJOURNAL_RESPONSE));           
             rslt.insert(operationpair(REMOVEJOURNAL_REQUEST_S, REMOVEJOURNAL_REQUEST));            
             rslt.insert(operationpair(REMOVEJOURNAL_RESPONSE_S, REMOVEJOURNAL_RESPONSE));          
+            
             rslt.insert(operationpair(REMOVE_RESPONSE_S, REMOVE_RESPONSE));               
             return rslt;
         }
@@ -341,7 +403,7 @@ namespace http {
                     else
                         result.add_child(it->first.expr(), add_tag_value(it->second));
                 }
-                resp.add_child(UPDATE_RESPONSE_S, result);
+                resp.add_child(UPDATETAG_RESPONSE_S, result);
                 result.clear();
                 if (has_exec) {
                     for (valuemap_type::const_iterator it = session->updatelist().begin(); it != session->updatelist().end(); ++it) {
@@ -349,7 +411,7 @@ namespace http {
                             result.add_child(it->first.id(), add_tag_value(it->second));
                         }
                     }
-                    resp.add_child(ADDEXECUTE_RESPONSE_S, result);
+                    resp.add_child(EXECUTE_RESPONSE_S, result);
                 }
                 session->updatelist().clear();
             }
@@ -366,7 +428,7 @@ namespace http {
                 for (short_values_map_type::const_iterator it = session->trends().begin(); it != session->trends().end(); ++it) {
                     result.add_child(it->first, add_trends_value(it->second));
                 }
-                resp.add_child(ADDTREND_RESPONSE_S, result);
+                resp.add_child(UPDATETREND_RESPONSE_S, result);
                 session->trends().clear();
             }
             if (!session->removesessionid().empty()) {
@@ -729,7 +791,7 @@ namespace http {
                     break;
 
                 }
-                case ADDEXECUTE_REQUEST:
+                case EXECUTE_REQUEST:
                 {
                     executevect_type excs;
                     if (get_executes_list(req, excs))
