@@ -452,13 +452,15 @@ namespace http {
 
         static void add_trends_value(const short_values_table& val, ptree::ptree& result) {
             for (short_values_table::const_iterator it = val.begin(); it != val.end(); ++it) {
-                result.put("start", it->first.second == 1 ? "true" : "false");
-                result.put("tag", it->first.first);
+                result.push_back(std::pair<std::string, ptree::ptree>("", ptree::ptree()));
+                ptree::ptree& subresult=result.back().second;
+                subresult.put("start", it->first.second == 1 ? "true" : "false");
+                subresult.put("tag", it->first.first);
                 if (it->first.second > 1) {
-                    result.put("error", "true");
+                    subresult.put("error", "true");
                 } else {
-                    result.add_child("data", ptree::ptree());
-                    add_trend_value(it->second, result.get_child("data"));
+                    subresult.add_child("data", ptree::ptree());
+                    add_trend_value(it->second, subresult.get_child("data"));
                 }
             }
         }
