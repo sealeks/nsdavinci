@@ -42,31 +42,23 @@
  removTrendsListener(handler)
  
  
- Type request:
-           
- 1. init
-  
-                                        user                                                                                                                                      server
-                                  {  "init-req":  "0"    }                                                          ->           
-                                                                                                                                                    <-              {"init-resp" : "RESPID"}
- 
- 2. process
- 
-    2.1 add tags in request
- 
-              { "session" : "RESPID" , add-tag : [... added tags list...] }         ->
- 
-     2.2 remove tags from request
- 
-              { "session" : "RESPID" , remove-tag : [... remove tags list...] }         ->     
- 
-     2.3  single execute expression in request
- 
-              { "session" : "RESPID" , add-execute : [... added executes list...] }         ->         
+       
  
  
  */
 
+/*Correct bug parsing UTF-8 by boost::pt*/
+namespace boost {
+    namespace property_tree {
+        namespace json_parser
+        {
+            // Create necessary escape sequences from illegal characters
+            static std::string create_escapes(const std::string &s){
+                return s;
+            }
+        }
+    }
+}
 
 namespace http {
     namespace server {
@@ -366,12 +358,29 @@ namespace http {
 
         ////////////////////////////////////////////////////////
         //  update value func
-        ////////////////////////////////////////////////////////          
+        ////////////////////////////////////////////////////////   
+        
+       /* static std::string correct_utf8(const std::string& val) {
+            const std::string& hexdigits = "0123456789ABCDEF";
+            std::string result;
+            for (std::string::size_type it = 0; it<val.length(); ++it) {
+                std::string::value_type tst=val[it];
+                if ((tst & 0x80)) 
+                    result += ("\\x" + hexdigits.substr(0xF & (tst >> 4),1) + hexdigits.substr(0xF & tst,1));
+                else
+                    result+=tst;
+            }       
+            return result;
+        }*/        
 
         static ptree::ptree add_tag_value(const short_value& val) {
             ptree::ptree result;
             if (!val.error()) {
-                result.put("value", val.value<std::string>());
+                if (val.type() == dvnci::TYPE_TEXT) {
+                    //std::string tmp = val.value<std::string>();
+                    result.put("value", val.value<std::string>());
+                } else
+                    result.put("value", val.value<std::string>());
                 result.put("type", dvnci::to_str(val.type()));
                 result.put("valid", dvnci::to_str(val.valid()));
                 //result.put("time", dvnci::to_str(val.time()));
