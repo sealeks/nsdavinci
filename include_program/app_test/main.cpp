@@ -171,6 +171,7 @@ protected:
 
 int main(int argc, char** argv) {
     std::string quit_in;
+    //DEBUG_VAL_DVNCI(dvnci::castnum64_from_datetime(dvnci::epoch_time))
     basepath = dvnci::getlocalbasepath();
     DEBUG_VAL_DVNCI(basepath.string())
     mainserv = executable_ptr(new testbaseservice());
